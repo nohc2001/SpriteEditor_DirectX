@@ -1,4 +1,40 @@
-¹®Á¦. 
-1. ¼öÁ¤µÈ FMÀÌ Àû¿ëÀÌ ¾ÈµÇ¾îÀÖ´Ù. -> ÀÌ·¡¼­ ¹º°¡ Á¦´ë·Î Àû¿ëÀÌ ¾ÈµÊ ¹º°¡ ¸Ş¸ğ¸®¿¡ ¹®Á¦°¡ ÀÖ´Ù.
-	ÀÌ°Å ÇÑ ´ÙÀ½ µğ¹ö±ëÀ» ÇØ¾ß ÇÒµí.
-2. github desktopÀÌ ¾È±ò·ÁÀÖ¾î¼­ ±êÇãºê¿¡ ¾÷µ¥ÀÌÆ®¸¦ ¸øÇÔ.
+ë¬¸ì œ. 
+1. ìˆ˜ì •ëœ FMì´ ì ìš©ì´ ì•ˆë˜ì–´ìˆë‹¤. -> ì´ë˜ì„œ ë­”ê°€ ì œëŒ€ë¡œ ì ìš©ì´ ì•ˆë¨ ë­”ê°€ ë©”ëª¨ë¦¬ì— ë¬¸ì œê°€ ìˆë‹¤.
+	ì´ê±° í•œ ë‹¤ìŒ ë””ë²„ê¹…ì„ í•´ì•¼ í• ë“¯.
+2. github desktopì´ ì•ˆê¹”ë ¤ìˆì–´ì„œ ê¹ƒí—ˆë¸Œì— ì—…ë°ì´íŠ¸ë¥¼ ëª»í•¨.
+3. ì˜¤ëª©ë‹¤ê°í˜•ë‚´ë¶€ì˜ ì‚¼ê°í˜•ê³¼ ì™¸ë¶€ì˜ ê±¸ì³ì§„ ì‚¼ê°í˜• êµ¬ë¶„í•˜ëŠ” í•¨ìˆ˜.
+
+ê³„íš.
+bool TriangleInPolygonRange(triangle3v3f tri, fmvecarr<vec3f> polygon){
+	for(int i=0;i<3;++i){
+		int tripos0 = i;
+		int tripos1 = (i+1 >= 3) ? 0 : i+1;
+		for(int k=0;k<polygon.size();++k){
+			int polypos0 = k;
+			int polypos1 = (k+1 >= polygon.size()) ? 0 : k+1;
+			if((tri[tripos0] == polygon[polypos0] || tri[tripos0] == polygon[polypos1]) || 
+				(tri[tripos1] == polygon[polypos0] || tri[tripos1] == polygon[polypos1])){
+				continue;
+			}
+
+			straightLine triline = straightLine(tri[tripos0], tri[tripos1]);
+			straightLine polyline = straightLine(polygon[polypos0], polygon[polypos1]);
+			shp::vec2f cross = GetCross(triline, polyline);
+			if(fabsf(triline.xdelta) > fabsf(triline.ydelta)){
+				float minx = (tri[tripos0].x < tri[tripos1].x) ? tri[tripos0].x : tri[tripos1].x;
+				float maxx = (tri[tripos0].x > tri[tripos1].x) ? tri[tripos0].x : tri[tripos1].x;
+				if(minx < cross.x && cross.x < maxx){
+					return false;
+				}
+			}
+			else{
+				float miny = (tri[tripos0].y < tri[tripos1].y) ? tri[tripos0].y : tri[tripos1].y;
+				float maxy = (tri[tripos0].y > tri[tripos1].y) ? tri[tripos0].y : tri[tripos1].y;
+				if(miny < cross.y && cross.y < maxy){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
