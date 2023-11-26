@@ -94,29 +94,29 @@ public:
             lt.push_front(i);
         }
 
-        int siz = lt.size;
         while (lt.size >= 3) {
             fmlist_node<uint>* lti = lt.first;
-            for (int i = 0; i < lt.size - 2; i++) {
-                if (lti == nullptr) continue;
+            for (; lti->next != nullptr && lti->next->next != nullptr; lti = lti->next) {
                 fmlist_node<uint>* inslti0 = lti;
-                fmlist_node<uint>* inslti1 = lt.getnext(lti);
-                fmlist_node<uint>* inslti2 = lt.getnext(inslti1);
+                fmlist_node<uint>* inslti1 = lti->next;
+                fmlist_node<uint>* inslti2 = inslti1->next;
+                if (lti == nullptr) continue;
                 bool bdraw = true;
 				fmlist_node<uint>* ltk = lt.first;
-				for (int k = 0; k < lt.size; ++k) {
-					if (i <= k && k <= i + 2) {
-                        ltk = lt.getnext(ltk);
+				for (; ltk->next != nullptr; ltk = ltk->next) {
+                    bool b = false;
+                    uint kv = ltk->value;
+                    b = b || inslti0->value == kv;
+                    b = b || inslti1->value == kv;
+                    b = b || inslti2->value == kv;
+					if (b) {
 						continue;
 					}
-					uint kv = ltk->value;
-
+					
 					bdraw = bdraw && !shp::bPointInTriangleRange(shp::vec2f(arr[kv].Pos.x, arr[kv].Pos.y),
 						shp::vec2f(arr[inslti0->value].Pos.x, arr[inslti0->value].Pos.y),
 						shp::vec2f(arr[inslti1->value].Pos.x, arr[inslti1->value].Pos.y),
 						shp::vec2f(arr[inslti2->value].Pos.x, arr[inslti2->value].Pos.y));
-
-                    ltk = lt.getnext(ltk);
 				}
 
                 if (bdraw == true) {
@@ -129,20 +129,13 @@ public:
                     shp::triangle3v3f tri(shp::vec3f(arr[pi].Pos.x, arr[pi].Pos.y, arr[pi].Pos.z),
                         shp::vec3f(arr[pi1].Pos.x, arr[pi1].Pos.y, arr[pi1].Pos.z),
                         shp::vec3f(arr[pi2].Pos.x, arr[pi2].Pos.y, arr[pi2].Pos.z));
-                    if (bTriangleInPolygonRange(tri, polygon)) {
+                    if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 4) {
                         indexes.push_back(aindex(pi, pi1, pi2));
                         lt.erase(inslti1);
+                        //여기에 도달하기 전에 lt의 first의 nest가 nullptr에서 쓰레기 값으로 덮어진다. 원인을 찾자
                     }
                 }
             }
-
-            if (siz == lt.size) {
-                break;
-            }
-            else {
-                siz = lt.size;
-            }
-
         }
 
         fm->_tempPopLayer();
@@ -182,7 +175,7 @@ public:
                     shp::triangle3v3f tri(shp::vec3f(polygon[i].x, polygon[i].y, 0),
                         shp::vec3f(polygon[i+1].x, polygon[i+1].y, 0),
                         shp::vec3f(polygon[i+2].x, polygon[i+2].y, 0));
-                    if (shp::bTriangleInPolygonRange(tri, save)) {
+                    if (shp::bPolyTriangleInPolygonRange(tri, save)) {
                         indexes.push_back(aindex(polygon_index[i], polygon_index[i+1], polygon_index[i+2]));
                         polygon.erase(i + 1);
                         polygon_index.erase(i + 1);

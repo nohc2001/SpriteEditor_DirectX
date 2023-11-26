@@ -38,3 +38,12 @@ bool TriangleInPolygonRange(triangle3v3f tri, fmvecarr<vec3f> polygon){
 	}
 	return true;
 }
+
+
+1. 삼각형 판정
+> 크로스 판정
+	in > true
+	out > false
+> 중심 판정
+	in > true
+	out > true or false

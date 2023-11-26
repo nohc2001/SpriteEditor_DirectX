@@ -477,6 +477,7 @@ namespace shp {
 	// �ﰢ���� �ٰ��� ���ο� �ִ��� ����
 	bool bTriangleInPolygonRange(triangle3v2f triangle, fmvecarr<vec2f> polygon);
 	bool bTriangleInPolygonRange(triangle3v3f triangle, fmvecarr<vec3f> polygon);
+	bool bPolyTriangleInPolygonRange(triangle3v3f tri, fmvecarr<vec3f> polygon);
 
 	// ���� ���簢�� ���ο� �ִ��� ����
 	bool bPointInRectRange(vec2f point, rect4f rt);
@@ -1076,6 +1077,7 @@ bool shp::bTriangleInPolygonRange(triangle3v3f triangle, fmvecarr<vec3f> polygon
 {
 	vec3f gcenter = triangle.point[0] + triangle.point[1] + triangle.point[2];
 	gcenter = gcenter / 3;
+	bool result = true;
 	if (bPointInPolygonRange(gcenter, polygon) == false) {
 		return false;
 	}
@@ -1086,6 +1088,44 @@ bool shp::bTriangleInPolygonRange(triangle3v3f triangle, fmvecarr<vec3f> polygon
 		}
 	}
 
+	return true;
+}
+
+bool shp::bPolyTriangleInPolygonRange(triangle3v3f tri, fmvecarr<vec3f> polygon) {
+	for (int i = 0; i < 3; ++i) {
+		int tripos0 = i;
+		int tripos1 = (i + 1 >= 3) ? 0 : i + 1;
+		for (int k = 0; k < polygon.size(); ++k) {
+			int polypos0 = k;
+			int polypos1 = (k + 1 >= polygon.size()) ? 0 : k + 1;
+			//if ((tri.point[tripos0] == polygon[polypos0] || tri.point[tripos1] == polygon[polypos1]) ||
+			//	(tri.point[tripos1] == polygon[polypos0] || tri.point[tripos0] == polygon[polypos1])) {
+			//	continue;
+			//}
+
+			straightLine triline = straightLine(tri.point[tripos0].getv2(), tri.point[tripos1].getv2());
+			straightLine polyline = straightLine(polygon[polypos0].getv2(), polygon[polypos1].getv2());
+			shp::vec2f cross = shp::GetCrossPoint(triline, polyline);
+			if (cross.isActive() == false) {
+				continue;
+			}
+
+			if (fabsf(triline.xrate) > fabsf(triline.yrate)) {
+				float minx = (tri.point[tripos0].x < tri.point[tripos1].x) ? tri.point[tripos0].x : tri.point[tripos1].x;
+				float maxx = (tri.point[tripos0].x > tri.point[tripos1].x) ? tri.point[tripos0].x : tri.point[tripos1].x;
+				if (minx+1 < cross.x && cross.x < maxx-1) {
+					return false; 
+				}
+			}
+			else {
+				float miny = (tri.point[tripos0].y < tri.point[tripos1].y) ? tri.point[tripos0].y : tri.point[tripos1].y;
+				float maxy = (tri.point[tripos0].y > tri.point[tripos1].y) ? tri.point[tripos0].y : tri.point[tripos1].y;
+				if (miny+1 < cross.y && cross.y < maxy-1) {
+					return false;
+				}
+			}
+		}
+	}
 	return true;
 }
 
