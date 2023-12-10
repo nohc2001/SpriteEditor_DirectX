@@ -94,7 +94,9 @@ public:
             lt.push_front(i);
         }
 
-        while (lt.size >= 3) {
+        int savesiz = lt.size;
+        while (lt.size >= 3 || savesiz != lt.size) {
+            savesiz = lt.size;
             fmlist_node<uint>* lti = lt.first;
             for (; lti->next != nullptr && lti->next->next != nullptr; lti = lti->next) {
                 fmlist_node<uint>* inslti0 = lti;
