@@ -90,28 +90,33 @@ public:
 
         fmlist<uint> lt;
         lt.Init(0);
+        fmlist_node<uint>* ltlast = lt.first;
         for (uint i = 1; i < arr.size(); ++i) {
             lt.push_front(i);
         }
 
         int savesiz = lt.size;
         while (lt.size >= 3 || savesiz != lt.size) {
+            //ltlast->next = nullptr;
             savesiz = lt.size;
             fmlist_node<uint>* lti = lt.first;
-            for (; lti->next != nullptr && lti->next->next != nullptr; lti = lti->next) {
+            for (int index = 0; index < lt.size - 2; ++index) {
+                //ltlast->next = nullptr;
                 fmlist_node<uint>* inslti0 = lti;
                 fmlist_node<uint>* inslti1 = lti->next;
                 fmlist_node<uint>* inslti2 = inslti1->next;
                 if (lti == nullptr) continue;
                 bool bdraw = true;
 				fmlist_node<uint>* ltk = lt.first;
-				for (; ltk->next != nullptr; ltk = ltk->next) {
+				for (int kndex = 0; kndex < lt.size; ++kndex) {
+                    //ltlast->next = nullptr;
                     bool b = false;
                     uint kv = ltk->value;
                     b = b || inslti0->value == kv;
                     b = b || inslti1->value == kv;
                     b = b || inslti2->value == kv;
 					if (b) {
+                        ltk = ltk->next;
 						continue;
 					}
 					
@@ -119,6 +124,8 @@ public:
 						shp::vec2f(arr[inslti0->value].Pos.x, arr[inslti0->value].Pos.y),
 						shp::vec2f(arr[inslti1->value].Pos.x, arr[inslti1->value].Pos.y),
 						shp::vec2f(arr[inslti2->value].Pos.x, arr[inslti2->value].Pos.y));
+
+                    ltk = ltk->next;
 				}
 
                 if (bdraw == true) {
@@ -134,9 +141,12 @@ public:
                     if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 4) {
                         indexes.push_back(aindex(pi, pi1, pi2));
                         lt.erase(inslti1);
+                        lti = inslti2;
                         //여기에 도달하기 전에 lt의 first의 nest가 nullptr에서 쓰레기 값으로 덮어진다. 원인을 찾자
                     }
                 }
+
+                lti = lti->next;
             }
         }
 
