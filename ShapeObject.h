@@ -95,8 +95,9 @@ public:
             lt.push_front(i);
         }
 
-        int savesiz = lt.size;
-        while (lt.size >= 3 || savesiz != lt.size) {
+        int savesiz = 0;
+        while (lt.size >= 3) {
+            if (savesiz == lt.size) break;
             //ltlast->next = nullptr;
             savesiz = lt.size;
             fmlist_node<uint>* lti = lt.first;
@@ -141,7 +142,7 @@ public:
                     if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 4) {
                         indexes.push_back(aindex(pi, pi1, pi2));
                         lt.erase(inslti1);
-                        lti = inslti2;
+                        //lti = inslti2;
                         //여기에 도달하기 전에 lt의 first의 nest가 nullptr에서 쓰레기 값으로 덮어진다. 원인을 찾자
                     }
                 }

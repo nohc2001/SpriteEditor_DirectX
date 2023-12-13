@@ -1773,12 +1773,12 @@ namespace freemem{
 			fmlayer = -1;
 		}
 
-		void Init(size_t siz, bool local, bool isdebug = false)
+		void Init(size_t siz, bool local, bool _isdebug = false)
 		{
 			T *newArr;
-			if (isdebug)
+			if (_isdebug)
 			{
-				newArr = (T *) fm->_New(sizeof(T) * siz, isdebug);
+				newArr = (T *) fm->_New(sizeof(T) * siz, _isdebug);
 			}
 			else
 			{
@@ -1805,6 +1805,7 @@ namespace freemem{
 			}
 
 			islocal = local;
+			isdebug = _isdebug;
 			Arr = newArr;
 			maxsize = siz;
 		}
