@@ -60,6 +60,10 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     fm->SetHeapData(4096, 4096, 4096, 4096);
     fm->_tempPushLayer();
 
+    const char* font_path = "Cafe24Ssurround-v2.0.ttf";
+    uint8_t condition_variable = 0;
+    int8_t error = TTFFontParser::parse_file(font_path, &font_data, &font_parsed, &condition_variable);
+
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
 
@@ -205,7 +209,7 @@ HRESULT InitDevice()
 
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory( &sd, sizeof( sd ) );
-    sd.BufferCount = 1;
+    sd.BufferCount = 2;
     sd.BufferDesc.Width = width;
     sd.BufferDesc.Height = height;
     sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -469,6 +473,10 @@ HRESULT InitDevice()
     polygon_cb.mView = XMMatrixTranspose(g_View);
     polygon_cb.mProjection = XMMatrixTranspose(g_Projection_2d);
 
+    CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
+    cbuf->ready(L'안', g_pVertexShader, g_pPixelShader);
+    char_map.insert(CharMap::value_type(L'안', cbuf));
+
     return S_OK;
 }
 
@@ -585,7 +593,8 @@ void Render()
     cursor_cb.mProjection = XMMatrixTranspose(g_Projection_2d);
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
     cursor_obj.render(cursor_cb);
-
+    
+    //char_map.at(L'안')->render(cursor_cb);
     
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &polygon_cb, 0, 0);
     polygon_obj.render(polygon_cb);
@@ -599,6 +608,8 @@ void Render()
         g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &dbgpos_cb, 0, 0);
         dbgpos_obj.render(dbgpos_cb);
     }
+
+    draw_string(L"안녕하세용!!", 8, 9, shp::rect4f(0, 0, 100, 100), g_pVertexShader, g_pPixelShader);
     //
     // Present our back buffer to our front buffer
     //

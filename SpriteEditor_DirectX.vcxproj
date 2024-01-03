@@ -384,6 +384,7 @@
     <ClInclude Include="arr_expend.h" />
     <ClInclude Include="ShapeObject.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="ttfParser.h" />
     <ClInclude Include="Utill_FreeMemory.h" />
     <ClInclude Include="Utill_SpaceMath.h" />
     <ResourceCompile Include="SpriteEditor_DirectX.rc" />

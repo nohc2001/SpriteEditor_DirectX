@@ -4,16 +4,27 @@
 #include <d3dx11.h>
 #include <d3dcompiler.h>
 #include <xnamath.h>
+#include <unordered_map>
 #include "Utill_FreeMemory.h"
 #include "Utill_SpaceMath.h"
 
+#define TTF_FONT_PARSER_IMPLEMENTATION
+#include "ttfParser.h"
+
+using namespace std;
 using namespace freemem;
+using namespace TTFFontParser;
 
 #define uint unsigned int
 
 ID3D11Device* g_pd3dDevice = NULL;
 ID3D11DeviceContext* g_pImmediateContext = NULL;
 ID3D11Buffer* g_pConstantBuffer = NULL;
+
+TTFFontParser::FontData font_data;
+
+extern XMMATRIX                g_View;
+extern XMMATRIX                g_Projection_2d;
 
 struct SimpleVertex
 {
@@ -74,12 +85,16 @@ public:
     }
 
     void Init(bool local) {
+        arr.NULLState();
+        indexes.NULLState();
         islocal = local;
         arr.Init(8, false, true);
         indexes.Init(8, false, true);
+        m_pVertexBuffer = nullptr;
+        m_pIndexBuffer = nullptr;
     }
 
-    inline void FreePolygonToTriangles1() {
+    inline void FreePolygonToTriangles() {
         fm->_tempPushLayer();
         fmvecarr<shp::vec3f> polygon;
         polygon.Init(arr.size(), true);
@@ -154,58 +169,6 @@ public:
         fm->_tempPopLayer();
     }
 
-    inline void FreePolygonToTriangles2() {
-        fm->_tempPushLayer();
-        fmvecarr<shp::vec2f> polygon;
-        fmvecarr<uint> polygon_index;
-        fmvecarr<shp::vec3f> save;
-        polygon.Init(arr.size(), true);
-        polygon.up = arr.size();
-        polygon_index.Init(arr.size(), true);
-        polygon_index.up = arr.size();
-        save.Init(arr.size(), true);
-        save.up = arr.size();
-        for (int i = 0; i < arr.size(); ++i) {
-            polygon[i] = shp::vec2f(arr[i].Pos.x, arr[i].Pos.y);
-            polygon_index[i] = i;
-            save[i] = shp::vec3f(arr[i].Pos.x, arr[i].Pos.y, -1);
-        }
-        int siz = polygon.size();
-        while (polygon.size() >= 3) {
-            for (int i = 0; i < polygon.size() - 2; i++) {
-                bool bdraw = true;
-                for (int k = 0; k < polygon.size(); k++) {
-                    if (i <= k && k <= i + 2) continue;
-
-                    if (bPointInTriangleRange(polygon.at(k), polygon.at(i), polygon.at(i + 1), polygon.at(i + 2))) {
-                        bdraw = false;
-                        break;
-                    }
-                }
-
-                if (bdraw == true) {
-                    shp::vec2f gcenter = shp::vec2f((polygon.at(i).x + polygon.at(i + 1).x + polygon.at(i + 2).x) / 3, (polygon.at(i).y + polygon.at(i + 1).y + polygon.at(i + 2).y) / 3);
-                    shp::triangle3v3f tri(shp::vec3f(polygon[i].x, polygon[i].y, 0),
-                        shp::vec3f(polygon[i+1].x, polygon[i+1].y, 0),
-                        shp::vec3f(polygon[i+2].x, polygon[i+2].y, 0));
-                    if (shp::bPolyTriangleInPolygonRange(tri, save)) {
-                        indexes.push_back(aindex(polygon_index[i], polygon_index[i+1], polygon_index[i+2]));
-                        polygon.erase(i + 1);
-                        polygon_index.erase(i + 1);
-                    }
-                }
-            }
-
-            if (siz == polygon.size()) {
-                break;
-            }
-            else {
-                siz = polygon.size();
-            }
-        }
-        fm->_tempPopLayer();
-    }
-
     void begin(ID3D11VertexShader* vshader, ID3D11PixelShader* fshader) {
         m_pVertexShader = vshader;
         m_pPixelShader = fshader;
@@ -227,7 +190,7 @@ public:
             m_pIndexBuffer = nullptr;
         }
 
-        FreePolygonToTriangles1();
+        FreePolygonToTriangles();
 
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
@@ -275,6 +238,132 @@ public:
         g_pImmediateContext->DrawIndexed(IndexCount, 0, 0);
     }
 };
+
+void font_parsed(void* args, void* _font_data, int error)
+{
+    if (error)
+    {
+        *(uint8_t*)args = error;
+    }
+    else
+    {
+        TTFFontParser::FontData* font_data = (TTFFontParser::FontData*)_font_data;
+
+        {
+            for (const auto& glyph_iterator : font_data->glyphs)
+            {
+                uint32_t num_curves = 0, num_lines = 0;
+                for (const auto& path_list : glyph_iterator.second.path_list)
+                {
+                    for (const auto& geometry : path_list.geometry)
+                    {
+                        if (geometry.is_curve)
+                            num_curves++;
+                        else
+                            num_lines++;
+                    }
+                }
+            }
+        }
+
+        *(uint8_t*)args = 1;
+    }
+}
+
+class CharBuffer
+{
+public:
+    fmvecarr < rbuffer* >frag;
+    shp::vec2f xrange;
+
+    CharBuffer()
+    {
+    }
+    ~CharBuffer()
+    {
+    }
+
+    void ready(unsigned int unicode, ID3D11VertexShader* vshader, ID3D11PixelShader* fshader)
+    {
+        //func_in("CharBuffer::ready");
+        Glyph g = font_data.glyphs.at(unicode);
+        frag.NULLState();
+        frag.Init(g.path_list.size(), false, true);
+        // drt->begin(rendertype::color_nouv);
+        
+        for (int i = g.path_list.size() - 1; i >= 0; --i)
+        {
+            Curve c = g.path_list.at(0).geometry.at(0);
+            xrange.x = c.p0.x;
+            xrange.y = c.p0.x;
+
+            rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+            rbuff->Init(false);
+            rbuff->begin(vshader, fshader);
+            for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
+            {
+                c = g.path_list.at(i).geometry.at(k);
+                rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+                if (xrange.x > c.p0.x) xrange.x = c.p0.x;
+                if (xrange.y < c.p0.y) xrange.y = c.p0.y;
+            }
+            rbuff->end();
+            frag.push_back(rbuff);
+        }
+        //func_out;
+    }
+
+    void render(const ConstantBuffer& uniform, bool debuging = false)
+    {
+        for (int i = 0; i < frag.size(); ++i)
+        {
+            frag[i]->render(uniform);
+        }
+    }
+};
+
+typedef unordered_map < uint32_t, CharBuffer* >CharMap;
+CharMap char_map;
+void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, 
+    ID3D11VertexShader* vshader, ID3D11PixelShader* fshader)
+{
+    XMMATRIX StringWorld = XMMatrixIdentity();
+    ConstantBuffer cb;
+    cb.mWorld = XMMatrixTranspose(StringWorld);
+    cb.mView = XMMatrixTranspose(g_View);
+    cb.mProjection = XMMatrixTranspose(g_Projection_2d);
+    g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cb, 0, 0);
+
+    //dbg << "insert start" << endl;
+    float fsiz = (float)fontsiz/500.0f;
+    shp::vec2f stackpos = shp::vec2f(loc.fx, loc.fy);
+    for (int i = 0; i < len; ++i)
+    {
+        unsigned int c = (unsigned int)wstr[i];
+        if (c == 0) return;
+        if (char_map.find(c) == char_map.end())
+        {
+            //dbg << "insert" << endl;
+            CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
+            //dbg << "bpbpb" << endl;
+            cbuf->ready(c, vshader, fshader);
+            char_map.insert(CharMap::value_type(c, cbuf));
+            // dbg << "insertend" << endl;
+        }
+
+        StringWorld = XMMatrixScaling(fsiz, fsiz, 1);
+        StringWorld = XMMatrixMultiply(StringWorld, XMMatrixTranslation(stackpos.x, stackpos.y, 0.9f));
+        cb.mWorld = XMMatrixTranspose(StringWorld);
+        char_map.at(c)->render(cb);
+
+        if (c < 255) {
+            stackpos.x += 450.0f * fsiz;
+        }
+        else {
+            stackpos.x += 900.0f * fsiz;
+        }
+    }
+}
 
 struct ShapeObject {
     rbuffer* origin_shape;
