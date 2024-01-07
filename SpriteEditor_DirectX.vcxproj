@@ -382,14 +382,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arr_expend.h" />
+    <ClInclude Include="DX11_UI.h" />
     <ClInclude Include="ShapeObject.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="ttfParser.h" />
     <ClInclude Include="Utill_FreeMemory.h" />
     <ClInclude Include="Utill_SpaceMath.h" />
     <ResourceCompile Include="SpriteEditor_DirectX.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="alfrq-8mw46-001.ico" />
+    <Image Include="directx.ico" />
+    <Image Include="SpriteEditorLogo.ico" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

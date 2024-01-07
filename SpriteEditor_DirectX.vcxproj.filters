@@ -19,6 +19,8 @@
     <ClInclude Include="Utill_FreeMemory.h" />
     <ClInclude Include="Utill_SpaceMath.h" />
     <ClInclude Include="ttfParser.h" />
+    <ClInclude Include="DX11_UI.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
@@ -40,5 +42,16 @@
     <ResourceCompile Include="SpriteEditor_DirectX.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SpriteEditorLogo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="directx.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="alfrq-8mw46-001.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

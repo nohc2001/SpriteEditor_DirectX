@@ -9,6 +9,7 @@
 //#include <xnamath.h>
 #include "resource.h"
 #include "ShapeObject.h"
+#include "DX11_UI.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -38,7 +39,9 @@ ConstantBuffer polygon_cb;
 
 //control
 bool ctrl_3d = true;
-
+shp::vec2f DX_UI::mousePos = shp::vec2f(0, 0);
+int DX_UI::FocusID = -1;
+XMFLOAT4 rbuffer::InputColor;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -63,6 +66,10 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     const char* font_path = "Cafe24Ssurround-v2.0.ttf";
     uint8_t condition_variable = 0;
     int8_t error = TTFFontParser::parse_file(font_path, &font_data, &font_parsed, &condition_variable);
+
+    sub_font_data[0] = new TTFFontParser::FontData();
+    const char* subfont_path = "ARLRDBD.TTF";
+    error = TTFFontParser::parse_file(subfont_path, sub_font_data[0], &font_parsed, &condition_variable);
 
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
@@ -111,12 +118,12 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon( hInstance, ( LPCTSTR )IDI_TUTORIAL1 );
+    wcex.hIcon = LoadIcon( hInstance, ( LPCTSTR )IDI_ICON2 );
     wcex.hCursor = LoadCursor( NULL, IDC_ARROW );
     wcex.hbrBackground = ( HBRUSH )( COLOR_WINDOW + 1 );
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = L"TutorialWindowClass";
-    wcex.hIconSm = LoadIcon( wcex.hInstance, ( LPCTSTR )IDI_TUTORIAL1 );
+    wcex.hIconSm = LoadIcon( wcex.hInstance, ( LPCTSTR )IDI_ICON2);
     if( !RegisterClassEx( &wcex ) )
         return E_FAIL;
 
@@ -179,6 +186,7 @@ rbuffer dbgpos_obj;
 
 HRESULT InitDevice()
 {
+
     HRESULT hr = S_OK;
 
     RECT rc;
@@ -502,16 +510,49 @@ void CleanupDevice()
     if( g_pd3dDevice ) g_pd3dDevice->Release();
 }
 
+void MainPage_Init(Page* page) {
+    page->pfm.SetHeapData(new byte8[4096], 4096);
+    DXBtn* PolyAddBtn = (DXBtn*)page->pfm._New(sizeof(DXBtn));
+    DXBtn* PolyClearBtn = (DXBtn*)page->pfm._New(sizeof(DXBtn));
+}
+
+void MainPage_Render(Page* page) {
+
+}
+
+void MainPage_Update(Page* page, float delta) {
+
+}
+
+void MainPage_Event(Page* page, HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    float mx, my;
+    switch (message)
+    {
+    case WM_LBUTTONDOWN:
+        mx = LOWORD(lParam);
+        my = HIWORD(lParam);
+        polygon_obj.av(SimpleVertex((float)mx - (float)width / 2.0f, -1.0f * (float)my + (float)height / 2.0f, 0.0f, 255.0f, 0.0f, 255.0f, 255.0f));
+        polygon_obj.end();
+        break;
+    case WM_RBUTTONDOWN:
+        polygon_obj.arr[polygon_obj.choice].up = 0;
+        polygon_obj.indexes[polygon_obj.choice].up = 0;
+        polygon_obj.end();
+        break;
+    }
+}
+
 
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
-
+int mx, my;
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     PAINTSTRUCT ps;
     HDC hdc;
-    int mx, my;
+
+    //pageEvent
     switch( message )
     {
         case WM_PAINT:
@@ -521,20 +562,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
         case WM_KEYDOWN:
             PostQuitMessage(0);
             break;
-        case WM_LBUTTONDOWN:
-            mx = LOWORD(lParam);
-            my = HIWORD(lParam);
-            polygon_obj.av(SimpleVertex((float)mx - (float)width / 2.0f, -1.0f * (float)my + (float)height / 2.0f, 0.0f, 255.0f, 0.0f, 255.0f, 255.0f));
-            polygon_obj.end();
-            break;
-        case WM_RBUTTONDOWN:
-            polygon_obj.arr.up = 0;
-            polygon_obj.indexes.up = 0;
-            polygon_obj.end();
-            break;
         case WM_MOUSEMOVE:
             mx = LOWORD(lParam);
             my = HIWORD(lParam);
+            DX_UI::mousePos = shp::vec2f((float)mx, (float)my);
             g_CursorWorld = XMMatrixTranslation((float)mx - (float)width/2.0f, -1.0f * (float)my + (float)height/2.0f, 0.9f);
             break;
         case WM_DESTROY:
@@ -597,19 +628,19 @@ void Render()
     //char_map.at(L'안')->render(cursor_cb);
     
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &polygon_cb, 0, 0);
-    polygon_obj.render(polygon_cb);
+    //polygon_obj.render(polygon_cb);
 
     ConstantBuffer dbgpos_cb;
     dbgpos_cb.mView = XMMatrixTranspose(g_View);
     dbgpos_cb.mProjection = XMMatrixTranspose(g_Projection_2d);
-    for (int i = 0; i < polygon_obj.arr.size(); ++i) {
-        g_DBGWorld = XMMatrixTranslation((float)polygon_obj.arr[i].Pos.x, (float)polygon_obj.arr[i].Pos.y, 0.9f);
+    for (int i = 0; i < polygon_obj.arr[polygon_obj.choice].size(); ++i) {
+        g_DBGWorld = XMMatrixTranslation((float)polygon_obj.arr[polygon_obj.choice][i].Pos.x, (float)polygon_obj.arr[polygon_obj.choice][i].Pos.y, 0.9f);
         dbgpos_cb.mWorld = XMMatrixTranspose(g_DBGWorld);
         g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &dbgpos_cb, 0, 0);
         dbgpos_obj.render(dbgpos_cb);
     }
 
-    draw_string(L"안녕하세용!!", 8, 9, shp::rect4f(0, 0, 100, 100), g_pVertexShader, g_pPixelShader);
+    draw_string(L"안녕하세용!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), g_pVertexShader, g_pPixelShader);
     //
     // Present our back buffer to our front buffer
     //
