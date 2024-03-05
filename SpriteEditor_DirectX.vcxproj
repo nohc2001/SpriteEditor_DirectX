@@ -382,7 +382,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arr_expend.h" />
-    <ClInclude Include="DX11_UI.h" />
+    <ClInclude Include="DX11_UI.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="ShapeObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Sprite.h" />

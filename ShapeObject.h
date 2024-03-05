@@ -75,18 +75,11 @@ struct ConstantBuffer
 
 class rbuffer {
 public:
-    bool islocal = true;
-
-    fmvecarr<SimpleVertex> arr[2] = {};
-    fmvecarr<SimpleIndex> indexes[2] = {};
-    
+    fmvecarr<SimpleVertex>* buffer[2] = {}; // arr -> buffer
+    fmvecarr<SimpleIndex>* index_buf[2] = {};
     ID3D11Buffer* m_pVertexBuffer[2] = {};
     ID3D11Buffer* m_pIndexBuffer[2] = {};
-    unsigned int choice = 1; // double buffering required
-
-    ID3D11VertexShader* m_pVertexShader = NULL;
-    ID3D11PixelShader* m_pPixelShader = NULL;
-
+    unsigned char setting[4] = { };
     static XMFLOAT4 InputColor;
 
     static void dxColor4f(float r, float g, float b, float a) {
@@ -97,53 +90,110 @@ public:
 
     }
 
-    rbuffer(bool local) : islocal(local) {
-        arr[0].Init(8, false, true);
-        arr[1].Init(8, false, true);
-        indexes[0].Init(8, false, true);
-        indexes[1].Init(8, false, true);
+    rbuffer(bool local) {
+        set_local(local);
+        buffer[0]->Init(8, false, true);
+        buffer[1]->Init(8, false, true);
+        index_buf[0]->Init(8, false, true);
+        index_buf[1]->Init(8, false, true);
     }
 
     ~rbuffer() {
-        if (islocal) {
-            arr[0].release();
-            arr[1].release();
-            indexes[0].release();
-            indexes[1].release();
+        if (get_local()) {
+            buffer[0]->release();
+            buffer[1]->release();
+            index_buf[0]->release();
+            index_buf[1]->release();
+        }
+    }
+
+    /*inline GLuint get_shader()
+    {
+        return basicshaders[(unsigned int)get_rt()];
+    }*/
+
+    inline int get_vertexsiz(int index)
+    {
+        return buffer[index]->size() / sizeof(SimpleVertex);
+    }
+
+    inline int get_choice()
+    {
+        return (int)(setting[1] & 1);
+    }
+
+    inline bool get_inherit()
+    {
+        return (int)(setting[2] & 1);
+    }
+
+    inline bool get_local()
+    {
+        return (int)(setting[2] & 2);
+    }
+
+    inline void set_choice(unsigned int n)
+    {
+        if (n > 1)
+            return;
+        setting[1] &= 254;
+        setting[1] += n;
+    }
+
+    inline void set_inherit(bool b)
+    {
+        setting[1] &= 254;
+        if (b)
+        {
+            setting[1] += 1;
+        }
+    }
+
+    inline void set_local(bool b)
+    {
+        setting[1] &= 253;
+        if (b)
+        {
+            setting[1] += 2;
         }
     }
 
     void Init(bool local) {
-        arr[0].NULLState();
-        indexes[0].NULLState();
-        arr[1].NULLState();
-        indexes[1].NULLState();
-        islocal = local;
-        arr[0].Init(8, false, true);
-        indexes[0].Init(8, false, true);
-        arr[1].Init(8, false, true);
-        indexes[1].Init(8, false, true);
+        buffer[0] = (fmvecarr<SimpleVertex>*)fm->_New(sizeof(fmvecarr<SimpleVertex>), true);
+        buffer[1] = (fmvecarr<SimpleVertex>*)fm->_New(sizeof(fmvecarr<SimpleVertex>), true);
+        index_buf[0] = (fmvecarr<SimpleIndex>*)fm->_New(sizeof(fmvecarr<SimpleIndex>), true);
+        index_buf[1] = (fmvecarr<SimpleIndex>*)fm->_New(sizeof(fmvecarr<SimpleIndex>), true);
+
+        buffer[0]->NULLState();
+        index_buf[0]->NULLState();
+        buffer[1]->NULLState();
+        index_buf[1]->NULLState();
+        set_local(local);
+        buffer[0]->Init(8, false, true);
+        index_buf[0]->Init(8, false, true);
+        buffer[1]->Init(8, false, true);
+        index_buf[1]->Init(8, false, true);
         m_pVertexBuffer[0] = nullptr;
         m_pIndexBuffer[0] = nullptr;
         m_pVertexBuffer[1] = nullptr;
         m_pIndexBuffer[1] = nullptr;
-        choice = 1;
+        set_choice(1);
     }
 
     inline void FreePolygonToTriangles() {
-        int nextchoice = (choice + 1) % 2;
+        int nextchoice = (get_choice() + 1) % 2;
         fm->_tempPushLayer();
         fmvecarr<shp::vec3f> polygon;
-        polygon.Init(arr[nextchoice].size(), true);
-        polygon.up = arr[nextchoice].size();
-        for (int i = 0; i < arr[nextchoice].size(); ++i) {
-            polygon[i] = shp::vec3f(arr[nextchoice][i].Pos.x, arr[nextchoice][i].Pos.y, arr[nextchoice][i].Pos.z);
+        polygon.Init(buffer[nextchoice]->size(), true);
+        polygon.up = buffer[nextchoice]->size();
+        for (int i = 0; i < buffer[nextchoice]->size(); ++i) {
+            polygon[i] = shp::vec3f(buffer[nextchoice]->at(i).Pos.x, buffer[nextchoice]->at(i).Pos.y, buffer[nextchoice]->at(i).Pos.z);
         }
 
         fmlist<uint> lt;
         lt.Init(0);
         fmlist_node<uint>* ltlast = lt.first;
-        for (uint i = 1; i < arr[nextchoice].size(); ++i) {
+        for (uint i = 1; i < buffer[nextchoice]->size(); ++i) {
             lt.push_front(i);
         }
 
@@ -173,10 +223,10 @@ public:
 						continue;
 					}
 					
-					bdraw = bdraw && !shp::bPointInTriangleRange(shp::vec2f(arr[nextchoice][kv].Pos.x, arr[nextchoice][kv].Pos.y),
-						shp::vec2f(arr[nextchoice][inslti0->value].Pos.x, arr[nextchoice][inslti0->value].Pos.y),
-						shp::vec2f(arr[nextchoice][inslti1->value].Pos.x, arr[nextchoice][inslti1->value].Pos.y),
-						shp::vec2f(arr[nextchoice][inslti2->value].Pos.x, arr[nextchoice][inslti2->value].Pos.y));
+					bdraw = bdraw && !shp::bPointInTriangleRange(shp::vec2f(buffer[nextchoice]->at(kv).Pos.x, buffer[nextchoice]->at(kv).Pos.y),
+						shp::vec2f(buffer[nextchoice]->at(inslti0->value).Pos.x, buffer[nextchoice]->at(inslti0->value).Pos.y),
+						shp::vec2f(buffer[nextchoice]->at(inslti1->value).Pos.x, buffer[nextchoice]->at(inslti1->value).Pos.y),
+						shp::vec2f(buffer[nextchoice]->at(inslti2->value).Pos.x, buffer[nextchoice]->at(inslti2->value).Pos.y));
 
                     ltk = ltk->next;
 				}
@@ -188,11 +238,11 @@ public:
                     uint pi2 = inslti2->value;
                     
                     //SimpleVertex* gcenter = vec3f((pi.x + pi1.x + pi2.x) / 3, (pi.y + pi1.y + pi2.y) / 3, pi.z);
-                    shp::triangle3v3f tri(shp::vec3f(arr[nextchoice][pi].Pos.x, arr[nextchoice][pi].Pos.y, arr[nextchoice][pi].Pos.z),
-                        shp::vec3f(arr[nextchoice][pi1].Pos.x, arr[nextchoice][pi1].Pos.y, arr[nextchoice][pi1].Pos.z),
-                        shp::vec3f(arr[nextchoice][pi2].Pos.x, arr[nextchoice][pi2].Pos.y, arr[nextchoice][pi2].Pos.z));
+                    shp::triangle3v3f tri(shp::vec3f(buffer[nextchoice]->at(pi).Pos.x, buffer[nextchoice]->at(pi).Pos.y, buffer[nextchoice]->at(pi).Pos.z),
+                        shp::vec3f(buffer[nextchoice]->at(pi1).Pos.x, buffer[nextchoice]->at(pi1).Pos.y, buffer[nextchoice]->at(pi1).Pos.z),
+                        shp::vec3f(buffer[nextchoice]->at(pi2).Pos.x, buffer[nextchoice]->at(pi2).Pos.y, buffer[nextchoice]->at(pi2).Pos.z));
                     if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 4) {
-                        indexes[nextchoice].push_back(aindex(pi, pi1, pi2));
+                        index_buf[nextchoice]->push_back(aindex(pi, pi1, pi2));
                         lt.erase(inslti1);
                         //lti = inslti2;
                         //여기에 도달하기 전에 lt의 first의 nest가 nullptr에서 쓰레기 값으로 덮어진다. 원인을 찾자
@@ -206,11 +256,9 @@ public:
         fm->_tempPopLayer();
     }
 
-    void begin(ID3D11VertexShader* vshader, ID3D11PixelShader* fshader) {
-        m_pVertexShader = vshader;
-        m_pPixelShader = fshader;
+    void begin() {
 
-        int nextchoice = (choice + 1) % 2;
+        int nextchoice = (get_choice() + 1) % 2;
 
         if (m_pVertexBuffer[nextchoice] != nullptr) {
             while (m_pVertexBuffer[nextchoice]->Release());
@@ -224,16 +272,17 @@ public:
     }
 
     inline void av(const SimpleVertex& vertex) {
-        int nextchoice = (choice + 1) % 2;
-        arr[nextchoice].push_back(vertex);
+        int nextchoice = (get_choice() + 1) % 2;
+        buffer[nextchoice]->push_back(vertex);
     }
 
     HRESULT end() {
+        unsigned int choice = get_choice();
         int nextchoice = (choice + 1) % 2;
 
-        if (arr[nextchoice].size() != arr[choice].size()) goto RBUFFER_END_NEWPOLY;
-        for (int i = 0; i < arr[choice].size(); ++i) {
-            if (!VertexEqual(arr[nextchoice][i], arr[choice][i])) {
+        if (buffer[nextchoice]->size() != buffer[choice]->size()) goto RBUFFER_END_NEWPOLY;
+        for (int i = 0; i < buffer[choice]->size(); ++i) {
+            if (!VertexEqual(buffer[nextchoice]->at(i), buffer[choice]->at(i))) {
                 goto RBUFFER_END_NEWPOLY;
             }
         }
@@ -242,7 +291,7 @@ public:
 
         RBUFFER_END_NEWPOLY:
 
-        indexes[nextchoice].up = 0;
+        index_buf[nextchoice]->up = 0;
         if (m_pVertexBuffer[nextchoice] != nullptr) {
             while (m_pVertexBuffer[nextchoice]->Release());
             m_pVertexBuffer[nextchoice] = nullptr;
@@ -258,22 +307,22 @@ public:
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
         bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(SimpleVertex) * arr[nextchoice].up;
+        bd.ByteWidth = sizeof(SimpleVertex) * buffer[nextchoice]->up;
         bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         bd.CPUAccessFlags = 0;
         D3D11_SUBRESOURCE_DATA InitData;
         ZeroMemory(&InitData, sizeof(InitData));
-        InitData.pSysMem = arr[nextchoice].Arr;
+        InitData.pSysMem = buffer[nextchoice]->Arr;
         HRESULT hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &(m_pVertexBuffer[nextchoice]));
         if (FAILED(hr))
             return hr;
 
         // Create index buffer
         bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(WORD) * 3 * indexes[nextchoice].up;       // 36 vertices needed for 12 triangles in a triangle list
+        bd.ByteWidth = sizeof(WORD) * 3 * index_buf[nextchoice]->up;       // 36 vertices needed for 12 triangles in a triangle list
         bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
         bd.CPUAccessFlags = 0;
-        InitData.pSysMem = indexes[nextchoice].Arr;
+        InitData.pSysMem = index_buf[nextchoice]->Arr;
         hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &(m_pIndexBuffer[nextchoice]));
         if (FAILED(hr))
             return hr;
@@ -283,6 +332,8 @@ public:
 
     void render(const ConstantBuffer& uniform) {
         // Set vertex buffer
+        unsigned int choice = get_choice();
+
         UINT stride = sizeof(SimpleVertex);
         UINT offset = 0;
         g_pImmediateContext->IASetVertexBuffers(0, 1, &(m_pVertexBuffer[choice]), &stride, &offset);
@@ -296,10 +347,10 @@ public:
         g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &uniform, 0, 0);
 
         // Render
-        g_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
+        g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
         g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
-        g_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
-        UINT IndexCount = 3 * indexes[choice].size();
+        g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
+        UINT IndexCount = 3 * index_buf[choice]->size();
         g_pImmediateContext->DrawIndexed(IndexCount, 0, 0);
     }
 };
@@ -386,7 +437,7 @@ public:
         {
             rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
             rbuff->Init(false);
-            rbuff->begin(vshader, fshader);
+            rbuff->begin();
             for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
             {
                 c = g.path_list.at(i).geometry.at(k);

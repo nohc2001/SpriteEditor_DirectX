@@ -9,7 +9,7 @@
 //#include <xnamath.h>
 #include "resource.h"
 #include "ShapeObject.h"
-#include "DX11_UI.h"
+//#include "DX11_UI.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ ConstantBuffer polygon_cb;
 
 //control
 bool ctrl_3d = true;
-shp::vec2f DX_UI::mousePos = shp::vec2f(0, 0);
-int DX_UI::FocusID = -1;
+//shp::vec2f DX_UI::mousePos = shp::vec2f(0, 0);
+//int DX_UI::FocusID = -1;
 XMFLOAT4 rbuffer::InputColor;
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -456,21 +456,21 @@ HRESULT InitDevice()
         0, 0, 1.0f / (nearZ - farZ), 1);
 
     cursor_obj.Init(false);
-    cursor_obj.begin(g_pVertexShader, g_pPixelShader);
+    cursor_obj.begin();
     cursor_obj.av(SimpleVertex(0.0f, -30.0f, 0.0f, 255.0f, 255.0f, 255.0f, 0.0f));
     cursor_obj.av(SimpleVertex(30.0f, -30.0f, 0.0f, 255.0f, 255.0f, 255.0f, 0.0f));
     cursor_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
     cursor_obj.end();
 
     polygon_obj.Init(false);
-    polygon_obj.begin(g_pVertexShader, g_pPixelShader);
+    polygon_obj.begin();
     polygon_obj.av(SimpleVertex(100.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
     polygon_obj.av(SimpleVertex(0.0f, 100.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
     polygon_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
     polygon_obj.end();
 
     dbgpos_obj.Init(false);
-    dbgpos_obj.begin(g_pVertexShader, g_pPixelShader);
+    dbgpos_obj.begin();
     dbgpos_obj.av(SimpleVertex(10.0f, -10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
     dbgpos_obj.av(SimpleVertex(10.0f, 10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
     dbgpos_obj.av(SimpleVertex(-10.0f, 10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
@@ -510,6 +510,7 @@ void CleanupDevice()
     if( g_pd3dDevice ) g_pd3dDevice->Release();
 }
 
+/*
 void MainPage_Init(Page* page) {
     page->pfm.SetHeapData(new byte8[4096], 4096);
     DXBtn* PolyAddBtn = (DXBtn*)page->pfm._New(sizeof(DXBtn));
@@ -541,6 +542,8 @@ void MainPage_Event(Page* page, HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         break;
     }
 }
+*/
+
 
 
 //--------------------------------------------------------------------------------------
@@ -565,7 +568,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
         case WM_MOUSEMOVE:
             mx = LOWORD(lParam);
             my = HIWORD(lParam);
-            DX_UI::mousePos = shp::vec2f((float)mx, (float)my);
+            //DX_UI::mousePos = shp::vec2f((float)mx, (float)my);
             g_CursorWorld = XMMatrixTranslation((float)mx - (float)width/2.0f, -1.0f * (float)my + (float)height/2.0f, 0.9f);
             break;
         case WM_DESTROY:
@@ -633,8 +636,8 @@ void Render()
     ConstantBuffer dbgpos_cb;
     dbgpos_cb.mView = XMMatrixTranspose(g_View);
     dbgpos_cb.mProjection = XMMatrixTranspose(g_Projection_2d);
-    for (int i = 0; i < polygon_obj.arr[polygon_obj.choice].size(); ++i) {
-        g_DBGWorld = XMMatrixTranslation((float)polygon_obj.arr[polygon_obj.choice][i].Pos.x, (float)polygon_obj.arr[polygon_obj.choice][i].Pos.y, 0.9f);
+    for (int i = 0; i < polygon_obj.buffer[polygon_obj.get_choice()]->size(); ++i) {
+        g_DBGWorld = XMMatrixTranslation((float)polygon_obj.buffer[polygon_obj.get_choice()]->at(i).Pos.x, (float)polygon_obj.buffer[polygon_obj.get_choice()]->at(i).Pos.y, 0.9f);
         dbgpos_cb.mWorld = XMMatrixTranspose(g_DBGWorld);
         g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &dbgpos_cb, 0, 0);
         dbgpos_obj.render(dbgpos_cb);

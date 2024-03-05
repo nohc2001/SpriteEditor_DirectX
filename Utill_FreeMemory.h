@@ -14,7 +14,7 @@ namespace freemem
 #define Init_VPTR freemem::Init_VPTR_x64
 #define ptr_size 8
 #define ptr_max 0xFFFFFFFFFFFFFFFF
-#define ptr_type int64_t
+#define ptr_type uintptr_t
 
 #define _GetByte(dat, loc) (dat >> loc) % 2
 #define _SetByte(dat, loc, is) dat = freemem::SetByte8(dat, loc, is);
@@ -1753,7 +1753,7 @@ namespace freemem{
 			fmlayer = -1;
 		}
 
-		virtual ~ fmvecarr()
+		~fmvecarr()
 		{
 			if (islocal)
 			{
