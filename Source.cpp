@@ -510,42 +510,6 @@ void CleanupDevice()
     if( g_pd3dDevice ) g_pd3dDevice->Release();
 }
 
-/*
-void MainPage_Init(Page* page) {
-    page->pfm.SetHeapData(new byte8[4096], 4096);
-    DXBtn* PolyAddBtn = (DXBtn*)page->pfm._New(sizeof(DXBtn));
-    DXBtn* PolyClearBtn = (DXBtn*)page->pfm._New(sizeof(DXBtn));
-}
-
-void MainPage_Render(Page* page) {
-
-}
-
-void MainPage_Update(Page* page, float delta) {
-
-}
-
-void MainPage_Event(Page* page, HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    float mx, my;
-    switch (message)
-    {
-    case WM_LBUTTONDOWN:
-        mx = LOWORD(lParam);
-        my = HIWORD(lParam);
-        polygon_obj.av(SimpleVertex((float)mx - (float)width / 2.0f, -1.0f * (float)my + (float)height / 2.0f, 0.0f, 255.0f, 0.0f, 255.0f, 255.0f));
-        polygon_obj.end();
-        break;
-    case WM_RBUTTONDOWN:
-        polygon_obj.arr[polygon_obj.choice].up = 0;
-        polygon_obj.indexes[polygon_obj.choice].up = 0;
-        polygon_obj.end();
-        break;
-    }
-}
-*/
-
-
-
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
