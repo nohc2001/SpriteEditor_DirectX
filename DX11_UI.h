@@ -2,6 +2,9 @@
 #define DXUI_H
 #include "ShapeObject.h"
 
+float scw;
+float sch;
+
 struct DX_Event {
 	HWND hWnd;
 	UINT message; 

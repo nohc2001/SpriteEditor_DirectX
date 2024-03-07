@@ -381,7 +381,9 @@
     <None Include="SpriteEditor_DirectX.fx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="arr_expend.h" />
+    <ClInclude Include="dbg.h" />
     <ClInclude Include="DX11_UI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>

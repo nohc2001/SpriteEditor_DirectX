@@ -27,6 +27,22 @@ unsigned int max_sub_font = 1;
 
 extern XMMATRIX                g_View;
 extern XMMATRIX                g_Projection_2d;
+extern ID3D11VertexShader* g_pVertexShader;
+extern ID3D11PixelShader* g_pPixelShader;
+
+struct DX11Color {
+    float r;
+    float g;
+    float b;
+    float a;
+
+    DX11Color(const float& R, const float& G, const float B, const float& A) {
+        r = R;
+        g = G;
+        b = B;
+        a = A;
+    }
+};
 
 struct SimpleVertex
 {
@@ -35,7 +51,22 @@ struct SimpleVertex
 
     SimpleVertex(float x, float y, float z, float r, float g, float b, float a) {
         Pos = XMFLOAT3(x, y, z);
-        Color = XMFLOAT4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+        Color = XMFLOAT4(r, g, b, a);
+    }
+
+    SimpleVertex(float x, float y, float z, DX11Color color) {
+        Pos = XMFLOAT3(x, y, z);
+        Color = XMFLOAT4((float*) & color);
+    }
+
+    SimpleVertex(shp::vec3f pos, DX11Color color) {
+        Pos = XMFLOAT3((float*) &pos);
+        Color = XMFLOAT4((float*)&color);
+    }
+
+    SimpleVertex(shp::vec3f pos, float r, float g, float b, float a) {
+        Pos = XMFLOAT3((float*)&pos);
+        Color = XMFLOAT4(r, g, b, a);
     }
 };
 
@@ -71,7 +102,28 @@ struct ConstantBuffer
     XMMATRIX mWorld;
     XMMATRIX mView;
     XMMATRIX mProjection;
+    DX11Color StaticColor;
 };
+
+ConstantBuffer SetCB(XMMATRIX world, XMMATRIX view, XMMATRIX project, DX11Color staticColor) {
+    ConstantBuffer cb;
+    cb.mWorld = world;
+    cb.mView = view;
+    cb.mProjection = project;
+    cb.StaticColor = staticColor;
+    return cb;
+}
+
+ConstantBuffer GetBasicModelCB(const shp::vec3f& pos, const shp::vec3f& rot, const shp::vec3f& sca, DX11Color scolor) {
+    XMMATRIX ObjWorld = XMMatrixIdentity();
+    ObjWorld = XMMatrixScaling(sca.x, sca.y, sca.z);
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationX(rot.x));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationY(rot.y));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationZ(rot.z));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixTranslation(pos.x, pos.y, pos.z));
+
+    return SetCB(ObjWorld, g_View, g_Projection_2d, scolor);
+}
 
 class rbuffer {
 public:
@@ -464,14 +516,10 @@ public:
 
 typedef unordered_map < uint32_t, CharBuffer* >CharMap;
 CharMap char_map;
-void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, 
-    ID3D11VertexShader* vshader, ID3D11PixelShader* fshader)
+void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11Color staticColor)
 {
     XMMATRIX StringWorld = XMMatrixIdentity();
-    ConstantBuffer cb;
-    cb.mWorld = XMMatrixTranspose(StringWorld);
-    cb.mView = XMMatrixTranspose(g_View);
-    cb.mProjection = XMMatrixTranspose(g_Projection_2d);
+    ConstantBuffer cb = SetCB(StringWorld, g_View, g_Projection_2d, staticColor);
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cb, 0, 0);
 
     //dbg << "insert start" << endl;

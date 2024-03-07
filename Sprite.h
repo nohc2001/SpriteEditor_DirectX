@@ -13,8 +13,6 @@ using namespace freemem;
 using namespace shp;
 using namespace std;
 
-extern FM_System0* fm;
-
 struct InsideCode;
 struct ExecutableContext;
 
@@ -133,9 +131,8 @@ void Sprite::render(const ConstantBuffer& uniform)
 			for (int i = 0; i < data.objs->size(); ++i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
-				sdlmat4 trmat = get_model_matrix(obj->pos, obj->rot, obj->sca);
-				sdlmat4 tempmat = mul(trmat, pmat);
-				obj->source->render(tempmat);
+				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca);
+				obj->source->render(cb);
 			}
 		}
 	}

@@ -21,6 +21,8 @@
     <ClInclude Include="ttfParser.h" />
     <ClInclude Include="DX11_UI.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="dbg.h" />
+    <ClInclude Include="Animation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

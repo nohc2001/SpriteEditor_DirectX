@@ -12,6 +12,7 @@ cbuffer ConstantBuffer : register( b0 )
 	matrix World;
 	matrix View;
     matrix Projection;
+    float4 StaticColor;
 }
 
 //--------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ PS_INPUT VS( VS_INPUT input )
     output.Pos = mul(input.Pos, World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Color = input.Color;
+    output.Color = input.Color * StaticColor;
     
     return output;
 }
