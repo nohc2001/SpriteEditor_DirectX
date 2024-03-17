@@ -23,6 +23,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="dbg.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="hancom.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

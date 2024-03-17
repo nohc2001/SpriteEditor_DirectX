@@ -13,6 +13,7 @@
 #include "Sprite.h"
 #include "Animation.h"
 #include "DX11_UI.h"
+#include "hancom.h"
 //#include "DX11_UI.h"
 
 
@@ -39,6 +40,8 @@ XMMATRIX                g_DBGWorld;
 XMMATRIX                g_View;
 XMMATRIX                g_Projection_3d;
 XMMATRIX                g_Projection_2d;
+XMMATRIX				CamView;
+XMMATRIX				CamProj;
 ConstantBuffer polygon_cb;
 
 Sprite* mainSprite = nullptr;
@@ -51,13 +54,15 @@ Page* filepage = nullptr;
 rbuffer* linedrt;
 bool press_ef = false;
 float zoomrate;
-shp::vec3f scwh;
+shp::vec2f scwh;
 
 struct pos_select_obj
 {
 	int index;
 	shp::vec3f origin_pos;
 	DX11Color origin_color;
+
+	pos_select_obj(){}
 };
 
 enum class mainpm {
@@ -475,7 +480,7 @@ void setcolorbtn_event(DXBtn* btn, DX_Event event)
 				fm->_tempPushLayer();
 				rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
 				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
-				fmvecarr<SimpleVertex>* farr = (SimpleVertex*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
+				fmvecarr<SimpleVertex>* farr = (fmvecarr<SimpleVertex>*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
 				for (int i = 0; i < bptr->size(); ++i)
 				{
 					farr->at(i) = bptr->at(i);
@@ -483,7 +488,7 @@ void setcolorbtn_event(DXBtn* btn, DX_Event event)
 				int vsiz = ap->get_vertexsiz(ap->get_choice());
 				// dbgcount(0, dbg << "ap vertex size : " <<
 				// ap->get_vertexsiz(ap->get_choice()) << endl)
-				ap->clear();
+				//ap->clear();
 				ap->begin();
 				for (int i = 0; i < vsiz; ++i)
 				{
@@ -910,19 +915,18 @@ void main_render(Page* p)
 	DXBtn* ocp = (DXBtn*)&p->pfm.Data[(int)mainpm::opencolorpage];
 
 	// obj redering_2d
-	sdlmat4 viewmat = get_view_matrix(shp::vec3f(pc->x, pc->y, 1), shp::vec3f(0, 0, -1), shp::vec3f(0, 1, 0));
+	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -5.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	CamView = XMMatrixLookAtLH(Eye, At, Up);
 
-	sdlmat4 projmat =
-		get_ortho_perspective((float)scw * zoomrate, (float)sch * zoomrate, 0.1f, 1000.0f);
-
-	for (int i = 0; i < 7; ++i)
-	{
-		GLuint uid = glGetUniformLocation(basicshaders[i], "viewmat");
-		glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&viewmat));
-
-		uid = glGetUniformLocation(basicshaders[i], "projmat");
-		glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&projmat));
-	}
+	float farZ = 1000.0f;
+	float nearZ = 0.1f;
+	CamProj = XMMATRIX(
+		2.0f / (float)width * zoomrate, 0, 0, 0,
+		0, 2.0f / (float)height * zoomrate, 0, 0,
+		0, 0, 1.0f / (farZ - nearZ), 0,
+		0, 0, 1.0f / (nearZ - farZ), 1);
 
 	float d = 50.0f * (int)(zoomrate);
 	float lw = 1.0f;
@@ -961,7 +965,7 @@ void main_render(Page* p)
 	// dbgcount(0, dbg << "try render sprite" << endl);
 	if (mainSprite != nullptr)
 	{
-		mainSprite->render(trmat);
+		mainSprite->render(cb);
 		if (*behave_selected == 0
 			&& (mainSprite->st == sprite_type::st_freepolygon
 				&& mainSprite->data.freepoly != nullptr))
@@ -1017,24 +1021,6 @@ void main_render(Page* p)
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
 
 	// ui rendering
-	viewmat = get_view_matrix(shp::vec3f(0, 0, 1), shp::vec3f(0, 0, -1), shp::vec3f(0, 1, 0));
-
-	projmat = get_ortho_perspective((float)scw, (float)sch, 0.1f, 1000.0f);
-
-	//for (int i = 0; i < 7; ++i)
-	//{
-	//	GLuint uid = glGetUniformLocation(basicshaders[i], "viewmat");
-	//	glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&viewmat));
-
-	//	uid = glGetUniformLocation(basicshaders[i], "projmat");
-	//	glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&projmat));
-	//}
-
-	//for (int i = 0; i < 7; ++i)
-	//{
-	//	GLuint uid = glGetUniformLocation(basicshaders[i], "viewmat");
-	//	glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&viewmat));
-	//}
 
 	behavetop->Render();
 	ocp->Render();
@@ -1106,7 +1092,6 @@ void main_render(Page* p)
 
 void main_update(Page* p, float delta)
 {
-	screenmod_lay = true;
 	float* stacktime = (float*)&p->pfm.Data[(int)mainpm::stacktime];
 	*stacktime += delta;
 	DXBtn* behavetop = (DXBtn*)&p->pfm.Data[(int)mainpm::behavetop];
@@ -1401,7 +1386,7 @@ void main_event(Page* p, DX_Event event)
 				&& (objmod->x == 1 && *(bool*)translate->param[2])))
 		{
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-			fvecarr* bptr = ap->buffer[ap->get_choice()];
+			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
 			for (int i = 0; i < sarr->size(); ++i)
 			{
 				sarr->at(i).origin_pos =
@@ -1418,7 +1403,7 @@ void main_event(Page* p, DX_Event event)
 			shp::vec2f viewpos =
 				shp::vec2f(present_center->x + GetMousePos_notcenter(event.lParam).x * scwh.x - scwh.x / 2.0f,
 					present_center->y - GetMousePos_notcenter(event.lParam).y * scwh.y + scwh.y / 2.0f);
-			shp::vec2f dv = shp::vec2f(x - presspos->x, y - presspos->y);
+			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			// camera move
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 			DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
@@ -1457,8 +1442,8 @@ void main_event(Page* p, DX_Event event)
 			{
 				fm->_tempPushLayer();
 				rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-				fvecarr* bptr = ap->buffer[ap->get_choice()];
-				float* farr = (float*)fm->_tempNew(bptr->size() * sizeof(float));
+				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
+				SimpleVertex* farr = (SimpleVertex*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
 				for (int i = 0; i < bptr->size(); ++i)
 				{
 					farr[i] = bptr->at(i);
@@ -1485,7 +1470,7 @@ void main_event(Page* p, DX_Event event)
 							pos.x = pso.origin_pos.x + zoomrate * dv.x;
 							pos.y = pso.origin_pos.y + zoomrate * dv.y;
 							pos.z = pso.origin_pos.z;
-							ap->av(pos, pso.origin_color);
+							ap->av(SimpleVertex(pos, pso.origin_color));
 							// dbgcount(0, dbg << "pos : " << pos.x << ",
 							// " << pos.y << ", " << pos.z << endl) 
 							break;
@@ -1496,7 +1481,7 @@ void main_event(Page* p, DX_Event event)
 					{
 						shp::vec3f p = *(shp::vec3f*)&farr[sizeof(SimpleVertex) * i + 4];
 						DX11Color c = *(DX11Color*)&farr[sizeof(SimpleVertex) * i];
-						ap->av(p, c);
+						ap->av(SimpleVertex(p, c));
 					}
 				}
 				ap->end();
@@ -1574,7 +1559,7 @@ void basicslider_event(DXSlider* slider, DX_Event event)
 		{
 			if (slider->horizontal)
 			{
-				float mx = x;
+				float mx = mpos.x;
 				if (mx < loc.fx)
 					mx = loc.fx;
 				if (mx > loc.lx)
@@ -1585,7 +1570,7 @@ void basicslider_event(DXSlider* slider, DX_Event event)
 			}
 			else
 			{
-				float mx = y;
+				float mx = mpos.y;
 				if (mx < loc.fy)
 					mx = loc.fy;
 				if (mx > loc.ly)
@@ -1713,36 +1698,23 @@ void colorpage_render(Page* p)
 				shp::rect4f(hscloc.fx + wh.x * x, hscloc.fy + wh.y * y, hscloc.fx + wh.x * (x + 1),
 					hscloc.fy + wh.y * (y + 1));
 			if (*selectnum == x * 5 + y)
-			{
-				trmat =
-					get_model_matrix(shp::vec3f(sloc.getCenter().x, sloc.getCenter().y, 0),
-						shp::vec3f(0, 0, 0), shp::vec3f(sloc.getw(), sloc.geth(), 1));
-				col = DX11Color(1, 1, 1, 0.4f);
-				uid = glGetUniformLocation(shader, "trmat");
-				glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&trmat));
-				uid = glGetUniformLocation(shader, "static_color");
-				glUniform4fv(uid, 1, reinterpret_cast <float*>(&col));
-				linedrt->render();
+			{	
+				ConstantBuffer cb = GetBasicModelCB(shp::vec3f(sloc.getCenter().x, sloc.getCenter().y, 0),
+					shp::vec3f(0, 0, 0), shp::vec3f(sloc.getw(), sloc.geth(), 1), DX11Color(1, 1, 1, 0.4f));
+				linedrt->render(cb);
 			}
 			shp::rect4f cloc =
 				shp::rect4f(sloc.fx + margin, sloc.fy + margin, sloc.lx - margin,
 					sloc.ly - margin);
-			trmat =
-				get_model_matrix(shp::vec3f(cloc.getCenter().x, cloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
-					shp::vec3f(cloc.getw(), cloc.geth(), 1));
-			col = pallete[5 * x + y];
-			uid = glGetUniformLocation(shader, "trmat");
-			glUniformMatrix4fv(uid, 1, GL_FALSE, reinterpret_cast <float*>(&trmat));
-			uid = glGetUniformLocation(shader, "static_color");
-			glUniform4fv(uid, 1, reinterpret_cast <float*>(&col));
-			linedrt->render();
+			ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cloc.getCenter().x, cloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
+				shp::vec3f(cloc.getw(), cloc.geth(), 1), pallete[5 * x + y]);
+			linedrt->render(cb);
 		}
 	}
 }
 
 void colorpage_update(Page* p, float delta)
 {
-	screenmod_lay = true;
 	DXSlider* RSlider = (DXSlider*)&p->pfm.Data[(int)colorpm::RSlider];
 	DXSlider* GSlider = (DXSlider*)&p->pfm.Data[(int)colorpm::GSlider];
 	DXSlider* BSlider = (DXSlider*)&p->pfm.Data[(int)colorpm::BSlider];
@@ -2070,7 +2042,7 @@ void keybtn_event(DXBtn* btn, DX_Event event)
 	{
 		tes.editin = false;
 		//save_edit_text(tes.editstr);
-		wchar_t* str = (wchar_t*)texteditpage->pfm.Data[(int)edittextpm::deststring];
+		wchar_t* str = (wchar_t*)texteditpage->pfm.Data[(int)texteditpm::deststring];
 		wcscpy(str, tes.editstr);
 		tes.editreset();
 		toppage -= 1;
@@ -2174,7 +2146,6 @@ void texteditpage_render(Page* p)
 
 void texteditpage_update(Page* p, float delta)
 {
-	screenmod_lay = false;
 	DXBtn* VKeyboard = (DXBtn*)&p->pfm.Data[(int)texteditpm::VKeyboard];
 	bool* isshift = (bool*)&p->pfm.Data[(int)texteditpm::isshift];
 	bool* ishan = (bool*)&p->pfm.Data[(int)texteditpm::ishan];
@@ -2586,7 +2557,7 @@ HRESULT InitDevice()
 
     // Initialize the view matrix
 	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, -5.0f, 0.0f );
-	XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
 
@@ -2781,7 +2752,7 @@ void Render()
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &polygon_cb, 0, 0);
     //polygon_obj.render(polygon_cb);
 
-    draw_string(L"¾È³çÇÏ¼¼¿ë!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), g_pVertexShader, g_pPixelShader);
+    draw_string(L"¾È³çÇÏ¼¼¿ë!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), DX11Color(1, 1, 1, 1));
     //
     // Present our back buffer to our front buffer
     //

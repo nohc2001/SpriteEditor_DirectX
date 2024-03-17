@@ -131,7 +131,7 @@ void Sprite::render(const ConstantBuffer& uniform)
 			for (int i = 0; i < data.objs->size(); ++i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
-				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca);
+				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
 				obj->source->render(cb);
 			}
 		}

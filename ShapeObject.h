@@ -27,6 +27,8 @@ unsigned int max_sub_font = 1;
 
 extern XMMATRIX                g_View;
 extern XMMATRIX                g_Projection_2d;
+extern XMMATRIX                CamView;
+extern XMMATRIX                CamProj;
 extern ID3D11VertexShader* g_pVertexShader;
 extern ID3D11PixelShader* g_pPixelShader;
 
@@ -35,6 +37,8 @@ struct DX11Color {
     float g;
     float b;
     float a;
+
+    DX11Color(){}
 
     DX11Color(const float& R, const float& G, const float B, const float& A) {
         r = R;
@@ -103,6 +107,10 @@ struct ConstantBuffer
     XMMATRIX mView;
     XMMATRIX mProjection;
     DX11Color StaticColor;
+
+    ConstantBuffer() {
+
+    }
 };
 
 ConstantBuffer SetCB(XMMATRIX world, XMMATRIX view, XMMATRIX project, DX11Color staticColor) {
@@ -123,6 +131,17 @@ ConstantBuffer GetBasicModelCB(const shp::vec3f& pos, const shp::vec3f& rot, con
     ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixTranslation(pos.x, pos.y, pos.z));
 
     return SetCB(ObjWorld, g_View, g_Projection_2d, scolor);
+}
+
+ConstantBuffer GetCamModelCB(const shp::vec3f& pos, const shp::vec3f& rot, const shp::vec3f& sca, DX11Color scolor) {
+    XMMATRIX ObjWorld = XMMatrixIdentity();
+    ObjWorld = XMMatrixScaling(sca.x, sca.y, sca.z);
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationX(rot.x));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationY(rot.y));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixRotationZ(rot.z));
+    ObjWorld = XMMatrixMultiply(ObjWorld, XMMatrixTranslation(pos.x, pos.y, pos.z));
+
+    return SetCB(ObjWorld, CamView, CamProj, scolor);
 }
 
 class rbuffer {
@@ -530,7 +549,7 @@ void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11
     if (char_map.find((unsigned int)c) == char_map.end())
     {
         CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
-        cbuf->ready((unsigned int)c, vshader, fshader);
+        cbuf->ready((unsigned int)c, g_pVertexShader, g_pPixelShader);
         char_map.insert(CharMap::value_type((unsigned int)c, cbuf));
     }
 
@@ -546,7 +565,7 @@ void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11
         if (nextC != 0 && char_map.find(nextC) == char_map.end())
         {
             CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
-            cbuf->ready(nextC, vshader, fshader);
+            cbuf->ready(nextC, g_pVertexShader, g_pPixelShader);
             char_map.insert(CharMap::value_type(nextC, cbuf));
         }
 
