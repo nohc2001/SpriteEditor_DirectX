@@ -115,9 +115,9 @@ struct ConstantBuffer
 
 ConstantBuffer SetCB(XMMATRIX world, XMMATRIX view, XMMATRIX project, DX11Color staticColor) {
     ConstantBuffer cb;
-    cb.mWorld = world;
-    cb.mView = view;
-    cb.mProjection = project;
+    cb.mWorld = XMMatrixTranspose(world);
+    cb.mView = XMMatrixTranspose(view);
+    cb.mProjection = XMMatrixTranspose(project);
     cb.StaticColor = staticColor;
     return cb;
 }
@@ -398,7 +398,13 @@ public:
         if (FAILED(hr))
             return hr;
 
-        choice = nextchoice;
+        set_choice(nextchoice);
+        if (get_inherit())
+        {
+            fmvecarr<SimpleVertex>* ptr = buffer[0];
+            buffer[0] = buffer[1];
+            buffer[1] = ptr;
+        }
     }
 
     void render(const ConstantBuffer& uniform) {

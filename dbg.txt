@@ -1,4 +1,4 @@
-3345
+2577
 enum class mainpm{
 present_center = 0
 , finger_pressed = 8

@@ -372,6 +372,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="dbg.txt" />
     <Text Include="memo.txt" />
   </ItemGroup>
   <ItemGroup>

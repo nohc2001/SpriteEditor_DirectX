@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="memo.txt" />
+    <Text Include="dbg.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

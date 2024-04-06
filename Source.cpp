@@ -77,41 +77,44 @@ enum class mainpm {
 	, presspos = 9
 	, centerorigin = 17
 	, behavetop = 25
-	, freepoly = 289
-	, textoutline = 553
-	, makeobj = 817
-	, translate = 1081
-	, scale = 1345
-	, objselect = 1609
-	, rotation = 1873
-	, selection = 2137
-	, setcolor = 2401
-	, behave_selected = 2665
-	, save = 2669
-	, adding_polygon = 2933
-	, present_color = 2997
-	, select_rect = 3013
-	, select_arr = 3037
-	, stacktime = 3077
-	, selectclear = 3081
-	, opencolorpage = 3345
-	, openobjlist = 3609
-	, showobjlist = 3873
-	, closeobjlist = 3874
-	, savefilestr = 4138
+	, freepoly = 225
+	, textoutline = 425
+	, makeobj = 625
+	, translate = 825
+	, scale = 1025
+	, objselect = 1225
+	, rotation = 1425
+	, selection = 1625
+	, setcolor = 1825
+	, behave_selected = 2025
+	, save = 2029
+	, adding_polygon = 2229
+	, present_color = 2301
+	, select_rect = 2317
+	, select_arr = 2341
+	, stacktime = 2373
+	, selectclear = 2377
+	, opencolorpage = 2577
+	, openobjlist = 2777
+	, showobjlist = 2977
+	, closeobjlist = 2978
+	, savefilestr = 3178
 };
-
-enum class colorpm
-{
-	presentcolor = 0, RSlider = 16, GSlider = 200, BSlider = 384, ASlider = 568, done =
-	752, pallete = 1016, selectnum = 2616
+enum class colorpm {
+	presentcolor = 0
+	, RSlider = 16
+	, GSlider = 200
+	, BSlider = 384
+	, ASlider = 568
+	, done = 752
+	, pallete = 952
+	, selectnum = 2552
 };
-
 enum class texteditpm {
 	VKeyboard = 0
-	, ishan = 13200
-	, isshift = 13201
-	, deststring = 13202
+	, ishan = 10000
+	, isshift = 10001
+	, deststring = 10002
 };
 
 void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
@@ -150,6 +153,7 @@ LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
 void Render();
 
 FM_System0* fm;
+bool FinishInit = false;
 
 
 void basicbtn_init(DXBtn* btn)
@@ -206,13 +210,13 @@ void basicbtn_update(DXBtn* btn, float delta)
 	}
 }
 
-void basicbtn_event(DXBtn* btn, DX_Event event)
+void basicbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
 		{
@@ -253,14 +257,14 @@ void behavetopbtn_init(DXBtn* btn)
 	}
 }
 
-void behavetopbtn_event(DXBtn* btn, DX_Event event)
+void behavetopbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	shp::vec2i* mod = (shp::vec2i*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
 		{
@@ -346,14 +350,14 @@ void freepolybtn_render(DXBtn* btn)
 	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
-void freepolybtn_event(DXBtn* btn, DX_Event event)
+void freepolybtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
 		{
@@ -407,14 +411,14 @@ void freepolybtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void savebtn_event(DXBtn* btn, DX_Event event)
+void savebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
 		{
@@ -427,14 +431,14 @@ void savebtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void translatebtn_event(DXBtn* btn, DX_Event event)
+void translatebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -455,14 +459,14 @@ void translatebtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void setcolorbtn_event(DXBtn* btn, DX_Event event)
+void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -584,14 +588,14 @@ void objselectbtn_render(DXBtn* btn)
 	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
-void objselectbtn_event(DXBtn* btn, DX_Event event)
+void objselectbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	shp::vec2i* mod = (shp::vec2i*)btn->param[2];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -620,13 +624,13 @@ void objselectbtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void selectclearbtn_event(DXBtn* btn, DX_Event event)
+void selectclearbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -640,13 +644,13 @@ void selectclearbtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void opencolorpagebtn_event(DXBtn* btn, DX_Event event)
+void opencolorpagebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -660,13 +664,13 @@ void opencolorpagebtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void openobjlistbtn_event(DXBtn* btn, DX_Event event)
+void openobjlistbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -680,13 +684,13 @@ void openobjlistbtn_event(DXBtn* btn, DX_Event event)
 	}
 }
 
-void closeobjlistbtn_event(DXBtn* btn, DX_Event event)
+void closeobjlistbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -1175,7 +1179,7 @@ void main_update(Page* p, float delta)
 	}
 }
 
-void main_event(Page* p, DX_Event event)
+void main_event(Page* p, DX_Event evt)
 {
 	shp::vec2f* present_center = (shp::vec2f*)&p->pfm.Data[(int)mainpm::present_center];
 	bool* finger_pressed = (bool*)&p->pfm.Data[(int)mainpm::finger_pressed];
@@ -1188,8 +1192,8 @@ void main_event(Page* p, DX_Event event)
 	DXBtn* ocp = (DXBtn*)&p->pfm.Data[(int)mainpm::opencolorpage];
 
 	int* behave_selected = (int*)&p->pfm.Data[(int)mainpm::behave_selected];
-	behavetop->Event(event);
-	ocp->Event(event);
+	behavetop->Event(evt);
+	ocp->Event(evt);
 
 	DXBtn* openobjlist = (DXBtn*)&p->pfm.Data[(int)mainpm::openobjlist];
 	DXBtn* closeobjlist = (DXBtn*)&p->pfm.Data[(int)mainpm::closeobjlist];
@@ -1197,11 +1201,11 @@ void main_event(Page* p, DX_Event event)
 
 	if (*showobjlist)
 	{
-		closeobjlist->Event(event);
+		closeobjlist->Event(evt);
 	}
 	else
 	{
-		openobjlist->Event(event);
+		openobjlist->Event(evt);
 	}
 
 	if (behavemod->x == 0)
@@ -1216,23 +1220,23 @@ void main_event(Page* p, DX_Event event)
 		switch (*behave_selected)
 		{
 		case -1:
-			freepoly->Event(event);
-			// euclid->Event(event);
-			textoutline->Event(event);
-			makeobj->Event(event);
-			// makespr->Event(event);
+			freepoly->Event(evt);
+			// euclid->Event(evt);
+			textoutline->Event(evt);
+			makeobj->Event(evt);
+			// makespr->Event(evt);
 			break;
 		case 0:
-			freepoly->Event(event);
-			save->Event(event);
+			freepoly->Event(evt);
+			save->Event(evt);
 			break;
 		case 1:
-			textoutline->Event(event);
-			save->Event(event);
+			textoutline->Event(evt);
+			save->Event(evt);
 			break;
 		case 2:
-			makeobj->Event(event);
-			save->Event(event);
+			makeobj->Event(evt);
+			save->Event(evt);
 			break;
 		}
 	}
@@ -1242,9 +1246,9 @@ void main_event(Page* p, DX_Event event)
 		DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
 		DXBtn* objselect = (DXBtn*)&p->pfm.Data[(int)mainpm::objselect];
 
-		translate->Event(event);
-		scale->Event(event);
-		objselect->Event(event);
+		translate->Event(evt);
+		scale->Event(evt);
+		objselect->Event(evt);
 
 		if (objmod->x == 1)
 		{
@@ -1252,30 +1256,30 @@ void main_event(Page* p, DX_Event event)
 			DXBtn* selection = (DXBtn*)&p->pfm.Data[(int)mainpm::selection];
 			DXBtn* setcolor = (DXBtn*)&p->pfm.Data[(int)mainpm::setcolor];
 
-			rotation->Event(event);
-			selection->Event(event);
-			setcolor->Event(event);
+			rotation->Event(evt);
+			selection->Event(evt);
+			setcolor->Event(evt);
 
 			fmvecarr < pos_select_obj >* sarr =
 				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
 			if (sarr->size() > 0)
 			{
 				DXBtn* selectclear = (DXBtn*)&p->pfm.Data[(int)mainpm::selectclear];
-				selectclear->Event(event);
+				selectclear->Event(evt);
 			}
 		}
 	}
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
 		*finger_pressed = true;
-		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(event.lParam).touchId);
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(evt.lParam).touchId);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		*presspos = shp::vec2f(mpos.x, mpos.y);
 		shp::vec2f viewpos =
-			shp::vec2f(present_center->x + GetMousePos_notcenter(event.lParam).x * scwh.x - scwh.x / 2.0f,
-				present_center->y - GetMousePos_notcenter(event.lParam).y * scwh.y + scwh.y / 2.0f);
+			shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
+				present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
 		*centerorigin = *present_center;
 
 		// addpoint in freepoly
@@ -1304,15 +1308,15 @@ void main_event(Page* p, DX_Event event)
 			rt->fy = viewpos.y;
 		}
 	}
-	else if (event.wParam == WM_LBUTTONUP)
+	else if (evt.wParam == WM_LBUTTONUP)
 	{
 		if (*finger_pressed)
 		{
-			shp::vec2f mpos = GetMousePos(event.lParam);
+			shp::vec2f mpos = GetMousePos(evt.lParam);
 			
 			shp::vec2f viewpos =
-				shp::vec2f(present_center->x + GetMousePos_notcenter(event.lParam).x * scwh.x - scwh.x / 2.0f,
-					present_center->y - GetMousePos_notcenter(event.lParam).y * scwh.y + scwh.y / 2.0f);
+				shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
+					present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
 			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 			DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
@@ -1400,15 +1404,15 @@ void main_event(Page* p, DX_Event event)
 			}
 		}
 	}
-	else if (event.wParam == WM_MOUSEMOVE)
+	else if (evt.wParam == WM_MOUSEMOVE)
 	{
 		if (*finger_pressed)
 		{
-			shp::vec2f mpos = GetMousePos(event.lParam);
+			shp::vec2f mpos = GetMousePos(evt.lParam);
 			
 			shp::vec2f viewpos =
-				shp::vec2f(present_center->x + GetMousePos_notcenter(event.lParam).x * scwh.x - scwh.x / 2.0f,
-					present_center->y - GetMousePos_notcenter(event.lParam).y * scwh.y + scwh.y / 2.0f);
+				shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
+					present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
 			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			// camera move
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
@@ -1553,12 +1557,12 @@ void basicslider_update(DXSlider* slider, float delta)
 {
 }
 
-void basicslider_event(DXSlider* slider, DX_Event event)
+void basicslider_event(DXSlider* slider, DX_Event evt)
 {
 	if (press_ef)
 	{
-		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(event.lParam).touchId);
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(evt.lParam).touchId);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		shp::rect4f loc = slider->sup()->loc;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), loc))
@@ -1598,13 +1602,13 @@ void basicslider_event(DXSlider* slider, DX_Event event)
 	}
 }
 
-void colorpage_donebtn_event(DXBtn* btn, DX_Event event)
+void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -1734,7 +1738,7 @@ void colorpage_update(Page* p, float delta)
 	done->Update(delta);
 }
 
-void colorpage_event(Page* p, DX_Event event)
+void colorpage_event(Page* p, DX_Event evt)
 {
 	DX11Color* presentcolor = (DX11Color*)&p->pfm.Data[(int)colorpm::presentcolor];
 	DXSlider* RSlider = (DXSlider*)&p->pfm.Data[(int)colorpm::RSlider];
@@ -1745,18 +1749,18 @@ void colorpage_event(Page* p, DX_Event event)
 	DX11Color* pallete = (DX11Color*)&p->pfm.Data[(int)colorpm::pallete];
 	int* selectnum = (int*)&p->pfm.Data[(int)colorpm::selectnum];
 
-	RSlider->Event(event);
-	GSlider->Event(event);
-	BSlider->Event(event);
-	ASlider->Event(event);
-	done->Event(event);
+	RSlider->Event(evt);
+	GSlider->Event(evt);
+	BSlider->Event(evt);
+	ASlider->Event(evt);
+	done->Event(evt);
 	pallete[*selectnum] = *presentcolor;
 
 	shp::rect4f hscloc = shp::rect4f(-scw / 2.0f, -sch / 2.0f, scw / 2.0f, 0);
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		float mx = GetMousePos_notcenter(event.lParam).x * scw - scw / 2.0f;
-		float my = -GetMousePos_notcenter(event.lParam).y * sch + sch / 2.0f;
+		float mx = GetMousePos_notcenter(evt.lParam).x * scw - scw / 2.0f;
+		float my = -GetMousePos_notcenter(evt.lParam).y * sch + sch / 2.0f;
 		shp::vec2f wh = shp::vec2f(hscloc.getw() / 20.0f, hscloc.geth() / 5.0f);
 		float margin = 5.0f;
 		for (int x = 0; x < 20; ++x)
@@ -1860,7 +1864,7 @@ void keybtn_render(DXBtn* btn)
 	draw_string(btn->text, wcslen(btn->text), 30, tloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
-void keybtn_event(DXBtn* btn, DX_Event event)
+void keybtn_event(DXBtn* btn, DX_Event evt)
 {
 	bool keyinput = false;
 	float* flow = (float*)btn->param[1];
@@ -1868,9 +1872,9 @@ void keybtn_event(DXBtn* btn, DX_Event event)
 	bool* isshift = (bool*)&texteditpage->pfm.Data[(int)texteditpm::isshift];
 	bool* ishan = (bool*)&texteditpage->pfm.Data[(int)texteditpm::ishan];
 
-	if (event.wParam == WM_LBUTTONDOWN)
+	if (evt.wParam == WM_LBUTTONDOWN)
 	{
-		shp::vec2f mpos = GetMousePos(event.lParam);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
 		// dbg << "mpos : " << x << ", " << y << endl;
 		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
@@ -2160,13 +2164,13 @@ void texteditpage_update(Page* p, float delta)
 	}
 }
 
-void texteditpage_event(Page* p, DX_Event event)
+void texteditpage_event(Page* p, DX_Event evt)
 {
 	DXBtn* VKeyboard = (DXBtn*)&p->pfm.Data[(int)texteditpm::VKeyboard];
 	bool* isshift = (bool*)&p->pfm.Data[(int)texteditpm::isshift];
 	bool* ishan = (bool*)&p->pfm.Data[(int)texteditpm::ishan];
 	for (int i = 0; i < 50; ++i) {
-		VKeyboard[i].Event(event);
+		VKeyboard[i].Event(evt);
 	}
 }
 
@@ -2176,6 +2180,7 @@ void texteditpage_event(Page* p, DX_Event event)
 //--------------------------------------------------------------------------------------
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
+	static chrono::steady_clock::time_point ft, et;
     dbg.open("dbg.txt", ios::ate);
 
     fm = new freemem::FM_System0();
@@ -2202,6 +2207,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         return 0;
     }
 
+	ft = chrono::high_resolution_clock::now();
+
     // Main message loop
     MSG msg = {0};
     while( WM_QUIT != msg.message )
@@ -2213,7 +2220,20 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         }
         else
         {
-            Render();
+			if (FinishInit) {
+				Page* presentPage = pagestack[toppage - 1];
+				int maxpage = toppage;
+
+				et = chrono::high_resolution_clock::now();
+				chrono::duration < float >codetime = et - ft;
+				float delta = codetime.count();
+				// dbgcount(0, dbg << "update : " << toppage - 1 << endl);
+				presentPage->update_func(presentPage, delta);
+
+				ft = chrono::high_resolution_clock::now();
+
+				Render();
+			}
         }
     }
 
@@ -2230,6 +2250,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 {
     // Register class
+	FinishInit = false;
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof( WNDCLASSEX );
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -2255,6 +2276,29 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
                            NULL );
     if( !g_hWnd )
         return E_FAIL;
+
+	// init
+	mainpage = (Page*)fm->_New(sizeof(Page), true);
+	mainpage->init_func = main_init;
+	mainpage->render_func = main_render;
+	mainpage->event_func = main_event;
+	mainpage->update_func = main_update;
+
+	colorpage = (Page*)fm->_New(sizeof(Page), true);
+	colorpage->init_func = colorpage_init;
+	colorpage->render_func = colorpage_render;
+	colorpage->update_func = colorpage_update;
+	colorpage->event_func = colorpage_event;
+
+	texteditpage = (Page*)fm->_New(sizeof(Page), true);
+	texteditpage->init_func = texteditpage_init;
+	texteditpage->render_func = texteditpage_render;
+	texteditpage->update_func = texteditpage_update;
+	texteditpage->event_func = texteditpage_event;
+
+	mainSprite = nullptr;
+
+	pagestacking(mainpage);
 
     ShowWindow( g_hWnd, nCmdShow );
 
@@ -2558,9 +2602,9 @@ HRESULT InitDevice()
     g_CursorWorld = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, -5.0f, 0.0f );
-	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
-	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	XMVECTOR Eye = XMVectorSet(0.0f, 4.0f, -10.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
 
     // Initialize the projection matrix
@@ -2568,34 +2612,36 @@ HRESULT InitDevice()
     float nearZ = 0.01f;
 
     //원근투영
-	g_Projection_3d = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
+	g_Projection_3d = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
+	//g_Projection_2d = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
     //직교투영
-    g_Projection_2d = XMMATRIX(
+	g_Projection_2d = XMMATRIX(
         2.0f/(float)width, 0, 0, 0,
         0, 2.0f/(float)height, 0, 0,
         0, 0, 1.0f / (farZ - nearZ), 0,
         0, 0, 1.0f / (nearZ - farZ), 1);
+    
 
     cursor_obj.Init(false);
     cursor_obj.begin();
-    cursor_obj.av(SimpleVertex(0.0f, -30.0f, 0.0f, 255.0f, 255.0f, 255.0f, 0.0f));
-    cursor_obj.av(SimpleVertex(30.0f, -30.0f, 0.0f, 255.0f, 255.0f, 255.0f, 0.0f));
-    cursor_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
+    cursor_obj.av(SimpleVertex(0.0f, -30.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f));
+    cursor_obj.av(SimpleVertex(30.0f, -30.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f));
+    cursor_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
     cursor_obj.end();
 
     polygon_obj.Init(false);
     polygon_obj.begin();
-    polygon_obj.av(SimpleVertex(100.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
-    polygon_obj.av(SimpleVertex(0.0f, 100.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
-    polygon_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 255.0f, 255.0f, 255.0f, 255.0f));
+    polygon_obj.av(SimpleVertex(100.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+    polygon_obj.av(SimpleVertex(0.0f, 100.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+    polygon_obj.av(SimpleVertex(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
     polygon_obj.end();
 
     dbgpos_obj.Init(false);
     dbgpos_obj.begin();
-    dbgpos_obj.av(SimpleVertex(10.0f, -10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
-    dbgpos_obj.av(SimpleVertex(10.0f, 10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
-    dbgpos_obj.av(SimpleVertex(-10.0f, 10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
-    dbgpos_obj.av(SimpleVertex(-10.0f, -10.0f, 0.0f, 255.0f, 255.0f, 0.0f, 200.0f));
+    dbgpos_obj.av(SimpleVertex(10.0f, -10.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+    dbgpos_obj.av(SimpleVertex(10.0f, 10.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+    dbgpos_obj.av(SimpleVertex(-10.0f, 10.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+    dbgpos_obj.av(SimpleVertex(-10.0f, -10.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f));
     dbgpos_obj.end();
 
     polygon_cb.mWorld = XMMatrixTranspose(g_World1);
@@ -2616,32 +2662,11 @@ HRESULT InitDevice()
     linedrt->av(SimpleVertex(shp::vec3f(-0.5f, 0.5f, 0), color));
     linedrt->end();
 
-    // init
-    mainpage = (Page*)fm->_New(sizeof(Page), true);
-    mainpage->init_func = main_init;
-    mainpage->render_func = main_render;
-    mainpage->event_func = main_event;
-    mainpage->update_func = main_update;
+	mainpage->init_func(mainpage);
+	colorpage->init_func(colorpage);
+	texteditpage->init_func(texteditpage);
 
-    colorpage = (Page*)fm->_New(sizeof(Page), true);
-    colorpage->init_func = colorpage_init;
-    colorpage->render_func = colorpage_render;
-    colorpage->update_func = colorpage_update;
-    colorpage->event_func = colorpage_event;
-
-    texteditpage = (Page*)fm->_New(sizeof(Page), true);
-    texteditpage->init_func = texteditpage_init;
-    texteditpage->render_func = texteditpage_render;
-    texteditpage->update_func = texteditpage_update;
-    texteditpage->event_func = texteditpage_event;
-
-    mainpage->init_func(mainpage);
-    colorpage->init_func(colorpage);
-    texteditpage->init_func(texteditpage);
-
-    mainSprite = nullptr;
-
-    pagestacking(mainpage);
+	FinishInit = true;
 
     return S_OK;
 }
@@ -2677,6 +2702,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 {
     PAINTSTRUCT ps;
     HDC hdc;
+	scwh = shp::vec2f((float)scw * zoomrate, (float)sch * zoomrate);
+	DX_Event evt;
+	evt.hWnd = hWnd;
+	evt.message = message;
+	evt.lParam = lParam;
+	evt.wParam = wParam;
+	Page* presentPage = pagestack[toppage - 1];
+	int maxpage = toppage;
 
     //pageEvent
     switch( message )
@@ -2688,6 +2721,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
         case WM_KEYDOWN:
             PostQuitMessage(0);
             break;
+		case WM_LBUTTONDOWN:
+			press_ef = true;
+			break;
+		case WM_LBUTTONUP:
+			press_ef = false;
+			break;
         case WM_MOUSEMOVE:
             mx = LOWORD(lParam);
             my = HIWORD(lParam);
@@ -2702,6 +2741,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
             return DefWindowProc( hWnd, message, wParam, lParam );
     }
 
+	if (FinishInit) {
+		presentPage->event_func(presentPage, evt);
+	}
+	
+
     return 0;
 }
 
@@ -2711,7 +2755,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 void Render()
 {
+	Page* presentPage = pagestack[toppage - 1];
+	int maxpage = toppage;
     GetScreenWH();
+
     fm->_tempPushLayer();
     // Update our time
     static float t = 0.0f;
@@ -2745,9 +2792,7 @@ void Render()
     //
     // Update variables for the first cube
     //
-    ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-    g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
-    cursor_obj.render(cursor_cb);
+    
     
     //char_map.at(L'안')->render(cursor_cb);
     
@@ -2758,6 +2803,17 @@ void Render()
     //
     // Present our back buffer to our front buffer
     //
+
+	for (int i = 0; i < maxpage; ++i)
+	{
+		// dbgcount(0, dbg << "render : " << i << endl);
+		pagestack[i]->render_func(pagestack[i]);
+	}
+
+	ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
+	cursor_obj.render(cursor_cb);
+
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();
 }

@@ -99,6 +99,7 @@ public:
 		}
 		init(this);
 	}
+
 	void Update(float delta)
 	{
 		if (update_func != nullptr)
