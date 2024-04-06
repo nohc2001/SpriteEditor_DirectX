@@ -1,3 +1,47 @@
 3345
 enum class mainpm{
-present_center = 3452816845
+present_center = 0
+, finger_pressed = 8
+, presspos = 9
+, centerorigin = 17
+, behavetop = 25
+, freepoly = 225
+, textoutline = 425
+, makeobj = 625
+, translate = 825
+, scale = 1025
+, objselect = 1225
+, rotation = 1425
+, selection = 1625
+, setcolor = 1825
+, behave_selected = 2025
+, save = 2029
+, adding_polygon = 2229
+, present_color = 2301
+, select_rect = 2317
+, select_arr = 2341
+, stacktime = 2373
+, selectclear = 2377
+, opencolorpage = 2577
+, openobjlist = 2777
+, showobjlist = 2977
+, closeobjlist = 2978
+, savefilestr = 3178
+};
+enum class colorpm{
+presentcolor = 0
+, RSlider = 16
+, GSlider = 200
+, BSlider = 384
+, ASlider = 568
+, done = 752
+, pallete = 952
+, selectnum = 2552
+};
+total fup : 2556
+enum class texteditpm{
+VKeyboard = 0
+, ishan = 10000
+, isshift = 10001
+, deststring = 10002
+};

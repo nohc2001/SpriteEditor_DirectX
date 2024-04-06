@@ -24,15 +24,15 @@ namespace freemem
 	template < typename T > void Init_VPTR_x86(void *obj)
 	{
 		T go = T();
-		__int32_t vp = *(__int32_t *) & go;
-		 *((__int32_t *) obj) = vp;
+		uint32_t vp = *(uint32_t *) & go;
+		 *((uint32_t *) obj) = vp;
 	}
 
 	template < typename T > void Init_VPTR_x64(void *obj)
 	{
 		T go;
-		__int64_t vp = *(__int64_t *) & go;
-		*((__int64_t *) obj) = vp;
+		uint64_t vp = *(uint64_t *) & go;
+		*((uint64_t *) obj) = vp;
 	}
 
 	class FM_Model
@@ -92,7 +92,7 @@ namespace freemem
 		unsigned int Fup = 0;
 		bool isHeap = false;
 
-		  FM_Model0()
+		FM_Model0()
 		{
 		}
 		FM_Model0(byte8 * data, unsigned int Size)
@@ -110,9 +110,11 @@ namespace freemem
 
 		void SetHeapData(byte8 * data, unsigned int Size)
 		{
+			Init_VPTR<FM_Model0>(this);
 			isHeap = true;
 			Data = data;
 			siz = Size;
+			Fup = 0;
 		}
 
 		byte8 *_New(unsigned int byteSiz)

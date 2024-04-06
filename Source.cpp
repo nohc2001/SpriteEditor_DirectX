@@ -708,7 +708,7 @@ void main_init(Page* p)
 
 	p->pfm.SetHeapData(new byte8[8192], 8192);
 	dbg << "present_center = " << p->pfm.Fup << endl;
-	shp::vec2f* present_center = (shp::vec2f*)p->pfm._New(sizeof(shp::vec2f));
+	shp::vec2f* present_center = (shp::vec2f*)(p->pfm._New(sizeof(shp::vec2f)));
 	*present_center = shp::vec2f(0, 0);
 
 	dbg << ", finger_pressed = " << p->pfm.Fup << endl;
