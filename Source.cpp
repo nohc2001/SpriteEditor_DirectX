@@ -190,12 +190,13 @@ void basicbtn_render(DXBtn* btn)
 	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), shp::vec3f(0, 0, 0),
 		shp::vec3f(btn->sup()->loc.getw() * expendrate, btn->sup()->loc.geth() * expendrate, 1),
 		DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	rb->render(cb);
 
 	shp::rect4f loc = btn->sup()->loc;
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
+
 	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	rb->render(cb);	
 }
 
 void basicbtn_update(DXBtn* btn, float delta)
@@ -214,7 +215,7 @@ void basicbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		// dbg << "mpos : " << x << ", " << y << endl;
@@ -262,7 +263,7 @@ void behavetopbtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	shp::vec2i* mod = (shp::vec2i*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		// dbg << "mpos : " << x << ", " << y << endl;
@@ -333,21 +334,22 @@ void freepolybtn_render(DXBtn* btn)
 	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), 
 		shp::vec3f(0, 0, 0), shp::vec3f(btn->sup()->loc.getw() * expendrate, 
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	if (*enable)
-	{
-		linedrt->render(cb);
-	}
+	
 
 	expendrate = 0.5f + 0.5f * rate;
 	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), shp::vec3f(0, 0, 0),
 		shp::vec3f(btn->sup()->loc.getw() * expendrate,
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	rb->render(cb2);
-
+	
 	shp::rect4f loc = btn->sup()->loc;
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	rb->render(cb2);
+	if (*enable)
+	{
+		linedrt->render(cb);
+	}
 }
 
 void freepolybtn_event(DXBtn* btn, DX_Event evt)
@@ -355,7 +357,7 @@ void freepolybtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -416,7 +418,7 @@ void savebtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -436,7 +438,7 @@ void translatebtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -464,7 +466,7 @@ void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -580,12 +582,12 @@ void objselectbtn_render(DXBtn* btn)
 	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), shp::vec3f(0, 0, 0),
 		shp::vec3f(btn->sup()->loc.getw() * expendrate,
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	rb->render(cb);
-
+	
 	shp::rect4f loc = btn->sup()->loc;
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	rb->render(cb);
 }
 
 void objselectbtn_event(DXBtn* btn, DX_Event evt)
@@ -593,7 +595,7 @@ void objselectbtn_event(DXBtn* btn, DX_Event evt)
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	shp::vec2i* mod = (shp::vec2i*)btn->param[2];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -628,7 +630,7 @@ void selectclearbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -648,7 +650,7 @@ void opencolorpagebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -668,7 +670,7 @@ void openobjlistbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -688,7 +690,7 @@ void closeobjlistbtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -1270,7 +1272,7 @@ void main_event(Page* p, DX_Event evt)
 		}
 	}
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		*finger_pressed = true;
 		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(evt.lParam).touchId);
@@ -1308,7 +1310,7 @@ void main_event(Page* p, DX_Event evt)
 			rt->fy = viewpos.y;
 		}
 	}
-	else if (evt.wParam == WM_LBUTTONUP)
+	else if (evt.message == WM_LBUTTONUP)
 	{
 		if (*finger_pressed)
 		{
@@ -1404,7 +1406,7 @@ void main_event(Page* p, DX_Event evt)
 			}
 		}
 	}
-	else if (evt.wParam == WM_MOUSEMOVE)
+	else if (evt.message == WM_MOUSEMOVE)
 	{
 		if (*finger_pressed)
 		{
@@ -1606,7 +1608,7 @@ void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
 {
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -1757,7 +1759,7 @@ void colorpage_event(Page* p, DX_Event evt)
 	pallete[*selectnum] = *presentcolor;
 
 	shp::rect4f hscloc = shp::rect4f(-scw / 2.0f, -sch / 2.0f, scw / 2.0f, 0);
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		float mx = GetMousePos_notcenter(evt.lParam).x * scw - scw / 2.0f;
 		float my = -GetMousePos_notcenter(evt.lParam).y * sch + sch / 2.0f;
@@ -1872,7 +1874,7 @@ void keybtn_event(DXBtn* btn, DX_Event evt)
 	bool* isshift = (bool*)&texteditpage->pfm.Data[(int)texteditpm::isshift];
 	bool* ishan = (bool*)&texteditpage->pfm.Data[(int)texteditpm::ishan];
 
-	if (evt.wParam == WM_LBUTTONDOWN)
+	if (evt.message == WM_LBUTTONDOWN)
 	{
 		shp::vec2f mpos = GetMousePos(evt.lParam);
 		
@@ -2725,12 +2727,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 			press_ef = true;
 			break;
 		case WM_LBUTTONUP:
-			press_ef = false;
+			//press_ef = false;
 			break;
         case WM_MOUSEMOVE:
             mx = LOWORD(lParam);
             my = HIWORD(lParam);
-            //DX_UI::mousePos = shp::vec2f((float)mx, (float)my);
             g_CursorWorld = XMMatrixTranslation((float)mx - (float)width/2.0f, -1.0f * (float)my + (float)height/2.0f, 0.9f);
             break;
         case WM_DESTROY:
@@ -2744,7 +2745,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 	if (FinishInit) {
 		presentPage->event_func(presentPage, evt);
 	}
-	
 
     return 0;
 }
