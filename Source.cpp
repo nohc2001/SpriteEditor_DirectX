@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+ï»¿//--------------------------------------------------------------------------------------
 // File: Tutorial05.cpp
 //
 // This application demonstrates animation using matrix transformations
@@ -55,6 +55,12 @@ rbuffer* linedrt;
 bool press_ef = false;
 float zoomrate;
 shp::vec2f scwh;
+
+UINT width;
+UINT height;
+rbuffer cursor_obj;
+rbuffer polygon_obj;
+rbuffer dbgpos_obj;
 
 struct pos_select_obj
 {
@@ -120,7 +126,7 @@ void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
 shp::vec2f GetMousePos(LPARAM lParam) {
 	int x = LOWORD(lParam);
 	int y = HIWORD(lParam);
-	return shp::vec2f((float)mx - (float)scw / 2.0f, -1.0f * (float)my + (float)sch / 2.0f);
+	return shp::vec2f((float)x - (float)scw / 2.0f, -1.0f * (float)y + (float)sch / 2.0f);
 }
 
 shp::vec2f GetMousePos_notcenter(LPARAM lParam) {
@@ -1887,7 +1893,7 @@ void keybtn_event(DXBtn* btn, DX_Event event)
 		tes.keyin(L' ');
 		return;
 	}
-	else if (wcscmp(btn->text, L"ÇÑ/¿µ") == 0)
+	else if (wcscmp(btn->text, L"í•œ/ì˜") == 0)
 	{
 		*isshift = false;
 		if (*ishan)
@@ -2121,7 +2127,7 @@ void texteditpage_init(Page* p)
 	Vkeyboard[44].init(wstr, keybtn_init, keybtn_render, keybtn_update, keybtn_event, shp::rect4f(scloc.fx + siz.x / 2 + wh.x * 2, starty - wh.y * 4, scloc.fx + siz.x / 2 + wh.x * 3, starty - wh.y * 3));
 
 	// han/eng
-	wcscpy(wstr, L"ÇÑ/¿µ");
+	wcscpy(wstr, L"í•œ/ì˜");
 	Vkeyboard[45].init(wstr, keybtn_init, keybtn_render, keybtn_update, keybtn_event, shp::rect4f(scloc.fx, starty - wh.y * 4, scloc.fx + wh.x * 2, starty - wh.y * 3));
 
 	// enter
@@ -2291,11 +2297,7 @@ HRESULT CompileShaderFromFile( WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR sz
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-UINT width;
-UINT height;
-rbuffer cursor_obj;
-rbuffer polygon_obj;
-rbuffer dbgpos_obj;
+
 
 void GetScreenWH() {
     RECT rc;
@@ -2565,9 +2567,9 @@ HRESULT InitDevice()
     float farZ = 100.0f;
     float nearZ = 0.01f;
 
-    //¿ø±ÙÅõ¿µ
+    //ì›ê·¼íˆ¬ì˜
 	g_Projection_3d = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
-    //Á÷±³Åõ¿µ
+    //ì§êµíˆ¬ì˜
     g_Projection_2d = XMMATRIX(
         2.0f/(float)width, 0, 0, 0,
         0, 2.0f/(float)height, 0, 0,
@@ -2601,8 +2603,8 @@ HRESULT InitDevice()
     polygon_cb.mProjection = XMMatrixTranspose(g_Projection_2d);
 
     CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
-    cbuf->ready(L'¾È', g_pVertexShader, g_pPixelShader);
-    char_map.insert(CharMap::value_type(L'¾È', cbuf));
+    cbuf->ready(L'ì•ˆ', g_pVertexShader, g_pPixelShader);
+    char_map.insert(CharMap::value_type(L'ì•ˆ', cbuf));
 
     DX11Color color = DX11Color(1.0f, 1.0f, 1.0f, 1.0f);
     linedrt = (rbuffer*)fm->_New(sizeof(rbuffer), true);
@@ -2747,12 +2749,12 @@ void Render()
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
     cursor_obj.render(cursor_cb);
     
-    //char_map.at(L'¾È')->render(cursor_cb);
+    //char_map.at(L'ì•ˆ')->render(cursor_cb);
     
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &polygon_cb, 0, 0);
     //polygon_obj.render(polygon_cb);
 
-    draw_string(L"¾È³çÇÏ¼¼¿ë!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), DX11Color(1, 1, 1, 1));
+    draw_string(L"ì•ˆë…•í•˜ì„¸ìš©!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), DX11Color(1, 1, 1, 1));
     //
     // Present our back buffer to our front buffer
     //

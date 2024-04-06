@@ -138,6 +138,8 @@ void Sprite::render(const ConstantBuffer& uniform)
 	}
 }
 
+void stackdata_savedata(savestruct* ss, sprite_type datatype, sprdata data);
+
 void stackspr_savestruct(savestruct* ss, Sprite* spr) {
 	spritedata sd;
 	stackdata_savedata(ss, spr->st, spr->data);

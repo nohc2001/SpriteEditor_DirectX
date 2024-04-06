@@ -1,4 +1,4 @@
-#define H_HANCOM
+﻿#define H_HANCOM
 #include <iostream>
 using namespace std;
 
@@ -7,31 +7,28 @@ constexpr int minmo = 0x314F;
 constexpr int minhan = 0xAC00;
 
 constexpr wchar_t key_sym[4][11] = {
-	{L"1234567890"},
-	{L"qwertyuiop"},
-	{L"asdfghjkl"},
-	{L"zxcvbnm"}
+	L"1234567890",
+	L"qwertyuiop",
+	L"asdfghjkl",
+	L"zxcvbnm"
 };
 
 constexpr wchar_t shift_key_sym[4][11] = {
-	{L"1234567890"},
-	{L"QWERTYUIOP"},
-	{L"ASDFGHJKL"},
-	{L"ZXCVBNM"}
+	L"1234567890",
+	L"QWERTYUIOP",
+	L"ASDFGHJKL",
+	L"ZXCVBNM"
 };
 
 constexpr wchar_t hankey_sym[4][11] = {
-	{L"1234567890"},
-	{L"ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ"},
-	{L"ㅁㄴㅇㄹㅎㅗㅓㅏㅣ"},
-	{L"ㅋㅌㅊㅍㅠㅜㅡ"}
+	L"1234567890", L"ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ", L"ㅁㄴㅇㄹㅎㅗㅓㅏㅣ", L"ㅋㅌㅊㅍㅠㅜㅡ"
 };
 
 constexpr wchar_t shift_hankey_sym[4][11] = {
-	{L"1234567890"},
-	{L"ㅃㅉㄸㄲㅆㅛㅕㅑㅒㅖ"},
-	{L"ㅁㄴㅇㄹㅎㅗㅓㅏㅣ"},
-	{L"ㅋㅌㅊㅍㅠㅜㅡ"}
+	L"1234567890",
+	L"ㅃㅉㄸㄲㅆㅛㅕㅑㅒㅖ",
+	L"ㅁㄴㅇㄹㅎㅗㅓㅏㅣ",
+	L"ㅋㅌㅊㅍㅠㅜㅡ"
 };
 
 int jatocho(int jaum)
