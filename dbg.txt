@@ -45,6 +45,3 @@ VKeyboard = 0
 , isshift = 10001
 , deststring = 10002
 };
-p4 : 0000000000000000
-mainSprite_init
-p4 : 0000025C9D0714E8

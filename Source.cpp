@@ -390,7 +390,6 @@ void freepolybtn_event(DXBtn* btn, DX_Event evt)
 						mainSprite->data.freepoly->begin();
 						mainSprite->data.freepoly->set_inherit(true);
 						mainSprite->data.freepoly->end();
-
 					}
 				}
 			}
@@ -2271,7 +2270,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 
     // Create window
     g_hInst = hInstance;
-    RECT rc = { 0, 0, 1600, 900 };
+    RECT rc = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
     g_hWnd = CreateWindow( L"TutorialWindowClass", L"SpriteEditor_DirectX", WS_OVERLAPPEDWINDOW,
                            CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
@@ -2804,15 +2803,17 @@ void Render()
     // Present our back buffer to our front buffer
     //
 
+	ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
+	cursor_obj.render(cursor_cb);
+
 	for (int i = 0; i < maxpage; ++i)
 	{
 		// dbgcount(0, dbg << "render : " << i << endl);
 		pagestack[i]->render_func(pagestack[i]);
 	}
 
-	ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
-	cursor_obj.render(cursor_cb);
+	
 
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();
