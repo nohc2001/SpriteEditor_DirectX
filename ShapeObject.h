@@ -75,7 +75,7 @@ struct SimpleVertex
 };
 
 bool VertexEqual(SimpleVertex& a, SimpleVertex& b) {
-    __m128i* ka = reinterpret_cast<__m128i*>(&a);
+    /*__m128i* ka = reinterpret_cast<__m128i*>(&a);
     __m128i* kb = reinterpret_cast<__m128i*>(&b);
     __m128i* ka2 = reinterpret_cast<__m128i*>(((byte8*)&a) + 3);
     __m128i* kb2 = reinterpret_cast<__m128i*>(((byte8*)&b) + 3);
@@ -86,7 +86,16 @@ bool VertexEqual(SimpleVertex& a, SimpleVertex& b) {
     if (mask != 0xffff || mask2 != 0xffff) {
         return false;
     }
-    return true;
+    return true;*/
+
+    bool r = a.Pos.x == b.Pos.x;
+    r = r && a.Pos.y == b.Pos.y;
+    r = r && a.Pos.z == b.Pos.z;
+    r = r && a.Color.x == b.Color.x;
+    r = r && a.Color.y == b.Color.y;
+    r = r && a.Color.z == b.Color.z;
+    r = r && a.Color.w == b.Color.w;
+    return r;
 }
 
 struct SimpleIndex
@@ -358,6 +367,24 @@ public:
             while (m_pIndexBuffer[nextchoice]->Release());
             m_pIndexBuffer[nextchoice] = nullptr;
         }
+    }
+
+    void clear() {
+        const int choice = get_choice();
+        buffer[choice]->up = 0;
+        index_buf[choice]->up = 0;
+
+        if (m_pVertexBuffer[choice] != nullptr) {
+            while (m_pVertexBuffer[choice]->Release());
+            m_pVertexBuffer[choice] = nullptr;
+        }
+
+        if (m_pIndexBuffer[choice] != nullptr) {
+            while (m_pIndexBuffer[choice]->Release());
+            m_pIndexBuffer[choice] = nullptr;
+        }
+
+        *(int*)setting = 0;
     }
 
     inline void av(const SimpleVertex& vertex) {

@@ -1019,7 +1019,6 @@ void main_render(Page* p)
 	// dbgcount(0, dbg << "try render sprite" << endl);
 	if (mainSprite != nullptr)
 	{
-		mainSprite->render(cb);
 		if (*behave_selected == 0
 			&& (mainSprite->st == sprite_type::st_freepolygon
 				&& mainSprite->data.freepoly != nullptr))
@@ -1038,8 +1037,8 @@ void main_render(Page* p)
 				shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
 				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
 				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
-					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
-						zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1),
+					shp::vec3f(zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)),
+						zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)), 1),
 					DX11Color(1.0f, 0, 1.0f, 1.0f));
 				bool BeSelect = false;
 				for (int k = 0; k < sarr->size(); ++k)
@@ -1063,6 +1062,8 @@ void main_render(Page* p)
 			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
 				4 * zoomrate, DX11Color(1, 1, 1, 1));
 		}
+
+		mainSprite->render(cb);
 	}
 
 
@@ -1404,7 +1405,7 @@ void main_event(Page* p, DX_Event evt)
 		{
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
 			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
-			XMFLOAT3 temp = 0;
+			XMFLOAT3 temp;
 			for (int i = 0; i < sarr->size(); ++i)
 			{
 				temp = bptr->at(sarr->at(i).index).Pos;
@@ -1419,8 +1420,8 @@ void main_event(Page* p, DX_Event evt)
 			shp::vec2f mpos = GetMousePos(evt.lParam);
 			
 			shp::vec2f viewpos =
-				shp::vec2f(present_center->x + (scwh.x / scw) * GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
-					present_center->y - (scwh.y / sch) * GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
+				shp::vec2f(present_center->x + (scwh.x / scw) * GetMousePos_notcenter(evt.lParam).x - scwh.x / 2.0f,
+					present_center->y - (scwh.y / sch) * GetMousePos_notcenter(evt.lParam).y + scwh.y / 2.0f);
 			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			// camera move
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
@@ -1470,7 +1471,7 @@ void main_event(Page* p, DX_Event evt)
 				int vsiz = ap->get_vertexsiz(ap->get_renderChoice());
 				// dbgcount(0, dbg << "ap vertex size : " <<
 				// ap->get_vertexsiz(ap->get_renderChoice()) << endl)
-				//ap->clear();
+				ap->clear();
 				ap->begin();
 				for (int i = 0; i < vsiz; ++i)
 				{
