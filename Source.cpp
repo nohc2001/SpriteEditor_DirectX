@@ -493,15 +493,15 @@ void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 				fm->_tempPushLayer();
 				rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
 				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
-				fmvecarr<SimpleVertex>* farr = (fmvecarr<SimpleVertex>*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
+				SimpleVertex* farr = (SimpleVertex*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
 				for (int i = 0; i < bptr->size(); ++i)
 				{
-					farr->at(i) = bptr->at(i);
+					farr[i] = bptr->at(i);
 				}
 				int vsiz = ap->get_vertexsiz(ap->get_renderChoice());
 				// dbgcount(0, dbg << "ap vertex size : " <<
 				// ap->get_vertexsiz(ap->get_renderChoice()) << endl)
-				//ap->clear();
+				ap->clear();
 				ap->begin();
 				for (int i = 0; i < vsiz; ++i)
 				{
@@ -528,8 +528,8 @@ void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 
 					if (isSelect == false)
 					{
-						shp::vec3f p = shp::vec3f(farr->at(i).Pos.x, farr->at(i).Pos.y, farr->at(i).Pos.z);
-						DX11Color c = DX11Color(farr->at(i).Color.x, farr->at(i).Color.y, farr->at(i).Color.z, farr->at(i).Color.w);
+						shp::vec3f p = shp::vec3f(farr[i].Pos.x, farr[i].Pos.y, farr[i].Pos.z);
+						DX11Color c = DX11Color(farr[i].Color.x, farr[i].Color.y, farr[i].Color.z, farr[i].Color.w);
 						ap->av(SimpleVertex(p, c));
 					}
 				}
@@ -2271,7 +2271,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon( hInstance, ( LPCTSTR )IDI_ICON2 );
-    wcex.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wcex.hCursor = NULL;//LoadCursor( NULL, IDC_ARROW );
     wcex.hbrBackground = ( HBRUSH )( COLOR_WINDOW + 1 );
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = L"TutorialWindowClass";
@@ -2282,6 +2282,8 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     // Create window
     g_hInst = hInstance;
     RECT rc = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+	width = GetSystemMetrics(SM_CXSCREEN);
+	height = GetSystemMetrics(SM_CYSCREEN);
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
     g_hWnd = CreateWindow( L"TutorialWindowClass", L"SpriteEditor_DirectX", WS_OVERLAPPEDWINDOW,
                            CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
