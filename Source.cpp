@@ -1037,7 +1037,7 @@ void main_render(Page* p)
 			{
 				shp::vec3f pos =
 					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->at(i).Pos;
-				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(2 * zoomrate, 2 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 0.5f));
+				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
 				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
 					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
 						zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1),
@@ -1105,10 +1105,6 @@ void main_render(Page* p)
 		lw = lw + 1.0f;
 		alpha *= 2.0f;
 	}
-
-
-
-	
 }
 
 void main_update(Page* p, float delta)
