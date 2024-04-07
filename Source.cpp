@@ -33,6 +33,7 @@ ID3D11PixelShader*      g_pPixelShader = NULL;
 ID3D11InputLayout*      g_pVertexLayout = NULL;
 ID3D11Buffer*           g_pVertexBuffer = NULL;
 ID3D11Buffer*           g_pIndexBuffer = NULL;
+ID3D11BlendState* g_pBlendStateBlend = NULL;
 XMMATRIX                g_World1;
 XMMATRIX                g_World2;
 XMMATRIX                g_CursorWorld;
@@ -196,7 +197,7 @@ void basicbtn_render(DXBtn* btn)
 	loc.fy += loc.geth() / 4.0f;
 
 	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	rb->render(cb);	
+	rb->render(cb);
 }
 
 void basicbtn_update(DXBtn* btn, float delta)
@@ -344,6 +345,7 @@ void freepolybtn_render(DXBtn* btn)
 	shp::rect4f loc = btn->sup()->loc;
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
+	
 	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	rb->render(cb2);
 	if (*enable)
@@ -585,7 +587,8 @@ void objselectbtn_render(DXBtn* btn)
 	shp::rect4f loc = btn->sup()->loc;
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
-	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	
+	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));	
 	rb->render(cb);
 }
 
@@ -925,111 +928,9 @@ void main_render(Page* p)
 	shp::vec2i* behavemod = (shp::vec2i*)behavetop->param[2];
 	DXBtn* ocp = (DXBtn*)&p->pfm.Data[(int)mainpm::opencolorpage];
 
-	// obj redering_2d
-	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -5.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	CamView = XMMatrixLookAtLH(Eye, At, Up);
-
-	float farZ = 1000.0f;
-	float nearZ = 0.1f;
-	CamProj = XMMATRIX(
-		2.0f / (float)width * zoomrate, 0, 0, 0,
-		0, 2.0f / (float)height * zoomrate, 0, 0,
-		0, 0, 1.0f / (farZ - nearZ), 0,
-		0, 0, 1.0f / (nearZ - farZ), 1);
-
-	float d = 50.0f * (int)(zoomrate);
-	float lw = 1.0f;
-	float alpha = 0.2f;
-	drawline(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
-		DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(0, pc->y - scwh.y), shp::vec2f(0, pc->y + scwh.y), 4.0f * zoomrate,
-		DX11Color(1, 1, 1, 1));
-	for (int k = 0; k < 3; ++k)
-	{
-		// dbg << "scwh.x : " << scwh.x << endl;
-
-		int ax = (pc->y - scwh.y) / d;
-		int max = (pc->y + scwh.y) / d;
-		for (; ax < max; ++ax)
-		{
-			drawline(shp::vec2f(pc->x - scwh.x, (float)ax * d),
-				shp::vec2f(pc->x + scwh.x, (float)ax * d), lw * zoomrate, DX11Color(1, 1, 1, alpha));
-		}
-		ax = (pc->x - scwh.x) / d;
-		max = (pc->x + scwh.x) / d;
-		for (; ax < max; ++ax)
-		{
-			drawline(shp::vec2f((float)ax * d, pc->y - scwh.y),
-				shp::vec2f((float)ax * d, pc->y + scwh.y), lw * zoomrate, DX11Color(1, 1, 1, alpha));
-		}
-		d = d * 2.0f;
-		lw = lw + 1.0f;
-		alpha *= 2.0f;
-	}
-
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	linedrt->render(cb);
-
 	int* behave_selected = (int*)&p->pfm.Data[(int)mainpm::behave_selected];
-	// dbgcount(0, dbg << "try render sprite" << endl);
-	if (mainSprite != nullptr)
-	{
-		mainSprite->render(cb);
-		if (*behave_selected == 0
-			&& (mainSprite->st == sprite_type::st_freepolygon
-				&& mainSprite->data.freepoly != nullptr))
-		{
-			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-			// dbgcount(0, ap->dbg_rbuffer());
-			// ap->render();
-			shp::vec3f savpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
-			fmvecarr < pos_select_obj >* sarr =
-				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
 
-			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
-			{
-				shp::vec3f pos =
-					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[sizeof(SimpleVertex) * i + 4];
-				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(2 * zoomrate, 2 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 0.5f));
-				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI), 
-					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 
-					zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1) , 
-					DX11Color(1.0f, 0, 1.0f, 1.0f));
-				bool BeSelect = false;
-				for (int k = 0; k < sarr->size(); ++k)
-				{
-					if (sarr->at(k).index == i)
-					{
-						linedrt->render(selectCB);
-						BeSelect = true;
-						break;
-					}
-				}
-
-				if (!BeSelect) linedrt->render(normalCB);
-
-				drawline(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
-					DX11Color(1, 1, 1, 1));
-				savpos = pos;
-			}
-			shp::vec3f initpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
-			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
-				4 * zoomrate, DX11Color(1, 1, 1, 1));
-		}
-	}
-
-
-	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
-	drawline(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	
 
 	// ui rendering
 
@@ -1099,6 +1000,112 @@ void main_render(Page* p)
 			}
 		}
 	}
+
+	// obj redering_2d
+	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -5.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	CamView = XMMatrixLookAtLH(Eye, At, Up);
+
+	float farZ = 1000.0f;
+	float nearZ = 0.1f;
+	CamProj = XMMATRIX(
+		2.0f / (float)width * zoomrate, 0, 0, 0,
+		0, 2.0f / (float)height * zoomrate, 0, 0,
+		0, 0, 1.0f / (farZ - nearZ), 0,
+		0, 0, 1.0f / (nearZ - farZ), 1);
+
+	float d = 50.0f * (int)(zoomrate);
+	float lw = 1.0f;
+	float alpha = 0.2f;
+	drawline(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
+		DX11Color(1, 1, 1, 1.0f));
+	drawline(shp::vec2f(0, pc->y - scwh.y), shp::vec2f(0, pc->y + scwh.y), 4.0f * zoomrate,
+		DX11Color(1, 1, 1, 1.0f));
+	for (int k = 0; k < 3; ++k)
+	{
+		// dbg << "scwh.x : " << scwh.x << endl;
+
+		int ax = (pc->y - scwh.y) / d;
+		int max = (pc->y + scwh.y) / d;
+		for (; ax < max; ++ax)
+		{
+			drawline(shp::vec2f(pc->x - scwh.x, (float)ax * d),
+				shp::vec2f(pc->x + scwh.x, (float)ax * d), lw * zoomrate, DX11Color(1, 1, 1, alpha));
+		}
+		ax = (pc->x - scwh.x) / d;
+		max = (pc->x + scwh.x) / d;
+		for (; ax < max; ++ax)
+		{
+			drawline(shp::vec2f((float)ax * d, pc->y - scwh.y),
+				shp::vec2f((float)ax * d, pc->y + scwh.y), lw * zoomrate, DX11Color(1, 1, 1, alpha));
+		}
+		d = d * 2.0f;
+		lw = lw + 1.0f;
+		alpha *= 2.0f;
+	}
+
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	linedrt->render(cb);
+
+
+	// dbgcount(0, dbg << "try render sprite" << endl);
+	if (mainSprite != nullptr)
+	{
+		mainSprite->render(cb);
+		if (*behave_selected == 0
+			&& (mainSprite->st == sprite_type::st_freepolygon
+				&& mainSprite->data.freepoly != nullptr))
+		{
+			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
+			// dbgcount(0, ap->dbg_rbuffer());
+			// ap->render();
+			shp::vec3f savpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
+			fmvecarr < pos_select_obj >* sarr =
+				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
+
+			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
+			{
+				shp::vec3f pos =
+					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[sizeof(SimpleVertex) * i + 4];
+				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(2 * zoomrate, 2 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 0.5f));
+				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
+					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
+						zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1),
+					DX11Color(1.0f, 0, 1.0f, 1.0f));
+				bool BeSelect = false;
+				for (int k = 0; k < sarr->size(); ++k)
+				{
+					if (sarr->at(k).index == i)
+					{
+						linedrt->render(selectCB);
+						BeSelect = true;
+						break;
+					}
+				}
+
+				if (!BeSelect) linedrt->render(normalCB);
+
+				drawline(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
+					DX11Color(1, 1, 1, 1));
+				savpos = pos;
+			}
+			shp::vec3f initpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
+			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
+				4 * zoomrate, DX11Color(1, 1, 1, 1));
+		}
+	}
+
+
+	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
+	drawline(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
 }
 
 void main_update(Page* p, float delta)
@@ -1210,7 +1217,7 @@ void main_event(Page* p, DX_Event evt)
 	}
 
 	if (behavemod->x == 0)
-	{
+	{	
 		DXBtn* freepoly = (DXBtn*)&p->pfm.Data[(int)mainpm::freepoly];
 		// DXBtn *euclid = (DXBtn *) & p->pfm.Data[(int)mainpm::euclid];
 		DXBtn* textoutline = (DXBtn*)&p->pfm.Data[(int)mainpm::textoutline];
@@ -1533,7 +1540,7 @@ void basicslider_render(DXSlider* slider)
 	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(bar.getCenter().x, bar.getCenter().y, 0), shp::vec3f(0, 0, 0),
 		shp::vec3f(bar.getw(), bar.geth(), 1), DX11Color(1.0f, 1.0f, 1.0f, 0.5f));
 	DX11Color col = DX11Color(1, 1, 1, 0.5f);
-	linedrt->render(cb);
+	
 
 	float rate = slider->setter / slider->max;
 	shp::rect4f pos;
@@ -1552,6 +1559,7 @@ void basicslider_render(DXSlider* slider)
 	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pos.getCenter().x, pos.getCenter().y, 0), shp::vec3f(0, 0, shp::PI / 4.0f),
 			shp::vec3f(pos.getw() * 0.7f, pos.geth() * 0.7f, 1), DX11Color(0.1f, 0.4f, 0.6f, 1.0f));
 	linedrt->render(cb2);
+	linedrt->render(cb);
 }
 
 void basicslider_update(DXSlider* slider, float delta)
@@ -1683,15 +1691,6 @@ void colorpage_render(Page* p)
 
 	shp::rect4f scloc = shp::rect4f(-scw / 2.0f, -sch / 2.0f, scw / 2.0f, sch / 2.0f);
 	//GLuint shader = linedrt->get_shader();
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(scloc.getCenter().x, scloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
-			shp::vec3f(scloc.getw(), scloc.geth(), 1), DX11Color(0, 0, 0, 0.4f));
-	linedrt->render(cb);
-
-	shp::rect4f pcloc = shp::rect4f(scloc.fx, scloc.ly - 500.0f, scloc.fx + 500.0f, scloc.ly);
-	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pcloc.getCenter().x, pcloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
-			shp::vec3f(pcloc.getw(), pcloc.geth(), 1), DX11Color(0, 0, 0, 0.4f));
-	linedrt->render(cb2);
-
 	RSlider->render();
 	GSlider->render();
 	BSlider->render();
@@ -1708,20 +1707,31 @@ void colorpage_render(Page* p)
 			shp::rect4f sloc =
 				shp::rect4f(hscloc.fx + wh.x * x, hscloc.fy + wh.y * y, hscloc.fx + wh.x * (x + 1),
 					hscloc.fy + wh.y * (y + 1));
-			if (*selectnum == x * 5 + y)
-			{	
-				ConstantBuffer cb = GetBasicModelCB(shp::vec3f(sloc.getCenter().x, sloc.getCenter().y, 0),
-					shp::vec3f(0, 0, 0), shp::vec3f(sloc.getw(), sloc.geth(), 1), DX11Color(1, 1, 1, 0.4f));
-				linedrt->render(cb);
-			}
+
 			shp::rect4f cloc =
 				shp::rect4f(sloc.fx + margin, sloc.fy + margin, sloc.lx - margin,
 					sloc.ly - margin);
 			ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cloc.getCenter().x, cloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
 				shp::vec3f(cloc.getw(), cloc.geth(), 1), pallete[5 * x + y]);
 			linedrt->render(cb);
+
+			if (*selectnum == x * 5 + y)
+			{
+				ConstantBuffer cb = GetBasicModelCB(shp::vec3f(sloc.getCenter().x, sloc.getCenter().y, 0),
+					shp::vec3f(0, 0, 0), shp::vec3f(sloc.getw(), sloc.geth(), 1), DX11Color(1, 1, 1, 0.4f));
+				linedrt->render(cb);
+			}
 		}
 	}
+
+	shp::rect4f pcloc = shp::rect4f(scloc.fx, scloc.ly - 500.0f, scloc.fx + 500.0f, scloc.ly);
+	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pcloc.getCenter().x, pcloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
+		shp::vec3f(pcloc.getw(), pcloc.geth(), 1), *presentcolor);
+	linedrt->render(cb2);
+	
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(scloc.getCenter().x, scloc.getCenter().y, 0), shp::vec3f(0, 0, 0),
+			shp::vec3f(scloc.getw(), scloc.geth(), 1), DX11Color(0, 0, 0, 0.4f));
+	linedrt->render(cb);
 }
 
 void colorpage_update(Page* p, float delta)
@@ -1760,8 +1770,8 @@ void colorpage_event(Page* p, DX_Event evt)
 	shp::rect4f hscloc = shp::rect4f(-scw / 2.0f, -sch / 2.0f, scw / 2.0f, 0);
 	if (evt.message == WM_LBUTTONDOWN)
 	{
-		float mx = GetMousePos_notcenter(evt.lParam).x * scw - scw / 2.0f;
-		float my = -GetMousePos_notcenter(evt.lParam).y * sch + sch / 2.0f;
+		float mx = GetMousePos(evt.lParam).x;
+		float my = GetMousePos(evt.lParam).y;
 		shp::vec2f wh = shp::vec2f(hscloc.getw() / 20.0f, hscloc.geth() / 5.0f);
 		float margin = 5.0f;
 		for (int x = 0; x < 20; ++x)
@@ -2355,7 +2365,7 @@ void GetScreenWH() {
 
 HRESULT InitDevice()
 {
-
+	zoomrate = 1;
     HRESULT hr = S_OK;
 
     GetScreenWH();
@@ -2446,6 +2456,21 @@ HRESULT InitDevice()
         return hr;
 
     g_pImmediateContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_pDepthStencilView );
+
+	
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	//BlendState.RenderTarget[0].BlendEnable = TRUE;
+	//BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	g_pd3dDevice->CreateBlendState(&BlendState, &g_pBlendStateBlend);
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
@@ -2603,8 +2628,8 @@ HRESULT InitDevice()
     g_CursorWorld = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 4.0f, -10.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
 
@@ -2616,13 +2641,16 @@ HRESULT InitDevice()
 	g_Projection_3d = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
 	//g_Projection_2d = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, nearZ, farZ);
     //직교투영
-	g_Projection_2d = XMMATRIX(
+	/*
+	* g_Projection_2d = XMMATRIX(
         2.0f/(float)width, 0, 0, 0,
         0, 2.0f/(float)height, 0, 0,
         0, 0, 1.0f / (farZ - nearZ), 0,
         0, 0, 1.0f / (nearZ - farZ), 1);
+	*/
+	
+	g_Projection_2d = XMMatrixOrthographicLH(width, height, nearZ, farZ);
     
-
     cursor_obj.Init(false);
     cursor_obj.begin();
     cursor_obj.av(SimpleVertex(0.0f, -30.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f));
@@ -2726,12 +2754,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 			press_ef = true;
 			break;
 		case WM_LBUTTONUP:
-			//press_ef = false;
+			press_ef = false;
 			break;
         case WM_MOUSEMOVE:
             mx = LOWORD(lParam);
             my = HIWORD(lParam);
-            g_CursorWorld = XMMatrixTranslation((float)mx - (float)width/2.0f, -1.0f * (float)my + (float)height/2.0f, 0.9f);
+            g_CursorWorld = XMMatrixTranslation((float)mx - (float)width/2.0f, -1.0f * (float)my + (float)height/2.0f, 0.0f);
             break;
         case WM_DESTROY:
             PostQuitMessage( 0 );
@@ -2788,26 +2816,28 @@ void Render()
     //
     g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+	g_pImmediateContext->OMSetBlendState(g_pBlendStateBlend, blendFactor, sampleMask);
+
     //
     // Update variables for the first cube
     //
-    
+	ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
+	cursor_obj.render(cursor_cb);
     
     //char_map.at(L'안')->render(cursor_cb);
     
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &polygon_cb, 0, 0);
     //polygon_obj.render(polygon_cb);
 
-    draw_string(L"안녕하세용!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), DX11Color(1, 1, 1, 1));
+    //draw_string(L"안녕하세용!! World!!", 16, 30, shp::rect4f(0, 0, 100, 100), DX11Color(1, 1, 1, 1));
     //
     // Present our back buffer to our front buffer
     //
 
-	ConstantBuffer cursor_cb = SetCB(g_CursorWorld, g_View, g_Projection_2d, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cursor_cb, 0, 0);
-	cursor_obj.render(cursor_cb);
-
-	for (int i = 0; i < maxpage; ++i)
+	for (int i = maxpage-1; i >= 0; --i)
 	{
 		// dbgcount(0, dbg << "render : " << i << endl);
 		pagestack[i]->render_func(pagestack[i]);

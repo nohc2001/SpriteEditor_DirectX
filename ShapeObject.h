@@ -407,7 +407,16 @@ public:
         }
     }
 
+    void push(const ConstantBuffer& uniform) {
+
+    }
+
     void render(const ConstantBuffer& uniform) {
+        //큐에 저장할 데이터
+        // 1. uniform
+        // 2. rbuffer ptr
+        // 3. choice
+        // 4. 
         // Set vertex buffer
         unsigned int choice = get_choice();
 
@@ -576,7 +585,7 @@ void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11
         }
 
         StringWorld = XMMatrixScaling(fsiz, fsiz, 1);
-        StringWorld = XMMatrixMultiply(StringWorld, XMMatrixTranslation(stackpos.x, stackpos.y, 0.9f));
+        StringWorld = XMMatrixMultiply(StringWorld, XMMatrixTranslation(stackpos.x, stackpos.y, 0.0f));
         cb.mWorld = XMMatrixTranspose(StringWorld);
         char_map.at(c)->render(cb);
 
