@@ -492,15 +492,15 @@ void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 					(fmvecarr < pos_select_obj > *) & mainpage->pfm.Data[(int)mainpm::select_arr];
 				fm->_tempPushLayer();
 				rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
+				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
 				fmvecarr<SimpleVertex>* farr = (fmvecarr<SimpleVertex>*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
 				for (int i = 0; i < bptr->size(); ++i)
 				{
 					farr->at(i) = bptr->at(i);
 				}
-				int vsiz = ap->get_vertexsiz(ap->get_choice());
+				int vsiz = ap->get_vertexsiz(ap->get_renderChoice());
 				// dbgcount(0, dbg << "ap vertex size : " <<
-				// ap->get_vertexsiz(ap->get_choice()) << endl)
+				// ap->get_vertexsiz(ap->get_renderChoice()) << endl)
 				//ap->clear();
 				ap->begin();
 				for (int i = 0; i < vsiz; ++i)
@@ -528,8 +528,8 @@ void setcolorbtn_event(DXBtn* btn, DX_Event evt)
 
 					if (isSelect == false)
 					{
-						shp::vec3f p = *(shp::vec3f*)&farr[sizeof(SimpleVertex) * i + 4];
-						DX11Color c = *(DX11Color*)&farr[sizeof(SimpleVertex) * i];
+						shp::vec3f p = shp::vec3f(farr->at(i).Pos.x, farr->at(i).Pos.y, farr->at(i).Pos.z);
+						DX11Color c = DX11Color(farr->at(i).Color.x, farr->at(i).Color.y, farr->at(i).Color.z, farr->at(i).Color.w);
 						ap->av(SimpleVertex(p, c));
 					}
 				}
@@ -930,8 +930,6 @@ void main_render(Page* p)
 
 	int* behave_selected = (int*)&p->pfm.Data[(int)mainpm::behave_selected];
 
-	
-
 	// ui rendering
 
 	behavetop->Render();
@@ -1029,14 +1027,15 @@ void main_render(Page* p)
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
 			// dbgcount(0, ap->dbg_rbuffer());
 			// ap->render();
-			shp::vec3f savpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
+			XMFLOAT3 temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
+			shp::vec3f savpos = shp::vec3f(temp.x, temp.y, temp.z);
 			fmvecarr < pos_select_obj >* sarr =
 				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
 
-			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
+			for (int i = 0; i < ap->get_vertexsiz(ap->get_renderChoice()); ++i)
 			{
-				shp::vec3f pos =
-					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->at(i).Pos;
+				temp = ap->buffer[ap->get_renderChoice()]->at(i).Pos;
+				shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
 				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
 				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
 					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
@@ -1059,7 +1058,8 @@ void main_render(Page* p)
 					DX11Color(1, 1, 1, 1));
 				savpos = pos;
 			}
-			shp::vec3f initpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->at(0).Pos;
+			temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
+			shp::vec3f initpos = shp::vec3f(temp.x, temp.y, temp.z);
 			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
 				4 * zoomrate, DX11Color(1, 1, 1, 1));
 		}
@@ -1376,12 +1376,12 @@ void main_event(Page* p, DX_Event evt)
 
 			// add selection points in freepolygon
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
+			for (int i = 0; i < ap->get_vertexsiz(ap->get_renderChoice()); ++i)
 			{
-				shp::vec3f pos =
-					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[sizeof(SimpleVertex) * i + 4];
-				DX11Color col =
-					*(DX11Color*)&ap->buffer[ap->get_choice()]->Arr[sizeof(SimpleVertex) * i];
+				XMFLOAT3 temp = ap->buffer[ap->get_renderChoice()]->at(i).Pos;
+				shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
+				XMFLOAT4 ctemp = ap->buffer[ap->get_renderChoice()]->at(i).Color;
+				DX11Color col = DX11Color(ctemp.x, ctemp.y, ctemp.z, ctemp.w);
 				shp::vec2f p2 = shp::vec2f(pos.x, pos.y);
 				pos_select_obj pso;
 				pso.index = i;
@@ -1403,11 +1403,12 @@ void main_event(Page* p, DX_Event evt)
 				&& (objmod->x == 1 && *(bool*)translate->param[2])))
 		{
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
+			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
+			XMFLOAT3 temp = 0;
 			for (int i = 0; i < sarr->size(); ++i)
 			{
-				sarr->at(i).origin_pos =
-					*(shp::vec3f*)&bptr->at(sarr->at(i).index * sizeof(SimpleVertex) + 4);
+				temp = bptr->at(sarr->at(i).index).Pos;
+				sarr->at(i).origin_pos = shp::vec3f(temp.x, temp.y, temp.z);
 			}
 		}
 	}
@@ -1459,16 +1460,16 @@ void main_event(Page* p, DX_Event evt)
 			{
 				fm->_tempPushLayer();
 				rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_choice()];
+				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
 				SimpleVertex* farr = (SimpleVertex*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
 				for (int i = 0; i < bptr->size(); ++i)
 				{
 					farr[i] = bptr->at(i);
 					// dbgcount(0, dbg << farr[i] << endl)
 				}
-				int vsiz = ap->get_vertexsiz(ap->get_choice());
+				int vsiz = ap->get_vertexsiz(ap->get_renderChoice());
 				// dbgcount(0, dbg << "ap vertex size : " <<
-				// ap->get_vertexsiz(ap->get_choice()) << endl)
+				// ap->get_vertexsiz(ap->get_renderChoice()) << endl)
 				//ap->clear();
 				ap->begin();
 				for (int i = 0; i < vsiz; ++i)
@@ -1496,8 +1497,8 @@ void main_event(Page* p, DX_Event evt)
 
 					if (isSelect == false)
 					{
-						shp::vec3f p = *(shp::vec3f*)&farr[sizeof(SimpleVertex) * i + 4];
-						DX11Color c = *(DX11Color*)&farr[sizeof(SimpleVertex) * i];
+						shp::vec3f p = shp::vec3f(farr[i].Pos.x, farr[i].Pos.y, farr[i].Pos.z);
+						DX11Color c = DX11Color(farr[i].Color.x, farr[i].Color.y, farr[i].Color.z, farr[i].Color.w);
 						ap->av(SimpleVertex(p, c));
 					}
 				}

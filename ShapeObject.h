@@ -185,12 +185,29 @@ public:
 
     inline int get_vertexsiz(int index)
     {
-        return buffer[index]->size() / sizeof(SimpleVertex);
+        return buffer[index]->size();
     }
 
     inline int get_choice()
     {
         return (int)(setting[1] & 1);
+    }
+
+    inline int get_renderChoice() {
+        if(get_vertexsiz(get_choice()) >= 3){
+            return get_choice();
+        }
+        else {
+            return 0;
+        }
+        
+
+        if (get_inherit()) {
+            return (get_choice() + 1) & 1;
+        }
+        else {
+            return get_choice();
+        }
     }
 
     inline bool get_inherit()
@@ -361,7 +378,7 @@ public:
 
         return 0;
 
-        RBUFFER_END_NEWPOLY:
+    RBUFFER_END_NEWPOLY:
 
         index_buf[nextchoice]->up = 0;
         if (m_pVertexBuffer[nextchoice] != nullptr) {
@@ -401,12 +418,14 @@ public:
 
         set_choice(nextchoice);
 
-        if (get_inherit())
-        {
-            fmvecarr<SimpleVertex>* ptr = buffer[0];
+        /*
+        *if (get_inherit()) {
+            fmvecarr<SimpleVertex>* vptr = buffer[0];
             buffer[0] = buffer[1];
-            buffer[1] = ptr;
+            buffer[1] = vptr;
         }
+        */
+        
     }
 
     void push(const ConstantBuffer& uniform) {
