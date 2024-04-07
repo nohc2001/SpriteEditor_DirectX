@@ -1015,6 +1015,67 @@ void main_render(Page* p)
 		0, 0, 1.0f / (farZ - nearZ), 0,
 		0, 0, 1.0f / (nearZ - farZ), 1);
 
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	linedrt->render(cb);
+
+	// dbgcount(0, dbg << "try render sprite" << endl);
+	if (mainSprite != nullptr)
+	{
+		mainSprite->render(cb);
+		if (*behave_selected == 0
+			&& (mainSprite->st == sprite_type::st_freepolygon
+				&& mainSprite->data.freepoly != nullptr))
+		{
+			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
+			// dbgcount(0, ap->dbg_rbuffer());
+			// ap->render();
+			shp::vec3f savpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
+			fmvecarr < pos_select_obj >* sarr =
+				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
+
+			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
+			{
+				shp::vec3f pos =
+					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->at(i).Pos;
+				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(2 * zoomrate, 2 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 0.5f));
+				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
+					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
+						zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1),
+					DX11Color(1.0f, 0, 1.0f, 1.0f));
+				bool BeSelect = false;
+				for (int k = 0; k < sarr->size(); ++k)
+				{
+					if (sarr->at(k).index == i)
+					{
+						linedrt->render(selectCB);
+						BeSelect = true;
+						break;
+					}
+				}
+
+				if (!BeSelect) linedrt->render(normalCB);
+
+				drawline(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
+					DX11Color(1, 1, 1, 1));
+				savpos = pos;
+			}
+			shp::vec3f initpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->at(0).Pos;
+			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
+				4 * zoomrate, DX11Color(1, 1, 1, 1));
+		}
+	}
+
+
+	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
+	drawline(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	drawline(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
+		4 * zoomrate, DX11Color(1, 1, 1, 1));
+
 	float d = 50.0f * (int)(zoomrate);
 	float lw = 1.0f;
 	float alpha = 0.2f;
@@ -1045,67 +1106,9 @@ void main_render(Page* p)
 		alpha *= 2.0f;
 	}
 
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
-	linedrt->render(cb);
 
 
-	// dbgcount(0, dbg << "try render sprite" << endl);
-	if (mainSprite != nullptr)
-	{
-		mainSprite->render(cb);
-		if (*behave_selected == 0
-			&& (mainSprite->st == sprite_type::st_freepolygon
-				&& mainSprite->data.freepoly != nullptr))
-		{
-			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
-			// dbgcount(0, ap->dbg_rbuffer());
-			// ap->render();
-			shp::vec3f savpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
-			fmvecarr < pos_select_obj >* sarr =
-				(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
-
-			for (int i = 0; i < ap->get_vertexsiz(ap->get_choice()); ++i)
-			{
-				shp::vec3f pos =
-					*(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[sizeof(SimpleVertex) * i + 4];
-				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(2 * zoomrate, 2 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 0.5f));
-				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
-					shp::vec3f(zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)),
-						zoomrate * (3.0f + 1.0f * sinf(*stacktime * 3.0f)), 1),
-					DX11Color(1.0f, 0, 1.0f, 1.0f));
-				bool BeSelect = false;
-				for (int k = 0; k < sarr->size(); ++k)
-				{
-					if (sarr->at(k).index == i)
-					{
-						linedrt->render(selectCB);
-						BeSelect = true;
-						break;
-					}
-				}
-
-				if (!BeSelect) linedrt->render(normalCB);
-
-				drawline(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
-					DX11Color(1, 1, 1, 1));
-				savpos = pos;
-			}
-			shp::vec3f initpos = *(shp::vec3f*)&ap->buffer[ap->get_choice()]->Arr[4];
-			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
-				4 * zoomrate, DX11Color(1, 1, 1, 1));
-		}
-	}
-
-
-	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
-	drawline(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+	
 }
 
 void main_update(Page* p, float delta)
@@ -1286,8 +1289,8 @@ void main_event(Page* p, DX_Event evt)
 		
 		*presspos = shp::vec2f(mpos.x, mpos.y);
 		shp::vec2f viewpos =
-			shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
-				present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
+			shp::vec2f(present_center->x + (scwh.x/scw) * GetMousePos_notcenter(evt.lParam).x - scwh.x / 2.0f,
+				present_center->y - (scwh.y / sch) * GetMousePos_notcenter(evt.lParam).y + scwh.y / 2.0f);
 		*centerorigin = *present_center;
 
 		// addpoint in freepoly
@@ -1323,8 +1326,8 @@ void main_event(Page* p, DX_Event evt)
 			shp::vec2f mpos = GetMousePos(evt.lParam);
 			
 			shp::vec2f viewpos =
-				shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
-					present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
+				shp::vec2f(present_center->x + (scwh.x / scw) * GetMousePos_notcenter(evt.lParam).x - scwh.x / 2.0f,
+					present_center->y - (scwh.y / sch) * GetMousePos_notcenter(evt.lParam).y + scwh.y / 2.0f);
 			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 			DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
@@ -1419,8 +1422,8 @@ void main_event(Page* p, DX_Event evt)
 			shp::vec2f mpos = GetMousePos(evt.lParam);
 			
 			shp::vec2f viewpos =
-				shp::vec2f(present_center->x + GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
-					present_center->y - GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
+				shp::vec2f(present_center->x + (scwh.x / scw) * GetMousePos_notcenter(evt.lParam).x * scwh.x - scwh.x / 2.0f,
+					present_center->y - (scwh.y / sch) * GetMousePos_notcenter(evt.lParam).y * scwh.y + scwh.y / 2.0f);
 			shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 			// camera move
 			DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];

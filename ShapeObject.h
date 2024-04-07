@@ -249,6 +249,7 @@ public:
         m_pVertexBuffer[1] = nullptr;
         m_pIndexBuffer[1] = nullptr;
         set_choice(1);
+        set_inherit(false);
     }
 
     inline void FreePolygonToTriangles() {
@@ -399,6 +400,7 @@ public:
             return hr;
 
         set_choice(nextchoice);
+
         if (get_inherit())
         {
             fmvecarr<SimpleVertex>* ptr = buffer[0];

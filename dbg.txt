@@ -47,4 +47,3 @@ VKeyboard = 0
 };
 p4 : 0000000000000000
 mainSprite_init
-p4 : 000002498E0B07D0
