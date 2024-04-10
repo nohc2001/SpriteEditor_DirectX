@@ -187,6 +187,41 @@ public:
         }
     }
 
+    void Release() {
+        if (buffer[0] != nullptr) {
+            buffer[0]->release();
+        }
+        
+        if (buffer[1] != nullptr) {
+            buffer[1]->release();
+        }
+        
+        if (index_buf[0] != nullptr) {
+            index_buf[0]->release();
+        }
+        
+        if (index_buf[1] != nullptr) {
+            index_buf[1]->release();
+        }
+       
+        if (m_pVertexBuffer[0] != nullptr) {
+            while (m_pVertexBuffer[0]->Release());
+            m_pVertexBuffer[0] = nullptr;
+        }
+        if (m_pIndexBuffer[0] != nullptr) {
+            while (m_pIndexBuffer[0]->Release());
+            m_pIndexBuffer[0] = nullptr;
+        }
+        if (m_pVertexBuffer[1] != nullptr) {
+            while (m_pVertexBuffer[1]->Release());
+            m_pVertexBuffer[1] = nullptr;
+        }
+        if (m_pIndexBuffer[1] != nullptr) {
+            while (m_pIndexBuffer[1]->Release());
+            m_pIndexBuffer[1] = nullptr;
+        }
+    }
+
     /*inline GLuint get_shader()
     {
         return basicshaders[(unsigned int)get_rt()];

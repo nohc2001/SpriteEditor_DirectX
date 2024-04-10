@@ -100,6 +100,10 @@ public:
 	void load(wchar_t* filename);
 
 	void save(wchar_t* filename);
+
+	bool isExistSpr(int* objptr);
+
+	void Release();
 };
 
 unordered_map<wchar_t*, Sprite*> sprdirData;
@@ -133,7 +137,7 @@ void Sprite::render(const ConstantBuffer& uniform)
 			for (int i = 0; i < data.objs->size(); ++i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
-				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
+				ConstantBuffer cb = GetCamModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
 				obj->source->render(cb);
 			}
 		}
@@ -311,5 +315,53 @@ void Sprite::save(wchar_t* filename)
 	// Close the file and delete the char*
 	file.close();
 	fm->_tempPopLayer();
+}
+
+bool Sprite::isExistSpr(int* objptr) {
+	if (this->st == sprite_type::st_objects) {
+		for (int i = 0; i < data.objs->size(); ++i) {
+			Object* mobj = (Object*)data.objs->at(i);
+			if ((Sprite*)objptr == mobj->source) {
+				return true;
+			}
+			bool b = mobj->source->isExistSpr(objptr);
+			if (b) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void Sprite::Release() {
+	if (st == sprite_type::st_freepolygon) {
+		if (data.freepoly != nullptr) {
+			data.freepoly->Release();
+			fm->_Delete((byte8*)data.freepoly, sizeof(rbuffer));
+		}
+	}
+	else if (st == sprite_type::st_objects) {
+		if (data.objs != nullptr) {
+			for (int i = 0; i < data.objs->size(); ++i) {
+				// check obj exist??
+				Object* obj = (Object*)data.objs->at(i);
+				if (obj != nullptr) {
+					fm->_Delete((byte8*)obj, sizeof(Object));
+					data.objs->at(i) = nullptr;
+				}
+			}
+
+			data.objs->release();
+			fm->_Delete((byte8*)data.objs, sizeof(fmvecarr<int*>));
+			data.objs = nullptr;
+		}
+	}
+	else if (st == sprite_type::st_sprite_filedir) {
+		if (data.dir != nullptr) {
+			int maxCap = wcslen(data.dir) + 1;
+			fm->_Delete((byte8*)data.dir, maxCap * sizeof(wchar_t));
+			data.dir = nullptr;
+		}
+	}
 }
 #endif

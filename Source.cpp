@@ -48,6 +48,7 @@ ConstantBuffer polygon_cb;
 Sprite* mainSprite = nullptr;
 Sprite* basicSprite = nullptr;
 Sprite* fpSprite = nullptr;
+bool fpedit = false;
 
 Page* mainpage = nullptr;
 Page* colorpage = nullptr;
@@ -914,6 +915,34 @@ void loadfromfilebtn_event(DXBtn* btn, DX_Event evt)
 	}
 }
 
+void fpsprbtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			
+			if (fpedit == false && fpSprite == nullptr) {
+				fpSprite = (Sprite*)fm->_New(sizeof(Sprite), true);
+				fpSprite->null();
+				fpSprite->st = sprite_type::st_freepolygon;
+				fpSprite->data.freepoly = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+				fpSprite->data.freepoly->Init(false);
+				fpSprite->data.freepoly->begin();
+				fpSprite->data.freepoly->set_inherit(true);
+				fpSprite->data.freepoly->end();
+				fpedit = true;
+			}
+		}
+	}
+}
 
 void main_init(Page* p)
 {
@@ -1183,7 +1212,7 @@ void main_init(Page* p)
 
 	dbg << ", fpsprbtn = " << p->pfm.Fup << endl;
 	DXBtn* fpsprbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	fpsprbtn->init(L"Fp", basicbtn_init, basicbtn_render, basicbtn_update, basicbtn_event,
+	fpsprbtn->init(L"Fp", basicbtn_init, basicbtn_render, basicbtn_update, fpsprbtn_event,
 		shp::rect4f(400, -sch / 2.0f, 700, -sch / 2.0f + 100));
 
 	dbg << "};" << endl;
@@ -1243,12 +1272,11 @@ void main_render(Page* p)
 					sch / 2.0f - 100.0f + tab_height);
 			for (int i = 0; i < objarr->size(); ++i)
 			{
-				wchar_t* nstr = (wchar_t*)to_wstring(i).c_str();
+				wchar_t nstr[16];
+				wcscpy_s(nstr, (wchar_t*)to_wstring(i).c_str());
 				int len = wcslen(nstr);
 				draw_string(nstr, len, 30, objrt, DX11Color(1, 1, 1, 1));
-				objrt.fy -= 100;
-				objrt.ly -= 100;
-
+				
 				if (*objselect_id == i)
 				{
 					drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
@@ -1265,6 +1293,8 @@ void main_render(Page* p)
 							0.3f,
 							1.0f));
 				}
+				objrt.fy -= 100;
+				objrt.ly -= 100;
 			}
 
 			drawline(shp::vec2f(tabrt.getCenter().x, tabrt.fy),
@@ -1419,6 +1449,9 @@ void main_render(Page* p)
 	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	linedrt->render(cb);
 
+	if (fpSprite != nullptr && fpedit) {
+		fpSprite->render(cb);
+	}
 	// dbgcount(0, dbg << "try render sprite" << endl);
 	if (mainSprite != nullptr)
 	{
@@ -1469,7 +1502,6 @@ void main_render(Page* p)
 		mainSprite->render(cb);
 	}
 
-
 	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
 	drawline_cam(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
@@ -1481,7 +1513,7 @@ void main_render(Page* p)
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
 
 	float d = 50.0f * (int)(zoomrate);
-	float lw = 1.0f;
+	float lw = 2.0f;
 	float alpha = 0.2f;
 	drawline_cam(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
 		DX11Color(1, 1, 1, 1.0f));
@@ -1745,6 +1777,7 @@ void main_event(Page* p, DX_Event evt)
 				sprdirbtn->Event(evt);
 				loadbydirbtn->Event(evt);
 				fpsprbtn->Event(evt);
+
 			}
 			break;
 			case 1:
@@ -1759,12 +1792,12 @@ void main_event(Page* p, DX_Event evt)
 					if (*finger_pressed)
 					{
 						shp::vec2f mpos = GetMousePos(evt.lParam);
-						shp::vec2f temppos = GetMousePos_notcenter(evt.lParam);
-						shp::vec2f viewpos =
+						//shp::vec2f temppos = GetMousePos_notcenter(evt.lParam);
+						/*shp::vec2f viewpos =
 							shp::vec2f(present_center->x + (scwh.x / scw) * temppos.x -
 								scwh.x / 2.0f,
 								present_center->y - (scwh.y / sch) * temppos.x +
-								scwh.y / 2.0f);
+								scwh.y / 2.0f);*/
 						shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
 						*present_center = *centerorigin - dv.operator*(zoomrate);
 						obj->pos.x = present_center->x;
@@ -1777,17 +1810,17 @@ void main_event(Page* p, DX_Event evt)
 			case 2:
 				// rot
 			{
-				if (evt.message == WM_MOUSEMOVE)
+				if (*finger_pressed)
 				{
 					shp::vec2f mpos = GetMousePos(evt.lParam);
 					float y = mpos.y;
 					if (y > 0)
 					{
-						obj->rot.z += 0.01f;
+						obj->rot.z += 0.001f;
 					}
 					else
 					{
-						obj->rot.z -= 0.01f;
+						obj->rot.z -= 0.001f;
 					}
 				}
 			}
@@ -1795,21 +1828,21 @@ void main_event(Page* p, DX_Event evt)
 			case 3:
 				// sca
 			{
-				if (evt.message == WM_MOUSEMOVE)
+				if (*finger_pressed)
 				{
 					shp::vec2f mpos = GetMousePos(evt.lParam);
 					float y = mpos.y;
 					if (y > 0)
 					{
-						obj->sca.x *= 1.01f;
-						obj->sca.y *= 1.01f;
-						obj->sca.z *= 1.01f;
+						obj->sca.x *= 1.001f;
+						obj->sca.y *= 1.001f;
+						obj->sca.z *= 1.001f;
 					}
 					else
 					{
-						obj->sca.x /= 1.01f;
-						obj->sca.y /= 1.01f;
-						obj->sca.z /= 1.01f;
+						obj->sca.x /= 1.001f;
+						obj->sca.y /= 1.001f;
+						obj->sca.z /= 1.001f;
 					}
 				}
 			}
@@ -1865,6 +1898,7 @@ void main_event(Page* p, DX_Event evt)
 	}
 	else
 	{
+		fpedit = false;
 		DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 		DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
 		DXBtn* objselect = (DXBtn*)&p->pfm.Data[(int)mainpm::objselect];
@@ -1893,6 +1927,37 @@ void main_event(Page* p, DX_Event evt)
 		}
 	}
 
+	
+	//이거 왜 실행 안됨??
+	if (evt.message == WM_RBUTTONDOWN) {
+		if (fpedit && fpSprite != nullptr) {
+			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+			rbuffer* rb = fpSprite->data.freepoly;
+			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
+			int rc = rb->get_renderChoice();
+			for (int i = 0; i < rb->get_vertexsiz(rc); ++i) {
+				rb->buffer[rc]->at(i).Pos.x -= obj->pos.x;
+				rb->buffer[rc]->at(i).Pos.y -= obj->pos.y;
+				rb->buffer[rc]->at(i).Pos.z -= obj->pos.z;
+			}
+			rb->end();
+			if (obj->source == basicSprite) {
+				obj->source = fpSprite;
+				fpSprite = nullptr;
+				fpedit = false;
+			}
+			else {
+				Sprite* tempSpr = obj->source;
+				obj->source = nullptr;
+				if (mainSprite->isExistSpr((int*)tempSpr) == false) {
+					fm->_Delete((byte8*)tempSpr, sizeof(Sprite));
+				}
+				obj->source = fpSprite;
+				fpSprite = nullptr;
+				fpedit = false;
+			}
+		}
+	}
 	if (evt.message == WM_LBUTTONDOWN)
 	{
 		*finger_pressed = true;
@@ -1914,6 +1979,16 @@ void main_event(Page* p, DX_Event evt)
 		{
 			press_ef = false;
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
+			DX11Color presentcolor = *(DX11Color*)&p->pfm.Data[(int)mainpm::present_color];
+			ap->set_inherit(true);
+			ap->begin();
+			ap->av(SimpleVertex(shp::vec3f(viewpos.x, viewpos.y, 0), presentcolor));
+			ap->end();
+		}
+
+		if (fpedit && press_ef) {
+			press_ef = false;
+			rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
 			DX11Color presentcolor = *(DX11Color*)&p->pfm.Data[(int)mainpm::present_color];
 			ap->set_inherit(true);
 			ap->begin();
@@ -2137,6 +2212,8 @@ void main_event(Page* p, DX_Event evt)
 			}
 		}
 	}
+
+	
 }
 
 void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
@@ -2812,8 +2889,8 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 	width = GetSystemMetrics(SM_CXSCREEN);
 	height = GetSystemMetrics(SM_CYSCREEN);
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-    g_hWnd = CreateWindow( L"TutorialWindowClass", L"SpriteEditor_DirectX", WS_OVERLAPPEDWINDOW,
-                           CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
+    g_hWnd = CreateWindow( L"TutorialWindowClass", L"EuclidMachine", WS_OVERLAPPEDWINDOW,
+                           0, 0, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
                            NULL );
     if( !g_hWnd )
         return E_FAIL;
@@ -3372,8 +3449,6 @@ void Render()
 		// dbgcount(0, dbg << "render : " << i << endl);
 		pagestack[i]->render_func(pagestack[i]);
 	}
-
-	
 
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();
