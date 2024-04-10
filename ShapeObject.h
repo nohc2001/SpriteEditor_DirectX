@@ -355,7 +355,6 @@ public:
     }
 
     void begin() {
-
         int nextchoice = (get_choice() + 1) % 2;
 
         if (m_pVertexBuffer[nextchoice] != nullptr) {
@@ -385,6 +384,7 @@ public:
         }
 
         *(int*)setting = 0;
+        set_choice(1);
     }
 
     inline void av(const SimpleVertex& vertex) {
@@ -444,15 +444,6 @@ public:
             return hr;
 
         set_choice(nextchoice);
-
-        /*
-        *if (get_inherit()) {
-            fmvecarr<SimpleVertex>* vptr = buffer[0];
-            buffer[0] = buffer[1];
-            buffer[1] = vptr;
-        }
-        */
-        
     }
 
     void push(const ConstantBuffer& uniform) {

@@ -127,6 +127,15 @@ void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
     linedrt->render(cb);
 }
 
+void drawline_cam(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
+{
+	shp::vec2f delta = p1 - p0;
+	float radian = shp::angle2f::usedxdy(delta.x, delta.y).radian;
+	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), 0), shp::vec3f(0, 0, radian),
+		shp::vec3f(sqrtf(delta.x * delta.x + delta.y * delta.y), linewidth, 1), color);
+	linedrt->render(cb);
+}
+
 shp::vec2f GetMousePos(LPARAM lParam) {
 	int x = LOWORD(lParam);
 	int y = HIWORD(lParam);
@@ -1000,8 +1009,8 @@ void main_render(Page* p)
 	}
 
 	// obj redering_2d
-	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -5.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -1.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(pc->x, pc->y, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	CamView = XMMatrixLookAtLH(Eye, At, Up);
 
@@ -1013,7 +1022,7 @@ void main_render(Page* p)
 		0, 0, 1.0f / (farZ - nearZ), 0,
 		0, 0, 1.0f / (nearZ - farZ), 1);
 
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	linedrt->render(cb);
 
 	// dbgcount(0, dbg << "try render sprite" << endl);
@@ -1035,8 +1044,8 @@ void main_render(Page* p)
 			{
 				temp = ap->buffer[ap->get_renderChoice()]->at(i).Pos;
 				shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
-				ConstantBuffer normalCB = GetBasicModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
-				ConstantBuffer selectCB = GetBasicModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
+				ConstantBuffer normalCB = GetCamModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
+				ConstantBuffer selectCB = GetCamModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
 					shp::vec3f(zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)),
 						zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)), 1),
 					DX11Color(1.0f, 0, 1.0f, 1.0f));
@@ -1053,13 +1062,13 @@ void main_render(Page* p)
 
 				if (!BeSelect) linedrt->render(normalCB);
 
-				drawline(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
+				drawline_cam(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
 					DX11Color(1, 1, 1, 1));
 				savpos = pos;
 			}
 			temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
 			shp::vec3f initpos = shp::vec3f(temp.x, temp.y, temp.z);
-			drawline(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
+			drawline_cam(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
 				4 * zoomrate, DX11Color(1, 1, 1, 1));
 		}
 
@@ -1068,21 +1077,21 @@ void main_render(Page* p)
 
 
 	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
-	drawline(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
+	drawline_cam(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
+	drawline_cam(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
+	drawline_cam(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
-	drawline(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
+	drawline_cam(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
 		4 * zoomrate, DX11Color(1, 1, 1, 1));
 
 	float d = 50.0f * (int)(zoomrate);
 	float lw = 1.0f;
 	float alpha = 0.2f;
-	drawline(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
+	drawline_cam(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
 		DX11Color(1, 1, 1, 1.0f));
-	drawline(shp::vec2f(0, pc->y - scwh.y), shp::vec2f(0, pc->y + scwh.y), 4.0f * zoomrate,
+	drawline_cam(shp::vec2f(0, pc->y - scwh.y), shp::vec2f(0, pc->y + scwh.y), 4.0f * zoomrate,
 		DX11Color(1, 1, 1, 1.0f));
 	for (int k = 0; k < 3; ++k)
 	{
@@ -1092,14 +1101,14 @@ void main_render(Page* p)
 		int max = (pc->y + scwh.y) / d;
 		for (; ax < max; ++ax)
 		{
-			drawline(shp::vec2f(pc->x - scwh.x, (float)ax * d),
+			drawline_cam(shp::vec2f(pc->x - scwh.x, (float)ax * d),
 				shp::vec2f(pc->x + scwh.x, (float)ax * d), lw * zoomrate, DX11Color(1, 1, 1, alpha));
 		}
 		ax = (pc->x - scwh.x) / d;
 		max = (pc->x + scwh.x) / d;
 		for (; ax < max; ++ax)
 		{
-			drawline(shp::vec2f((float)ax * d, pc->y - scwh.y),
+			drawline_cam(shp::vec2f((float)ax * d, pc->y - scwh.y),
 				shp::vec2f((float)ax * d, pc->y + scwh.y), lw * zoomrate, DX11Color(1, 1, 1, alpha));
 		}
 		d = d * 2.0f;
@@ -1436,13 +1445,15 @@ void main_event(Page* p, DX_Event evt)
 				{
 					if (dv.y > 0)
 					{
-						zoomrate = 0.01f + zoomrate * 1.01f;
+						zoomrate = zoomrate + 0.001f;
 					}
 					else if (dv.y < 0)
 					{
-						zoomrate = 0.01f + zoomrate * 0.99f;
-						if (zoomrate < 0.01f)
-							zoomrate = 0.01f;
+						zoomrate = zoomrate - 0.001f;
+					}
+
+					if (zoomrate <= 0.001f) {
+						zoomrate = 0.001f;
 					}
 				}
 			}
@@ -1504,6 +1515,9 @@ void main_event(Page* p, DX_Event evt)
 					}
 				}
 				ap->end();
+				if (ap->buffer[ap->get_choice()] == 0) {
+					cout << "hey" << endl;
+				}
 				fm->_tempPopLayer();
 			}
 
