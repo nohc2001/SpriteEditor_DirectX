@@ -46,6 +46,8 @@ XMMATRIX				CamProj;
 ConstantBuffer polygon_cb;
 
 Sprite* mainSprite = nullptr;
+Sprite* basicSprite = nullptr;
+Sprite* fpSprite = nullptr;
 
 Page* mainpage = nullptr;
 Page* colorpage = nullptr;
@@ -62,6 +64,9 @@ UINT height;
 rbuffer cursor_obj;
 rbuffer polygon_obj;
 rbuffer dbgpos_obj;
+
+char sprloadmod = 'n'; 
+// n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
 
 struct pos_select_obj
 {
@@ -100,6 +105,16 @@ enum class mainpm {
 	, showobjlist = 2977
 	, closeobjlist = 2978
 	, savefilestr = 3178
+	, tabbtn_objs = 3688
+	, tabbtn_property = 3888
+	, list_height = 4088
+	, tabSlider = 4096
+	, objselect_id = 4280
+	, tabselect_id = 4284
+	, paramselect_id = 4288
+	, sprdirbtn = 4292
+	, loadbydirbtn = 4492
+	, fpsprbtn = 4692
 };
 enum class colorpm {
 	presentcolor = 0
@@ -116,6 +131,10 @@ enum class texteditpm {
 	, ishan = 10000
 	, isshift = 10001
 	, deststring = 10002
+};
+enum class filepm
+{
+	pdir = 0, file_in_dir = 4096, sliderRate = 4136, vertSlider = 4140
 };
 
 void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
@@ -234,6 +253,99 @@ void basicbtn_event(DXBtn* btn, DX_Event evt)
 			press_ef = false;
 			flow->x = 0;
 			// operate
+		}
+	}
+}
+
+void basicslider_init(DXSlider* slider)
+{
+}
+
+void basicslider_render(DXSlider* slider)
+{
+	shp::vec2f cen = slider->sup()->loc.getCenter();
+	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
+	//GLuint shader = linedrt->get_shader();
+	shp::rect4f bar;
+	if (slider->horizontal)
+	{
+		bar = shp::rect4f(cen.x - wh.x, cen.y - wh.y / 3, cen.x + wh.x, cen.y + wh.y / 3);
+	}
+	else
+	{
+		bar = shp::rect4f(cen.x - wh.x / 3, cen.y - wh.y, cen.x + wh.x / 3, cen.y + wh.y);
+	}
+
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(bar.getCenter().x, bar.getCenter().y, 0), shp::vec3f(0, 0, 0),
+		shp::vec3f(bar.getw(), bar.geth(), 1), DX11Color(1.0f, 1.0f, 1.0f, 0.5f));
+	DX11Color col = DX11Color(1, 1, 1, 0.5f);
+
+
+	float rate = slider->setter / slider->max;
+	shp::rect4f pos;
+	shp::vec2f setp;
+	if (slider->horizontal)
+	{
+		setp = shp::vec2f(cen.x - wh.x + rate * wh.x * 2, cen.y);
+		pos = shp::rect4f(setp.x - wh.y, setp.y - wh.y, setp.x + wh.y, setp.y + wh.y);
+	}
+	else
+	{
+		setp = shp::vec2f(cen.x, cen.y + wh.y - rate * wh.y * 2);
+		pos = shp::rect4f(setp.x - wh.x, setp.y - wh.x, setp.x + wh.x, setp.y + wh.x);
+	}
+
+	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pos.getCenter().x, pos.getCenter().y, 0), shp::vec3f(0, 0, shp::PI / 4.0f),
+		shp::vec3f(pos.getw() * 0.7f, pos.geth() * 0.7f, 1), DX11Color(0.1f, 0.4f, 0.6f, 1.0f));
+	linedrt->render(cb2);
+	linedrt->render(cb);
+}
+
+void basicslider_update(DXSlider* slider, float delta)
+{
+}
+
+void basicslider_event(DXSlider* slider, DX_Event evt)
+{
+	if (press_ef)
+	{
+		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(evt.lParam).touchId);
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+
+		shp::rect4f loc = slider->sup()->loc;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), loc))
+		{
+			if (slider->horizontal)
+			{
+				float mx = mpos.x;
+				if (mx < loc.fx)
+					mx = loc.fx;
+				if (mx > loc.lx)
+					mx = loc.lx;
+
+				float v = (mx - loc.fx) / loc.getw();
+				slider->setter = slider->max * v;
+			}
+			else
+			{
+				float mx = mpos.y;
+				if (mx < loc.fy)
+					mx = loc.fy;
+				if (mx > loc.ly)
+					mx = loc.ly;
+
+				float v = (-mx + loc.ly) / loc.geth();
+				slider->setter = slider->max * v;
+			}
+			switch (slider->mod)
+			{
+			case 'n':
+				*reinterpret_cast <int*>(slider->obj) = slider->setter;
+				break;
+			case 'f':
+				*reinterpret_cast <float*>(slider->obj) = slider->setter;
+				break;
+			}
 		}
 	}
 }
@@ -402,6 +514,27 @@ void freepolybtn_event(DXBtn* btn, DX_Event evt)
 						mainSprite->data.freepoly->set_inherit(true);
 						mainSprite->data.freepoly->end();
 					}
+				}
+				else if (*btn->param[4] == 2)
+				{
+					// makeobj
+					if (mainSprite == nullptr)
+					{
+						dbgcount(0, dbg << "mainSprite_init" << endl);
+						mainSprite = (Sprite*)fm->_New(sizeof(Sprite), true);
+						mainSprite->null();
+						mainSprite->st = sprite_type::st_objects;
+						mainSprite->data.objs =
+							(fmvecarr < int*>*)fm->_New(sizeof(fmvecarr < int*>), true);
+						mainSprite->data.objs->NULLState();
+						mainSprite->data.objs->Init(8, false);
+					}
+					Object* newobj = (Object*)fm->_New(sizeof(Object), true);
+					newobj->source = basicSprite;
+					newobj->pos = shp::vec3f(0, 0, 0);
+					newobj->rot = shp::vec3f(0, 0, 0);
+					newobj->sca = shp::vec3f(1, 1, 1);
+					mainSprite->data.objs->push_back(reinterpret_cast <int*>(newobj));
 				}
 			}
 			else
@@ -717,10 +850,88 @@ void closeobjlistbtn_event(DXBtn* btn, DX_Event evt)
 	}
 }
 
+void tabbtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			unsigned int* a = (unsigned int*)&mainpage->pfm.Data[(int)mainpm::tabselect_id];
+			if (*btn->param[2] == 0)
+			{
+				*a = 0;
+			}
+			else
+			{
+				*a = 1;
+			}
+			// operate
+		}
+	}
+}
+
+void sprdirbtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			sprloadmod = 'd';
+			pagestacking(filepage);
+		}
+	}
+}
+
+void loadfromfilebtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			sprloadmod = 'l';
+			pagestacking(filepage);
+		}
+	}
+}
+
+
 void main_init(Page* p)
 {
+	basicSprite = (Sprite*)fm->_New(sizeof(Sprite), true);
+	basicSprite->null();
+	basicSprite->st == sprite_type::st_freepolygon;
+	basicSprite->data.freepoly = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+	basicSprite->data.freepoly->Init(false);
+	basicSprite->data.freepoly->begin();
+	basicSprite->data.freepoly->av(SimpleVertex(shp::vec3f(-100, -100, 0), DX11Color(1, 1, 1, 1)));
+	basicSprite->data.freepoly->av(SimpleVertex(shp::vec3f(100, -100, 0), DX11Color(1, 1, 1, 1)));
+	basicSprite->data.freepoly->av(SimpleVertex(shp::vec3f(100, 100, 0), DX11Color(1, 1, 1, 1)));
+	basicSprite->data.freepoly->av(SimpleVertex(shp::vec3f(-100, 100, 0), DX11Color(1, 1, 1, 1)));
+	basicSprite->data.freepoly->end();
+
 	dbg << (int)mainpm::opencolorpage << endl;
 	static int behaveid_arr[6] = { 0, 1, 2, 3, 4, -1 };
+	static int tabid_arr[2] = { 0, 1 };
 	dbg << "enum class mainpm{" << endl;
 
 	p->pfm.SetHeapData(new byte8[8192], 8192);
@@ -922,6 +1133,59 @@ void main_init(Page* p)
 	wchar_t* savefilestr = (wchar_t*)p->pfm._New(sizeof(wchar_t) * 255);
 	savefilestr[0] = 0;
 
+	dbg << ", tabbtn_objs = " << p->pfm.Fup << endl;
+	DXBtn* tabbtn_objs = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	tabbtn_objs->init(L"objs", basicbtn_init, basicbtn_render, basicbtn_update, tabbtn_event,
+		shp::rect4f(scw / 2.0f - 400, sch / 2.0f - 100.0f, scw / 2.0f - 200,
+			sch / 2.0f));
+
+	dbg << ", tabbtn_property = " << p->pfm.Fup << endl;
+	DXBtn* tabbtn_property = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	tabbtn_property->init(L"property", basicbtn_init, basicbtn_render, basicbtn_update,
+		tabbtn_event, shp::rect4f(scw / 2.0f - 200, sch / 2.0f - 100.0f,
+			scw / 2.0f, sch / 2.0f));
+	tabbtn_objs->param[2] = &tabid_arr[0];
+	tabbtn_property->param[2] = &tabid_arr[1];
+
+	dbg << ", list_height = " << p->pfm.Fup << endl;
+	float* list_height = (float*)p->pfm._New(sizeof(float) * 2);
+	list_height[0] = 0;
+	list_height[1] = 0;
+
+	dbg << ", tabSlider = " << p->pfm.Fup << endl;
+	DXSlider* tabSlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
+	tabSlider->init(1.0f, 'f', (int*)list_height,
+		shp::rect4f(scw / 2.0f - 60.0f, -sch / 2.0f, scw / 2.0f, sch / 2.0f - 100.0f),
+		basicslider_init, basicslider_render, basicslider_update, basicslider_event,
+		false);
+
+	dbg << ", objselect_id = " << p->pfm.Fup << endl;
+	unsigned int* objselect_id = (unsigned int*)p->pfm._New(sizeof(unsigned int));
+	*objselect_id = 0;
+
+	dbg << ", tabselect_id = " << p->pfm.Fup << endl;
+	unsigned int* tabselect_id = (unsigned int*)p->pfm._New(sizeof(unsigned int));
+	*tabselect_id = 0;
+
+	dbg << ", paramselect_id = " << p->pfm.Fup << endl;
+	unsigned int* paramselect_id = (unsigned int*)p->pfm._New(sizeof(unsigned int));
+	*paramselect_id = 0;
+
+	dbg << ", sprdirbtn = " << p->pfm.Fup << endl;
+	DXBtn* sprdirbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	sprdirbtn->init(L"sprdir", basicbtn_init, basicbtn_render, basicbtn_update, sprdirbtn_event,
+		shp::rect4f(-700, -sch / 2.0f, -400, -sch / 2.0f + 100));
+
+	dbg << ", loadbydirbtn = " << p->pfm.Fup << endl;
+	DXBtn* loadbydirbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	loadbydirbtn->init(L"loadByDir", basicbtn_init, basicbtn_render, basicbtn_update,
+		loadfromfilebtn_event, shp::rect4f(-300, -sch / 2.0f, 300, -sch / 2.0f + 100));
+
+	dbg << ", fpsprbtn = " << p->pfm.Fup << endl;
+	DXBtn* fpsprbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	fpsprbtn->init(L"Fp", basicbtn_init, basicbtn_render, basicbtn_update, basicbtn_event,
+		shp::rect4f(400, -sch / 2.0f, 700, -sch / 2.0f + 100));
+
 	dbg << "};" << endl;
 }
 
@@ -950,7 +1214,137 @@ void main_render(Page* p)
 
 	if (*showobjlist)
 	{
+		// obj list
+
 		closeobjlist->Render();
+		shp::rect4f tabrt = shp::rect4f(scw / 2.0f - 400, +sch / 2.0f, scw / 2.0f, -sch / 2.0f);
+		
+		unsigned int* tabselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::tabselect_id];
+		DXBtn* tabbtn_objs = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_objs];
+		DXBtn* tabbtn_property = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_property];
+		DXSlider* tabSlider = (DXSlider*)&p->pfm.Data[(int)mainpm::tabSlider];
+		tabbtn_objs->Render();
+		tabbtn_property->Render();
+		tabSlider->render();
+
+		if (mainSprite == nullptr) goto PASS_Render_0;
+
+		if (*tabselect_id == 0)
+		{
+			
+			float tab_height = *(float*)&p->pfm.Data[(int)mainpm::list_height];
+			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+			// render lists
+
+			fmvecarr < int*>* objarr = mainSprite->data.objs;
+			tab_height = tab_height * (float)objarr->size() * 100;
+			shp::rect4f objrt =
+				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + tab_height, scw / 2.0f,
+					sch / 2.0f - 100.0f + tab_height);
+			for (int i = 0; i < objarr->size(); ++i)
+			{
+				wchar_t* nstr = (wchar_t*)to_wstring(i).c_str();
+				int len = wcslen(nstr);
+				draw_string(nstr, len, 30, objrt, DX11Color(1, 1, 1, 1));
+				objrt.fy -= 100;
+				objrt.ly -= 100;
+
+				if (*objselect_id == i)
+				{
+					drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
+						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), DX11Color(0.2f,
+							0.7f,
+							0.8f,
+							1.0f));
+				}
+				else
+				{
+					drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
+						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), DX11Color(0.2f,
+							0.3f,
+							0.3f,
+							1.0f));
+				}
+			}
+
+			drawline(shp::vec2f(tabrt.getCenter().x, tabrt.fy),
+				shp::vec2f(tabrt.getCenter().x, tabrt.ly), tabrt.geth() / 2.0f, DX11Color(0, 0,
+					0,
+					0.8f));
+		}
+		else
+		{
+			// property
+			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+			unsigned int* paramselect_id =
+				(unsigned int*)&p->pfm.Data[(int)mainpm::paramselect_id];
+			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
+			fmvecarr < int*>* objarr = mainSprite->data.objs;
+			float* tab_height = (float*)&p->pfm.Data[(int)mainpm::list_height];
+			float th = tab_height[1] * (float)objarr->size() * 100.0f;
+			shp::rect4f objrt =
+				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + th, scw / 2.0f,
+					sch / 2.0f - 100.0f + th);
+
+			wchar_t nstr[5][16] = { L"spr", L"pos", L"rot", L"sca", L"ic" };
+			// source
+			for (int i = 0; i < 5; ++i)
+			{
+				DX11Color col = DX11Color(0, 0, 0, 1);
+				col =
+					(*paramselect_id == i) ? DX11Color(0.2f, 0.7f, 0.8f, 0.8f) : DX11Color(0.2f, 0.3f,
+						0.3f, 0.8f);
+				int len = wcslen(nstr[i]);
+				draw_string(nstr[i], len, 30, objrt, DX11Color(1, 1, 1, 1));
+				drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
+					shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col);
+				objrt.fy -= 100;
+				objrt.ly -= 100;
+			}
+
+			switch (*paramselect_id)
+			{
+			case 0:
+				// spr
+			{
+
+				DXBtn* sprdirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::sprdirbtn];
+				DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
+				DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
+				sprdirbtn->Render();
+				loadbydirbtn->Render();
+				fpsprbtn->Render();
+			}
+			break;
+			case 1:
+				// pos
+			{
+
+			}
+			break;
+			case 2:
+				// rot
+			{
+			}
+			break;
+			case 3:
+				// sca
+			{
+			}
+			break;
+			case 4:
+				// ic
+			{
+			}
+			break;
+			}
+		}
+
+	PASS_Render_0:
+
+		drawline(shp::vec2f(tabrt.getCenter().x, tabrt.fy),
+			shp::vec2f(tabrt.getCenter().x, tabrt.ly), tabrt.geth() / 2.0f, DX11Color(0, 0, 0,
+				0.5f));
 	}
 	else
 	{
@@ -1132,9 +1526,65 @@ void main_update(Page* p, float delta)
 		//save mainsprite with name
 	}
 
+	unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+	switch (sprloadmod) {
+	case 'D':
+	{
+		// load spr with sprdir by dir(filepage.pdir)
+		Sprite* spr = (Sprite*)fm->_New(sizeof(Sprite), true);
+		spr->null();
+		wstring str = utf8_to_wstr((char*)&filepage->pfm.Data[(int)filepm::pdir]);
+		spr->load((wchar_t*)str.c_str());
+		int len = wcslen(str.c_str());
+		if (mainSprite->data.dir != nullptr) {
+			if (fm->bAlloc((byte8*)mainSprite->data.dir, sizeof(wchar_t) * (wcslen(mainSprite->data.dir) + 1))) {
+				fm->_Delete((byte8*)mainSprite->data.dir, sizeof(wchar_t) * (wcslen(mainSprite->data.dir) + 1));
+			}
+			mainSprite->data.dir = nullptr;
+		}
+		mainSprite->data.dir = (wchar_t*)fm->_New(sizeof(wchar_t) * (len + 1), true);
+		wcscpy(mainSprite->data.dir, str.c_str());
+		sprdirData[mainSprite->data.dir] = spr;
+		sprloadmod = 'n';
+	}
+	break;
+	case 'L':
+	{
+		//load spr by dir
+		Sprite* spr = (Sprite*)fm->_New(sizeof(Sprite), true);
+		spr->null();
+		wstring str = utf8_to_wstr((char*)&filepage->pfm.Data[(int)filepm::pdir]);
+		spr->load((wchar_t*)str.c_str());
+		Object* o = (Object*)mainSprite->data.objs->at(*objselect_id);
+		if (o->source != nullptr) {
+			if (fm->bAlloc((byte8*)o->source, sizeof(Sprite))) {
+				//release data
+				fm->_Delete((byte8*)o->source, sizeof(Sprite));
+			}
+			o->source = nullptr;
+		}
+		o->source = spr;
+		sprloadmod = 'n';
+	}
+	break;
+	}
+
 	if (*showobjlist)
 	{
+		DXBtn* tabbtn_objs = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_objs];
+		DXBtn* tabbtn_property = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_property];
+		tabbtn_objs->Update(delta);
+		tabbtn_property->Update(delta);
 		closeobjlist->Update(delta);
+		DXSlider* tabSlider = (DXSlider*)&p->pfm.Data[(int)mainpm::tabSlider];
+		tabSlider->update(delta);
+
+		DXBtn* sprdirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::sprdirbtn];
+		DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
+		DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
+		sprdirbtn->Update(delta);
+		loadbydirbtn->Update(delta);
+		fpsprbtn->Update(delta);
 	}
 	else
 	{
@@ -1218,7 +1668,163 @@ void main_event(Page* p, DX_Event evt)
 
 	if (*showobjlist)
 	{
+		DXBtn* tabbtn_objs = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_objs];
+		DXBtn* tabbtn_property = (DXBtn*)&p->pfm.Data[(int)mainpm::tabbtn_property];
 		closeobjlist->Event(evt);
+		DXSlider* tabSlider = (DXSlider*)&p->pfm.Data[(int)mainpm::tabSlider];
+		shp::rect4f tabrt = shp::rect4f(scw / 2.0f - 400, +sch / 2.0f, scw / 2.0f, -sch / 2.0f);
+		unsigned int* tabselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::tabselect_id];
+		if (mainSprite == nullptr) goto PASS_EVENT_0;
+
+		if (*tabselect_id == 0)
+		{
+
+			float tab_height = *(float*)&p->pfm.Data[(int)mainpm::list_height];
+			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+			// render lists
+
+			fmvecarr < int*>* objarr = mainSprite->data.objs;
+			tab_height = tab_height * (float)objarr->size() * 100;
+			shp::rect4f objrt =
+				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + tab_height, scw / 2.0f,
+					sch / 2.0f - 100.0f + tab_height);
+			if (evt.message == WM_LBUTTONDOWN)
+			{
+				shp::vec2f mpos = GetMousePos(evt.lParam);
+				for (int i = 0; i < objarr->size(); ++i)
+				{
+					if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), objrt))
+					{
+						*objselect_id = i;
+					}
+					objrt.fy -= 100;
+					objrt.ly -= 100;
+				}
+			}
+		}
+		else
+		{
+			// property
+			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
+			unsigned int* paramselect_id =
+				(unsigned int*)&p->pfm.Data[(int)mainpm::paramselect_id];
+			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
+			fmvecarr < int*>* objarr = mainSprite->data.objs;
+			float* tab_height = (float*)&p->pfm.Data[(int)mainpm::list_height];
+			float th = tab_height[1] * (float)objarr->size() * 100;
+			shp::rect4f objrt =
+				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + th, scw / 2.0f,
+					sch / 2.0f - 100.0f + th);
+
+			wchar_t nstr[5][16] = { L"spr", L"pos", L"rot", L"sca", L"ic" };
+			// source
+
+			if (evt.message == WM_LBUTTONDOWN)
+			{
+				shp::vec2f mpos = GetMousePos(evt.lParam);
+				for (int i = 0; i < 5; ++i)
+				{
+					if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), objrt))
+					{
+						*paramselect_id = i;
+					}
+					objrt.fy -= 100;
+					objrt.ly -= 100;
+				}
+			}
+
+			switch (*paramselect_id)
+			{
+			case 0:
+				// spr
+			{
+
+				DXBtn* sprdirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::sprdirbtn];
+				DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
+				DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
+				sprdirbtn->Event(evt);
+				loadbydirbtn->Event(evt);
+				fpsprbtn->Event(evt);
+			}
+			break;
+			case 1:
+			{
+				if (evt.message == WM_LBUTTONDOWN)
+				{
+					*present_center = shp::vec2f(obj->pos.x, obj->pos.y);
+					*centerorigin = *present_center;
+				}
+				if (evt.message == WM_MOUSEMOVE)
+				{
+					if (*finger_pressed)
+					{
+						shp::vec2f mpos = GetMousePos(evt.lParam);
+						shp::vec2f temppos = GetMousePos_notcenter(evt.lParam);
+						shp::vec2f viewpos =
+							shp::vec2f(present_center->x + (scwh.x / scw) * temppos.x -
+								scwh.x / 2.0f,
+								present_center->y - (scwh.y / sch) * temppos.x +
+								scwh.y / 2.0f);
+						shp::vec2f dv = shp::vec2f(mpos.x - presspos->x, mpos.y - presspos->y);
+						*present_center = *centerorigin - dv.operator*(zoomrate);
+						obj->pos.x = present_center->x;
+						obj->pos.y = present_center->y;
+					}
+				}
+			}
+			// pos
+			break;
+			case 2:
+				// rot
+			{
+				if (evt.message == WM_MOUSEMOVE)
+				{
+					shp::vec2f mpos = GetMousePos(evt.lParam);
+					float y = mpos.y;
+					if (y > 0)
+					{
+						obj->rot.z += 0.01f;
+					}
+					else
+					{
+						obj->rot.z -= 0.01f;
+					}
+				}
+			}
+			break;
+			case 3:
+				// sca
+			{
+				if (evt.message == WM_MOUSEMOVE)
+				{
+					shp::vec2f mpos = GetMousePos(evt.lParam);
+					float y = mpos.y;
+					if (y > 0)
+					{
+						obj->sca.x *= 1.01f;
+						obj->sca.y *= 1.01f;
+						obj->sca.z *= 1.01f;
+					}
+					else
+					{
+						obj->sca.x /= 1.01f;
+						obj->sca.y /= 1.01f;
+						obj->sca.z /= 1.01f;
+					}
+				}
+			}
+			break;
+			case 4:
+				// ic
+				break;
+			}
+		}
+
+	PASS_EVENT_0:
+
+		tabSlider->Event(evt);
+		tabbtn_objs->Event(evt);
+		tabbtn_property->Event(evt);
 	}
 	else
 	{
@@ -1528,99 +2134,6 @@ void main_event(Page* p, DX_Event evt)
 				shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
 				rt->lx = viewpos.x;
 				rt->ly = viewpos.y;
-			}
-		}
-	}
-}
-
-void basicslider_init(DXSlider* slider)
-{
-}
-
-void basicslider_render(DXSlider* slider)
-{
-	shp::vec2f cen = slider->sup()->loc.getCenter();
-	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
-	//GLuint shader = linedrt->get_shader();
-	shp::rect4f bar;
-	if (slider->horizontal)
-	{
-		bar = shp::rect4f(cen.x - wh.x, cen.y - wh.y / 3, cen.x + wh.x, cen.y + wh.y / 3);
-	}
-	else
-	{
-		bar = shp::rect4f(cen.x - wh.x / 3, cen.y - wh.y, cen.x + wh.x / 3, cen.y + wh.y);
-	}
-
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(bar.getCenter().x, bar.getCenter().y, 0), shp::vec3f(0, 0, 0),
-		shp::vec3f(bar.getw(), bar.geth(), 1), DX11Color(1.0f, 1.0f, 1.0f, 0.5f));
-	DX11Color col = DX11Color(1, 1, 1, 0.5f);
-	
-
-	float rate = slider->setter / slider->max;
-	shp::rect4f pos;
-	shp::vec2f setp;
-	if (slider->horizontal)
-	{
-		setp = shp::vec2f(cen.x - wh.x + rate * wh.x * 2, cen.y);
-		pos = shp::rect4f(setp.x - wh.y, setp.y - wh.y, setp.x + wh.y, setp.y + wh.y);
-	}
-	else
-	{
-		setp = shp::vec2f(cen.x, cen.y + wh.y - rate * wh.y * 2);
-		pos = shp::rect4f(setp.x - wh.x, setp.y - wh.x, setp.x + wh.x, setp.y + wh.x);
-	}
-
-	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pos.getCenter().x, pos.getCenter().y, 0), shp::vec3f(0, 0, shp::PI / 4.0f),
-			shp::vec3f(pos.getw() * 0.7f, pos.geth() * 0.7f, 1), DX11Color(0.1f, 0.4f, 0.6f, 1.0f));
-	linedrt->render(cb2);
-	linedrt->render(cb);
-}
-
-void basicslider_update(DXSlider* slider, float delta)
-{
-}
-
-void basicslider_event(DXSlider* slider, DX_Event evt)
-{
-	if (press_ef)
-	{
-		//int n = SDL_GetNumTouchFingers(GetMousePos_notcenter(evt.lParam).touchId);
-		shp::vec2f mpos = GetMousePos(evt.lParam);
-		
-		shp::rect4f loc = slider->sup()->loc;
-		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), loc))
-		{
-			if (slider->horizontal)
-			{
-				float mx = mpos.x;
-				if (mx < loc.fx)
-					mx = loc.fx;
-				if (mx > loc.lx)
-					mx = loc.lx;
-
-				float v = (mx - loc.fx) / loc.getw();
-				slider->setter = slider->max * v;
-			}
-			else
-			{
-				float mx = mpos.y;
-				if (mx < loc.fy)
-					mx = loc.fy;
-				if (mx > loc.ly)
-					mx = loc.ly;
-
-				float v = (-mx + loc.ly) / loc.geth();
-				slider->setter = slider->max * v;
-			}
-			switch (slider->mod)
-			{
-			case 'n':
-				*reinterpret_cast <int*>(slider->obj) = slider->setter;
-				break;
-			case 'f':
-				*reinterpret_cast <float*>(slider->obj) = slider->setter;
-				break;
 			}
 		}
 	}

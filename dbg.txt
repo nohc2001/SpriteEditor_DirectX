@@ -27,6 +27,16 @@ present_center = 0
 , showobjlist = 2977
 , closeobjlist = 2978
 , savefilestr = 3178
+, tabbtn_objs = 3688
+, tabbtn_property = 3888
+, list_height = 4088
+, tabSlider = 4096
+, objselect_id = 4280
+, tabselect_id = 4284
+, paramselect_id = 4288
+, sprdirbtn = 4292
+, loadbydirbtn = 4492
+, fpsprbtn = 4692
 };
 enum class colorpm{
 presentcolor = 0
@@ -45,3 +55,4 @@ VKeyboard = 0
 , isshift = 10001
 , deststring = 10002
 };
+mainSprite_init

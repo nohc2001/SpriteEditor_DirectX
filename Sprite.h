@@ -102,6 +102,8 @@ public:
 	void save(wchar_t* filename);
 };
 
+unordered_map<wchar_t*, Sprite*> sprdirData;
+
 class Object
 {
 public:

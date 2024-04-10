@@ -1,9 +1,24 @@
 #ifndef DXUI_H
 #define DXUI_H
+#include <codecvt>
 #include "ShapeObject.h"
 
 float scw;
 float sch;
+
+std::string wstr_to_utf8(wchar_t* wstr)
+{
+	std::wstring_convert < std::codecvt_utf8 < wchar_t >> converter;
+	std::string utf8Str = converter.to_bytes(wstr);
+	return utf8Str;
+}
+
+std::wstring utf8_to_wstr(char* utf8str)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	std::wstring wideStr = converter.from_bytes(utf8str);
+	return wideStr;
+}
 
 struct DX_Event {
 	HWND hWnd;
