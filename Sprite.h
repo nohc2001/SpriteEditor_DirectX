@@ -134,7 +134,7 @@ void Sprite::render(const ConstantBuffer& uniform)
 	{
 		if (data.objs != nullptr)
 		{
-			for (int i = 0; i < data.objs->size(); ++i)
+			for (int i = data.objs->size()-1; i >= 0; --i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
 				ConstantBuffer cb = GetCamModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
@@ -321,6 +321,7 @@ bool Sprite::isExistSpr(int* objptr) {
 	if (this->st == sprite_type::st_objects) {
 		for (int i = 0; i < data.objs->size(); ++i) {
 			Object* mobj = (Object*)data.objs->at(i);
+			if (mobj->source == nullptr) continue;
 			if ((Sprite*)objptr == mobj->source) {
 				return true;
 			}

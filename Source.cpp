@@ -1260,7 +1260,6 @@ void main_render(Page* p)
 
 		if (*tabselect_id == 0)
 		{
-			
 			float tab_height = *(float*)&p->pfm.Data[(int)mainpm::list_height];
 			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
 			// render lists
@@ -1450,6 +1449,44 @@ void main_render(Page* p)
 	linedrt->render(cb);
 
 	if (fpSprite != nullptr && fpedit) {
+		rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
+		// dbgcount(0, ap->dbg_rbuffer());
+		// ap->render();
+		XMFLOAT3 temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
+		shp::vec3f savpos = shp::vec3f(temp.x, temp.y, temp.z);
+		fmvecarr < pos_select_obj >* sarr =
+			(fmvecarr < pos_select_obj > *) & p->pfm.Data[(int)mainpm::select_arr];
+
+		for (int i = 0; i < ap->get_vertexsiz(ap->get_renderChoice()); ++i)
+		{
+			temp = ap->buffer[ap->get_renderChoice()]->at(i).Pos;
+			shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
+			ConstantBuffer normalCB = GetCamModelCB(pos, shp::vec3f(0, 0, 0), shp::vec3f(10 * zoomrate, 10 * zoomrate, 1), DX11Color(0, 1.0f, 1.0f, 1.0f));
+			ConstantBuffer selectCB = GetCamModelCB(pos, shp::vec3f(0, 0, *stacktime * shp::PI),
+				shp::vec3f(zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)),
+					zoomrate * (30.0f + 10.0f * sinf(*stacktime * 3.0f)), 1),
+				DX11Color(1.0f, 0, 1.0f, 1.0f));
+			bool BeSelect = false;
+			for (int k = 0; k < sarr->size(); ++k)
+			{
+				if (sarr->at(k).index == i)
+				{
+					linedrt->render(selectCB);
+					BeSelect = true;
+					break;
+				}
+			}
+
+			if (!BeSelect) linedrt->render(normalCB);
+
+			drawline_cam(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
+				DX11Color(1, 1, 1, 1));
+			savpos = pos;
+		}
+		temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
+		shp::vec3f initpos = shp::vec3f(temp.x, temp.y, temp.z);
+		drawline_cam(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
+			4 * zoomrate, DX11Color(1, 1, 1, 1));
 		fpSprite->render(cb);
 	}
 	// dbgcount(0, dbg << "try render sprite" << endl);
@@ -1898,7 +1935,7 @@ void main_event(Page* p, DX_Event evt)
 	}
 	else
 	{
-		fpedit = false;
+		//fpedit = false;
 		DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 		DXBtn* scale = (DXBtn*)&p->pfm.Data[(int)mainpm::scale];
 		DXBtn* objselect = (DXBtn*)&p->pfm.Data[(int)mainpm::objselect];
@@ -1929,17 +1966,25 @@ void main_event(Page* p, DX_Event evt)
 
 	
 	//이거 왜 실행 안됨??
-	if (evt.message == WM_RBUTTONDOWN) {
+	if (evt.message == WM_KEYDOWN && evt.wParam == 'S') {
 		if (fpedit && fpSprite != nullptr) {
 			unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
 			rbuffer* rb = fpSprite->data.freepoly;
 			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
 			int rc = rb->get_renderChoice();
 			for (int i = 0; i < rb->get_vertexsiz(rc); ++i) {
-				rb->buffer[rc]->at(i).Pos.x -= obj->pos.x;
-				rb->buffer[rc]->at(i).Pos.y -= obj->pos.y;
-				rb->buffer[rc]->at(i).Pos.z -= obj->pos.z;
+				XMFLOAT3& ref = rb->buffer[rc]->at(i).Pos;
+				ref.x -= obj->pos.x;
+				ref.y -= obj->pos.y;
+				ref.z -= obj->pos.z;
+				shp::vec2f beforeRotatePos = shp::GetRotatePos(shp::vec2f(0, 0), shp::vec2f(ref.x, ref.y), shp::angle2f(-obj->rot.z, true));
+				ref.x = beforeRotatePos.x;
+				ref.y = beforeRotatePos.y;
+				ref.x = ref.x / obj->sca.x;
+				ref.y = ref.y / obj->sca.y;
+				ref.z = ref.z / obj->sca.z;
 			}
+			rb->set_choice(1);
 			rb->end();
 			if (obj->source == basicSprite) {
 				obj->source = fpSprite;
@@ -1986,7 +2031,7 @@ void main_event(Page* p, DX_Event evt)
 			ap->end();
 		}
 
-		if (fpedit && press_ef) {
+		if (behavemod->x == 0 && (fpedit && press_ef)) {
 			press_ef = false;
 			rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
 			DX11Color presentcolor = *(DX11Color*)&p->pfm.Data[(int)mainpm::present_color];
@@ -2001,6 +2046,12 @@ void main_event(Page* p, DX_Event evt)
 		bool* selection_enable = (bool*)selection->param[2];
 		if ((behavemod->x == 1 && *behave_selected == 0) && (objmod->x == 1 && *selection_enable))
 		{
+			shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
+			rt->fx = viewpos.x;
+			rt->fy = viewpos.y;
+		}
+
+		if ((fpedit && fpSprite != nullptr) && (objmod->x == 1 && *selection_enable)) {
 			shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
 			rt->fx = viewpos.x;
 			rt->fy = viewpos.y;
@@ -2087,6 +2138,43 @@ void main_event(Page* p, DX_Event evt)
 			*rt = shp::rect4f(0, 0, 0, 0);
 		}
 
+		if ((fpedit && fpSprite != nullptr) && (objmod->x == 1 && *selection_enable)) {
+			shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
+			if (rt->fx > rt->lx)
+			{
+				float f = rt->fx;
+				rt->fx = rt->lx;
+				rt->lx = f;
+			}
+			if (rt->fy > rt->ly)
+			{
+				float f = rt->fy;
+				rt->fy = rt->ly;
+				rt->ly = f;
+			}
+
+			// add selection points in freepolygon
+			rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
+			for (int i = 0; i < ap->get_vertexsiz(ap->get_renderChoice()); ++i)
+			{
+				XMFLOAT3 temp = ap->buffer[ap->get_renderChoice()]->at(i).Pos;
+				shp::vec3f pos = shp::vec3f(temp.x, temp.y, temp.z);
+				XMFLOAT4 ctemp = ap->buffer[ap->get_renderChoice()]->at(i).Color;
+				DX11Color col = DX11Color(ctemp.x, ctemp.y, ctemp.z, ctemp.w);
+				shp::vec2f p2 = shp::vec2f(pos.x, pos.y);
+				pos_select_obj pso;
+				pso.index = i;
+				pso.origin_pos = pos;
+				pso.origin_color = col;
+				if (shp::bPointInRectRange(p2, *rt))
+				{
+					sarr->push_back(pso);
+				}
+			}
+
+			*rt = shp::rect4f(0, 0, 0, 0);
+		}
+
 		// sav selection position
 		DXBtn* translate = (DXBtn*)&p->pfm.Data[(int)mainpm::translate];
 		if ((mainSprite != nullptr && mainSprite->st == sprite_type::st_freepolygon)
@@ -2094,6 +2182,17 @@ void main_event(Page* p, DX_Event evt)
 				&& (objmod->x == 1 && *(bool*)translate->param[2])))
 		{
 			rbuffer* ap = (rbuffer*)mainSprite->data.freepoly;
+			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
+			XMFLOAT3 temp;
+			for (int i = 0; i < sarr->size(); ++i)
+			{
+				temp = bptr->at(sarr->at(i).index).Pos;
+				sarr->at(i).origin_pos = shp::vec3f(temp.x, temp.y, temp.z);
+			}
+		}
+
+		if ((fpedit && fpSprite != nullptr) && (objmod->x == 1 && *(bool*)translate->param[2])) {
+			rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
 			fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
 			XMFLOAT3 temp;
 			for (int i = 0; i < sarr->size(); ++i)
@@ -2196,9 +2295,59 @@ void main_event(Page* p, DX_Event evt)
 					}
 				}
 				ap->end();
-				if (ap->buffer[ap->get_choice()] == 0) {
+				/*if (ap->buffer[ap->get_choice()] == 0) {
 					cout << "hey" << endl;
+				}*/
+				fm->_tempPopLayer();
+			}
+
+			if (((behavemod->x == 1) && (objmod->x == 1 && *(bool*)translate->param[2])) && (fpedit && fpSprite != nullptr))
+			{
+				fm->_tempPushLayer();
+				rbuffer* ap = (rbuffer*)fpSprite->data.freepoly;
+				fmvecarr<SimpleVertex>* bptr = ap->buffer[ap->get_renderChoice()];
+				SimpleVertex* farr = (SimpleVertex*)fm->_tempNew(bptr->size() * sizeof(SimpleVertex));
+				for (int i = 0; i < bptr->size(); ++i)
+				{
+					farr[i] = bptr->at(i);
+					// dbgcount(0, dbg << farr[i] << endl)
 				}
+				int vsiz = ap->get_vertexsiz(ap->get_renderChoice());
+				// dbgcount(0, dbg << "ap vertex size : " <<
+				// ap->get_vertexsiz(ap->get_renderChoice()) << endl)
+				ap->clear();
+				ap->begin();
+				for (int i = 0; i < vsiz; ++i)
+				{
+					bool isSelect = false;
+					// dbgcount(0, dbg << "sarr size : " << sarr->size()
+					// << endl)
+					for (int k = 0; k < sarr->size(); ++k)
+					{
+						if (sarr->at(k).index == i)
+						{
+							// 
+							isSelect = true;
+							shp::vec3f pos;
+							pos_select_obj pso = sarr->at(k);
+							pos.x = pso.origin_pos.x + zoomrate * dv.x;
+							pos.y = pso.origin_pos.y + zoomrate * dv.y;
+							pos.z = pso.origin_pos.z;
+							ap->av(SimpleVertex(pos, pso.origin_color));
+							// dbgcount(0, dbg << "pos : " << pos.x << ",
+							// " << pos.y << ", " << pos.z << endl) 
+							break;
+						}
+					}
+
+					if (isSelect == false)
+					{
+						shp::vec3f p = shp::vec3f(farr[i].Pos.x, farr[i].Pos.y, farr[i].Pos.z);
+						DX11Color c = DX11Color(farr[i].Color.x, farr[i].Color.y, farr[i].Color.z, farr[i].Color.w);
+						ap->av(SimpleVertex(p, c));
+					}
+				}
+				ap->end();
 				fm->_tempPopLayer();
 			}
 
@@ -2206,6 +2355,12 @@ void main_event(Page* p, DX_Event evt)
 			if ((behavemod->x == 1 && *behave_selected == 0)
 				&& (objmod->x == 1 && *selection_enable))
 			{
+				shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
+				rt->lx = viewpos.x;
+				rt->ly = viewpos.y;
+			}
+
+			if ((fpedit && fpSprite != nullptr) && (objmod->x == 1 && *selection_enable)) {
 				shp::rect4f* rt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
 				rt->lx = viewpos.x;
 				rt->ly = viewpos.y;
@@ -3354,9 +3509,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
             hdc = BeginPaint( hWnd, &ps );
             EndPaint( hWnd, &ps );
             break;
-        case WM_KEYDOWN:
-            PostQuitMessage(0);
-            break;
+        //case WM_KEYDOWN:
+        //    //PostQuitMessage(0);
+        //    break;
 		case WM_LBUTTONDOWN:
 			press_ef = true;
 			break;
@@ -3371,16 +3526,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
         case WM_DESTROY:
             PostQuitMessage( 0 );
             break;
-
-        default:
-            return DefWindowProc( hWnd, message, wParam, lParam );
     }
 
 	if (FinishInit) {
 		presentPage->event_func(presentPage, evt);
 	}
 
-    return 0;
+    return DefWindowProc(hWnd, message, wParam, lParam);;
 }
 
 
