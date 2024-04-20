@@ -1977,7 +1977,10 @@ void main_event(Page* p, DX_Event evt)
 				ref.x -= obj->pos.x;
 				ref.y -= obj->pos.y;
 				ref.z -= obj->pos.z;
+				//dbg << obj->rot.z/shp::PI << endl;
 				shp::vec2f beforeRotatePos = shp::GetRotatePos(shp::vec2f(0, 0), shp::vec2f(ref.x, ref.y), shp::angle2f(-obj->rot.z, true));
+				//dbg << "origin[" << i << "] : " << ref.x << ", " << ref.y << endl;
+				//dbg << "trpos[" << i << "] : " << beforeRotatePos.x << ", " << beforeRotatePos.y << endl;
 				ref.x = beforeRotatePos.x;
 				ref.y = beforeRotatePos.y;
 				ref.x = ref.x / obj->sca.x;
