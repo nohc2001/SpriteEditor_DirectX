@@ -6,6 +6,8 @@
 float scw;
 float sch;
 
+
+
 std::string wstr_to_utf8(wchar_t* wstr)
 {
 	std::wstring_convert < std::codecvt_utf8 < wchar_t >> converter;

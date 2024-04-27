@@ -69,6 +69,58 @@ rbuffer dbgpos_obj;
 char sprloadmod = 'n'; 
 // n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
 
+wchar_t* GetFileNameFromDlg_open() {
+	OPENFILENAME OFN;
+	TCHAR filePathName[256] = L"";
+	TCHAR lpstrFile[256] = L"";
+	static TCHAR filter[] = L"모든 파일\0*.*\0바이너리 파일\0*.bin\0bin 파일\0*.bin";
+
+	memset(&OFN, 0, sizeof(OPENFILENAME));
+	OFN.lStructSize = sizeof(OPENFILENAME);
+	OFN.hwndOwner = g_hWnd;
+	OFN.lpstrFilter = filter;
+	OFN.lpstrFile = lpstrFile;
+	OFN.nMaxFile = 256;
+	OFN.lpstrInitialDir = L".";
+
+	if (GetOpenFileName(&OFN) != 0) {
+		wsprintf(filePathName, L"%s 파일을 열겠습니까?", OFN.lpstrFile);
+		MessageBox(g_hWnd, filePathName, L"열기 선택", MB_OK);
+
+		wchar_t* str = OFN.lpstrFile;
+		return str;
+	}
+	return nullptr;
+}
+
+wchar_t* GetFileNameFromDlg_save() {
+	OPENFILENAME OFN;
+	TCHAR filePathName[256] = L"";
+	TCHAR lpstrFile[256] = L"";
+	static TCHAR filter[] = L"모든 파일\0*.*\0바이너리 파일\0*.bin\0bin 파일\0*.bin";
+
+	memset(&OFN, 0, sizeof(OPENFILENAME));
+	OFN.lStructSize = sizeof(OPENFILENAME);
+	OFN.hwndOwner = g_hWnd;
+	OFN.lpstrFilter = filter;
+	OFN.lpstrFile = lpstrFile;
+	OFN.nMaxFile = 256;
+	OFN.lpstrInitialDir = L".";
+
+	wchar_t* rstr = nullptr;
+
+	if (GetSaveFileName(&OFN) != 0) {
+		wsprintf(filePathName, L"%s 파일을 저장하겠습니까?", OFN.lpstrFile);
+		MessageBox(g_hWnd, filePathName, L"저장 선택", MB_OK);
+
+		wchar_t* str = OFN.lpstrFile;
+		int len = (wcslen(str)+1);
+		rstr = (wchar_t*)fm->_New(sizeof(wchar_t) * len, true);
+		wcscpy_s(rstr, len, str);
+	}
+	return rstr;
+}
+
 struct pos_select_obj
 {
 	int index;
@@ -570,9 +622,14 @@ void savebtn_event(DXBtn* btn, DX_Event evt)
 		{
 			press_ef = false;
 			flow->x = 0;
-			wchar_t** wptr = (wchar_t**)&texteditpage->pfm.Data[(int)texteditpm::deststring];
+			/*wchar_t** wptr = (wchar_t**)&texteditpage->pfm.Data[(int)texteditpm::deststring];
 			*wptr = (wchar_t*)&mainpage->pfm.Data[(int)mainpm::savefilestr];
-			pagestacking(texteditpage);
+			pagestacking(texteditpage);*/
+
+			wchar_t* savefiledir = GetFileNameFromDlg_save();
+			if (savefiledir != nullptr) {
+				mainSprite->save(savefiledir);
+			}
 		}
 	}
 }
@@ -909,8 +966,25 @@ void loadfromfilebtn_event(DXBtn* btn, DX_Event evt)
 			press_ef = false;
 			flow->x = 0;
 			// operate
-			sprloadmod = 'l';
-			pagestacking(filepage);
+
+			wchar_t* loadfiledir = GetFileNameFromDlg_save();
+			if (loadfiledir != nullptr) {
+				int objselect_id = mainpage->pfm.Data[(int)mainpm::objselect_id];
+				Object* obj = (Object*)mainSprite->data.objs->at(objselect_id);
+				Sprite* newspr = (Sprite*)fm->_New(sizeof(Sprite), true);
+				newspr->null();
+				newspr->load(loadfiledir);
+				Sprite* origin_source = obj->source;
+				obj->source = newspr;
+				if ((origin_source != basicSprite) && mainSprite->isExistSpr((int*)origin_source)) {
+					origin_source->Release();
+					fm->_Delete((byte8*)origin_source, sizeof(Sprite));
+					origin_source = nullptr;
+				}
+			}
+
+			/*sprloadmod = 'l';
+			pagestacking(filepage);*/
 		}
 	}
 }

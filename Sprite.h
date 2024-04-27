@@ -245,7 +245,174 @@ void stackic_savedata()
 
 void Sprite::load(wchar_t* filename)
 {
+	savestruct ss;
+	ss.spr.NULLState();
+	ss.spr.Init(8, false);
+	ss.obj.NULLState();
+	ss.obj.Init(8, false);
+	ss.data.NULLState();
+	ss.data.Init(8, false);
+	ss.ics.NULLState();
+	ss.ics.Init(8, false);
 
+	dbg << "fileload" << endl;
+	// Create a file name with wide characters
+	int fnlen = wcslen(filename);
+	dbg << "fnlen : " << fnlen << endl;
+
+	// Convert the file name to a char*
+	fm->_tempPushLayer();
+	char* fileNameChar = (char*)fm->_tempNew(fnlen * 4 + 1);
+	std::wcstombs(fileNameChar, filename, fnlen * 4 + 1);
+	dbg << "filename : :" << fileNameChar << endl;
+
+	// Open the file in binary mode
+	std::ifstream file(fileNameChar, std::ios::binary);
+
+	unsigned int sprsiz = 0;
+	file.read(reinterpret_cast<char*>(&sprsiz), sizeof(sprsiz));
+	dbg << "sprsiz : " << sprsiz << endl;
+
+	for (int i = 0; i < sprsiz; ++i) {
+		spritedata spr;
+		file.read(reinterpret_cast<char*>(&spr.dataptr), sizeof(spr.dataptr));
+		file.read(reinterpret_cast<char*>(&spr.icptr), sizeof(spr.icptr));
+		dbg << "index : " << i << " ] _dataptr : " << spr.dataptr << " _icptr : " << spr.icptr << endl;
+		ss.spr.push_back(spr);
+	}
+
+	unsigned int objsiz = 0;
+	file.read(reinterpret_cast<char*>(&objsiz), sizeof(objsiz));
+	dbg << "objsiz : " << objsiz << endl;
+
+	for (int i = 0; i < objsiz; ++i) {
+		objdata obj;
+		file.read(reinterpret_cast<char*>(&obj.sourceptr), sizeof(obj.sourceptr));
+		file.read(reinterpret_cast<char*>(&obj.pos), sizeof(obj.pos));
+		file.read(reinterpret_cast<char*>(&obj.rot), sizeof(obj.rot));
+		file.read(reinterpret_cast<char*>(&obj.sca), sizeof(obj.sca));
+		file.read(reinterpret_cast<char*>(&obj.icptr), sizeof(obj.icptr));
+		dbg << "index : " << i << " ] _sourceptr : " << obj.sourceptr << ", _icptr : " << obj.icptr << endl;
+		dbg << "pos : (" << obj.pos.x << ", " << obj.pos.y << ", " << obj.pos.z << ")" << endl;
+		dbg << "rot : (" << obj.rot.x << ", " << obj.rot.y << ", " << obj.rot.z << ")" << endl;
+		dbg << "sca : (" << obj.sca.x << ", " << obj.sca.y << ", " << obj.sca.z << ")" << endl;
+		ss.obj.push_back(obj);
+	}
+
+	unsigned int datasiz;
+	file.read(reinterpret_cast<char*>(&datasiz), sizeof(datasiz));
+	dbg << "datasiz : " << datasiz << endl;
+	for (int i = 0; i < datasiz; ++i) {
+		s_data sd;
+		unsigned char type = 0;
+		file.read(reinterpret_cast<char*>(&type), 1);
+		dbg << "index : " << i << ", type : " << (int)type << endl;
+		if (type == 1) {
+			sd.fd.type = type;
+			unsigned int vsiz;
+			file.read(reinterpret_cast<char*>(&vsiz), 4);
+			dbg << "vsiz : " << vsiz << endl;
+			sd.fd.vb.NULLState();
+			sd.fd.vb.Init(vsiz, false);
+			for (int i = 0; i < vsiz; ++i) {
+				float v = 0;
+				file.read(reinterpret_cast<char*>(&v), 4);
+				dbg << "[fv" << i << " : " << v << "]" << endl;
+				sd.fd.vb.push_back(v);
+			}
+			dbg << endl;
+			unsigned int isiz;
+			file.read(reinterpret_cast<char*>(&isiz), 4);
+			dbg << "isiz : " << isiz << endl;
+			sd.fd.ib.NULLState();
+			sd.fd.ib.Init(isiz, false);
+			for (int i = 0; i < isiz; ++i) {
+				SimpleIndex ind = SimpleIndex(0, 0, 0);
+				unsigned int indd[3] = {};
+				file.read(reinterpret_cast<char*>(&indd[0]), 4);
+				file.read(reinterpret_cast<char*>(&indd[1]), 4);
+				file.read(reinterpret_cast<char*>(&indd[2]), 4);
+				ind.pos0 = (WORD)indd[0];
+				ind.pos1 = (WORD)indd[1];
+				ind.pos2 = (WORD)indd[2];
+				dbg << "[iv" << i << " : (" << ind.pos0 << ", " << ind.pos1 << ", " << ind.pos2 << ")]" << endl;
+				sd.fd.ib.push_back(ind);
+			}
+			ss.data.push_back(sd);
+		}
+		else if (type == 2) {
+			sd.oad.type = type;
+			unsigned int osiz;
+			file.read(reinterpret_cast<char*>(&osiz), 4);
+			sd.oad.objs.NULLState();
+			sd.oad.objs.Init(osiz, false);
+			for (int i = 0; i < osiz; ++i) {
+				unsigned int optr = 0;
+				file.read(reinterpret_cast<char*>(&optr), 4);
+				sd.oad.objs.push_back(optr);
+			}
+		}
+		else if (type == 3) {
+			sd.oad.type = type;
+			unsigned int strsiz = 0;
+			file.read(reinterpret_cast<char*>(&strsiz), 4);
+			sd.sdd.wstr = (wchar_t*)fm->_New(sizeof(wchar_t) * strsiz, true);
+			for (int i = 0; i < strsiz; ++i) {
+				file.read(reinterpret_cast<char*>(&sd.sdd.wstr[i]), 4);
+			}
+		}
+		else {
+			char t = 0;
+			file.read(reinterpret_cast<char*>(&t), 1);
+		}
+	}
+
+	// Close the file and delete the char*
+	file.close();
+	fm->_tempPopLayer();
+
+	Sprite* sprarr = (Sprite*)fm->_New(sizeof(Sprite) * sprsiz, true);
+	Object* objarr = (Object*)fm->_New(sizeof(Object) * objsiz, true);
+	for (int i = 0; i < sprsiz; ++i) {
+		s_data sd = ss.data[ss.spr[i].dataptr];
+		sprarr[i].st = (sprite_type)sd.fd.type;
+		if (sprarr[i].st == sprite_type::st_freepolygon) {
+			sprarr[i].data.freepoly = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+			sprarr[i].data.freepoly->Init(false);
+			sprarr[i].data.freepoly->begin();
+			for (int k = 0; k < sd.fd.vb.size() / 7; ++k) {
+				shp::vec3f f = *(shp::vec3f*)&sd.fd.vb.at(7 * k);
+				DX11Color c = *(DX11Color*)&sd.fd.vb.at(7 * k + 3);
+				sprarr[i].data.freepoly->av(SimpleVertex(f, c));
+			}
+			sprarr[i].data.freepoly->end();
+		}
+		if (sprarr[i].st == sprite_type::st_objects) {
+			sprarr[i].data.objs = (fmvecarr<int*>*)fm->_New(sizeof(fmvecarr<int*>), true);
+			sprarr[i].data.objs->NULLState();
+			sprarr[i].data.objs->Init(sd.oad.objs.size(), false);
+			for (int k = 0; k < sd.oad.objs.size(); ++k) {
+				sprarr[i].data.objs->push_back(reinterpret_cast<int*>(&objarr[sd.oad.objs.at(k)]));
+			}
+		}
+		if (sprarr[i].st == sprite_type::st_sprite_filedir) {
+			sprarr[i].data.dir = (wchar_t*)fm->_New(sizeof(wchar_t) * sd.sdd.strsize, true);
+			wcscpy(sprarr[i].data.dir, sd.sdd.wstr);
+		}
+	}
+
+	for (int i = 0; i < objsiz; ++i) {
+		objarr[i].source = &sprarr[ss.obj[i].sourceptr];
+		objarr[i].pos = ss.obj[i].pos;
+		objarr[i].rot = ss.obj[i].rot;
+		objarr[i].sca = ss.obj[i].sca;
+		//ecs
+	}
+
+	Sprite* lastspr = &sprarr[sprsiz - 1];
+	this->st = lastspr->st;
+	this->data = lastspr->data;
+	this->spr_ic = lastspr->spr_ic;
 }
 
 void Sprite::save(wchar_t* filename)
@@ -302,13 +469,40 @@ void Sprite::save(wchar_t* filename)
 	for (int i = 0; i < datasiz; ++i) {
 		s_data sd = ss.data[i];
 		if (sd.fd.type == 1) {
-
+			file.write(reinterpret_cast<const char*>(&sd.fd.type), 1);
+			unsigned int vsiz = sd.fd.vb.size();
+			file.write(reinterpret_cast<const char*>(&vsiz), 4);
+			for (int i = 0; i < sd.fd.vb.size(); ++i) {
+				file.write(reinterpret_cast<const char*>(&sd.fd.vb.at(i)), 4);
+			}
+			unsigned int isiz = sd.fd.ib.size();
+			file.write(reinterpret_cast<const char*>(&isiz), 4);
+			
+			for (int i = 0; i < isiz; ++i) {
+				unsigned int indd[3] = { sd.fd.ib[i].pos0 , sd.fd.ib[i].pos1 , sd.fd.ib[i].pos2 };
+				file.write(reinterpret_cast<const char*>(&indd[0]), 4);
+				file.write(reinterpret_cast<const char*>(&indd[1]), 4);
+				file.write(reinterpret_cast<const char*>(&indd[2]), 4);
+			}
 		}
 		else if (sd.fd.type == 2) {
+			file.write(reinterpret_cast<const char*>(&sd.oad.type), 1);
+			unsigned int osiz = sd.oad.objs.size();
+			file.write(reinterpret_cast<const char*>(&osiz), 4);
+			for (int i = 0; i < osiz; ++i) {
+				file.write(reinterpret_cast<const char*>(&sd.oad.objs[i]), 4);
+			}
 		}
 		else if (sd.fd.type == 3) {
+			file.write(reinterpret_cast<const char*>(&sd.sdd.type), 1);
+			file.write(reinterpret_cast<const char*>(&sd.sdd.strsize), 4);
+			for (int i = 0; i < sd.sdd.strsize; ++i) {
+				file.write(reinterpret_cast<const char*>(&sd.sdd.wstr[i]), 4);
+			}
 		}
 		else {
+			char t = 0;
+			file.write(reinterpret_cast<const char*>(&t), 1);
 		}
 	}
 

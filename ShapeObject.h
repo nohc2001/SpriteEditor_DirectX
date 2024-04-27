@@ -103,6 +103,12 @@ struct SimpleIndex
     WORD pos0;
     WORD pos1;
     WORD pos2;
+
+    SimpleIndex(unsigned int v0, unsigned int v1, unsigned int v2) {
+        pos0 = v0;
+        pos1 = v1;
+        pos2 = v2;
+    }
 };
 
 SimpleIndex aindex(unsigned int a, unsigned int b, unsigned int c) {
