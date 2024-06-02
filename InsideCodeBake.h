@@ -7005,6 +7005,9 @@ bool isBreaking = false;
 int stopnum = -1;
 bool isDbg = false;
 
+vecarr < ICB_Context* >icbarr;
+unsigned int icbindex_cxt = 0;
+
 int code_control(vecarr<ICB_Context *> *icbarr)
 {
 	static int stack = 0;
@@ -7039,9 +7042,12 @@ int code_control(vecarr<ICB_Context *> *icbarr)
 }
 
 void execute_switch(vecarr<ICB_Context*> icbarr, int execodenum,
-	int (*control_func)(vecarr<ICB_Context*>*), bool init)
+	int (*control_func)(vecarr<ICB_Context*>*), float exerate, int cxtindex)
 {
 	constexpr unsigned int percent16 = 15;
+
+	unsigned int ftime = getticks();
+	unsigned int etime = ftime;
 
 	byte8* tmptr_b;
 	ushort* tmptr_s;
@@ -7113,6 +7119,15 @@ void execute_switch(vecarr<ICB_Context*> icbarr, int execodenum,
 	goto CONTEXT_SWITCH;
 
 CONTEXT_SWITCH:
+
+	etime = getticks();
+	float delta = getDeltaTime_per60(ftime, etime);
+	//dbg << "time : " << delta << endl;
+	if (delta > exerate)
+	{
+		goto PROGRAMQUIT;
+	}
+
 	if (n == maxo)
 	{
 		// control code
@@ -7176,6 +7191,7 @@ CONTEXT_SWITCH:
 	goto INST_SWITCH;
 
 PROGRAMQUIT:
+	icbindex_cxt = (n + 1) % icbarr.size();
 	return;
 
 CAST_SWITCH:
