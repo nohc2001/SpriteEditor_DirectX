@@ -1,0 +1,136 @@
+struct pICB{
+	int* data;
+};
+
+struct pECS{
+	int* data;
+}
+
+struct prbuffer
+{
+	int *data;
+};
+
+struct gcolor
+{
+	float r;
+	float g;
+	float b;
+	float a;
+};
+
+struct gpos
+{
+	float x;
+	float y;
+	float z;
+};
+
+struct gindex
+{
+	ushort v0;
+	ushort v1;
+	ushort v2;
+};
+
+struct mat4
+{
+	float x00;
+	float x01;
+	float x02;
+	float x03;
+	float x10;
+	float x11;
+	float x12;
+	float x13;
+	float x20;
+	float x21;
+	float x22;
+	float x23;
+	float x30;
+	float x31;
+	float x32;
+	float x33;
+};
+
+struct pSprite
+{
+	int *value;
+};
+
+struct pObject
+{
+	int* value;
+};
+
+pICB get_icb(char *filename);
+
+pECS create_ecs(pICB icb, uint memsiz);
+
+pICB ecs_get_icb(pECS ecs);
+
+gpos apos(float x, float y, float z);
+
+gindex aindex(ushort n0, ushort n1, ushort n2);
+
+int rbuff_get_vertexsiz(prbuffer buff, int index);
+
+int rbuff_get_choice(prbuffer buff);
+
+bool rbuff_get_inherit(prbuffer buff);
+
+void rbuff_set_choice(prbuffer buff, uint n);
+
+void rbuff_set_inherit(prbuffer buff, bool b);
+
+void rbuff_Init(prbuffer buff, bool local);
+
+void begin(prbuffer buff, bool inherit = false);
+
+void end(prbuffer buff);
+
+void av(prbuffer buff, gpos pos, gcolor color);
+
+void rbuff_set_static_color(prbuffer buff, gcolor color);
+
+void rbuff_clear(prbuffer buff);
+
+void spr_render(pSprite spr, mat4 pmat);
+
+void spr_load(pSprite spr, char *filename);
+
+void spr_save(pSprite spr, char *filename);
+
+bool spr_isExistSpr(pSprite spr, int *objptr);
+
+pObject aobject(pSprite spr, gpos p, gpos r, gpos s, pECS ecs);
+
+pObject spr_getchild(pSprite spr, int id);
+
+void spr_erasechild(pSprite spr, int id);
+
+void spr_pushchild(pSprite spr, pObject obj);
+
+gpos obj_getpos(pObject obj);
+
+gpos obj_getrot(pObject obj);
+
+gpos obj_getsca(pObject obj);
+
+pSprite obj_getsource(pObject obj);
+
+pECS obj_getecs(pObject obj);
+
+void obj_setpos(pObject obj, gpos pos);
+
+void obj_setrot(pObject obj, gpos rot);
+
+void obj_setsca(pObject obj, gpos sca);
+
+void obj_setsource(pObject obj, pSprite spr);
+
+void obj_setecs(pObject obj, pECS ecs);
+
+uint rdtsc();
+
+float get_deltatime(uint t0, uint t1);

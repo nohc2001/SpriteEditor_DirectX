@@ -14,12 +14,21 @@
 #include "Animation.h"
 #include "DX11_UI.h"
 #include "hancom.h"
+#include "exGeometry.h"
+#include "exGraphics.h"
 //#include "DX11_UI.h"
 
 
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
+
+word_base_sen_sys InsideCode_Bake::wbss;
+type_data* InsideCode_Bake::basictype[basictype_max];
+operator_data InsideCode_Bake::basicoper[basicoper_max];
+ofstream InsideCode_Bake::icl;
+uint32_t InsideCode_Bake::icl_optionFlag;
+
 HINSTANCE               g_hInst = NULL;
 HWND                    g_hWnd = NULL;
 D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
@@ -68,6 +77,10 @@ rbuffer dbgpos_obj;
 
 char sprloadmod = 'n'; 
 // n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
+
+fmvecarr < ICB_Extension* >basic_ext;
+vecarr < ICB_Context* >ecss;
+float exerate = 0.01f;
 
 wchar_t* GetFileNameFromDlg_open() {
 	OPENFILENAME OFN;
@@ -236,7 +249,6 @@ void Render();
 
 FM_System0* fm;
 bool FinishInit = false;
-
 
 void basicbtn_init(DXBtn* btn)
 {
@@ -1013,6 +1025,65 @@ void fpsprbtn_event(DXBtn* btn, DX_Event evt)
 				fpSprite->data.freepoly->set_inherit(true);
 				fpSprite->data.freepoly->end();
 				fpedit = true;
+			}
+		}
+	}
+}
+
+void addicbtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			wchar_t* loadfiledir = GetFileNameFromDlg_save();
+			int objselect_id = mainpage->pfm.Data[(int)mainpm::objselect_id];
+			if (loadfiledir != nullptr) {
+				// load ic
+				//dbg << "loadic" << endl;
+				char* filename = (char*)&filepage->pfm.Data[(int)filepm::pdir];
+				InsideCode_Bake* icb = nullptr;
+				if (icmap.find(filename) == icmap.end())
+				{
+					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+					icb->init(40960);
+					for (int i = 0; i < basic_ext.size(); ++i)
+					{
+						icb->extension.push_back(basic_ext[i]);
+					}
+					//dbg << "bake" << endl;
+					icb->bake_code(filename);
+					//dbg << "s0" << endl;
+					icmap.insert(ICMAP::value_type(filename, icb));
+					//dbg << "s0" << endl;
+				}
+				else
+				{
+					icb = icmap[filename];
+				}
+
+				//dbg << "sec0" << endl;
+
+				ICB_Context* ctx = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
+				ctx->SetICB(icb, 4096);	// 40KB
+				Object* o = (Object*)mainSprite->data.objs->at(objselect_id);
+				*reinterpret_cast <Object**>(&ctx->datamem[0]) = o;
+				if (o->ecs != nullptr)
+				{
+					// todo : disable origin ecs
+				}
+				o->ecs = ctx;
+				ecss.push_back(ctx);
+				sprloadmod = 'n';
+				//dbg << "icend" << endl;
+				//counting[0] = 1000;
 			}
 		}
 	}
@@ -3128,6 +3199,56 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
         return E_FAIL;
 
 	// init
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::ICB_StaticInit, false);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init, false);
+	{
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init__Bake_Extension,
+			false);
+	}
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanStructTypes, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddStructTypes, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanCodes, true);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, true);
+	{
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, false);
+	}
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, false);
+
+	InsideCode_Bake::StaticInit();
+
+	ecss.NULLState();
+	ecss.Init(8, false);
+
+	basic_ext.NULLState();
+	basic_ext.Init(8, false);
+	ICB_Extension* ext = Init_exGeometry();
+	basic_ext.push_back(ext);
+	//dbg << "init graphics" << endl;
+	ext = Init_exGraphics();
+	//dbg << "init graphics end" << endl;
+	basic_ext.push_back(ext);
+
 	mainpage = (Page*)fm->_New(sizeof(Page), true);
 	mainpage->init_func = main_init;
 	mainpage->render_func = main_render;

@@ -24,6 +24,13 @@
     <ClInclude Include="dbg.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="hancom.h" />
+    <ClInclude Include="exGraphics.h" />
+    <ClInclude Include="time_rdtsc.h" />
+    <ClInclude Include="exGeometry.h" />
+    <ClInclude Include="ICB_Extension.h" />
+    <ClInclude Include="InsideCodeBake.h" />
+    <ClInclude Include="multifor.h" />
+    <ClInclude Include="sen_tr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
@@ -41,6 +48,9 @@
   <ItemGroup>
     <Text Include="memo.txt" />
     <Text Include="dbg.txt" />
+    <Text Include="exGraphics.txt" />
+    <Text Include="icb_dbg.txt" />
+    <Text Include="exGeometry.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

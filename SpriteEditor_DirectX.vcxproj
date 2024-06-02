@@ -373,6 +373,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="dbg.txt" />
+    <Text Include="exGeometry.txt" />
+    <Text Include="exGraphics.txt" />
+    <Text Include="icb_dbg.txt" />
     <Text Include="memo.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -388,10 +391,17 @@
     <ClInclude Include="DX11_UI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="exGeometry.h" />
+    <ClInclude Include="exGraphics.h" />
     <ClInclude Include="hancom.h" />
+    <ClInclude Include="ICB_Extension.h" />
+    <ClInclude Include="InsideCodeBake.h" />
+    <ClInclude Include="multifor.h" />
+    <ClInclude Include="sen_tr.h" />
     <ClInclude Include="ShapeObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="time_rdtsc.h" />
     <ClInclude Include="ttfParser.h" />
     <ClInclude Include="Utill_FreeMemory.h" />
     <ClInclude Include="Utill_SpaceMath.h" />

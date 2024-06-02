@@ -7,6 +7,8 @@
 #include "Utill_FreeMemory.h"
 #include "Utill_SpaceMath.h"
 #include "ShapeObject.h"
+#include "InsideCodeBake.h"
+#include "ICB_Extension.h"
 //#include "dbg.h"
 
 using namespace freemem;
@@ -81,18 +83,30 @@ struct savestruct {
 	fmvecarr<unsigned int> ics;
 };
 
+template <class _Tp>
+struct str_equal_to : public binary_function<_Tp, _Tp, bool>
+{
+	bool operator()(const _Tp& __x, const _Tp& __y) const
+	{
+		return strcmp(__x, __y) == 0;
+	}
+};
+
+typedef std::unordered_map<char*, InsideCode_Bake*, std::hash<char*>, str_equal_to<char*> > ICMAP;
+ICMAP icmap;
+
 class Sprite
 {
 public:
 	sprite_type st;
 	sprdata data;
-	InsideCode* spr_ic;
+	//InsideCode* spr_ic;
 
 	void null()
 	{
 		st = sprite_type::st_freepolygon;
 		data.freepoly = nullptr;
-		spr_ic = nullptr;
+		//spr_ic = nullptr;
 	}
 
 	void render(const ConstantBuffer& uniform);
@@ -115,7 +129,16 @@ public:
 	shp::vec3f pos;
 	shp::vec3f rot;
 	shp::vec3f sca;
-	vecarr < ExecutableContext* >ecs;
+	ICB_Context* ecs;
+
+	void null()
+	{
+		source = nullptr;
+		pos = shp::vec3f(0, 0, 0);
+		rot = shp::vec3f(0, 0, 0);
+		sca = shp::vec3f(0, 0, 0);
+		ecs = nullptr;
+	}
 };
 
 void Sprite::render(const ConstantBuffer& uniform)
@@ -412,7 +435,7 @@ void Sprite::load(wchar_t* filename)
 	Sprite* lastspr = &sprarr[sprsiz - 1];
 	this->st = lastspr->st;
 	this->data = lastspr->data;
-	this->spr_ic = lastspr->spr_ic;
+	//this->spr_ic = lastspr->spr_ic;
 }
 
 void Sprite::save(wchar_t* filename)
