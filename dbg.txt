@@ -39,6 +39,7 @@ present_center = 0
 , sprdirbtn = 4292
 , loadbydirbtn = 4492
 , fpsprbtn = 4692
+, addicbtn = 4892
 };
 enum class colorpm{
 presentcolor = 0

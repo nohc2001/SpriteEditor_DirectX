@@ -14,6 +14,8 @@
 #include "Animation.h"
 #include "DX11_UI.h"
 #include "hancom.h"
+#include "InsideCodeBake.h"
+#include "ICB_Extension.h"
 #include "exGeometry.h"
 #include "exGraphics.h"
 //#include "DX11_UI.h"
@@ -181,6 +183,7 @@ enum class mainpm {
 	, sprdirbtn = 4292
 	, loadbydirbtn = 4492
 	, fpsprbtn = 4692
+	, addicbtn = 4892
 };
 enum class colorpm {
 	presentcolor = 0
@@ -1048,9 +1051,9 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 			if (loadfiledir != nullptr) {
 				// load ic
 				//dbg << "loadic" << endl;
-				char* filename = (char*)&filepage->pfm.Data[(int)filepm::pdir];
+				string filename = wstr_to_utf8(loadfiledir);
 				InsideCode_Bake* icb = nullptr;
-				if (icmap.find(filename) == icmap.end())
+				if (icmap.find((char*)filename.c_str()) == icmap.end())
 				{
 					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
 					icb->init(40960);
@@ -1059,14 +1062,14 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 						icb->extension.push_back(basic_ext[i]);
 					}
 					//dbg << "bake" << endl;
-					icb->bake_code(filename);
+					icb->bake_code((char*)filename.c_str());
 					//dbg << "s0" << endl;
-					icmap.insert(ICMAP::value_type(filename, icb));
+					icmap.insert(ICMAP::value_type((char*)filename.c_str(), icb));
 					//dbg << "s0" << endl;
 				}
 				else
 				{
-					icb = icmap[filename];
+					icb = icmap[(char*)filename.c_str()];
 				}
 
 				//dbg << "sec0" << endl;
@@ -1360,6 +1363,11 @@ void main_init(Page* p)
 	fpsprbtn->init(L"Fp", basicbtn_init, basicbtn_render, basicbtn_update, fpsprbtn_event,
 		shp::rect4f(400, -sch / 2.0f, 700, -sch / 2.0f + 100));
 
+	dbg << ", addicbtn = " << p->pfm.Fup << endl;
+	DXBtn* addicbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	addicbtn->init(L"LoadIC", basicbtn_init, basicbtn_render, basicbtn_update, addicbtn_event,
+		shp::rect4f(-300, -sch / 2.0f, 300, -sch / 2.0f + 100));
+
 	dbg << "};" << endl;
 }
 
@@ -1481,13 +1489,14 @@ void main_render(Page* p)
 			case 0:
 				// spr
 			{
-
 				DXBtn* sprdirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::sprdirbtn];
 				DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
 				DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
+				
 				sprdirbtn->Render();
 				loadbydirbtn->Render();
 				fpsprbtn->Render();
+				
 			}
 			break;
 			case 1:
@@ -1509,6 +1518,8 @@ void main_render(Page* p)
 			case 4:
 				// ic
 			{
+				DXBtn* addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
+				addicbtn->Render();
 			}
 			break;
 			}
@@ -1796,9 +1807,11 @@ void main_update(Page* p, float delta)
 		DXBtn* sprdirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::sprdirbtn];
 		DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
 		DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
+		DXBtn* addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
 		sprdirbtn->Update(delta);
 		loadbydirbtn->Update(delta);
 		fpsprbtn->Update(delta);
+		addicbtn->Update(delta);
 	}
 	else
 	{
@@ -1959,7 +1972,6 @@ void main_event(Page* p, DX_Event evt)
 				sprdirbtn->Event(evt);
 				loadbydirbtn->Event(evt);
 				fpsprbtn->Event(evt);
-
 			}
 			break;
 			case 1:
@@ -2031,6 +2043,8 @@ void main_event(Page* p, DX_Event evt)
 			break;
 			case 4:
 				// ic
+				DXBtn * addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
+				addicbtn->Event(evt);
 				break;
 			}
 		}
@@ -3227,21 +3241,21 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 
 	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, true);
 	{
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, false);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, true);
 	}
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, false);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, true);
 
 	InsideCode_Bake::StaticInit();
 

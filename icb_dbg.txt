@@ -1,3 +1,60 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
+Create_New_ICB[000002528DB24F70] Initialization...finish
+ICB[000002528DB24F70] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs0.txt]
+ICB[000002528DB24F70] BakeCode_GetCodeFromText...finish
+ICB[000002528DB24F70] BakeCode_AddTextBlocks...finish
+ICB[000002528DB24F70] BakeCode_ScanStructTypes...finish
+ICB[000002528DB24F70] BakeCode_AddStructTypes...finish
+ICB[000002528DB24F70] BakeCode_ScanCodes...start
+[0] ~ add variable : add_var : pObject this  ~ [2]
+[3] ~ addfunction : addfunc : int main ( )  ~ [6]
+[7] ~ blocks : start
+[0] ~ add and set variable : adsetvar: float deltaTime = 0  ~ [4]
+[5] ~ add and set variable : adsetvar: float past = 0  ~ [9]
+[10] ~ add and set variable : adsetvar: uint t0 = rdtsc ( )  ~ [16]
+[17] ~ while : while__ : while ( true )  ~ [20]
+[21] ~ blocks : start
+[0] ~ add and set variable : adsetvar: uint t1 = rdtsc ( )  ~ [6]
+[7] ~  ~ [7]
+[8] ~ set Variable : set_var : deltaTime = get_deltatime ( t0 , t1 )  ~ [15]
+[16] ~ add and set variable : adsetvar: gpos p = obj_getpos ( this )  ~ [23]
+[24] ~  ~ [24]
+[25] ~  ~ [25]
+[26] ~  ~ [26]
+[27] ~ set Variable : set_var : p . x += 10.0 * deltaTime  ~ [31]
+[32] ~ use Function : usefunc : obj_setpos ( this , p . x )  ~ [40]
+[41] ~  ~ [41]
+[42] ~ set Variable : set_var : t0 = t1  ~ [44]
+BakeCode_ScanCodes...block__ : {
+adsetvar: uint t1 = rdtsc ( ) 
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+adsetvar: gpos p = obj_getpos ( this ) 
+set_var : p . x += 10.0 * deltaTime 
+usefunc : obj_setpos ( this , p . x ) 
+set_var : t0 = t1 
+closed_ : }
+ ~ [67]
+[68] ~ return in Function : return_ : return 0  ~ [70]
+BakeCode_ScanCodes...block__ : {
+adsetvar: float deltaTime = 0 
+adsetvar: float past = 0 
+adsetvar: uint t0 = rdtsc ( ) 
+while__ : while ( true ) 
+block__ : {
+adsetvar: uint t1 = rdtsc ( ) 
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+adsetvar: gpos p = obj_getpos ( this ) 
+set_var : p . x += 10.0 * deltaTime 
+usefunc : obj_setpos ( this , p . x ) 
+set_var : t0 = t1 
+closed_ : }
+
+return_ : return 0 
+closed_ : }
+ ~ [79]
+BakeCode_ScanCodes...finish
+ICB[000002528DB24F70] BakeCode_GlobalMemoryInit...finish
+ICB[000002528DB24F70] BakeCode_CompileCodes...start
+BakeCode_CompileCodes__add_var : pObject this 

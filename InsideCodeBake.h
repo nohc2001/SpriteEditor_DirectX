@@ -12,7 +12,6 @@ using namespace freemem;
 
 typedef unsigned char byte8;
 typedef unsigned short ushort;
-//typedef unsigned int uint;
 
 enum class insttype {
 	IT_ADD_STACK_VARIABLE = 0,
@@ -1563,8 +1562,14 @@ public:
 		}
 	}
 
-	void dbg_bakecode(vecarr<code_sen *> *csa, int sav)
+	void dbg_bakecode(vecarr<code_sen *> *csa, int sav, bool coutstream = true)
 	{
+		ofstream* ptr = nullptr;
+		if (coutstream) ptr = (ofstream*)&cout;
+		else {
+			ptr = &InsideCode_Bake::icl;
+		}
+		ofstream& ofs = *ptr;
 		// cout << "all asm :" << endl;
 		int save = sav;
 		for (int i = 0; i < csa->size(); ++i)
@@ -1572,28 +1577,37 @@ public:
 			code_sen *cs = csa->at(i);
 			if (cs->start_line > save)
 			{
-				cout << "\033[0;36m";
-				cout << "<nocode>" << endl;
-				cout << "\033[0;37m";
-				print_asm(save, cs->start_line - 1);
+				if (coutstream) {
+					ofs << "\033[0;36m";
+				}
+				ofs << "<nocode>" << endl;
+				if (coutstream) {
+					ofs << "\033[0;37m";
+				}
+				
+				print_asm(save, cs->start_line - 1, coutstream);
 				save = cs->start_line;
-				cout << endl;
+				ofs << endl;
 			}
 			if (cs->ck == codeKind::ck_blocks)
 			{
 				vecarr<code_sen *> *css =
 					reinterpret_cast<vecarr<code_sen *> *>(cs->codeblocks);
-				dbg_bakecode(css, save);
+				dbg_bakecode(css, save, coutstream);
 				save = css->last()->end_line + 1;
 			}
 			else
 			{
-				cout << "\033[0;36m";
-				dbg_codesen(cs);
-				cout << "\033[0;37m" << endl;
-				print_asm(cs->start_line, cs->end_line);
+				if (coutstream) {
+					ofs << "\033[0;36m";
+				}
+				dbg_codesen(cs, coutstream);
+				if (coutstream) {
+					ofs << "\033[0;37m";
+				}
+				print_asm(cs->start_line, cs->end_line, coutstream);
 				save = cs->end_line + 1;
-				cout << endl;
+				ofs << endl;
 			}
 		}
 	}
@@ -6807,7 +6821,7 @@ public:
 
 		mem[writeup++] = (byte8)insttype::IT_EXIT;
 
-		dbg_bakecode(csarr, 0);
+		dbg_bakecode(csarr, 0, false);
 
 		icl << "ICB[" << this << "] BakeCode finish." << endl;
 	}
@@ -8361,7 +8375,7 @@ INST_SWITCH:
 		++*pc;
 		byte8* bptr = reinterpret_cast<byte8*>(mem + (uint64_t)_la);
 		byte8* aptr = reinterpret_cast<byte8*>(mem + (uint64_t)registerA0);
-		uint ValueSiz = **pci;
+		unsigned int ValueSiz = **pci;
 		++*pci;
 		for (uint k = 0; k < ValueSiz; ++k) {
 			bptr[k] = aptr[k];
