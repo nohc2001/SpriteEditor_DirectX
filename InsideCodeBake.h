@@ -6,6 +6,7 @@
 #include <string>
 //#include "infArray_fm_v0.h"
 #include "sen_tr.h"
+#include "time_rdtsc.h"
 using namespace std;
 using namespace freemem;
 
@@ -2316,7 +2317,7 @@ public:
 						cs->codeblocks = (vecarr<int*> *)fm->_New(sizeof(vecarr<int*>), true);
 						cs->codeblocks->NULLState();
 						cs->codeblocks->Init(8, false);
-						Init_VPTR<vecarr<int*>*>(cs->codeblocks);
+						//Init_VPTR<vecarr<int*>*>(cs->codeblocks);
 
 						for (int u = 0; u < (int)cbv->size(); u++)
 						{
@@ -2618,7 +2619,7 @@ public:
 						cs->codeblocks = (vecarr<int*> *)fm->_New(sizeof(vecarr<int*>), true);
 						cs->codeblocks->NULLState();
 						cs->codeblocks->Init(8, false);
-						Init_VPTR<vecarr<int*>*>(cs->codeblocks);
+						//Init_VPTR<vecarr<int*>*>(cs->codeblocks);
 
 						for (int u = 0; u < (int)cbv->size(); u++)
 						{
@@ -7000,13 +7001,12 @@ class ICB_Context{
 #define shiftB0(delta) bpivot = (bpivot + (delta)) & percent16
 
 vecarr<ICB_Context *> icbarr;
+unsigned int icbindex_cxt = 0;
 
 bool isBreaking = false;
 int stopnum = -1;
 bool isDbg = false;
 
-vecarr < ICB_Context* >icbarr;
-unsigned int icbindex_cxt = 0;
 
 int code_control(vecarr<ICB_Context *> *icbarr)
 {

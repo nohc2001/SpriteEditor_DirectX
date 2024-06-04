@@ -7,83 +7,83 @@
 
 #define __isin(A, B, C) ((A < B && B < C) || (C < B && B < A))
 
-constexpr float PI = 3.141592f;
+constexpr float gPI = 3.141592f;
 
-struct vec2f {
+struct gvec2f {
     float x;
     float y;
 
-    vec2f() {
+    gvec2f() {
         x = 0;
         y = 0;
     }
 
-    vec2f(float X, float Y) {
+    gvec2f(float X, float Y) {
         x = X;
         y = Y;
     }
 };
 
 struct circle {
-    vec2f center;
+    gvec2f center;
     float radius;
 };
 
 struct line2d {
-    vec2f fp;
-    vec2f lp;
+    gvec2f fp;
+    gvec2f lp;
 };
 
 struct angle2d {
-    vec2f delta;
+    gvec2f delta;
     float radian;
 };
 
-struct rect4f {
-    vec2f fp;
-    vec2f lp;
+struct grect4f {
+    gvec2f fp;
+    gvec2f lp;
 };
 
-struct vec3f {
+struct gvec3f {
     float x;
     float y;
     float z;
 };
 
 struct sphere {
-    vec3f center;
+    gvec3f center;
     float radius;
 };
 
 struct line3d {
-    vec3f fp;
-    vec3f lp;
+    gvec3f fp;
+    gvec3f lp;
 };
 
 struct cubef6 {
-    vec3f fp;
-    vec3f lp;
+    gvec3f fp;
+    gvec3f lp;
 };
 
 struct angle3d {
-    vec3f delta;
-    vec2f radian;
+    gvec3f delta;
+    gvec2f radian;
 };
 
-//vec2f _vec2f(float x, float y);
-void exGeometry__vec2f(int* pcontext) {
+//gvec2f _gvec2f(float x, float y);
+void exGeometry__gvec2f(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    vec2f v;
+    gvec2f v;
     v.x = *reinterpret_cast<float*>(icc->rfsp - 8);
     v.y = *reinterpret_cast<float*>(icc->rfsp - 4);
 
-    icc->sp -= sizeof(vec2f);
-    *reinterpret_cast<vec2f*>(icc->sp) = v;
+    icc->sp -= sizeof(gvec2f);
+    *reinterpret_cast<gvec2f*>(icc->sp) = v;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
 
-//circle _circle(vec2f cen, float rad);
+//circle _circle(gvec2f cen, float rad);
 void exGeometry__circle(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     circle c = *reinterpret_cast<circle*>(icc->rfsp - 12);
@@ -94,7 +94,7 @@ void exGeometry__circle(int* pcontext) {
     icc->Amove_pivot(-1);
 }
 
-//line2d _line2d(vec2f FP, vec2f LP);
+//line2d _line2d(gvec2f FP, gvec2f LP);
 void exGeometry__line2d(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     line2d l;
@@ -123,15 +123,15 @@ void exGeometry__angle2d_delta(int* pcontext) {
             a.radian = angle;
         }
         else {
-            a.radian = PI - angle;
+            a.radian = gPI - angle;
         }
     }
     else {
         if (dx > 0) {
-            a.radian = 2 * PI - angle;
+            a.radian = 2 * gPI - angle;
         }
         else {
-            a.radian = PI + angle;
+            a.radian = gPI + angle;
         }
     }
     a.delta.x = dx;
@@ -149,13 +149,13 @@ void exGeometry__angle2d(int* pcontext) {
     float radian = *reinterpret_cast<float*>(icc->rfsp - 4);
 
     angle2d a;
-    if (radian > 2.0f * PI) {
-        int a = radian / (2.0f * PI);
-        radian = radian - 2.0f * (float)a * PI;
+    if (radian > 2.0f * gPI) {
+        int a = radian / (2.0f * gPI);
+        radian = radian - 2.0f * (float)a * gPI;
     }
     if (radian < 0) {
-        int a = -radian / (2.0f * PI);
-        radian = ((float)(a + 1) * 2.0f * PI) - radian;
+        int a = -radian / (2.0f * gPI);
+        radian = ((float)(a + 1) * 2.0f * gPI) - radian;
     }
     a.radian = radian;
     a.delta.x = cosf(radian);
@@ -167,13 +167,13 @@ void exGeometry__angle2d(int* pcontext) {
     icc->Amove_pivot(-1);
 }
 
-//vec2f[2] get_cross_CircleAndLine(circle c, line2d l);
+//gvec2f[2] get_cross_CircleAndLine(circle c, line2d l);
 void exGeometry_get_cross_CircleAndLine(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     circle cir = *reinterpret_cast<circle*>(icc->rfsp - (sizeof(circle) + sizeof(line2d)));
     line2d l = *reinterpret_cast<line2d*>(icc->rfsp - sizeof(line2d));
 
-    vec2f p1, p2;
+    gvec2f p1, p2;
 
     float xr = l.lp.x - l.fp.x;
     float yr = l.lp.y - l.fp.y;
@@ -185,40 +185,40 @@ void exGeometry_get_cross_CircleAndLine(int* pcontext) {
         float C = cir.center.x * cir.center.x + ycy * ycy - cir.radius * cir.radius;
         float inSqrt = B * B - 4.0f * A * C;
         if (inSqrt < 0) {
-            p1 = vec2f(NAN, NAN);
-            p2 = vec2f(NAN, NAN);
+            p1 = gvec2f(NAN, NAN);
+            p2 = gvec2f(NAN, NAN);
         }
         else if (inSqrt == 0) {
             float rx1 = -B * (2.0f * A);
             float ry1 = yrDxr * (rx1 - l.fp.x) + l.fp.y;
             if (__isin(l.fp.x, rx1, l.lp.x) && __isin(l.fp.y, ry1, l.lp.y)) {
-                p1 = vec2f(rx1, ry1);
-                p2 = vec2f(NAN, NAN);
+                p1 = gvec2f(rx1, ry1);
+                p2 = gvec2f(NAN, NAN);
             }
             else {
-                p1 = vec2f(NAN, NAN);
-                p2 = vec2f(NAN, NAN);
+                p1 = gvec2f(NAN, NAN);
+                p2 = gvec2f(NAN, NAN);
             }
         }
         else {
             float sqrtv = sqrtf(inSqrt);
-            vec2f rp1 = vec2f((-B + sqrtv) / (2 * A), 0);
+            gvec2f rp1 = gvec2f((-B + sqrtv) / (2 * A), 0);
             rp1.y = yrDxr * (rp1.x - l.fp.x) + l.fp.y;
-            vec2f rp2 = vec2f((-B - sqrtv) / (2 * A), 0);
+            gvec2f rp2 = gvec2f((-B - sqrtv) / (2 * A), 0);
             rp2.y = yrDxr * (rp2.x - l.fp.x) + l.fp.y;
 
             if (__isin(l.fp.x, rp1.x, l.lp.x) && __isin(l.fp.y, rp1.y, l.lp.y)) {
                 p1 = rp1;
             }
             else {
-                p1 = vec2f(NAN, NAN);
+                p1 = gvec2f(NAN, NAN);
             }
 
             if (__isin(l.fp.x, rp2.x, l.lp.x) && __isin(l.fp.y, rp2.y, l.lp.y)) {
                 p2 = rp1;
             }
             else {
-                p2 = vec2f(NAN, NAN);
+                p2 = gvec2f(NAN, NAN);
             }
         }
     }
@@ -230,53 +230,53 @@ void exGeometry_get_cross_CircleAndLine(int* pcontext) {
         float C = cir.center.y * cir.center.y + xcx * xcx - cir.radius * cir.radius;
         float inSqrt = B * B - 4.0f * A * C;
         if (inSqrt < 0) {
-            p1 = vec2f(NAN, NAN);
-            p2 = vec2f(NAN, NAN);
+            p1 = gvec2f(NAN, NAN);
+            p2 = gvec2f(NAN, NAN);
         }
         else if (inSqrt == 0) {
             float ry1 = -B * (2.0f * A);
             float rx1 = xrDyr * (ry1 - l.fp.y) + l.fp.x;
             if (__isin(l.fp.x, rx1, l.lp.x) && __isin(l.fp.y, ry1, l.lp.y)) {
-                p1 = vec2f(rx1, ry1);
-                p2 = vec2f(NAN, NAN);
+                p1 = gvec2f(rx1, ry1);
+                p2 = gvec2f(NAN, NAN);
             }
             else {
-                p1 = vec2f(NAN, NAN);
-                p2 = vec2f(NAN, NAN);
+                p1 = gvec2f(NAN, NAN);
+                p2 = gvec2f(NAN, NAN);
             }
         }
         else {
             float sqrtv = sqrtf(inSqrt);
-            vec2f rp1 = vec2f(0, (-B + sqrtv) / (2 * A));
+            gvec2f rp1 = gvec2f(0, (-B + sqrtv) / (2 * A));
             rp1.x = xrDyr * (rp1.y - l.fp.y) + l.fp.x;
-            vec2f rp2 = vec2f(0, (-B - sqrtv) / (2 * A));
+            gvec2f rp2 = gvec2f(0, (-B - sqrtv) / (2 * A));
             rp2.x = xrDyr * (rp2.y - l.fp.y) + l.fp.x;
 
             if (__isin(l.fp.x, rp1.x, l.lp.x) && __isin(l.fp.y, rp1.y, l.lp.y)) {
                 p1 = rp1;
             }
             else {
-                p1 = vec2f(NAN, NAN);
+                p1 = gvec2f(NAN, NAN);
             }
 
             if (__isin(l.fp.x, rp2.x, l.lp.x) && __isin(l.fp.y, rp2.y, l.lp.y)) {
                 p2 = rp1;
             }
             else {
-                p2 = vec2f(NAN, NAN);
+                p2 = gvec2f(NAN, NAN);
             }
         }
     }
 
-    icc->sp -= sizeof(vec2f);
-    *reinterpret_cast<vec2f*>(icc->sp) = p2;
-    icc->sp -= sizeof(vec2f);
-    *reinterpret_cast<vec2f*>(icc->sp) = p1;
+    icc->sp -= sizeof(gvec2f);
+    *reinterpret_cast<gvec2f*>(icc->sp) = p2;
+    icc->sp -= sizeof(gvec2f);
+    *reinterpret_cast<gvec2f*>(icc->sp) = p1;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
 
-//vec2f get_pos_in_LineAndRatioAB(line2d l, float A, float B);
+//gvec2f get_pos_in_LineAndRatioAB(line2d l, float A, float B);
 void exGeometry_get_pos_in_LineAndRatioAB(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     line2d L = *reinterpret_cast<line2d*>(icc->rfsp - 24);
@@ -285,30 +285,30 @@ void exGeometry_get_pos_in_LineAndRatioAB(int* pcontext) {
     float invtotal = 1 / (A + B);
     A = A * invtotal;
     B = B * invtotal;
-    vec2f rp;
+    gvec2f rp;
     rp.x = B * L.fp.x + A * L.lp.x;
     rp.y = B * L.fp.y + A * L.lp.y;
 
-    icc->sp -= sizeof(vec2f);
-    *reinterpret_cast<vec2f*>(icc->sp) = rp;
+    icc->sp -= sizeof(gvec2f);
+    *reinterpret_cast<gvec2f*>(icc->sp) = rp;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
 
-//vec2f* get_poses_in_Bezier1F(vec2f p0, vec2f p1, vec2f factor, uint sizeOfVertex);
+//gvec2f* get_poses_in_Bezier1F(gvec2f p0, gvec2f p1, gvec2f factor, uint sizeOfVertex);
 void exGeometry_get_poses_in_Bezier1F(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    vec2f s = *reinterpret_cast<vec2f*>(icc->rfsp - 28);
-    vec2f e = *reinterpret_cast<vec2f*>(icc->rfsp - 20);
-    vec2f factor = *reinterpret_cast<vec2f*>(icc->rfsp - 12);
+    gvec2f s = *reinterpret_cast<gvec2f*>(icc->rfsp - 28);
+    gvec2f e = *reinterpret_cast<gvec2f*>(icc->rfsp - 20);
+    gvec2f factor = *reinterpret_cast<gvec2f*>(icc->rfsp - 12);
     uint Siz = *reinterpret_cast<uint*>(icc->rfsp - 4);
-    vec2f sf, ef;
+    gvec2f sf, ef;
     sf = s;
     ef = factor;
     float t = 0;
     float delta = 1.0f / (float)Siz;
-    icc->sp -= sizeof(vec2f) * Siz;
-    vec2f* out = (vec2f*)icc->sp;
+    icc->sp -= sizeof(gvec2f) * Siz;
+    gvec2f* out = (gvec2f*)icc->sp;
     for (int i = 0; i < Siz; ++i) {
         sf.x = (1.0f - t) * s.x + t * factor.x;
         sf.y = (1.0f - t) * s.y + t * factor.y;
@@ -334,11 +334,11 @@ void exGeometry_get_distance2d(int* pcontext) {
     icc->Amove_pivot(-1);
 }
 
-//bool isPosInRect2d(vec2f pos, rect4f rt);
+//bool isPosInRect2d(gvec2f pos, rect4f rt);
 void exGeometry_isPosInRect2d(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    vec2f pos = *reinterpret_cast<vec2f*>(icc->rfsp - 24);
-    rect4f rt = *reinterpret_cast<rect4f*>(icc->rfsp - 16);
+    gvec2f pos = *reinterpret_cast<gvec2f*>(icc->rfsp - 24);
+    grect4f rt = *reinterpret_cast<grect4f*>(icc->rfsp - 16);
     bool b = rt.fp.x < pos.x && pos.x < rt.lp.x;
     b = b || (rt.fp.y < pos.y && pos.y < rt.lp.y);
     *reinterpret_cast<bool*>(&icc->getA(0)) = b;
@@ -352,7 +352,7 @@ void exGeometry_addAngle2d(int* pcontext) {
     angle2d B = *reinterpret_cast<angle2d*>(icc->rfsp - 12);
     angle2d R;
     R.radian = A.radian + B.radian;
-    R.radian -= 2 * PI * floorf((R.radian) / (2 * PI));
+    R.radian -= 2 * gPI * floorf((R.radian) / (2 * gPI));
     R.delta.x = cosf(R.radian);
     R.delta.y = sinf(R.radian);
 
@@ -362,19 +362,19 @@ void exGeometry_addAngle2d(int* pcontext) {
     icc->Amove_pivot(-1);
 }
 
-//vec2f get_cross_line(line2d A, line2d B);
+//gvec2f get_cross_line(line2d A, line2d B);
 void exGeometry_get_cross_line(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     line2d sl1 = *reinterpret_cast<line2d*>(icc->rfsp - 32);
     line2d sl2 = *reinterpret_cast<line2d*>(icc->rfsp - 16);
 
-    vec2f sl1Rate, sl2Rate;
+    gvec2f sl1Rate, sl2Rate;
     sl1Rate.x = sl1.lp.x - sl1.fp.x;
     sl1Rate.y = sl1.lp.y - sl1.fp.y;
     sl2Rate.x = sl2.lp.x - sl2.fp.x;
     sl2Rate.y = sl2.lp.y - sl2.fp.y;
 
-    vec2f cross;
+    gvec2f cross;
     if (sl1Rate.x * sl2Rate.x != 0 || sl1Rate.y * sl2Rate.y != 0) {
         cross.x = (sl1.fp.x * sl1Rate.y / sl1Rate.x - sl1.fp.y - sl2.fp.x * sl2Rate.y / sl2Rate.x + sl2.fp.y) / (sl1Rate.y / sl1Rate.x - sl2Rate.y / sl2Rate.x);
         cross.y = (sl1Rate.y / sl1Rate.x) * (cross.x - sl1.fp.x) + sl1.fp.y;
@@ -397,7 +397,7 @@ void exGeometry_get_cross_line(int* pcontext) {
     //return cross;
 
     bool b = true;
-    vec2f temp_mm;
+    gvec2f temp_mm;
     temp_mm.x = (sl1.fp.x < sl1.lp.x) ? sl1.fp.x : sl1.lp.x;
     temp_mm.y = (sl1.fp.x < sl1.lp.x) ? sl1.lp.x : sl1.fp.x;
     b = b && (temp_mm.x <= cross.x && cross.x <= temp_mm.y);
@@ -419,8 +419,8 @@ void exGeometry_get_cross_line(int* pcontext) {
         cross.y = NAN;
     }
 
-    icc->sp -= sizeof(vec2f);
-    *reinterpret_cast<vec2f*>(icc->sp) = cross;
+    icc->sp -= sizeof(gvec2f);
+    *reinterpret_cast<gvec2f*>(icc->sp) = cross;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
@@ -464,7 +464,7 @@ ICB_Extension* Init_exGeometry() {
     int i = -1;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init Set_Function_Pointers function name : " << ext->exfuncArr[i + 1]->name.c_str() << "...";
-    ext->exfuncArr[++i]->start_pc = reinterpret_cast<byte8*>(exGeometry__vec2f);//0
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast<byte8*>(exGeometry__gvec2f);//0
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init Set_Function_Pointers function name : " << ext->exfuncArr[i + 1]->name.c_str() << "...";

@@ -4,6 +4,10 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <vector>
 #include "Utill_FreeMemory.h"
 #include "Utill_SpaceMath.h"
 #include "ShapeObject.h"
@@ -84,7 +88,7 @@ struct savestruct {
 };
 
 template <class _Tp>
-struct str_equal_to : public binary_function<_Tp, _Tp, bool>
+struct str_equal_to : public std::binary_function<_Tp, _Tp, bool>
 {
 	bool operator()(const _Tp& __x, const _Tp& __y) const
 	{

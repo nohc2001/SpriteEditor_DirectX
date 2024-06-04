@@ -1,4 +1,5 @@
-﻿#define H_HANCOM
+﻿#ifndef H_HANCOM
+#define H_HANCOM
 #include <iostream>
 using namespace std;
 
@@ -462,3 +463,4 @@ void hankey_arrange(wchar_t * arr)
 		}
 	}
 }
+#endif // !1
