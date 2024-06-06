@@ -30,6 +30,7 @@ type_data* InsideCode_Bake::basictype[basictype_max];
 operator_data InsideCode_Bake::basicoper[basicoper_max];
 ofstream InsideCode_Bake::icl;
 uint32_t InsideCode_Bake::icl_optionFlag;
+instruct_data InsideCode_Bake::inst_meta[256];
 
 HINSTANCE               g_hInst = NULL;
 HWND                    g_hWnd = NULL;
@@ -3169,7 +3170,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				{
 					// performance pi is 2/10(exerate)
 					//dbgcount(0, dbg << "execute" << endl);
-					execute_switch(ecss, 100, code_control, exerate, icbindex_cxt);
+					execute_switch(ecss, 1, code_control, exerate, icbindex_cxt);
 					//dbgcount(0, dbg << "executeend" << endl);
 				}
 

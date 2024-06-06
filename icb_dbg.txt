@@ -1,13 +1,13 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
-Create_New_ICB[000002528DB24F70] Initialization...finish
-ICB[000002528DB24F70] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs0.txt]
-ICB[000002528DB24F70] BakeCode_GetCodeFromText...finish
-ICB[000002528DB24F70] BakeCode_AddTextBlocks...finish
-ICB[000002528DB24F70] BakeCode_ScanStructTypes...finish
-ICB[000002528DB24F70] BakeCode_AddStructTypes...finish
-ICB[000002528DB24F70] BakeCode_ScanCodes...start
+Create_New_ICB[000001C82F158F70] Initialization...finish
+ICB[000001C82F158F70] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs0.txt]
+ICB[000001C82F158F70] BakeCode_GetCodeFromText...finish
+ICB[000001C82F158F70] BakeCode_AddTextBlocks...finish
+ICB[000001C82F158F70] BakeCode_ScanStructTypes...finish
+ICB[000001C82F158F70] BakeCode_AddStructTypes...finish
+ICB[000001C82F158F70] BakeCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
 [3] ~ addfunction : addfunc : int main ( )  ~ [6]
 [7] ~ blocks : start
@@ -24,19 +24,19 @@ ICB[000002528DB24F70] BakeCode_ScanCodes...start
 [25] ~  ~ [25]
 [26] ~  ~ [26]
 [27] ~ set Variable : set_var : p . x += 10.0 * deltaTime  ~ [31]
-[32] ~ use Function : usefunc : obj_setpos ( this , p . x )  ~ [40]
-[41] ~  ~ [41]
-[42] ~ set Variable : set_var : t0 = t1  ~ [44]
+[32] ~ use Function : usefunc : obj_setpos ( this , p )  ~ [38]
+[39] ~  ~ [39]
+[40] ~ set Variable : set_var : t0 = t1  ~ [42]
 BakeCode_ScanCodes...block__ : {
 adsetvar: uint t1 = rdtsc ( ) 
 set_var : deltaTime = get_deltatime ( t0 , t1 ) 
 adsetvar: gpos p = obj_getpos ( this ) 
 set_var : p . x += 10.0 * deltaTime 
-usefunc : obj_setpos ( this , p . x ) 
+usefunc : obj_setpos ( this , p ) 
 set_var : t0 = t1 
 closed_ : }
- ~ [67]
-[68] ~ return in Function : return_ : return 0  ~ [70]
+ ~ [65]
+[66] ~ return in Function : return_ : return 0  ~ [68]
 BakeCode_ScanCodes...block__ : {
 adsetvar: float deltaTime = 0 
 adsetvar: float past = 0 
@@ -47,14 +47,7173 @@ adsetvar: uint t1 = rdtsc ( )
 set_var : deltaTime = get_deltatime ( t0 , t1 ) 
 adsetvar: gpos p = obj_getpos ( this ) 
 set_var : p . x += 10.0 * deltaTime 
-usefunc : obj_setpos ( this , p . x ) 
+usefunc : obj_setpos ( this , p ) 
 set_var : t0 = t1 
 closed_ : }
 
 return_ : return 0 
 closed_ : }
- ~ [79]
+ ~ [77]
 BakeCode_ScanCodes...finish
-ICB[000002528DB24F70] BakeCode_GlobalMemoryInit...finish
-ICB[000002528DB24F70] BakeCode_CompileCodes...start
+ICB[000001C82F158F70] BakeCode_GlobalMemoryInit...finish
+ICB[000001C82F158F70] BakeCode_CompileCodes...start
 BakeCode_CompileCodes__add_var : pObject this 
+BakeCode_CompileCodes__addfunc : int main ( ) 
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__adsetvar: float deltaTime = 0 
+6	:ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
+11	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+16	:CASTING_A(163) > 12
+18	:A=&VID(159) > 4(4, 0, 0, 0)
+23	:LA=A(161)
+24	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float past = 0 
+25	:ADD_STACK_VARIABLE(0) > 8(8, 0, 0, 0)
+30	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+35	:CASTING_A(163) > 12
+37	:A=&VID(159) > 8(8, 0, 0, 0)
+42	:LA=A(161)
+43	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: uint t0 = rdtsc ( ) 
+44	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+49	:FUNC(153)
+50	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 34(34, 0, 0, 0)
+59	:A=&VID(159) > 12(12, 0, 0, 0)
+64	:LA=A(161)
+65	:*LA=A_4(171)
+BakeCode_CompileCodes__while__ : while ( true ) 
+66	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+71	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__adsetvar: uint t1 = rdtsc ( ) 
+76	:ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+81	:FUNC(153)
+82	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 34(34, 0, 0, 0)
+91	:A=&VID(159) > 16(16, 0, 0, 0)
+96	:LA=A(161)
+97	:*LA=A_4(171)
+BakeCode_CompileCodes__set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98	:FUNC(153)
+99	:A=&VID(159) > 16(16, 0, 0, 0)
+104	:A=*A_nopush(165)
+105	:PARAM_4(156)
+106	:A=&VID(159) > 12(12, 0, 0, 0)
+111	:A=*A_nopush(165)
+112	:PARAM_4(156)
+113	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 35(35, 0, 0, 0)
+122	:A=&VID(159) > 4(4, 0, 0, 0)
+127	:LA=A(161)
+128	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: gpos p = obj_getpos ( this ) 
+129	:ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+134	:FUNC(153)
+135	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+140	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+145	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 24(24, 0, 0, 0)
+154	:A=&VID(159) > 28(28, 0, 0, 0)
+159	:LA=A(161)
+160	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+BakeCode_CompileCodes__set_var : p . x += 10.0 * deltaTime 
+165	:PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+170	:B=&VID(160) > 4(4, 0, 0, 0)
+175	:B=*B_nopush(166)
+176	:AU_FLOAT_MUL_B(58)
+177	:A<=&VID[Const](183) > 28(28, 0, 0, 0) > 0(0, 0, 0, 0)
+186	:A=*A_nopush(165)
+187	:AU_FLOAT_ADD_A(29)
+188	:A<=&VID[Const](183) > 28(28, 0, 0, 0) > 0(0, 0, 0, 0)
+197	:LA=A(161)
+198	:*LA=A_4(171)
+BakeCode_CompileCodes__usefunc : obj_setpos ( this , p ) 
+199	:FUNC(153)
+200	:A=&VID(159) > 28(28, 0, 0, 0)
+205	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+210	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+215	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+220	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 29(29, 0, 0, 0)
+BakeCode_CompileCodes__set_var : t0 = t1 
+229	:A=&VID(159) > 16(16, 0, 0, 0)
+234	:A=*A_nopush(165)
+235	:A=&VID(159) > 12(12, 0, 0, 0)
+240	:LA=A(161)
+241	:*LA=A_4(171)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__return_ : return 0 
+247	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+252	:RETURN(157)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes...finish
+<nocode>
+0	:FUNC(153)
+1	:FUNCJMP(162) > 6(6, 0, 0, 0)
+
+add_var : pObject this 
+
+addfunc : int main ( ) 
+
+adsetvar: float deltaTime = 0 
+6	:ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
+11	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+16	:CASTING_A(163) > 12
+18	:A=&VID(159) > 4(4, 0, 0, 0)
+23	:LA=A(161)
+24	:*LA=A_4(171)
+
+adsetvar: float past = 0 
+25	:ADD_STACK_VARIABLE(0) > 8(8, 0, 0, 0)
+30	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+35	:CASTING_A(163) > 12
+37	:A=&VID(159) > 8(8, 0, 0, 0)
+42	:LA=A(161)
+43	:*LA=A_4(171)
+
+adsetvar: uint t0 = rdtsc ( ) 
+44	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+49	:FUNC(153)
+50	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 34(34, 0, 0, 0)
+59	:A=&VID(159) > 12(12, 0, 0, 0)
+64	:LA=A(161)
+65	:*LA=A_4(171)
+
+while__ : while ( true ) 
+66	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+71	:IF(151) > 247(247, 0, 0, 0)
+
+adsetvar: uint t1 = rdtsc ( ) 
+76	:ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+81	:FUNC(153)
+82	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 34(34, 0, 0, 0)
+91	:A=&VID(159) > 16(16, 0, 0, 0)
+96	:LA=A(161)
+97	:*LA=A_4(171)
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98	:FUNC(153)
+99	:A=&VID(159) > 16(16, 0, 0, 0)
+104	:A=*A_nopush(165)
+105	:PARAM_4(156)
+106	:A=&VID(159) > 12(12, 0, 0, 0)
+111	:A=*A_nopush(165)
+112	:PARAM_4(156)
+113	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 35(35, 0, 0, 0)
+122	:A=&VID(159) > 4(4, 0, 0, 0)
+127	:LA=A(161)
+128	:*LA=A_4(171)
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129	:ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+134	:FUNC(153)
+135	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+140	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+145	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 24(24, 0, 0, 0)
+154	:A=&VID(159) > 28(28, 0, 0, 0)
+159	:LA=A(161)
+160	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+
+set_var : p . x += 10.0 * deltaTime 
+165	:PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+170	:B=&VID(160) > 4(4, 0, 0, 0)
+175	:B=*B_nopush(166)
+176	:AU_FLOAT_MUL_B(58)
+177	:A<=&VID[Const](183) > 28(28, 0, 0, 0) > 0(0, 0, 0, 0)
+186	:A=*A_nopush(165)
+187	:AU_FLOAT_ADD_A(29)
+188	:A<=&VID[Const](183) > 28(28, 0, 0, 0) > 0(0, 0, 0, 0)
+197	:LA=A(161)
+198	:*LA=A_4(171)
+
+usefunc : obj_setpos ( this , p ) 
+199	:FUNC(153)
+200	:A=&VID(159) > 28(28, 0, 0, 0)
+205	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+210	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+215	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+220	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 29(29, 0, 0, 0)
+
+set_var : t0 = t1 
+229	:A=&VID(159) > 16(16, 0, 0, 0)
+234	:A=*A_nopush(165)
+235	:A=&VID(159) > 12(12, 0, 0, 0)
+240	:LA=A(161)
+241	:*LA=A_4(171)
+
+<nocode>
+242	:JMP(152) > 66(66, 0, 0, 0)
+
+return_ : return 0 
+247	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+252	:RETURN(157)
+
+ICB[000001C82F158F70] BakeCode finish.
+Create_New_ICB_Context From ICB[000001C82F158F70], with 4096 size memory...finish.1 : FUNCJMP(162) > 6(6, 0, 0, 0)
+stack mem
+
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+6 : ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
+stack mem
+
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+11 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+205 205 205 205 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+16 : CASTING_A(163) > 12
+stack mem
+205 205 205 205 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+18 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+205 205 205 205 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+23 : LA=A(161)
+stack mem
+205 205 205 205 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float deltaTime = 0 
+24 : *LA=A_4(171)
+stack mem
+205 205 205 205 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+25 : ADD_STACK_VARIABLE(0) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+30 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+205 205 205 205 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+35 : CASTING_A(163) > 12
+stack mem
+205 205 205 205 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+37 : A=&VID(159) > 8(8, 0, 0, 0)
+stack mem
+205 205 205 205 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+42 : LA=A(161)
+stack mem
+205 205 205 205 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: float past = 0 
+43 : *LA=A_4(171)
+stack mem
+205 205 205 205 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+44 : ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+49 : FUNC(153)
+stack mem
+205 205 205 205 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+50 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+205 205 205 205 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+59 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+205 205 205 205 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+64 : LA=A(161)
+stack mem
+205 205 205 205 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t0 = rdtsc ( ) 
+65 : *LA=A_4(171)
+stack mem
+205 205 205 205 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+188 233 5 220 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+188 233 5 220 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+188 233 5 220 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+188 233 5 220 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+188 233 5 220 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 0 0 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+51 86 37 64 239 15 0 0 235 15 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 222 158 0 0 0 0 0 0 0 0 0 0 222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 239 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+222 158 0 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 188 61 1 0 0 0 0 0 0 0 0 0 188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+188 61 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 154 220 1 0 0 0 0 0 0 0 0 0 154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+154 220 1 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 120 123 2 0 0 0 0 0 0 0 0 0 120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+120 123 2 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 86 26 3 0 0 0 0 0 0 0 0 0 86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+86 26 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 52 185 3 0 0 0 0 0 0 0 0 0 52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+52 185 3 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 18 88 4 0 0 0 0 0 0 0 0 0 18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+18 88 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 240 246 4 0 0 0 0 0 0 0 0 0 240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+240 246 4 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 206 149 5 0 0 0 0 0 0 0 0 0 206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+206 149 5 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 172 52 6 0 0 0 0 0 0 0 0 0 172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+172 52 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 138 211 6 0 0 0 0 0 0 0 0 0 138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+138 211 6 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 104 114 7 0 0 0 0 0 0 0 0 0 104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+104 114 7 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 70 17 8 0 0 0 0 0 0 0 0 0 70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+70 17 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 36 176 8 0 0 0 0 0 0 0 0 0 36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+36 176 8 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 2 79 9 0 0 0 0 0 0 0 0 0 2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+2 79 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 224 237 9 0 0 0 0 0 0 0 0 0 224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+224 237 9 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 190 140 10 0 0 0 0 0 0 0 0 0 190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+190 140 10 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 156 43 11 0 0 0 0 0 0 0 0 0 156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+156 43 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 122 202 11 0 0 0 0 0 0 0 0 0 122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+66 : PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+while__ : while ( true ) 
+71 : IF(151) > 247(247, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+76 : ADD_STACK_VARIABLE(0) > 16(16, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+81 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+82 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+91 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+96 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: uint t1 = rdtsc ( ) 
+97 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+98 : FUNC(153)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+99 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+104 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+105 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+106 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+111 : A=*A_nopush(165)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+112 : PARAM_4(156)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+122 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+127 : LA=A(161)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : deltaTime = get_deltatime ( t0 , t1 ) 
+128 : *LA=A_4(171)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+129 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+134 : FUNC(153)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+135 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+140 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+145 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+154 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+159 : LA=A(161)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+adsetvar: gpos p = obj_getpos ( this ) 
+160 : *LA=*A_N(182) > 12(12, 0, 0, 0)
+stack mem
+0 0 0 0 235 15 0 0 235 15 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+165 : PUSH_A_CONST_4(6) > 1092616192(0, 0, 32, 65)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+170 : B=&VID(160) > 4(4, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+175 : B=*B_nopush(166)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+176 : AU_FLOAT_MUL_B(58)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+177 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+186 : A=*A_nopush(165)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+187 : AU_FLOAT_ADD_A(29)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+188 : A<=&VID[Const](183) > 28(28, 0, 0, 0) > 28(28, 0, 0, 0)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+197 : LA=A(161)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : p . x += 10.0 * deltaTime 
+198 : *LA=A_4(171)
+stack mem
+122 202 11 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+199 : FUNC(153)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+200 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+205 : PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+210 : A=&Global_VID(178) > 0(0, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+215 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+usefunc : obj_setpos ( this , p ) 
+220 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+144 96 107 45 200 1 0 0 88 105 12 0 0 0 0 0 0 0 0 0 88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+229 : A=&VID(159) > 16(16, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+234 : A=*A_nopush(165)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+235 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+240 : LA=A(161)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+set_var : t0 = t1 
+241 : *LA=A_4(171)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
+242 : JMP(152) > 66(66, 0, 0, 0)
+stack mem
+88 105 12 0 0 0 0 0 0 0 0 0 235 15 0 0 235 15 0 0 0 0 0 0 227 15 0 0 
+data mem
+144 96 107 45 200 1 0 0 
+
