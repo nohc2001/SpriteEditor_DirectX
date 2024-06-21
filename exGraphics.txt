@@ -113,11 +113,15 @@ void spr_push_rbuffer(pSprite spr, prbuffer rb);
 
 pObject _pObject(pSprite spr, gpos p, gpos r, gpos s, pECS ecs);
 
+pSprite _pSprite();
+
 pObject spr_getchild(pSprite spr, int id);
 
 void spr_erasechild(pSprite spr, int id);
 
 void spr_pushchild(pSprite spr, pObject obj);
+
+void spr_clearchild(pSprite spr);
 
 gpos obj_getpos(pObject obj);
 

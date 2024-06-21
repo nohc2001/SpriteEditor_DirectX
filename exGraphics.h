@@ -339,12 +339,11 @@ void exGraphics_spr_push_rbuffer(int* pcontext)
 // pObject _pObject(pSprite spr, gpos p, gpos r, gpos s, int* ecs);
 void exGraphics__pObject(int *pcontext)
 {
-	/*
-	* ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
+	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	Sprite *spr = *reinterpret_cast < Sprite ** >(icc->rfsp - 52);
-	sdlpos p = *reinterpret_cast < sdlpos * >(icc->rfsp - 44);
-	sdlpos r = *reinterpret_cast < sdlpos * >(icc->rfsp - 32);
-	sdlpos s = *reinterpret_cast < sdlpos * >(icc->rfsp - 20);
+	shp::vec3f p = *reinterpret_cast <shp::vec3f* >(icc->rfsp - 44);
+	shp::vec3f r = *reinterpret_cast <shp::vec3f* >(icc->rfsp - 32);
+	shp::vec3f s = *reinterpret_cast <shp::vec3f* >(icc->rfsp - 20);
 	pECS ecs = *reinterpret_cast < pECS*>(icc->rfsp - 8);
 	Object *newobj = (Object *) fm->_New(sizeof(Object), true);
 	newobj->null();
@@ -358,7 +357,22 @@ void exGraphics__pObject(int *pcontext)
 	*reinterpret_cast < Object ** >(icc->sp) = newobj;
 	icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
-	*/
+}
+
+// pSprite _pSprite();
+void exGraphics__pSprite(int* pcontext)
+{
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+	Sprite* spr;
+	spr = (Sprite*)fm->_New(sizeof(Sprite), true);
+	spr->null();
+	spr->st = sprite_type::st_none;
+	spr->data.freepoly = nullptr;
+
+	icc->sp -= sizeof(Sprite*);
+	*reinterpret_cast <Sprite**>(icc->sp) = spr;
+	icc->getA(0) = icc->sp - icc->mem;
+	icc->Amove_pivot(-1);
 }
 
 // pObject spr_getchild(pSprite spr, int id);
@@ -381,6 +395,7 @@ void exGraphics_spr_erasechild(int *pcontext)
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	Sprite *spr = *reinterpret_cast < Sprite ** >(icc->rfsp - 12);
 	int id = *reinterpret_cast < int *>(icc->rfsp - 4);
+	spr->st = sprite_type::st_objects;
 	spr->data.objs->erase(id);
 }
 
@@ -390,7 +405,17 @@ void exGraphics_spr_pushchild(int *pcontext)
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	Sprite *spr = *reinterpret_cast < Sprite ** >(icc->rfsp - 16);
 	Object *obj = *reinterpret_cast < Object ** >(icc->rfsp - 8);
+	spr->st = sprite_type::st_objects;
 	spr->data.objs->push_back((int *)obj);
+}
+
+//void spr_clearchild(pSprite spr);
+void exGraphics_spr_clearchild(int* pcontext)
+{
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+	Sprite* spr = *reinterpret_cast <Sprite**>(icc->rfsp - 8);
+	spr->st = sprite_type::st_objects;
+	spr->data.objs->up = 0;
 }
 
 // gpos obj_getpos(pObject obj);
@@ -532,10 +557,10 @@ ICB_Extension *Init_exGraphics()
 	ext->exfuncArr.Init(64, false);
 	ext->exstructArr.NULLState();
 	ext->exstructArr.Init(32, false);
-	dbg << "bake" << endl;
+	//dbg << "bake" << endl;
 	bake_Extension("exGraphics.txt", ext);
 	int i = -1;
-	dbg << "pc input" << endl;
+	//dbg << "pc input" << endl;
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_get_icb);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_create_ecs);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ecs_get_icb);
@@ -559,6 +584,7 @@ ICB_Extension *Init_exGraphics()
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_isExistSpr);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_push_rbuffer);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__pObject);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__pSprite);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_getchild);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_erasechild);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_pushchild);
