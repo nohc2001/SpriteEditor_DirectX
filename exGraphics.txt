@@ -69,9 +69,15 @@ pECS create_ecs(pICB icb, uint memsiz);
 
 pICB ecs_get_icb(pECS ecs);
 
-gpos apos(float x, float y, float z);
+gpos _gpos(float x, float y, float z);
 
-gindex aindex(ushort n0, ushort n1, ushort n2);
+gindex _gindex(ushort n0, ushort n1, ushort n2);
+
+gcolor _gcolor(uchar r, uchar g, uchar b, uchar a);
+
+pSprite _pSprite();
+
+pObject _pObject();
 
 int rbuff_get_vertexsiz(prbuffer buff, int index);
 
@@ -85,7 +91,7 @@ void rbuff_set_inherit(prbuffer buff, bool b);
 
 void rbuff_Init(prbuffer buff, bool local);
 
-void begin(prbuffer buff, bool inherit = false);
+void begin(prbuffer buff, bool inherit);
 
 void end(prbuffer buff);
 
@@ -103,7 +109,9 @@ void spr_save(pSprite spr, char *filename);
 
 bool spr_isExistSpr(pSprite spr, int *objptr);
 
-pObject aobject(pSprite spr, gpos p, gpos r, gpos s, pECS ecs);
+void spr_push_rbuffer(pSprite spr, prbuffer rb);
+
+pObject _pObject(pSprite spr, gpos p, gpos r, gpos s, pECS ecs);
 
 pObject spr_getchild(pSprite spr, int id);
 

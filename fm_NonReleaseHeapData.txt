@@ -1,0 +1,43 @@
+mulindex_: 0
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 1
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 2
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 3
+fmsiz: 2
+id_: 1
+NonReleaseHeapNum_: 0
+
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 4
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 5
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 6
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+
+mulindex_: 7
+fmsiz: 1
+id_: 0
+NonReleaseHeapNum_: 0
+

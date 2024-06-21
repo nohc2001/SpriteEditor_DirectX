@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------------------
 
 word_base_sen_sys InsideCode_Bake::wbss;
-type_data* InsideCode_Bake::basictype[basictype_max];
+type_data InsideCode_Bake::basictype[basictype_max];
 operator_data InsideCode_Bake::basicoper[basicoper_max];
 ofstream InsideCode_Bake::icl;
 uint32_t InsideCode_Bake::icl_optionFlag;
@@ -82,7 +82,7 @@ char sprloadmod = 'n';
 // n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
 
 fmvecarr < ICB_Extension* >basic_ext;
-vecarr < ICB_Context* >ecss;
+fmvecarr < ICB_Context* >ecss;
 float exerate = 0.01f;
 
 wchar_t* GetFileNameFromDlg_open() {
@@ -98,13 +98,18 @@ wchar_t* GetFileNameFromDlg_open() {
 	OFN.lpstrFile = lpstrFile;
 	OFN.nMaxFile = 256;
 	OFN.lpstrInitialDir = L".";
+	
+	wchar_t* rstr = nullptr;
 
 	if (GetOpenFileName(&OFN) != 0) {
 		wsprintf(filePathName, L"%s 파일을 열겠습니까?", OFN.lpstrFile);
 		MessageBox(g_hWnd, filePathName, L"열기 선택", MB_OK);
 
 		wchar_t* str = OFN.lpstrFile;
-		return str;
+		int len = (wcslen(str) + 1);
+		rstr = (wchar_t*)fm->_New(sizeof(wchar_t) * len, true);
+		wcscpy_s(rstr, len, str);
+		return rstr;
 	}
 	return nullptr;
 }
@@ -133,6 +138,7 @@ wchar_t* GetFileNameFromDlg_save() {
 		int len = (wcslen(str)+1);
 		rstr = (wchar_t*)fm->_New(sizeof(wchar_t) * len, true);
 		wcscpy_s(rstr, len, str);
+		return rstr;
 	}
 	return rstr;
 }
@@ -167,25 +173,26 @@ enum class mainpm {
 	, present_color = 2301
 	, select_rect = 2317
 	, select_arr = 2341
-	, stacktime = 2373
-	, selectclear = 2377
-	, opencolorpage = 2577
-	, openobjlist = 2777
-	, showobjlist = 2977
-	, closeobjlist = 2978
-	, savefilestr = 3178
-	, tabbtn_objs = 3688
-	, tabbtn_property = 3888
-	, list_height = 4088
-	, tabSlider = 4096
-	, objselect_id = 4280
-	, tabselect_id = 4284
-	, paramselect_id = 4288
-	, sprdirbtn = 4292
-	, loadbydirbtn = 4492
-	, fpsprbtn = 4692
-	, addicbtn = 4892
+	, stacktime = 2381
+	, selectclear = 2385
+	, opencolorpage = 2585
+	, openobjlist = 2785
+	, showobjlist = 2985
+	, closeobjlist = 2986
+	, savefilestr = 3186
+	, tabbtn_objs = 3696
+	, tabbtn_property = 3896
+	, list_height = 4096
+	, tabSlider = 4104
+	, objselect_id = 4288
+	, tabselect_id = 4292
+	, paramselect_id = 4296
+	, sprdirbtn = 4300
+	, loadbydirbtn = 4500
+	, fpsprbtn = 4700
+	, addicbtn = 4900
 };
+
 enum class colorpm {
 	presentcolor = 0
 	, RSlider = 16
@@ -196,15 +203,12 @@ enum class colorpm {
 	, pallete = 952
 	, selectnum = 2552
 };
+
 enum class texteditpm {
 	VKeyboard = 0
 	, ishan = 10000
 	, isshift = 10001
 	, deststring = 10002
-};
-enum class filepm
-{
-	pdir = 0, file_in_dir = 4096, sliderRate = 4136, vertSlider = 4140
 };
 
 void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
@@ -251,7 +255,7 @@ void CleanupDevice();
 LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
 void Render();
 
-FM_System0* fm;
+extern FM_System0* fm;
 bool FinishInit = false;
 
 void basicbtn_init(DXBtn* btn)
@@ -1047,7 +1051,7 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 			press_ef = false;
 			flow->x = 0;
 			// operate
-			wchar_t* loadfiledir = GetFileNameFromDlg_save();
+			wchar_t* loadfiledir = GetFileNameFromDlg_open();
 			int objselect_id = mainpage->pfm.Data[(int)mainpm::objselect_id];
 			if (loadfiledir != nullptr) {
 				// load ic
@@ -1057,7 +1061,7 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 				if (icmap.find((char*)filename.c_str()) == icmap.end())
 				{
 					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-					icb->init(40960);
+					icb->init();
 					for (int i = 0; i < basic_ext.size(); ++i)
 					{
 						icb->extension.push_back(basic_ext[i]);
@@ -1114,6 +1118,7 @@ void main_init(Page* p)
 
 	p->pfm.SetHeapData(new byte8[8192], 8192);
 	dbg << "present_center = " << p->pfm.Fup << endl;
+	Init_VPTR_x64<freemem::FM_Model0>(&p->pfm);
 	shp::vec2f* present_center = (shp::vec2f*)(p->pfm._New(sizeof(shp::vec2f)));
 	*present_center = shp::vec2f(0, 0);
 
@@ -1753,47 +1758,6 @@ void main_update(Page* p, float delta)
 	}
 
 	unsigned int* objselect_id = (unsigned int*)&p->pfm.Data[(int)mainpm::objselect_id];
-	switch (sprloadmod) {
-	case 'D':
-	{
-		// load spr with sprdir by dir(filepage.pdir)
-		Sprite* spr = (Sprite*)fm->_New(sizeof(Sprite), true);
-		spr->null();
-		wstring str = utf8_to_wstr((char*)&filepage->pfm.Data[(int)filepm::pdir]);
-		spr->load((wchar_t*)str.c_str());
-		int len = wcslen(str.c_str());
-		if (mainSprite->data.dir != nullptr) {
-			if (fm->bAlloc((byte8*)mainSprite->data.dir, sizeof(wchar_t) * (wcslen(mainSprite->data.dir) + 1))) {
-				fm->_Delete((byte8*)mainSprite->data.dir, sizeof(wchar_t) * (wcslen(mainSprite->data.dir) + 1));
-			}
-			mainSprite->data.dir = nullptr;
-		}
-		mainSprite->data.dir = (wchar_t*)fm->_New(sizeof(wchar_t) * (len + 1), true);
-		wcscpy(mainSprite->data.dir, str.c_str());
-		sprdirData[mainSprite->data.dir] = spr;
-		sprloadmod = 'n';
-	}
-	break;
-	case 'L':
-	{
-		//load spr by dir
-		Sprite* spr = (Sprite*)fm->_New(sizeof(Sprite), true);
-		spr->null();
-		wstring str = utf8_to_wstr((char*)&filepage->pfm.Data[(int)filepm::pdir]);
-		spr->load((wchar_t*)str.c_str());
-		Object* o = (Object*)mainSprite->data.objs->at(*objselect_id);
-		if (o->source != nullptr) {
-			if (fm->bAlloc((byte8*)o->source, sizeof(Sprite))) {
-				//release data
-				fm->_Delete((byte8*)o->source, sizeof(Sprite));
-			}
-			o->source = nullptr;
-		}
-		o->source = spr;
-		sprloadmod = 'n';
-	}
-	break;
-	}
 
 	if (*showobjlist)
 	{
@@ -2530,8 +2494,6 @@ void main_event(Page* p, DX_Event evt)
 			}
 		}
 	}
-
-	
 }
 
 void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
@@ -2560,6 +2522,7 @@ void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
 void colorpage_init(Page* p)
 {
 	p->pfm.SetHeapData(new byte8[4096], 4096);
+	Init_VPTR_x64<freemem::FM_Model0>(&p->pfm);
 
 	dbg << "enum class colorpm{" << endl;
 	dbg << "presentcolor = " << p->pfm.Fup << endl;
@@ -2998,6 +2961,7 @@ void keybtn_event(DXBtn* btn, DX_Event evt)
 void texteditpage_init(Page* p)
 {
 	p->pfm.SetHeapData(new byte8[14336], 14336);
+	Init_VPTR_x64<freemem::FM_Model0>(&p->pfm);
 
 	dbg << "enum class texteditpm{" << endl;
 	// params
@@ -3220,79 +3184,6 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
                            NULL );
     if( !g_hWnd )
         return E_FAIL;
-
-	// init
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::ICB_StaticInit, false);
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init, false);
-	{
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init__Bake_Extension,
-			false);
-	}
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, false);
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanStructTypes, false);
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddStructTypes, false);
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanCodes, true);
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit, false);
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, true);
-	{
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, true);
-	}
-
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, true);
-
-	InsideCode_Bake::StaticInit();
-
-	ecss.NULLState();
-	ecss.Init(8, false);
-
-	basic_ext.NULLState();
-	basic_ext.Init(8, false);
-	ICB_Extension* ext = Init_exGeometry();
-	basic_ext.push_back(ext);
-	//dbg << "init graphics" << endl;
-	ext = Init_exGraphics();
-	//dbg << "init graphics end" << endl;
-	basic_ext.push_back(ext);
-
-	mainpage = (Page*)fm->_New(sizeof(Page), true);
-	mainpage->init_func = main_init;
-	mainpage->render_func = main_render;
-	mainpage->event_func = main_event;
-	mainpage->update_func = main_update;
-
-	colorpage = (Page*)fm->_New(sizeof(Page), true);
-	colorpage->init_func = colorpage_init;
-	colorpage->render_func = colorpage_render;
-	colorpage->update_func = colorpage_update;
-	colorpage->event_func = colorpage_event;
-
-	texteditpage = (Page*)fm->_New(sizeof(Page), true);
-	texteditpage->init_func = texteditpage_init;
-	texteditpage->render_func = texteditpage_render;
-	texteditpage->update_func = texteditpage_update;
-	texteditpage->event_func = texteditpage_event;
-
-	mainSprite = nullptr;
-
-	pagestacking(mainpage);
 
     ShowWindow( g_hWnd, nCmdShow );
 
@@ -3633,6 +3524,82 @@ HRESULT InitDevice()
 	*/
 	
 	g_Projection_2d = XMMatrixOrthographicLH(width, height, nearZ, farZ);
+
+	// init
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::ICB_StaticInit, false);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init, false);
+	{
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init__Bake_Extension,
+			false);
+	}
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanStructTypes, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddStructTypes, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanCodes, true);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit, false);
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, true);
+	{
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, true);
+	}
+
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, true);
+
+	InsideCode_Bake::StaticInit();
+
+	ecss.NULLState();
+	ecss.Init(8, false);
+
+	basic_ext.NULLState();
+	basic_ext.Init(8, false);
+	ICB_Extension* ext = Init_exGeometry();
+	basic_ext.push_back(ext);
+	//dbg << "init graphics" << endl;
+	ext = Init_exGraphics();
+	//dbg << "init graphics end" << endl;
+	basic_ext.push_back(ext);
+
+	mainpage = (Page*)fm->_New(sizeof(Page), true);
+	mainpage->init_func = main_init;
+	mainpage->render_func = main_render;
+	mainpage->event_func = main_event;
+	mainpage->update_func = main_update;
+
+	colorpage = (Page*)fm->_New(sizeof(Page), true);
+	colorpage->init_func = colorpage_init;
+	colorpage->render_func = colorpage_render;
+	colorpage->update_func = colorpage_update;
+	colorpage->event_func = colorpage_event;
+
+	texteditpage = (Page*)fm->_New(sizeof(Page), true);
+	texteditpage->init_func = texteditpage_init;
+	texteditpage->render_func = texteditpage_render;
+	texteditpage->update_func = texteditpage_update;
+	texteditpage->event_func = texteditpage_event;
+
+	mainSprite = nullptr;
+	mainpage->init_func(mainpage);
+	colorpage->init_func(colorpage);
+	texteditpage->init_func(texteditpage);
+
+	pagestacking(mainpage);
     
     cursor_obj.Init(false);
     cursor_obj.begin();
@@ -3673,10 +3640,6 @@ HRESULT InitDevice()
     linedrt->av(SimpleVertex(shp::vec3f(0.5f, 0.5f, 0), color));
     linedrt->av(SimpleVertex(shp::vec3f(-0.5f, 0.5f, 0), color));
     linedrt->end();
-
-	mainpage->init_func(mainpage);
-	colorpage->init_func(colorpage);
-	texteditpage->init_func(texteditpage);
 
 	FinishInit = true;
 

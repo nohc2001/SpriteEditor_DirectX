@@ -1,37 +1,57 @@
 #ifndef ICB_EXTENSION_H
 #define ICB_EXTENSION_H
-
+#include "Utill_FreeMemory.h"
 #include "InsideCodeBake.h"
 
-//basic functions for extension operation
-void push_word(lcstr &str, vecarr<char*>* codesen)
-{
-    const char *sptr = str.c_str();
-    int len = strlen(sptr);
-    char *cstr = (char *)fm->_New(len + 1, true);
+using namespace freemem;
 
-    for (int i = 0; i < len; ++i)
+//basic functions for extension operation
+void push_word(char* sptr, fmvecarr<char*>* codesen)
+{
+    for (int i = 0; i < InsideCode_Bake::wbss.wordlist.size(); ++i)
     {
-        cstr[i] = sptr[i];
+        char* temp = InsideCode_Bake::wbss.wordlist.at(i);
+        if (strcmp(sptr, temp) == 0)
+        {
+            codesen->push_back(temp);
+            return;
+        }
     }
-    cstr[len] = 0;
+
+    char* cstr = InsideCode_Bake::wbss.addword(sptr);
     codesen->push_back(cstr);
 }
 
-void set_word(int index, lcstr &str, vecarr<char*>* codesen)
+void set_word(int index, char* sptr, fmvecarr<char*>* codesen)
 {
+    for (int i = 0; i < InsideCode_Bake::wbss.wordlist.size(); ++i)
+    {
+        char* temp = InsideCode_Bake::wbss.wordlist.at(i);
+        if (strcmp(sptr, temp) == 0)
+        {
+            (*codesen)[index] = temp;
+            return;
+        }
+    }
+
+    char* cstr = InsideCode_Bake::wbss.addword(sptr);
+    (*codesen)[index] = cstr;
+
+    /*
+
     const char *sptr = str.c_str();
     int len = strlen(sptr);
     char *cstr = (char *)fm->_New(len + 1, true);
-    strcpy_s(cstr, len + 1, sptr);
+    strcpy(cstr, sptr);
     cstr[len] = 0;
     fm->_Delete((byte8*)(*codesen)[index], strlen((*codesen)[index])+1);
     (*codesen)[index] = cstr;
+    */
 }
 
-void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
+void AddTextBlocks(fmlcstr &codetxt, fmvecarr<char*>* codesen)
 {
-    lcstr insstr;
+    fmlcstr insstr;
     insstr.NULLState();
     insstr.Init(2, false);
 
@@ -44,7 +64,7 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             if (i == codetxt.size() - 1)
             {
                 cout << "siz : " << i << "-" << codetxt.size() << " str : " << insstr.c_str() << endl;
-                push_word(insstr, codesen);
+                push_word(insstr.c_str(), codesen);
                 continue;
             }
             insstr.push_back(codetxt.at(i + 1));
@@ -52,7 +72,7 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             {
                 insstr.pop_back();
                 cout << "siz : " << i << "-" << codetxt.size() << " str : " << insstr.c_str() << endl;
-                push_word(insstr, codesen);
+                push_word(insstr.c_str(), codesen);
                 insstr.clear();
             }
             else
@@ -64,11 +84,11 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
                 {
                     insstr.pop_back();
                     cout << "siz : " << i << "-" << codetxt.size() << " str : " << insstr.c_str() << endl;
-                    push_word(insstr, codesen);
+                    push_word(insstr.c_str(), codesen);
                     insstr.clear();
                     insstr.push_back(c);
                     cout << "siz : " << i << "-" << codetxt.size() << " str : " << insstr.c_str() << endl;
-                    push_word(insstr, codesen);
+                    push_word(insstr.c_str(), codesen);
                     insstr.clear();
                     i++;
                 }
@@ -91,28 +111,28 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
 
     for (int i = 0; i < (int)codesen->size(); ++i)
     {
-        lcstr s;
+        fmlcstr s;
         s = (*codesen)[i];
         if (s == "-")
         {
             if (i == 0)
                 continue;
-            lcstr t0;
+            fmlcstr t0;
             t0 = (*codesen)[i - 1];
-            lcstr t1;
+            fmlcstr t1;
             t1 = (*codesen)[i + 1];
 
             bool bequ = (DecodeTextBlock(t0) == TBT::_operation) && (DecodeTextBlock(t1) != TBT::_operation);
             if (bequ)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i];
                 for (int k = 0; k < t1.size(); k++)
                 {
                     insstr.push_back(t1[k]);
                 }
 
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 (*codesen).erase(i + 1);
             }
         }
@@ -128,10 +148,10 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             bequ = bequ || (c == '%');
             if (bequ)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i - 1];
                 insstr.push_back('=');
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 codesen->erase(i);
             }
         }
@@ -143,10 +163,10 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             bool bequ = (c == '|');
             if (bequ)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i];
                 insstr.push_back('|');
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 codesen->erase(i + 1);
             }
         }
@@ -158,10 +178,10 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             bool bequ = (c == '&');
             if (bequ)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i];
                 insstr.push_back('&');
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 codesen->erase(i + 1);
             }
         }
@@ -169,9 +189,9 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
         {
             if (i - 1 < 0 && i + 1 > codesen->size() - 1)
                 continue;
-            lcstr front;
+            fmlcstr front;
             front = (*codesen)[i - 1];
-            lcstr back;
+            fmlcstr back;
             back = (*codesen)[i + 1];
             bool bequ = true;
             for (int k = 0; k < front.size(); k++)
@@ -192,14 +212,14 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
             }
             if (bequ)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i - 1];
                 insstr.push_back('.');
                 for (int k = 0; k < back.size(); k++)
                 {
                     insstr.push_back(back[k]);
                 }
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str() , codesen);
                 codesen->erase(i);
                 codesen->erase(i);
             }
@@ -209,11 +229,11 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
         {
             if (strcmp((*codesen)[i + 2], "\'") == 0)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i];
-                lcstr cent;
+                fmlcstr cent;
                 cent = (*codesen)[i + 1];
-                lcstr back;
+                fmlcstr back;
                 back = (*codesen)[i + 2];
                 for (int k = 0; k < cent.size(); k++)
                 {
@@ -225,19 +245,19 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
                     insstr.push_back(back.at(k));
                 }
 
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 codesen->erase(i + 1);
                 codesen->erase(i + 1);
             }
             else if (strcmp((*codesen)[i + 1], "\\") == 0 && strcmp((*codesen)[i + 3], "\'") == 0)
             {
-                lcstr insstr;
+                fmlcstr insstr;
                 insstr = (*codesen)[i];
-                lcstr cent;
+                fmlcstr cent;
                 cent = (*codesen)[i + 1];
-                lcstr back;
+                fmlcstr back;
                 back = (*codesen)[i + 2];
-                lcstr backback;
+                fmlcstr backback;
                 backback = (*codesen)[i + 3];
                 for (int k = 0; k < cent.size(); k++)
                 {
@@ -254,7 +274,7 @@ void AddTextBlocks(lcstr &codetxt, vecarr<char*>* codesen)
                     insstr.push_back(backback.at(k));
                 }
 
-                set_word(i, insstr, codesen);
+                set_word(i, insstr.c_str(), codesen);
                 codesen->erase(i + 1);
                 codesen->erase(i + 1);
                 codesen->erase(i + 1);
@@ -269,7 +289,7 @@ bool IsTypeString(const char *str, ICB_Extension* ext)
 {
     for (int i = 0; i < InsideCode_Bake::basictype_max; ++i)
     {
-        if (strcmp(str, InsideCode_Bake::basictype[i]->name.c_str()) == 0)
+        if (strcmp(str, InsideCode_Bake::basictype[i].name.c_str()) == 0)
             return true;
     }
 
@@ -280,14 +300,14 @@ bool IsTypeString(const char *str, ICB_Extension* ext)
     return false;
 }
 
-vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char *ScanMod, ICB_Extension* ext)
+fmvecarr<code_sen *> *AddCodeFromBlockData(fmvecarr<char *> &allcodesen, const char *ScanMod, ICB_Extension* ext)
 {
     // allcode_sen-> allcode_sen
     // ic -> this
     // code -> sen_arr
 
-    vecarr<code_sen *> *senarr =
-        (vecarr<code_sen *> *)fm->_New(sizeof(vecarr<code_sen *>), true);
+    fmvecarr<code_sen *> *senarr =
+        (fmvecarr<code_sen *> *)fm->_New(sizeof(fmvecarr<code_sen *>), true);
     senarr->NULLState();
     senarr->Init(10, false);
 
@@ -338,9 +358,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                         code_sen *cs = (code_sen *)fm->_New(sizeof(code_sen), true);
                         *cs = code_sen();
                         cs->ck = codeKind::ck_addFunction;
-                        vecarr<char *> cbs;
+                        fm->_tempPushLayer();
+                        fmvecarr<char*> cbs;
                         cbs.NULLState();
-                        cbs.Init(3, true);
+                        cbs.Init(3, false, false);
                         for (int k = typeS; k < typeE + 2; ++k) {
                             cbs.push_back(allcodesen[k]);
                         }
@@ -365,6 +386,7 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                         }
 
                         InsideCode_Bake::set_codesen(cs, cbs);
+                        fm->_tempPopLayer();
 
                         senarr->push_back(cs);
                         i = startI - 1;
@@ -376,9 +398,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     code_sen *cs = (code_sen *)fm->_New(sizeof(code_sen), true);
                     *cs = code_sen();
                     cs->ck = codeKind::ck_addFunction;
-                    vecarr<char *> cbs;
+                    fm->_tempPushLayer();
+                    fmvecarr<char*> cbs;
                     cbs.NULLState();
-                    cbs.Init(3, true);
+                    cbs.Init(3, false, false);
                     cbs.push_back(allcodesen[i]);
                     cbs.push_back(allcodesen[i + 1]);
 
@@ -402,6 +425,7 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     }
 
                     InsideCode_Bake::set_codesen(cs, cbs);
+                    fm->_tempPopLayer();
                     senarr->push_back(cs);
                     i = startI - 1;
                     StartI = i + 1;
@@ -411,9 +435,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     code_sen *cs = (code_sen *)fm->_New(sizeof(code_sen), true);
                     *cs = code_sen();
                     cs->ck = codeKind::ck_blocks;
-                    vecarr<char *> cbs;
+                    fm->_tempPushLayer();
+                    fmvecarr<char*> cbs;
                     cbs.NULLState();
-                    cbs.Init(2, true);
+                    cbs.Init(2, false, false);
 
                     int open = 0;
                     int h = 1;
@@ -436,13 +461,13 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     // cbs.pop_back();
                     // cbs.erase(0);
 
-                    vecarr<code_sen *> *cbv = AddCodeFromBlockData(cbs, "none", ext);
+                    fmvecarr<code_sen *> *cbv = AddCodeFromBlockData(cbs, "none", ext);
 
-                    cs->codeblocks = (vecarr<int *> *)fm->_New(sizeof(vecarr<int *>), true);
+                    cs->codeblocks = (fmvecarr<int *> *)fm->_New(sizeof(fmvecarr<int *>), true);
                     cs->codeblocks->NULLState();
-                    cs->codeblocks->Init(8, false);
+                    cs->codeblocks->Init(8, false, true);
                     cs->codeblocks->islocal = false;
-                    Init_VPTR<vecarr<int *> *>(cs->codeblocks);
+                    //Init_VPTR<fmvecarr<int *> *>(cs->codeblocks);
 
                     for (int u = 0; u < (int)cbv->size(); u++)
                     {
@@ -450,9 +475,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     }
 
                     cbv->release();
-                    fm->_Delete((byte8 *)cbv, sizeof(cbv));
+                    fm->_Delete((byte8 *)cbv, sizeof(fmvecarr<code_sen*>));
 
                     senarr->push_back(cs);
+                    fm->_tempPopLayer();
 
                     i += h;
                     StartI = i + 1;
@@ -466,9 +492,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     code_sen *cs = (code_sen *)fm->_New(sizeof(code_sen), true);
                     *cs = code_sen();
                     cs->ck = codeKind::ck_addStruct;
-                    vecarr<char *> cbs;
+                    fm->_tempPushLayer();
+                    fmvecarr<char*> cbs;
                     cbs.NULLState();
-                    cbs.Init(3, true);
+                    cbs.Init(3, false, false);
 
                     int open = 0;
                     int h = 0;
@@ -483,9 +510,9 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                         cbs.push_back(allcodesen[i + h]);
                     }
 
-                    vecarr<char *> bd;
+                    fmvecarr<char *> bd;
                     bd.NULLState();
-                    bd.Init(10, false);
+                    bd.Init(10, false, false);
                     for (int i = 0; i < cbs.size(); ++i)
                     {
                         bd.push_back(cbs[i]);
@@ -499,12 +526,11 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     bd.erase(0);
                     bd.pop_back();
 
-                    vecarr<code_sen *> *cbv = AddCodeFromBlockData(bd, "none", ext);
+                    fmvecarr<code_sen *> *cbv = AddCodeFromBlockData(bd, "none", ext);
 
-                    cs->codeblocks = (vecarr<int *> *)fm->_New(sizeof(vecarr<int *>), true);
+                    cs->codeblocks = (fmvecarr<int *> *)fm->_New(sizeof(fmvecarr<int *>), true);
                     cs->codeblocks->NULLState();
-                    cs->codeblocks->Init(8, false);
-                    //Init_VPTR<vecarr<int *> *>(cs->codeblocks);
+                    cs->codeblocks->Init(8, false, true);
 
                     for (int u = 0; u < (int)cbv->size(); u++)
                     {
@@ -512,9 +538,10 @@ vecarr<code_sen *> *AddCodeFromBlockData(vecarr<char *> &allcodesen, const char 
                     }
 
                     cbv->release();
-                    fm->_Delete((byte8 *)cbv, sizeof(cbv));
+                    fm->_Delete((byte8 *)cbv, sizeof(fmvecarr<code_sen*>));
 
                     InsideCode_Bake::set_codesen(cs, cbs);
+                    fm->_tempPopLayer();
                     senarr->push_back(cs);
                 }
             }
@@ -531,8 +558,8 @@ type_data *get_type_with_namesen(sen *tname, ICB_Extension* ext)
     char *bt = tname->at(0).data.str;
     for (int i = 0; i < InsideCode_Bake::basictype_max; ++i)
     {
-        if (strcmp(bt, InsideCode_Bake::basictype[i]->name.c_str()) == 0){
-            td = InsideCode_Bake::basictype[i];
+        if (strcmp(bt, InsideCode_Bake::basictype[i].name.c_str()) == 0){
+            td = &InsideCode_Bake::basictype[i];
             break;
         }
     }
@@ -554,7 +581,7 @@ type_data *get_type_with_namesen(sen *tname, ICB_Extension* ext)
         }
         if (c == '*')
         {
-            ntd = InsideCode_Bake::get_addpointer_type(td);
+            ntd = InsideCode_Bake::static_get_addpointer_type(td);
             if (i != 1)
             {
                 fm->_Delete((byte8 *)td, sizeof(td));
@@ -564,7 +591,25 @@ type_data *get_type_with_namesen(sen *tname, ICB_Extension* ext)
         else if (c == '[')
         {
             int siz = atoi(tname->at(i + 1).data.str);
-            ntd = InsideCode_Bake::get_array_type(td, siz);
+            ntd = InsideCode_Bake::static_get_array_type(td, siz);
+            bool isRelease = true;
+            if (td->typetype == 's') {
+                for (int i = 0; i < ext->exstructArr.size(); ++i) {
+                    if (strcmp(td->name.c_str(), ext->exstructArr.at(i)->name.c_str()) == 0) {
+                        isRelease = false;
+                        break;
+                    }
+                }
+            }
+            else if (td->typetype == 'b') {
+                isRelease = false;
+            }
+
+            if (isRelease)
+            {
+                EXT_ReleaseTypeData(td, ext);
+                td = nullptr;
+            }
             td = ntd;
         }
     }
@@ -573,15 +618,15 @@ type_data *get_type_with_namesen(sen *tname, ICB_Extension* ext)
 
 void interpret_AddStruct(code_sen *cs, ICB_Extension *ext)
 {
-    sen *code = InsideCode_Bake::get_sen_from_codesen(cs);
-    char *cname = code->at(1).data.str;
-    int cnlen = strlen(cname) + 1;
-    char *name = (char *)fm->_New(cnlen, true);
-    strcpy_s(name, cnlen, cname);
-    struct_data *stdata = (struct_data *)fm->_New(sizeof(struct_data), true);
+    sen* code = InsideCode_Bake::get_sen_from_codesen(cs);
+    char* cname = code->at(1).data.str;
+    int name_siz = strlen(cname) + 1;
+    //char *name = (char *)fm->_New(name_siz, true);
+    //strcpy(name, cname);
+    struct_data* stdata = (struct_data*)fm->_New(sizeof(struct_data), true);
     stdata->name.NULLState();
-    stdata->name.Init(16, false);
-    stdata->name = name;
+    stdata->name.Init(8, false);
+    stdata->name = cname;
     stdata->member_data.NULLState();
     stdata->member_data.Init(8, false);
     int cpivot = 3;
@@ -589,48 +634,62 @@ void interpret_AddStruct(code_sen *cs, ICB_Extension *ext)
     while (cpivot < code->size() - 1)
     {
         int loc = InsideCode_Bake::wbss.search_word_first(cpivot, code, ";");
-        sen *member_sen = InsideCode_Bake::wbss.sen_cut(code, cpivot, loc - 1);
-        InsideCode_Bake::wbss.dbg_sen(member_sen);
+        sen* member_sen = InsideCode_Bake::wbss.sen_cut(code, cpivot, loc - 1);
+        //InsideCode_Bake::wbss.dbg_sen(member_sen);
         NamingData nd;
         cname = member_sen->last().data.str;
-        int cnlen = strlen(cname) + 1;
-        nd.name = (char *)fm->_New(cnlen, true);
-        strcpy_s(nd.name, cnlen, cname);
-        sen *type_sen = InsideCode_Bake::wbss.sen_cut(member_sen, 0, member_sen->size() - 1);
-        type_data *td = get_type_with_namesen(type_sen, ext);
+        nd.name = cname; // (char *)fm->_New(strlen(cname) + 1, true);
+        //strcpy(nd.name, cname);
+        sen* type_sen = InsideCode_Bake::wbss.sen_cut(member_sen, 0, member_sen->size() - 1);
+        type_data* td = get_type_with_namesen(type_sen, ext);
         nd.td = td;
         nd.add_address = totalSiz;
         totalSiz += td->typesiz;
         stdata->member_data.push_back(nd);
         cpivot = loc + 1;
+
+        member_sen->release();
+        fm->_Delete((byte8*)member_sen, sizeof(sen));
+
+        type_sen->release();
+        fm->_Delete((byte8*)type_sen, sizeof(sen));
     }
-    type_data *newtype = InsideCode_Bake::create_type(name, totalSiz, 's', reinterpret_cast<int *>(stdata));
+    type_data* newtype = (type_data*)fm->_New(sizeof(type_data), true);
+    *newtype = InsideCode_Bake::create_type(stdata->name.c_str(), totalSiz, 's', reinterpret_cast<int*>(stdata));
+
     ext->exstructArr.push_back(newtype);
+    code->release();
+    fm->_Delete((byte8*)code, sizeof(sen));
 }
 
 void compile_addFunction(code_sen *cs, ICB_Extension *ext)
 {
-    func_data *fd = (func_data *)fm->_New(sizeof(func_data), true);
+    func_data* fd = (func_data*)fm->_New(sizeof(func_data), true);
     fd->name.NULLState();
     fd->name.Init(2, false);
 
-    sen *code = InsideCode_Bake::get_sen_from_codesen(cs);
+    sen* code = InsideCode_Bake::get_sen_from_codesen(cs);
     int loc = code->size() - 1;
-    sen *inner_params = InsideCode_Bake::wbss.oc_search_inv(code, loc, "(", ")");
+    sen* inner_params = InsideCode_Bake::wbss.oc_search_inv(code, loc, "(", ")");
     int nameloc = loc - inner_params->size();
 
     fd->name = code->at(nameloc).data.str;
+    //cout << fd->name.c_str() << endl;
 
-    sen *typen = InsideCode_Bake::wbss.sen_cut(code, 0, nameloc - 1);
+    sen* typen = InsideCode_Bake::wbss.sen_cut(code, 0, nameloc - 1);
     type_data* td = get_type_with_namesen(typen, ext);
-    sen *params_sen = InsideCode_Bake::wbss.sen_cut(code, nameloc + 2, loc - 1);
+    typen->release();
+    fm->_Delete((byte8*)typen, sizeof(sen));
+    typen = nullptr;
+
+    sen* params_sen = InsideCode_Bake::wbss.sen_cut(code, nameloc + 2, loc - 1);
     InsideCode_Bake::wbss.dbg_sen(params_sen);
     int coma = InsideCode_Bake::wbss.search_word_first(0, params_sen, ",");
     int savecoma = 0;
     int last = params_sen->size() - 1;
 
     fd->param_data.NULLState();
-    fd->param_data.Init(2, false);
+    fd->param_data.Init(2, false, true);
     fd->returntype = td;
     fd->start_pc = nullptr;
 
@@ -640,21 +699,21 @@ void compile_addFunction(code_sen *cs, ICB_Extension *ext)
     {
         ext->exfuncArr.push_back(fd);
         code->release();
-        fm->_Delete((byte8 *)code, sizeof(sen));
+        fm->_Delete((byte8*)code, sizeof(sen));
 
         params_sen->release();
-        fm->_Delete((byte8 *)params_sen, sizeof(sen));
+        fm->_Delete((byte8*)params_sen, sizeof(sen));
         return;
     }
 
     while (coma != -1)
     {
-        sen *param_sen = InsideCode_Bake::wbss.sen_cut(params_sen, savecoma, coma - 1);
+        sen* param_sen = InsideCode_Bake::wbss.sen_cut(params_sen, savecoma, coma - 1);
         NamingData nd;
 
-        sen *typestr = (sen *)fm->_New(sizeof(sen), true);
+        sen* typestr = (sen*)fm->_New(sizeof(sen), true);
         typestr->NULLState();
-        typestr->Init(2, false);
+        typestr->Init(2, false, true);
         for (int i = 0; i < param_sen->size() - 1; ++i)
         {
             typestr->push_back(param_sen->at(i));
@@ -671,19 +730,21 @@ void compile_addFunction(code_sen *cs, ICB_Extension *ext)
         coma = InsideCode_Bake::wbss.search_word_first(savecoma, params_sen, ",");
 
         param_sen->release();
-        fm->_Delete((byte8 *)param_sen, sizeof(sen));
+        fm->_Delete((byte8*)param_sen, sizeof(sen));
 
         typestr->release();
-        fm->_Delete((byte8 *)typestr, sizeof(sen));
+        fm->_Delete((byte8*)typestr, sizeof(sen));
     }
 
-    sen *param_sen = InsideCode_Bake::wbss.sen_cut(params_sen, savecoma, last);
+    //fm->dbg_fm1_lifecheck_charprint();
+
+    sen* param_sen = InsideCode_Bake::wbss.sen_cut(params_sen, savecoma, last);
     //InsideCode_Bake::wbss.dbg_sen(param_sen);
     NamingData nd;
 
-    sen *typestr = (sen *)fm->_New(sizeof(sen), true);
+    sen* typestr = (sen*)fm->_New(sizeof(sen), true);
     typestr->NULLState();
-    typestr->Init(2, false);
+    typestr->Init(2, false, true);
     for (int i = 0; i < param_sen->size() - 1; ++i)
     {
         typestr->push_back(param_sen->at(i));
@@ -702,13 +763,19 @@ void compile_addFunction(code_sen *cs, ICB_Extension *ext)
     ext->exfuncArr.push_back(fd);
 
     code->release();
-    fm->_Delete((byte8 *)code, sizeof(sen));
+    fm->_Delete((byte8*)code, sizeof(sen));
 
     param_sen->release();
-    fm->_Delete((byte8 *)param_sen, sizeof(sen));
+    fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+    params_sen->release();
+    fm->_Delete((byte8*)params_sen, sizeof(sen));
+
+    inner_params->release();
+    fm->_Delete((byte8*)inner_params, sizeof(sen));
 
     typestr->release();
-    fm->_Delete((byte8 *)typestr, sizeof(sen));
+    fm->_Delete((byte8*)typestr, sizeof(sen));
 }
 
 void compile_code(code_sen *cs, ICB_Extension *ext)
@@ -726,19 +793,24 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
     bool icldetail = InsideCode_Bake::GetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init__Bake_Extension);
     if (icldetail) icl << "start" << endl;
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__GetCodeFromText...";
-    lcstr *allcodeptr = GetCodeTXT(filename, fm);
+    fmlcstr *allcodeptr = GetCodeTXT(filename, fm);
     if (icldetail) icl << "finish" << endl;
-	lcstr &allcode = *allcodeptr;
-    vecarr<char*> codesen;
+	fmlcstr &allcode = *allcodeptr;
+    fmvecarr<char*> codesen;
     codesen.NULLState();
     codesen.Init(8, false);
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__AddTextBlocks...";
 	AddTextBlocks(allcode, &codesen);
+
+    allcodeptr->release();
+    allcodeptr->NULLState();
+    fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__ScanStructTypes...";
-	vecarr<code_sen *> *senstptr = AddCodeFromBlockData(codesen, "struct", ext);
+	fmvecarr<code_sen *> *senstptr = AddCodeFromBlockData(codesen, "struct", ext);
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__AddStructTypes...";
@@ -752,7 +824,7 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__ScanFunctions...";
-    vecarr<code_sen *> *senptr = AddCodeFromBlockData(codesen, "none", ext);
+    fmvecarr<code_sen *> *senptr = AddCodeFromBlockData(codesen, "none", ext);
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__AddFunctions...";
@@ -760,11 +832,35 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
 	{
 		// fm->dbg_fm1_lifecheck();
 		code_sen *cs = senptr->at(i);
-        InsideCode_Bake::dbg_codesen(cs);
+        dbg_codesen(cs);
         if (cs->ck == codeKind::ck_addFunction) {
             compile_addFunction(cs, ext);
         }
 	}
+
+    codesen.release();
+    codesen.NULLState();
+
+    for (int i = 0; i < senstptr->size(); ++i) {
+        code_sen* cs = senstptr->at(i);
+        InsideCode_Bake::ReleaseCodeSen(cs);
+        fm->_Delete((byte8*)cs, sizeof(code_sen));
+        senstptr->at(i) = nullptr;
+    }
+    senstptr->release();
+    senstptr->NULLState();
+    fm->_Delete((byte8*)senstptr, sizeof(fmvecarr<code_sen*>));
+
+    for (int i = 0; i < senptr->size(); ++i) {
+        code_sen* cs = senptr->at(i);
+        InsideCode_Bake::ReleaseCodeSen(cs);
+        fm->_Delete((byte8*)cs, sizeof(code_sen));
+        senptr->at(i) = nullptr;
+    }
+    senptr->release();
+    senptr->NULLState();
+    fm->_Delete((byte8*)senptr, sizeof(fmvecarr<code_sen*>));
+
     if (icldetail) icl << "finish" << endl;
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension ";
 }

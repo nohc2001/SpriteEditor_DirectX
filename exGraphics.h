@@ -76,7 +76,7 @@ void exGraphics_get_icb(int* pcontext)
 	InsideCode_Bake* icb = nullptr;
 	if(icmap.find(filename) == icmap.end()){
 		icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-		icb->init(40960);
+		icb->init();
     	ICB_Extension* ext = Init_exGeometry();
     	icb->extension.push_back(ext);
     	ext = Init_exGraphics();
@@ -127,7 +127,7 @@ void exGraphics_ecs_get_icb(int *pcontext)
 }
 
 // gpos apos(float x, float y, float z);
-void exGraphics_apos(int *pcontext)
+void exGraphics__gpos(int *pcontext)
 {
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	gpos v;
@@ -140,7 +140,7 @@ void exGraphics_apos(int *pcontext)
 }
 
 // gindex aindex(ushort n0, ushort n1, ushort n2);
-void exGraphics_aindex(int *pcontext)
+void exGraphics__gindex(int *pcontext)
 {
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	gindex v;
@@ -150,6 +150,23 @@ void exGraphics_aindex(int *pcontext)
 	*reinterpret_cast < gindex * >(icc->sp) = v;
 	icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
+}
+
+// gpos _gcolor(uchar r, uchar g, uchar b, uchar a);
+void exGraphics__gcolor(int* pcontext)
+{
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+	unsigned char* colorparam;
+	colorparam = reinterpret_cast <unsigned char*>(icc->rfsp - 4);
+	gcolor v;
+	v.r = (float)colorparam[0] / 255.0f;
+	v.g = (float)colorparam[1] / 255.0f;
+	v.b = (float)colorparam[2] / 255.0f;
+	v.a = (float)colorparam[3] / 255.0f;
+	icc->sp -= sizeof(gcolor);
+	*reinterpret_cast <gcolor*>(icc->sp) = v;
+	icc->getA(0) = icc->sp - icc->mem;
+	icc->Amove_pivot(-1);
 }
 
 // int rbuff_get_vertexsiz(prbuffer buff, int index);
@@ -307,8 +324,20 @@ void exGraphics_spr_isExistSpr(int *pcontext)
     icc->Amove_pivot(-1);
 }
 
-// pObject aobject(pSprite spr, gpos p, gpos r, gpos s, int* ecs);
-void exGraphics_aobject(int *pcontext)
+//void spr_push_rbuffer(pSprite spr, prbuffer rb);
+void exGraphics_spr_push_rbuffer(int* pcontext)
+{
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+	Sprite* spr = *reinterpret_cast <Sprite**>(icc->rfsp - 16);
+	rbuffer* rb = *reinterpret_cast <rbuffer**>(icc->rfsp - 8);
+	spr->Release();
+	spr->st = sprite_type::st_freepolygon;
+	spr->data.freepoly = rb;
+	//spr->save((wchar_t*)utf8_to_wstr(filename).c_str());
+}
+
+// pObject _pObject(pSprite spr, gpos p, gpos r, gpos s, int* ecs);
+void exGraphics__pObject(int *pcontext)
 {
 	/*
 	* ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
@@ -507,42 +536,44 @@ ICB_Extension *Init_exGraphics()
 	bake_Extension("exGraphics.txt", ext);
 	int i = -1;
 	dbg << "pc input" << endl;
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_get_icb);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_create_ecs);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_ecs_get_icb);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_apos);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_aindex);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_get_vertexsiz);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_get_choice);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_get_inherit);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_set_choice);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_set_inherit);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_Init);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_begin);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_end);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_av);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 *>(exGraphics_rbuff_set_static_color);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rbuff_clear);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_render);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_load);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_save);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_isExistSpr);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_aobject);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_getchild);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_erasechild);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_spr_pushchild);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_getpos);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_getrot);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_getsca);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_getsource);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_getecs);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_setpos);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_setrot);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_setsca);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_setsource);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_obj_setecs);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_rdtsc);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast < byte8 * >(exGraphics_get_deltatime);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_get_icb);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_create_ecs);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ecs_get_icb);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__gpos);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__gindex);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__gcolor);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_get_vertexsiz);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_get_choice);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_get_inherit);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_set_choice);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_set_inherit);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_Init);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_begin);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_end);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_av);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_set_static_color);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_clear);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_render);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_load);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_save);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_isExistSpr);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_push_rbuffer);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__pObject);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_getchild);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_erasechild);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_pushchild);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getpos);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getrot);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getsca);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getsource);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getecs);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setpos);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setrot);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setsca);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setsource);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setecs);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rdtsc);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_get_deltatime);
 	return ext;
 }
 

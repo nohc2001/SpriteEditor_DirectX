@@ -77,6 +77,17 @@ union s_data {
 	freepolydata fd;
 
 	s_data() {}
+	s_data(const s_data& ref) {
+		sdd = ref.sdd;
+		oad = ref.oad;
+		fd = ref.fd;
+	}
+
+	void operator=(const s_data& ref) {
+		sdd = ref.sdd;
+		oad = ref.oad;
+		fd = ref.fd;
+	}
 	~s_data() {}
 };
 

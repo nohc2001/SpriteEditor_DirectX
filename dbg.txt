@@ -1,6 +1,6 @@
 bake
 pc input
-2577
+2585
 enum class mainpm{
 present_center = 0
 , finger_pressed = 8
@@ -22,24 +22,24 @@ present_center = 0
 , present_color = 2301
 , select_rect = 2317
 , select_arr = 2341
-, stacktime = 2373
-, selectclear = 2377
-, opencolorpage = 2577
-, openobjlist = 2777
-, showobjlist = 2977
-, closeobjlist = 2978
-, savefilestr = 3178
-, tabbtn_objs = 3688
-, tabbtn_property = 3888
-, list_height = 4088
-, tabSlider = 4096
-, objselect_id = 4280
-, tabselect_id = 4284
-, paramselect_id = 4288
-, sprdirbtn = 4292
-, loadbydirbtn = 4492
-, fpsprbtn = 4692
-, addicbtn = 4892
+, stacktime = 2381
+, selectclear = 2385
+, opencolorpage = 2585
+, openobjlist = 2785
+, showobjlist = 2985
+, closeobjlist = 2986
+, savefilestr = 3186
+, tabbtn_objs = 3696
+, tabbtn_property = 3896
+, list_height = 4096
+, tabSlider = 4104
+, objselect_id = 4288
+, tabselect_id = 4292
+, paramselect_id = 4296
+, sprdirbtn = 4300
+, loadbydirbtn = 4500
+, fpsprbtn = 4700
+, addicbtn = 4900
 };
 enum class colorpm{
 presentcolor = 0
