@@ -75,10 +75,6 @@ gindex _gindex(ushort n0, ushort n1, ushort n2);
 
 gcolor _gcolor(uchar r, uchar g, uchar b, uchar a);
 
-pSprite _pSprite();
-
-pObject _pObject();
-
 int rbuff_get_vertexsiz(prbuffer buff, int index);
 
 int rbuff_get_choice(prbuffer buff);

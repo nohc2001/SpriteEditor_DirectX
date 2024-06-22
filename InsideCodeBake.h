@@ -632,45 +632,45 @@ struct code_sen
 	}
 };
 
-void dbg_codesen(code_sen *cs)
+void dbg_codesen(code_sen *cs, ostream& ofs)
 {
 	switch (cs->ck)
 	{
 	case codeKind::ck_addVariable:
-		cout << "add var : ";
+		ofs << "add var : ";
 		break;
 	case codeKind::ck_setVariable:
-		cout << "set var : ";
+		ofs << "set var : ";
 		break;
 	case codeKind::ck_if:
-		cout << "if_ sen : ";
+		ofs << "if_ sen : ";
 		break;
 	case codeKind::ck_while:
-		cout << "while__ : ";
+		ofs << "while__ : ";
 		break;
 	case codeKind::ck_blocks:
-		cout << "block__ : ";
+		ofs << "block__ : ";
 		break;
 	case codeKind::ck_addFunction:
-		cout << "addfunc : ";
+		ofs << "addfunc : ";
 		break;
 	case codeKind::ck_useFunction:
-		cout << "usefunc : ";
+		ofs << "usefunc : ";
 		break;
 	case codeKind::ck_returnInFunction:
-		cout << "return_ : ";
+		ofs << "return_ : ";
 		break;
 	case codeKind::ck_addStruct:
-		cout << "struct__ : ";
+		ofs << "struct__ : ";
 		break;
 	case codeKind::ck_break:
-		cout << "break__ : ";
+		ofs << "break__ : ";
 		break;
 	case codeKind::ck_continue:
-		cout << "continue: ";
+		ofs << "continue: ";
 		break;
 	case codeKind::ck_addsetVariable:
-		cout << "adsetvar: ";
+		ofs << "adsetvar: ";
 		break;
 	default:
 		break;
@@ -680,18 +680,18 @@ void dbg_codesen(code_sen *cs)
 	{
 		for (int i = 0; i < cs->maxlen; ++i)
 		{
-			cout << cs->sen[i] << " ";
+			ofs << cs->sen[i] << " ";
 		}
-		cout << endl;
+		ofs << endl;
 	}
 	else
 	{
-		cout << "{" << endl;
+		ofs << "{" << endl;
 		for (int i = 0; i < cs->codeblocks->size(); ++i)
 		{
-			dbg_codesen(reinterpret_cast<code_sen *>(cs->codeblocks->at(i)));
+			dbg_codesen(reinterpret_cast<code_sen *>(cs->codeblocks->at(i)), ofs);
 		}
-		cout << "closed_ : }" << endl;
+		ofs << "closed_ : }" << endl;
 	}
 }
 
@@ -1919,7 +1919,7 @@ public:
 
 		strcpy_s(name, 5, "bool");
 		if (icldetail) icl << "ICB_StaticInit Create Type : " << name << "...";
-		basictype[4] = create_type(name, 4, 'b', nullptr);
+		basictype[4] = create_type(name, 1, 'b', nullptr);
 		if (icldetail) icl << "finish" << endl;
 
 		strcpy_s(name, 5, "uint");
@@ -1961,13 +1961,14 @@ public:
 		basicoper[18] = create_oper("||", 'o', (byte8)insttype::IT_LU_BOOL_OR_A, (byte8)insttype::IT_LU_BOOL_OR_B);
 		if (icldetail) icl << "ICB_StaticInit create basic operation finish" << endl;
 
+		read_inst_table();
+
 		if (icldetail) icl << "ICB_StaticInit ";
 		icl << "finish" << endl;
 	}
 
 	static void StaticRelease() {
 		cout << "instruction table" << endl;
-		read_inst_table();
 
 		for (int i = 0; i < 8; ++i) {
 			type_data* td = &basictype[i];
@@ -1997,7 +1998,7 @@ public:
 		bd->variable_data.NULLState();
 		bd->variable_data.Init(10, false, true);
 
-		max_mem_byte = 4096;
+		max_mem_byte = 40960;
 		mem = (byte8*)fm->_New(max_mem_byte, true);
 		for (int i = 0; i < max_mem_byte; ++i)
 		{
@@ -7575,41 +7576,45 @@ class ICB_Context{
 
     void dbg_registers()
 	{
-		cout << "a : " << (uint)getA(0) << "\t(";
+		ofstream& ofs = InsideCode_Bake::icl;
+		ofs << "a : " << (uint)getA(0) << "\t(";
 		for (int i = 1; i < 4; ++i)
 		{
-			cout << " | " << getA(i);
+			ofs << " | " << getA(i);
 		}
-		cout << endl;
-		cout << "b : " << (uint)getB(0) << "\t(";
+		ofs << endl;
+		ofs << "b : " << (uint)getB(0) << "\t(";
 		for (int i = 1; i < 4; ++i)
 		{
-			cout << " | " << getB(i);
+			ofs << " | " << getB(i);
 		}
-		cout << endl;
+		ofs << endl;
 	}
 
 	void dbg_stack()
 	{
-		cout << "stack mem" << endl;
+		ofstream& ofs = InsideCode_Bake::icl;
+		ofs << "stack mem" << endl;
 		for (byte8 *ptr = sp; ptr != &mem[max_mem_byte - 1]; ++ptr)
 		{
-			cout << (int)*ptr << ' ';
+			ofs << (int)*ptr << ' ';
 		}
-		cout << endl;
+		ofs << endl;
 	}
 
 	void dbg_data(){
-		cout << "data mem" << endl;
+		ofstream& ofs = InsideCode_Bake::icl;
+		ofs << "data mem" << endl;
 		for (int i=0;i<datamem.size();++i)
 		{
-			cout << (int)datamem[i] << ' ';
+			ofs << (int)datamem[i] << ' ';
 		}
-		cout << endl;
+		ofs << endl;
 	}
 
     void dbg_pc()
 	{
+		ofstream& ofs = InsideCode_Bake::icl;
 		if (icb->inst_meta[*pc].param_num < 0)
 		{
 			return;
@@ -7617,9 +7622,9 @@ class ICB_Context{
 		code_sen *cs = icb->find_codesen_with_linenum(icb->csarr, (int)(pc - codemem));
 		if (cs != nullptr)
 		{
-			dbg_codesen(cs);
+			dbg_codesen(cs, ofs);
 		}
-		cout << (int)(pc - codemem) << " : " << icb->inst_meta[*pc].name << "(" << (uint)*pc << ")";
+		ofs << (int)(pc - codemem) << " : " << icb->inst_meta[*pc].name << "(" << (uint)*pc << ")";
 		instruct_data id = icb->inst_meta[*pc];
 		int n;
 		for (int k = 0; k < id.param_num; ++k)
@@ -7628,24 +7633,24 @@ class ICB_Context{
 			{
 			case 1:
 				n = (uint) * (pc + 1);
-				cout << " > " << n;
+				ofs << " > " << n;
 				break;
 			case 2:
 				n = *reinterpret_cast<ushort *>(pc + 1);
-				cout << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ")";
+				ofs << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ")";
 				break;
 			case 4:
 				n = *reinterpret_cast<uint *>(pc + 1);
-				cout << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ", " << (uint) * (pc + 3) << ", " << (uint) * (pc + 4) << ")";
+				ofs << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ", " << (uint) * (pc + 3) << ", " << (uint) * (pc + 4) << ")";
 				break;
 			case 8:
 				n = *reinterpret_cast<uint64_t *>(pc + 1);
-				cout << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ", " << (uint) * (pc + 3) << ", " << (uint) * (pc + 4)
+				ofs << " > " << n << "(" << (uint) * (pc + 1) << ", " << (uint) * (pc + 2) << ", " << (uint) * (pc + 3) << ", " << (uint) * (pc + 4)
 				<< (uint) * (pc + 5) << ", " << (uint) * (pc + 6) << ", " << (uint) * (pc + 7) << ", " << (uint) * (pc + 8) << ")";
 				break;
 			}
 		}
-		cout << endl;
+		ofs << endl;
 	}
 };
 
@@ -7658,8 +7663,8 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = -1;
-bool isDbg = false;
+int stopnum = 0;
+bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {

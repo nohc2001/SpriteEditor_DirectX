@@ -235,6 +235,7 @@ void exGraphics_rbuff_Init(int *pcontext)
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
 	rbuffer *rb = *reinterpret_cast < rbuffer ** >(icc->rfsp - 9);
 	bool b = *reinterpret_cast < bool * >(icc->rfsp - 1);
+	rb = (rbuffer*)fm->_New(sizeof(rbuffer), true);
 	rb->Init(false);
 }
 

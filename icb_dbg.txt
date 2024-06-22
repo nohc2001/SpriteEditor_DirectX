@@ -1,318 +1,1536 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
-Create_New_ICB[0000016A04E2F6B7] Initialization...finish
-ICB[0000016A04E2F6B7] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs0.txt]
-ICB[0000016A04E2F6B7] BakeCode_GetCodeFromText...finish
-ICB[0000016A04E2F6B7] BakeCode_AddTextBlocks...finish
-ICB[0000016A04E2F6B7] BakeCode_ScanStructTypes...finish
-ICB[0000016A04E2F6B7] BakeCode_AddStructTypes...finish
-ICB[0000016A04E2F6B7] BakeCode_ScanCodes...start
+Create_New_ICB[000001CD9CA3F99B] Initialization...finish
+ICB[000001CD9CA3F99B] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_face.txt]
+ICB[000001CD9CA3F99B] BakeCode_GetCodeFromText...finish
+ICB[000001CD9CA3F99B] BakeCode_AddTextBlocks...finish
+ICB[000001CD9CA3F99B] BakeCode_ScanStructTypes...finish
+ICB[000001CD9CA3F99B] BakeCode_AddStructTypes...finish
+ICB[000001CD9CA3F99B] BakeCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
-[3] ~ addfunction : addfunc : int main ( )  ~ [6]
-[7] ~ blocks : start
-[0] ~ add and set variable : adsetvar: float deltaTime = 0  ~ [4]
-[5] ~ add and set variable : adsetvar: float past = 0  ~ [9]
-[10] ~ add and set variable : adsetvar: uint t0 = rdtsc ( )  ~ [16]
-[17] ~ while : while__ : while ( true )  ~ [20]
-[21] ~ blocks : start
-[0] ~ add and set variable : adsetvar: uint t1 = rdtsc ( )  ~ [6]
-[7] ~  ~ [7]
-[8] ~ set Variable : set_var : deltaTime = get_deltatime ( t0 , t1 )  ~ [15]
-[16] ~ add and set variable : adsetvar: gpos p = obj_getpos ( this )  ~ [23]
-[24] ~  ~ [24]
-[25] ~  ~ [25]
-[26] ~  ~ [26]
-[27] ~ set Variable : set_var : p . x += 0.01  ~ [29]
-[30] ~ use Function : usefunc : obj_setpos ( this , p )  ~ [36]
+[3] ~ add and set variable : adsetvar: float eyeStartPos_rate = 0.5  ~ [7]
+[8] ~ add and set variable : adsetvar: float eyeEndPos_rateX = 0.2  ~ [12]
+[13] ~ add and set variable : adsetvar: float eyeEndPos_rateY = 0.2  ~ [17]
+[18] ~ add and set variable : adsetvar: float eyeTopPos_rateX = 0.2  ~ [22]
+[23] ~ add and set variable : adsetvar: float eyeTopPos_rateY = 0.1  ~ [27]
+[28] ~ add and set variable : adsetvar: float eyeBotPos_rateY = 0.2  ~ [32]
+[33] ~ addfunction : addfunc : int main ( )  ~ [36]
+[37] ~ blocks : start
+[0] ~ add and set variable : adsetvar: float PI = 3.141592  ~ [4]
+[5] ~ add and set variable : adsetvar: pSprite mainspr = _pSprite ( )  ~ [11]
+[12] ~ add and set variable : adsetvar: pSprite circle_spr = _pSprite ( )  ~ [18]
+[19] ~ add variable : add_var : prbuffer circle_buff  ~ [21]
+[22] ~ use Function : usefunc : rbuff_Init ( circle_buff , false )  ~ [28]
+[29] ~ add and set variable : adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 )  ~ [42]
+[43] ~ add and set variable : adsetvar: vec2f center = _vec2f ( 0 , 0 )  ~ [52]
+[53] ~ add and set variable : adsetvar: float radius = 100  ~ [57]
+[58] ~ add and set variable : adsetvar: float angle = 0  ~ [62]
+[63] ~ add and set variable : adsetvar: float delta_angle = PI / 30  ~ [69]
+[70] ~ use Function : usefunc : begin ( circle_buff , false )  ~ [76]
+[77] ~ add and set variable : adsetvar: int i = 0  ~ [81]
+[82] ~ while : while__ : while ( i < 30 )  ~ [87]
+[88] ~ blocks : start
+[0] ~ add and set variable : adsetvar: angle2d anglevec = _angle2d ( angle )  ~ [7]
+[8] ~ add and set variable : adsetvar: gpos pos = _gpos ( anglevec . delta . x , anglevec . delta . y , 0 )  ~ [27]
+[28] ~ use Function : usefunc : av ( circle_buff , pos , skin_color )  ~ [36]
 [37] ~  ~ [37]
-[38] ~ set Variable : set_var : t0 = t1  ~ [40]
+[38] ~ set Variable : set_var : angle += delta_angle  ~ [40]
+[41] ~  ~ [41]
+[42] ~ set Variable : set_var : i += 1  ~ [44]
 BakeCode_ScanCodes...block__ : {
-adsetvar: uint t1 = rdtsc ( ) 
-set_var : deltaTime = get_deltatime ( t0 , t1 ) 
-adsetvar: gpos p = obj_getpos ( this ) 
-set_var : p . x += 0.01 
-usefunc : obj_setpos ( this , p ) 
-set_var : t0 = t1 
+adsetvar: angle2d anglevec = _angle2d ( angle ) 
+adsetvar: gpos pos = _gpos ( anglevec . delta . x , anglevec . delta . y , 0 ) 
+usefunc : av ( circle_buff , pos , skin_color ) 
+set_var : angle += delta_angle 
+set_var : i += 1 
 closed_ : }
- ~ [63]
-[64] ~ return in Function : return_ : return 0  ~ [66]
+ ~ [134]
+[135] ~ add and set variable : adsetvar: line2d hori = _line2d ( _vec2f ( center . x - 2 * radius , center . y ) , _vec2f ( center . x + 2 * radius , center . y ) )  ~ [170]
+[171] ~ add and set variable : adsetvar: line2d vert = _line2d ( _vec2f ( center . x , center . y - 2 * radius ) , _vec2f ( center . x , center . y + 2 * radius ) )  ~ [206]
+[207] ~ add and set variable : adsetvar: circle face_outline = _circle ( center , radius )  ~ [216]
+[217] ~ add and set variable : adsetvar: vec2f [ 2 ] horiPos = get_cross_CircleAndLine ( face_outline , hori )  ~ [229]
+[230] ~ add and set variable : adsetvar: vec2f [ 2 ] vertPos = get_cross_CircleAndLine ( face_outline , vert )  ~ [242]
+[243] ~ add and set variable : adsetvar: vec2f downPos = _vec2f ( 0 , 0 )  ~ [252]
+[253] ~ IF : if__sen : if ( vertPos [ 0 ] . y > vertPos [ 1 ] . y )  ~ [268]
+[269] ~ blocks : start
+[0] ~  ~ [0]
+[1] ~ set Variable : set_var : downPos = vertPos [ 1 ]  ~ [6]
 BakeCode_ScanCodes...block__ : {
-adsetvar: float deltaTime = 0 
-adsetvar: float past = 0 
-adsetvar: uint t0 = rdtsc ( ) 
+set_var : downPos = vertPos [ 1 ] 
+closed_ : }
+ ~ [277]
+[278] ~ IF : if__sen : else  ~ [278]
+[279] ~ blocks : start
+[0] ~  ~ [0]
+[1] ~ set Variable : set_var : downPos = vertPos [ 0 ]  ~ [6]
+BakeCode_ScanCodes...block__ : {
+set_var : downPos = vertPos [ 0 ] 
+closed_ : }
+ ~ [287]
+[288] ~ add and set variable : adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 )  ~ [304]
+[305] ~ add and set variable : adsetvar: vec2f MouseCenter = downPos  ~ [309]
+[310] ~ add and set variable : adsetvar: vec2f ChinBorder = _vec2f ( center . x , MouseCenter . y - center . y + NoseCenter . y )  ~ [331]
+[332] ~ add and set variable : adsetvar: vec2f rightPos = _vec2f ( 0 , 0 )  ~ [341]
+[342] ~ add and set variable : adsetvar: vec2f leftPos = _vec2f ( 0 , 0 )  ~ [351]
+[352] ~ IF : if__sen : if ( horiPos [ 0 ] . x > horiPos [ 1 ] . x )  ~ [367]
+[368] ~ blocks : start
+[0] ~  ~ [0]
+[1] ~ set Variable : set_var : rightPos = horiPos [ 0 ]  ~ [6]
+[7] ~  ~ [7]
+[8] ~ set Variable : set_var : leftPos = horiPos [ 1 ]  ~ [13]
+BakeCode_ScanCodes...block__ : {
+set_var : rightPos = horiPos [ 0 ] 
+set_var : leftPos = horiPos [ 1 ] 
+closed_ : }
+ ~ [383]
+[384] ~ IF : if__sen : else  ~ [384]
+[385] ~ blocks : start
+[0] ~  ~ [0]
+[1] ~ set Variable : set_var : rightPos = horiPos [ 1 ]  ~ [6]
+[7] ~  ~ [7]
+[8] ~ set Variable : set_var : leftPos = horiPos [ 0 ]  ~ [13]
+BakeCode_ScanCodes...block__ : {
+set_var : rightPos = horiPos [ 1 ] 
+set_var : leftPos = horiPos [ 0 ] 
+closed_ : }
+ ~ [400]
+[401] ~ add and set variable : adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( rightPos . x , ChinBorder . y ) , 64 )  ~ [426]
+[427] ~ add and set variable : adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( leftPos . x , ChinBorder . y ) , 64 )  ~ [452]
+[453] ~  ~ [453]
+[454] ~ set Variable : set_var : i = 0  ~ [456]
+[457] ~ while : while__ : while ( i < 64 )  ~ [462]
+[463] ~ blocks : start
+[0] ~ use Function : usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color )  ~ [11]
+[12] ~  ~ [12]
+[13] ~ set Variable : set_var : i += 1  ~ [15]
+BakeCode_ScanCodes...block__ : {
+usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [480]
+[481] ~  ~ [481]
+[482] ~ set Variable : set_var : i = 0  ~ [484]
+[485] ~ while : while__ : while ( i < 64 )  ~ [490]
+[491] ~ blocks : start
+[0] ~ use Function : usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color )  ~ [11]
+[12] ~  ~ [12]
+[13] ~ set Variable : set_var : i += 1  ~ [15]
+BakeCode_ScanCodes...block__ : {
+usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [508]
+[509] ~ use Function : usefunc : end ( circle_buff )  ~ [513]
+[514] ~ use Function : usefunc : spr_push_rbuffer ( circle_spr , circle_buff )  ~ [520]
+[521] ~ use Function : usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [559]
+[560] ~ use Function : usefunc : obj_setsource ( this , mainspr )  ~ [566]
+[567] ~ while : while__ : while ( true )  ~ [570]
+[571] ~ blocks : start
+[0] ~ add and set variable : adsetvar: int aaa = 10  ~ [4]
+BakeCode_ScanCodes...block__ : {
+adsetvar: int aaa = 10 
+closed_ : }
+ ~ [577]
+[578] ~ return in Function : return_ : return 0  ~ [580]
+BakeCode_ScanCodes...block__ : {
+adsetvar: float PI = 3.141592 
+adsetvar: pSprite mainspr = _pSprite ( ) 
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+add_var : prbuffer circle_buff 
+usefunc : rbuff_Init ( circle_buff , false ) 
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+adsetvar: float radius = 100 
+adsetvar: float angle = 0 
+adsetvar: float delta_angle = PI / 30 
+usefunc : begin ( circle_buff , false ) 
+adsetvar: int i = 0 
+while__ : while ( i < 30 ) 
+block__ : {
+adsetvar: angle2d anglevec = _angle2d ( angle ) 
+adsetvar: gpos pos = _gpos ( anglevec . delta . x , anglevec . delta . y , 0 ) 
+usefunc : av ( circle_buff , pos , skin_color ) 
+set_var : angle += delta_angle 
+set_var : i += 1 
+closed_ : }
+
+adsetvar: line2d hori = _line2d ( _vec2f ( center . x - 2 * radius , center . y ) , _vec2f ( center . x + 2 * radius , center . y ) ) 
+adsetvar: line2d vert = _line2d ( _vec2f ( center . x , center . y - 2 * radius ) , _vec2f ( center . x , center . y + 2 * radius ) ) 
+adsetvar: circle face_outline = _circle ( center , radius ) 
+adsetvar: vec2f [ 2 ] horiPos = get_cross_CircleAndLine ( face_outline , hori ) 
+adsetvar: vec2f [ 2 ] vertPos = get_cross_CircleAndLine ( face_outline , vert ) 
+adsetvar: vec2f downPos = _vec2f ( 0 , 0 ) 
+if__sen : if ( vertPos [ 0 ] . y > vertPos [ 1 ] . y ) 
+block__ : {
+set_var : downPos = vertPos [ 1 ] 
+closed_ : }
+
+if__sen : else 
+block__ : {
+set_var : downPos = vertPos [ 0 ] 
+closed_ : }
+
+adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 ) 
+adsetvar: vec2f MouseCenter = downPos 
+adsetvar: vec2f ChinBorder = _vec2f ( center . x , MouseCenter . y - center . y + NoseCenter . y ) 
+adsetvar: vec2f rightPos = _vec2f ( 0 , 0 ) 
+adsetvar: vec2f leftPos = _vec2f ( 0 , 0 ) 
+if__sen : if ( horiPos [ 0 ] . x > horiPos [ 1 ] . x ) 
+block__ : {
+set_var : rightPos = horiPos [ 0 ] 
+set_var : leftPos = horiPos [ 1 ] 
+closed_ : }
+
+if__sen : else 
+block__ : {
+set_var : rightPos = horiPos [ 1 ] 
+set_var : leftPos = horiPos [ 0 ] 
+closed_ : }
+
+adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( rightPos . x , ChinBorder . y ) , 64 ) 
+adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( leftPos . x , ChinBorder . y ) , 64 ) 
+set_var : i = 0 
+while__ : while ( i < 64 ) 
+block__ : {
+usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color ) 
+set_var : i += 1 
+closed_ : }
+
+set_var : i = 0 
+while__ : while ( i < 64 ) 
+block__ : {
+usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color ) 
+set_var : i += 1 
+closed_ : }
+
+usefunc : end ( circle_buff ) 
+usefunc : spr_push_rbuffer ( circle_spr , circle_buff ) 
+usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+usefunc : obj_setsource ( this , mainspr ) 
 while__ : while ( true ) 
 block__ : {
-adsetvar: uint t1 = rdtsc ( ) 
-set_var : deltaTime = get_deltatime ( t0 , t1 ) 
-adsetvar: gpos p = obj_getpos ( this ) 
-set_var : p . x += 0.01 
-usefunc : obj_setpos ( this , p ) 
-set_var : t0 = t1 
+adsetvar: int aaa = 10 
 closed_ : }
 
 return_ : return 0 
 closed_ : }
- ~ [75]
+ ~ [619]
 BakeCode_ScanCodes...finish
-ICB[0000016A04E2F6B7] BakeCode_GlobalMemoryInit...finish
-ICB[0000016A04E2F6B7] BakeCode_CompileCodes...start
+ICB[000001CD9CA3F99B] BakeCode_GlobalMemoryInit...finish
+ICB[000001CD9CA3F99B] BakeCode_CompileCodes...start
 BakeCode_CompileCodes__add_var : pObject this 
+BakeCode_CompileCodes__adsetvar: float eyeStartPos_rate = 0.5 
+6	:PUSH_A_CONST_4(6) > 1056964608(0, 0, 0, 63)
+11	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+16	:LA=A(161)
+17	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float eyeEndPos_rateX = 0.2 
+18	:PUSH_A_CONST_4(6) > 1045220557(205, 204, 76, 62)
+23	:A=&Global_VID(178) > 12(12, 0, 0, 0)
+28	:LA=A(161)
+29	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float eyeEndPos_rateY = 0.2 
+30	:PUSH_A_CONST_4(6) > 1045220557(205, 204, 76, 62)
+35	:A=&Global_VID(178) > 16(16, 0, 0, 0)
+40	:LA=A(161)
+41	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float eyeTopPos_rateX = 0.2 
+42	:PUSH_A_CONST_4(6) > 1045220557(205, 204, 76, 62)
+47	:A=&Global_VID(178) > 20(20, 0, 0, 0)
+52	:LA=A(161)
+53	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float eyeTopPos_rateY = 0.1 
+54	:PUSH_A_CONST_4(6) > 1036831949(205, 204, 204, 61)
+59	:A=&Global_VID(178) > 24(24, 0, 0, 0)
+64	:LA=A(161)
+65	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float eyeBotPos_rateY = 0.2 
+66	:PUSH_A_CONST_4(6) > 1045220557(205, 204, 76, 62)
+71	:A=&Global_VID(178) > 28(28, 0, 0, 0)
+76	:LA=A(161)
+77	:*LA=A_4(171)
 BakeCode_CompileCodes__addfunc : int main ( ) 
 BakeCode_CompileCodes Block Start {
-BakeCode_CompileCodes__adsetvar: float deltaTime = 0 
-6	:(0)
-7	:(4)
-8	:(0)
-9	:(0)
-10	:(0)
-11	:(6)
-12	:(0)
-13	:(0)
-14	:(0)
-15	:(0)
-16	:(163)
-17	:(12)
-18	:(159)
-19	:(4)
-20	:(0)
-21	:(0)
-22	:(0)
-23	:(161)
-24	:(171)
-BakeCode_CompileCodes__adsetvar: float past = 0 
-25	:(0)
-26	:(8)
-27	:(0)
-28	:(0)
-29	:(0)
-30	:(6)
-31	:(0)
-32	:(0)
-33	:(0)
-34	:(0)
-35	:(163)
-36	:(12)
-37	:(159)
-38	:(8)
-39	:(0)
-40	:(0)
-41	:(0)
-42	:(161)
-43	:(171)
-BakeCode_CompileCodes__adsetvar: uint t0 = rdtsc ( ) 
-44	:(0)
-45	:(12)
-46	:(0)
-47	:(0)
-48	:(0)
-49	:(153)
-50	:(255)
-51	:(1)
-52	:(0)
-53	:(0)
-54	:(0)
-55	:(34)
-56	:(0)
-57	:(0)
-58	:(0)
-59	:(163)
-60	:(3)
-61	:(159)
-62	:(12)
-63	:(0)
-64	:(0)
-65	:(0)
-66	:(161)
-67	:(171)
-BakeCode_CompileCodes__while__ : while ( true ) 
-68	:(6)
-69	:(1)
-70	:(0)
-71	:(0)
-72	:(0)
-73	:(151)
-74	:(254)
-75	:(254)
-76	:(254)
-77	:(254)
+BakeCode_CompileCodes__adsetvar: float PI = 3.141592 
+78	:ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
+83	:PUSH_A_CONST_4(6) > 1078530008(216, 15, 73, 64)
+88	:A=&VID(159) > 4(4, 0, 0, 0)
+93	:LA=A(161)
+94	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: pSprite mainspr = _pSprite ( ) 
+95	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+100	:FUNC(153)
+101	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+110	:A=&VID(159) > 12(12, 0, 0, 0)
+115	:LA=A(161)
+116	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: pSprite circle_spr = _pSprite ( ) 
+121	:ADD_STACK_VARIABLE(0) > 20(20, 0, 0, 0)
+126	:FUNC(153)
+127	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+136	:A=&VID(159) > 20(20, 0, 0, 0)
+141	:LA=A(161)
+142	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__add_var : prbuffer circle_buff 
+147	:ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+BakeCode_CompileCodes__usefunc : rbuff_Init ( circle_buff , false ) 
+152	:FUNC(153)
+153	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+158	:PARAM_1(154)
+159	:A=&VID(159) > 28(28, 0, 0, 0)
+164	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+169	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+178	:ADD_STACK_VARIABLE(0) > 44(44, 0, 0, 0)
+183	:FUNC(153)
+184	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+189	:PARAM_1(154)
+190	:PUSH_A_CONST_4(6) > 96(96, 0, 0, 0)
+195	:PARAM_1(154)
+196	:PUSH_A_CONST_4(6) > 200(200, 0, 0, 0)
+201	:PARAM_1(154)
+202	:PUSH_A_CONST_4(6) > 244(244, 0, 0, 0)
+207	:PARAM_1(154)
+208	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
+217	:A=&VID(159) > 44(44, 0, 0, 0)
+222	:LA=A(161)
+223	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+228	:ADD_STACK_VARIABLE(0) > 52(52, 0, 0, 0)
+233	:FUNC(153)
+234	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+239	:CASTING_A(163) > 12
+241	:PARAM_4(156)
+242	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+247	:CASTING_A(163) > 12
+249	:PARAM_4(156)
+250	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+259	:A=&VID(159) > 52(52, 0, 0, 0)
+264	:LA=A(161)
+265	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: float radius = 100 
+270	:ADD_STACK_VARIABLE(0) > 56(56, 0, 0, 0)
+275	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+280	:CASTING_A(163) > 12
+282	:A=&VID(159) > 56(56, 0, 0, 0)
+287	:LA=A(161)
+288	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float angle = 0 
+289	:ADD_STACK_VARIABLE(0) > 60(60, 0, 0, 0)
+294	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+299	:CASTING_A(163) > 12
+301	:A=&VID(159) > 60(60, 0, 0, 0)
+306	:LA=A(161)
+307	:*LA=A_4(171)
+BakeCode_CompileCodes__adsetvar: float delta_angle = PI / 30 
+308	:ADD_STACK_VARIABLE(0) > 64(64, 0, 0, 0)
+313	:A=&VID(159) > 4(4, 0, 0, 0)
+318	:A=*A_nopush(165)
+319	:PUSH_B_CONST_4(12) > 30(30, 0, 0, 0)
+324	:CASTING_B(164) > 12
+326	:AU_FLOAT_DIV_A(71)
+327	:A=&VID(159) > 64(64, 0, 0, 0)
+332	:LA=A(161)
+333	:*LA=A_4(171)
+BakeCode_CompileCodes__usefunc : begin ( circle_buff , false ) 
+334	:FUNC(153)
+335	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+340	:PARAM_1(154)
+341	:A=&VID(159) > 28(28, 0, 0, 0)
+346	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+351	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: int i = 0 
+360	:ADD_STACK_VARIABLE(0) > 68(68, 0, 0, 0)
+365	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+370	:A=&VID(159) > 68(68, 0, 0, 0)
+375	:LA=A(161)
+376	:*LA=A_4(171)
+BakeCode_CompileCodes__while__ : while ( i < 30 ) 
+377	:A=&VID(159) > 68(68, 0, 0, 0)
+382	:A=*A_nopush(165)
+383	:PUSH_B_CONST_4(12) > 30(30, 0, 0, 0)
+388	:CM_BOOL_INT_RBIG_A(131)
+389	:IF(151) > -16843010(254, 254, 254, 254)
 BakeCode_CompileCodes Block Start {
-BakeCode_CompileCodes__adsetvar: uint t1 = rdtsc ( ) 
-78	:(0)
-79	:(16)
-80	:(0)
-81	:(0)
-82	:(0)
-83	:(153)
-84	:(255)
-85	:(1)
-86	:(0)
-87	:(0)
-88	:(0)
-89	:(34)
-90	:(0)
-91	:(0)
-92	:(0)
-93	:(163)
-94	:(3)
-95	:(159)
-96	:(16)
-97	:(0)
-98	:(0)
-99	:(0)
-100	:(161)
-101	:(171)
-BakeCode_CompileCodes__set_var : deltaTime = get_deltatime ( t0 , t1 ) 
-102	:(153)
-103	:(159)
-104	:(16)
-105	:(0)
-106	:(0)
-107	:(0)
-108	:(165)
-109	:(156)
-110	:(159)
-111	:(12)
-112	:(0)
-113	:(0)
-114	:(0)
-115	:(165)
-116	:(156)
-117	:(255)
-118	:(1)
-119	:(0)
-120	:(0)
-121	:(0)
-122	:(35)
-123	:(0)
-124	:(0)
-125	:(0)
-126	:(159)
-127	:(4)
-128	:(0)
-129	:(0)
-130	:(0)
-131	:(161)
-132	:(171)
-BakeCode_CompileCodes__adsetvar: gpos p = obj_getpos ( this ) 
-133	:(0)
-134	:(28)
-135	:(0)
-136	:(0)
-137	:(0)
-138	:(153)
-139	:(178)
-140	:(0)
-141	:(0)
-142	:(0)
-143	:(0)
-144	:(177)
-145	:(8)
-146	:(0)
-147	:(0)
-148	:(0)
-149	:(255)
-150	:(1)
-151	:(0)
-152	:(0)
-153	:(0)
-154	:(24)
-155	:(0)
-156	:(0)
-157	:(0)
-158	:(159)
-159	:(28)
-160	:(0)
-161	:(0)
-162	:(0)
-163	:(161)
-164	:(182)
-165	:(12)
-166	:(0)
-167	:(0)
-168	:(0)
-BakeCode_CompileCodes__set_var : p . x += 0.01 
-169	:(12)
-170	:(10)
-171	:(215)
-172	:(35)
-173	:(60)
-174	:(183)
-175	:(28)
-176	:(0)
-177	:(0)
-178	:(0)
-179	:(0)
-180	:(0)
-181	:(0)
-182	:(0)
-183	:(165)
-184	:(29)
-185	:(183)
-186	:(28)
-187	:(0)
-188	:(0)
-189	:(0)
-190	:(0)
-191	:(0)
-192	:(0)
-193	:(0)
-194	:(161)
-195	:(171)
-BakeCode_CompileCodes__usefunc : obj_setpos ( this , p ) 
-196	:(153)
-197	:(159)
-198	:(28)
-199	:(0)
-200	:(0)
-201	:(0)
-202	:(177)
-203	:(12)
-204	:(0)
-205	:(0)
-206	:(0)
-207	:(178)
-208	:(0)
-209	:(0)
-210	:(0)
-211	:(0)
-212	:(177)
-213	:(8)
-214	:(0)
-215	:(0)
-216	:(0)
-217	:(255)
-218	:(1)
-219	:(0)
-220	:(0)
-221	:(0)
-222	:(29)
-223	:(0)
-224	:(0)
-225	:(0)
-BakeCode_CompileCodes__set_var : t0 = t1 
-226	:(159)
-227	:(16)
-228	:(0)
-229	:(0)
-230	:(0)
-231	:(165)
-232	:(159)
-233	:(12)
-234	:(0)
-235	:(0)
-236	:(0)
-237	:(161)
-238	:(171)
+BakeCode_CompileCodes__adsetvar: angle2d anglevec = _angle2d ( angle ) 
+394	:ADD_STACK_VARIABLE(0) > 80(80, 0, 0, 0)
+399	:FUNC(153)
+400	:A=&VID(159) > 60(60, 0, 0, 0)
+405	:A=*A_nopush(165)
+406	:PARAM_4(156)
+407	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 4(4, 0, 0, 0)
+416	:A=&VID(159) > 80(80, 0, 0, 0)
+421	:LA=A(161)
+422	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: gpos pos = _gpos ( anglevec . delta . x , anglevec . delta . y , 0 ) 
+427	:ADD_STACK_VARIABLE(0) > 92(92, 0, 0, 0)
+432	:FUNC(153)
+433	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+438	:CASTING_A(163) > 12
+440	:PARAM_4(156)
+441	:A<=&VID[Const](183) > 80(80, 0, 0, 0) > 0(0, 0, 0, 0)
+450	:PUSH_B_CONST_4(12) > 4(4, 0, 0, 0)
+455	:AU_INT_ADD_A(25)
+456	:A=*A_nopush(165)
+457	:PARAM_4(156)
+458	:A<=&VID[Const](183) > 80(80, 0, 0, 0) > 0(0, 0, 0, 0)
+467	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
+472	:AU_INT_ADD_A(25)
+473	:A=*A_nopush(165)
+474	:PARAM_4(156)
+475	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+484	:A=&VID(159) > 92(92, 0, 0, 0)
+489	:LA=A(161)
+490	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+BakeCode_CompileCodes__usefunc : av ( circle_buff , pos , skin_color ) 
+495	:FUNC(153)
+496	:A=&VID(159) > 44(44, 0, 0, 0)
+501	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+506	:A=&VID(159) > 92(92, 0, 0, 0)
+511	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+516	:A=&VID(159) > 28(28, 0, 0, 0)
+521	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+526	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+BakeCode_CompileCodes__set_var : angle += delta_angle 
+535	:B=&VID(160) > 64(64, 0, 0, 0)
+540	:B=*B_nopush(166)
+541	:A=&VID(159) > 60(60, 0, 0, 0)
+546	:A=*A_nopush(165)
+547	:AU_FLOAT_ADD_A(29)
+548	:A=&VID(159) > 60(60, 0, 0, 0)
+553	:LA=A(161)
+554	:*LA=A_4(171)
+BakeCode_CompileCodes__set_var : i += 1 
+555	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+560	:A=&VID(159) > 68(68, 0, 0, 0)
+565	:A=*A_nopush(165)
+566	:AU_INT_ADD_A(25)
+567	:A=&VID(159) > 68(68, 0, 0, 0)
+572	:LA=A(161)
+573	:*LA=A_4(171)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__adsetvar: line2d hori = _line2d ( _vec2f ( center . x - 2 * radius , center . y ) , _vec2f ( center . x + 2 * radius , center . y ) ) 
+579	:ADD_STACK_VARIABLE(0) > 84(84, 0, 0, 0)
+584	:FUNC(153)
+585	:FUNC(153)
+586	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
+595	:A=*A_nopush(165)
+596	:PARAM_4(156)
+597	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
+606	:A=*A_nopush(165)
+607	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+612	:CASTING_A(163) > 12
+614	:B=&VID(160) > 56(56, 0, 0, 0)
+619	:B=*B_nopush(166)
+620	:AU_FLOAT_MUL_A(57)
+621	:B=A(181)
+622	:POP_A(174)
+623	:AU_FLOAT_ADD_A(29)
+624	:PARAM_4(156)
+625	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+634	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+639	:FUNC(153)
+640	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
+649	:A=*A_nopush(165)
+650	:PARAM_4(156)
+651	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
+660	:A=*A_nopush(165)
+661	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+666	:CASTING_A(163) > 12
+668	:B=&VID(160) > 56(56, 0, 0, 0)
+673	:B=*B_nopush(166)
+674	:AU_FLOAT_MUL_A(57)
+675	:B=A(181)
+676	:POP_A(174)
+677	:AU_FLOAT_MIN_A(43)
+678	:PARAM_4(156)
+679	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+688	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+693	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+702	:A=&VID(159) > 84(84, 0, 0, 0)
+707	:LA=A(161)
+708	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: line2d vert = _line2d ( _vec2f ( center . x , center . y - 2 * radius ) , _vec2f ( center . x , center . y + 2 * radius ) ) 
+713	:ADD_STACK_VARIABLE(0) > 100(100, 0, 0, 0)
+718	:FUNC(153)
+719	:FUNC(153)
+720	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
+729	:A=*A_nopush(165)
+730	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+735	:CASTING_A(163) > 12
+737	:B=&VID(160) > 56(56, 0, 0, 0)
+742	:B=*B_nopush(166)
+743	:AU_FLOAT_MUL_A(57)
+744	:B=A(181)
+745	:POP_A(174)
+746	:AU_FLOAT_ADD_A(29)
+747	:PARAM_4(156)
+748	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
+757	:A=*A_nopush(165)
+758	:PARAM_4(156)
+759	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+768	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+773	:FUNC(153)
+774	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
+783	:A=*A_nopush(165)
+784	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+789	:CASTING_A(163) > 12
+791	:B=&VID(160) > 56(56, 0, 0, 0)
+796	:B=*B_nopush(166)
+797	:AU_FLOAT_MUL_A(57)
+798	:B=A(181)
+799	:POP_A(174)
+800	:AU_FLOAT_MIN_A(43)
+801	:PARAM_4(156)
+802	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
+811	:A=*A_nopush(165)
+812	:PARAM_4(156)
+813	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+822	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+827	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+836	:A=&VID(159) > 100(100, 0, 0, 0)
+841	:LA=A(161)
+842	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: circle face_outline = _circle ( center , radius ) 
+847	:ADD_STACK_VARIABLE(0) > 112(112, 0, 0, 0)
+852	:FUNC(153)
+853	:A=&VID(159) > 56(56, 0, 0, 0)
+858	:A=*A_nopush(165)
+859	:PARAM_4(156)
+860	:A=&VID(159) > 52(52, 0, 0, 0)
+865	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+870	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 1(1, 0, 0, 0)
+879	:A=&VID(159) > 112(112, 0, 0, 0)
+884	:LA=A(161)
+885	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f [ 2 ] horiPos = get_cross_CircleAndLine ( face_outline , hori ) 
+890	:ADD_STACK_VARIABLE(0) > 128(128, 0, 0, 0)
+895	:FUNC(153)
+896	:A=&VID(159) > 84(84, 0, 0, 0)
+901	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+906	:A=&VID(159) > 112(112, 0, 0, 0)
+911	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+916	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 5(5, 0, 0, 0)
+925	:A=&VID(159) > 128(128, 0, 0, 0)
+930	:LA=A(161)
+931	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f [ 2 ] vertPos = get_cross_CircleAndLine ( face_outline , vert ) 
+936	:ADD_STACK_VARIABLE(0) > 144(144, 0, 0, 0)
+941	:FUNC(153)
+942	:A=&VID(159) > 100(100, 0, 0, 0)
+947	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+952	:A=&VID(159) > 112(112, 0, 0, 0)
+957	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+962	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 5(5, 0, 0, 0)
+971	:A=&VID(159) > 144(144, 0, 0, 0)
+976	:LA=A(161)
+977	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f downPos = _vec2f ( 0 , 0 ) 
+982	:ADD_STACK_VARIABLE(0) > 152(152, 0, 0, 0)
+987	:FUNC(153)
+988	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+993	:CASTING_A(163) > 12
+995	:PARAM_4(156)
+996	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1001	:CASTING_A(163) > 12
+1003	:PARAM_4(156)
+1004	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1013	:A=&VID(159) > 152(152, 0, 0, 0)
+1018	:LA=A(161)
+1019	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__if__sen : if ( vertPos [ 0 ] . y > vertPos [ 1 ] . y ) 
+1024	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1029	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1034	:AU_UINT_MUL_B(56)
+1035	:A=&VID(159) > 144(144, 0, 0, 0)
+1040	:AU_INT_ADD_A(25)
+1041	:PUSH_B_CONST_4(12) > 4(4, 0, 0, 0)
+1046	:AU_INT_ADD_A(25)
+1047	:A=*A_nopush(165)
+1048	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1053	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1058	:AU_UINT_MUL_B(56)
+1059	:A=&VID(159) > 144(144, 0, 0, 0)
+1064	:AU_INT_ADD_A(25)
+1065	:PUSH_B_CONST_4(12) > 4(4, 0, 0, 0)
+1070	:AU_INT_ADD_A(25)
+1071	:B=A(181)
+1072	:POP_A(174)
+1073	:B=*B_nopush(166)
+1074	:CM_BOOL_FLOAT_LBIG_A(107)
+1075	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__set_var : downPos = vertPos [ 1 ] 
+1080	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1085	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1090	:AU_UINT_MUL_B(56)
+1091	:A=&VID(159) > 144(144, 0, 0, 0)
+1096	:AU_INT_ADD_A(25)
+1097	:A=&VID(159) > 152(152, 0, 0, 0)
+1102	:LA=A(161)
+1103	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__if__sen : else 
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__set_var : downPos = vertPos [ 0 ] 
+1113	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1118	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1123	:AU_UINT_MUL_B(56)
+1124	:A=&VID(159) > 144(144, 0, 0, 0)
+1129	:AU_INT_ADD_A(25)
+1130	:A=&VID(159) > 152(152, 0, 0, 0)
+1135	:LA=A(161)
+1136	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 ) 
+1141	:ADD_STACK_VARIABLE(0) > 160(160, 0, 0, 0)
+1146	:FUNC(153)
+1147	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1152	:CASTING_A(163) > 12
+1154	:PARAM_4(156)
+1155	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1160	:CASTING_A(163) > 12
+1162	:PARAM_4(156)
+1163	:FUNC(153)
+1164	:A=&VID(159) > 52(52, 0, 0, 0)
+1169	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1174	:A=&VID(159) > 152(152, 0, 0, 0)
+1179	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1184	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+1193	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1198	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+1207	:A=&VID(159) > 160(160, 0, 0, 0)
+1212	:LA=A(161)
+1213	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f MouseCenter = downPos 
+1218	:ADD_STACK_VARIABLE(0) > 168(168, 0, 0, 0)
+1223	:A=&VID(159) > 152(152, 0, 0, 0)
+1228	:A=*A_nopush(165)
+1229	:A=&VID(159) > 168(168, 0, 0, 0)
+1234	:LA=A(161)
+1235	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f ChinBorder = _vec2f ( center . x , MouseCenter . y - center . y + NoseCenter . y ) 
+1240	:ADD_STACK_VARIABLE(0) > 176(176, 0, 0, 0)
+1245	:FUNC(153)
+1246	:A<=&VID[Const](183) > 168(168, 0, 0, 0) > 4(4, 0, 0, 0)
+1255	:A=*A_nopush(165)
+1256	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
+1265	:A=*A_nopush(165)
+1266	:A<=&VID[Const](183) > 160(160, 0, 0, 0) > 4(4, 0, 0, 0)
+1275	:B=A(181)
+1276	:POP_A(174)
+1277	:B=*B_nopush(166)
+1278	:AU_FLOAT_ADD_A(29)
+1279	:B=A(181)
+1280	:POP_A(174)
+1281	:AU_FLOAT_MIN_A(43)
+1282	:PARAM_4(156)
+1283	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
+1292	:A=*A_nopush(165)
+1293	:PARAM_4(156)
+1294	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1303	:A=&VID(159) > 176(176, 0, 0, 0)
+1308	:LA=A(161)
+1309	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f rightPos = _vec2f ( 0 , 0 ) 
+1314	:ADD_STACK_VARIABLE(0) > 184(184, 0, 0, 0)
+1319	:FUNC(153)
+1320	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1325	:CASTING_A(163) > 12
+1327	:PARAM_4(156)
+1328	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1333	:CASTING_A(163) > 12
+1335	:PARAM_4(156)
+1336	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1345	:A=&VID(159) > 184(184, 0, 0, 0)
+1350	:LA=A(161)
+1351	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f leftPos = _vec2f ( 0 , 0 ) 
+1356	:ADD_STACK_VARIABLE(0) > 192(192, 0, 0, 0)
+1361	:FUNC(153)
+1362	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1367	:CASTING_A(163) > 12
+1369	:PARAM_4(156)
+1370	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1375	:CASTING_A(163) > 12
+1377	:PARAM_4(156)
+1378	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1387	:A=&VID(159) > 192(192, 0, 0, 0)
+1392	:LA=A(161)
+1393	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__if__sen : if ( horiPos [ 0 ] . x > horiPos [ 1 ] . x ) 
+1398	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1403	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1408	:AU_UINT_MUL_B(56)
+1409	:A=&VID(159) > 128(128, 0, 0, 0)
+1414	:AU_INT_ADD_A(25)
+1415	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
+1420	:AU_INT_ADD_A(25)
+1421	:A=*A_nopush(165)
+1422	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1427	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1432	:AU_UINT_MUL_B(56)
+1433	:A=&VID(159) > 128(128, 0, 0, 0)
+1438	:AU_INT_ADD_A(25)
+1439	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
+1444	:AU_INT_ADD_A(25)
+1445	:B=A(181)
+1446	:POP_A(174)
+1447	:B=*B_nopush(166)
+1448	:CM_BOOL_FLOAT_LBIG_A(107)
+1449	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__set_var : rightPos = horiPos [ 0 ] 
+1454	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1459	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1464	:AU_UINT_MUL_B(56)
+1465	:A=&VID(159) > 128(128, 0, 0, 0)
+1470	:AU_INT_ADD_A(25)
+1471	:A=&VID(159) > 184(184, 0, 0, 0)
+1476	:LA=A(161)
+1477	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__set_var : leftPos = horiPos [ 1 ] 
+1482	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1487	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1492	:AU_UINT_MUL_B(56)
+1493	:A=&VID(159) > 128(128, 0, 0, 0)
+1498	:AU_INT_ADD_A(25)
+1499	:A=&VID(159) > 192(192, 0, 0, 0)
+1504	:LA=A(161)
+1505	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__if__sen : else 
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__set_var : rightPos = horiPos [ 1 ] 
+1515	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1520	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1525	:AU_UINT_MUL_B(56)
+1526	:A=&VID(159) > 128(128, 0, 0, 0)
+1531	:AU_INT_ADD_A(25)
+1532	:A=&VID(159) > 184(184, 0, 0, 0)
+1537	:LA=A(161)
+1538	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__set_var : leftPos = horiPos [ 0 ] 
+1543	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1548	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1553	:AU_UINT_MUL_B(56)
+1554	:A=&VID(159) > 128(128, 0, 0, 0)
+1559	:AU_INT_ADD_A(25)
+1560	:A=&VID(159) > 192(192, 0, 0, 0)
+1565	:LA=A(161)
+1566	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( rightPos . x , ChinBorder . y ) , 64 ) 
+1571	:ADD_STACK_VARIABLE(0) > 704(192, 2, 0, 0)
+1576	:FUNC(153)
+1577	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
+1582	:PARAM_4(156)
+1583	:FUNC(153)
+1584	:A<=&VID[Const](183) > 176(176, 0, 0, 0) > 4(4, 0, 0, 0)
+1593	:A=*A_nopush(165)
+1594	:PARAM_4(156)
+1595	:A<=&VID[Const](183) > 184(184, 0, 0, 0) > 0(0, 0, 0, 0)
+1604	:A=*A_nopush(165)
+1605	:PARAM_4(156)
+1606	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1615	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1620	:A=&VID(159) > 184(184, 0, 0, 0)
+1625	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1630	:A=&VID(159) > 176(176, 0, 0, 0)
+1635	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1640	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
+1649	:A=&VID(159) > 704(192, 2, 0, 0)
+1654	:LA=A(161)
+1655	:*LA=*A_N(182) > 512(0, 2, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( leftPos . x , ChinBorder . y ) , 64 ) 
+1660	:ADD_STACK_VARIABLE(0) > 1216(192, 4, 0, 0)
+1665	:FUNC(153)
+1666	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
+1671	:PARAM_4(156)
+1672	:FUNC(153)
+1673	:A<=&VID[Const](183) > 176(176, 0, 0, 0) > 4(4, 0, 0, 0)
+1682	:A=*A_nopush(165)
+1683	:PARAM_4(156)
+1684	:A<=&VID[Const](183) > 192(192, 0, 0, 0) > 0(0, 0, 0, 0)
+1693	:A=*A_nopush(165)
+1694	:PARAM_4(156)
+1695	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1704	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1709	:A=&VID(159) > 176(176, 0, 0, 0)
+1714	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1719	:A=&VID(159) > 192(192, 0, 0, 0)
+1724	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1729	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
+1738	:A=&VID(159) > 1216(192, 4, 0, 0)
+1743	:LA=A(161)
+1744	:*LA=*A_N(182) > 512(0, 2, 0, 0)
+BakeCode_CompileCodes__set_var : i = 0 
+1749	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1754	:A=&VID(159) > 68(68, 0, 0, 0)
+1759	:LA=A(161)
+1760	:*LA=A_4(171)
+BakeCode_CompileCodes__while__ : while ( i < 64 ) 
+1761	:A=&VID(159) > 68(68, 0, 0, 0)
+1766	:A=*A_nopush(165)
+1767	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
+1772	:CM_BOOL_INT_RBIG_A(131)
+1773	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color ) 
+1778	:FUNC(153)
+1779	:A=&VID(159) > 44(44, 0, 0, 0)
+1784	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1789	:A=&VID(159) > 68(68, 0, 0, 0)
+1794	:A=*A_nopush(165)
+1795	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1800	:AU_UINT_MUL_B(56)
+1801	:A=&VID(159) > 1216(192, 4, 0, 0)
+1806	:AU_INT_ADD_A(25)
+1807	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+1812	:A=&VID(159) > 28(28, 0, 0, 0)
+1817	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1822	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+BakeCode_CompileCodes__set_var : i += 1 
+1831	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+1836	:A=&VID(159) > 68(68, 0, 0, 0)
+1841	:A=*A_nopush(165)
+1842	:AU_INT_ADD_A(25)
+1843	:A=&VID(159) > 68(68, 0, 0, 0)
+1848	:LA=A(161)
+1849	:*LA=A_4(171)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__set_var : i = 0 
+1855	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1860	:A=&VID(159) > 68(68, 0, 0, 0)
+1865	:LA=A(161)
+1866	:*LA=A_4(171)
+BakeCode_CompileCodes__while__ : while ( i < 64 ) 
+1867	:A=&VID(159) > 68(68, 0, 0, 0)
+1872	:A=*A_nopush(165)
+1873	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
+1878	:CM_BOOL_INT_RBIG_A(131)
+1879	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color ) 
+1884	:FUNC(153)
+1885	:A=&VID(159) > 44(44, 0, 0, 0)
+1890	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1895	:A=&VID(159) > 68(68, 0, 0, 0)
+1900	:A=*A_nopush(165)
+1901	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1906	:AU_UINT_MUL_B(56)
+1907	:A=&VID(159) > 704(192, 2, 0, 0)
+1912	:AU_INT_ADD_A(25)
+1913	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+1918	:A=&VID(159) > 28(28, 0, 0, 0)
+1923	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1928	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+BakeCode_CompileCodes__set_var : i += 1 
+1937	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+1942	:A=&VID(159) > 68(68, 0, 0, 0)
+1947	:A=*A_nopush(165)
+1948	:AU_INT_ADD_A(25)
+1949	:A=&VID(159) > 68(68, 0, 0, 0)
+1954	:LA=A(161)
+1955	:*LA=A_4(171)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes__usefunc : end ( circle_buff ) 
+1961	:FUNC(153)
+1962	:A=&VID(159) > 28(28, 0, 0, 0)
+1967	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1972	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
+BakeCode_CompileCodes__usefunc : spr_push_rbuffer ( circle_spr , circle_buff ) 
+1981	:FUNC(153)
+1982	:A=&VID(159) > 28(28, 0, 0, 0)
+1987	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1992	:A=&VID(159) > 20(20, 0, 0, 0)
+1997	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2002	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
+BakeCode_CompileCodes__usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+2011	:FUNC(153)
+2012	:FUNC(153)
+2013	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2018	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2023	:FUNC(153)
+2024	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+2029	:CASTING_A(163) > 12
+2031	:PARAM_4(156)
+2032	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+2037	:CASTING_A(163) > 12
+2039	:PARAM_4(156)
+2040	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+2045	:CASTING_A(163) > 12
+2047	:PARAM_4(156)
+2048	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+2057	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+2062	:FUNC(153)
+2063	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2068	:CASTING_A(163) > 12
+2070	:PARAM_4(156)
+2071	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2076	:CASTING_A(163) > 12
+2078	:PARAM_4(156)
+2079	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2084	:CASTING_A(163) > 12
+2086	:PARAM_4(156)
+2087	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+2096	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+2101	:FUNC(153)
+2102	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2107	:CASTING_A(163) > 12
+2109	:PARAM_4(156)
+2110	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2115	:CASTING_A(163) > 12
+2117	:PARAM_4(156)
+2118	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2123	:CASTING_A(163) > 12
+2125	:PARAM_4(156)
+2126	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+2135	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+2140	:A=&VID(159) > 20(20, 0, 0, 0)
+2145	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2150	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+2159	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2164	:A=&VID(159) > 12(12, 0, 0, 0)
+2169	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2174	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+BakeCode_CompileCodes__usefunc : obj_setsource ( this , mainspr ) 
+2183	:FUNC(153)
+2184	:A=&VID(159) > 12(12, 0, 0, 0)
+2189	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2194	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+2199	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2204	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
+BakeCode_CompileCodes__while__ : while ( true ) 
+2213	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+2218	:IF(151) > -16843010(254, 254, 254, 254)
+BakeCode_CompileCodes Block Start {
+BakeCode_CompileCodes__adsetvar: int aaa = 10 
+2223	:ADD_STACK_VARIABLE(0) > 1220(196, 4, 0, 0)
+2228	:PUSH_A_CONST_4(6) > 10(10, 0, 0, 0)
+2233	:A=&VID(159) > 1220(196, 4, 0, 0)
+2238	:LA=A(161)
+2239	:*LA=A_4(171)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes__return_ : return 0 
-244	:(6)
-245	:(0)
-246	:(0)
-247	:(0)
-248	:(0)
-249	:(157)
+2245	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+2250	:RETURN(157)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes...finish
-ICB[0000016A04E2F6B7] BakeCode finish.
-Create_New_ICB_Context From ICB[0000016A04E2F6B7], with 4096 size memory...finish.
+ICB[000001CD9CA3F99B] BakeCode finish.
+Create_New_ICB_Context From ICB[000001CD9CA3F99B], with 4096 size memory...finish.1 : FUNCJMP(162) > 78(78, 0, 0, 0)
+stack mem
+
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float PI = 3.141592 
+78 : ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
+stack mem
+
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float PI = 3.141592 
+83 : PUSH_A_CONST_4(6) > 1078530008(216, 15, 73, 64)
+stack mem
+205 205 205 205 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float PI = 3.141592 
+88 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+205 205 205 205 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float PI = 3.141592 
+93 : LA=A(161)
+stack mem
+205 205 205 205 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4091	( | 1078530008 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float PI = 3.141592 
+94 : *LA=A_4(171)
+stack mem
+205 205 205 205 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+95 : ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+stack mem
+216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+100 : FUNC(153)
+stack mem
+205 205 205 205 205 205 205 205 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+101 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+205 205 205 205 205 205 205 205 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+110 : A=&VID(159) > 12(12, 0, 0, 0)
+stack mem
+205 205 205 205 205 205 205 205 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+115 : LA=A(161)
+stack mem
+205 205 205 205 205 205 205 205 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4083	( | 4075 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite mainspr = _pSprite ( ) 
+116 : *LA=*A_N(182) > 8(8, 0, 0, 0)
+stack mem
+205 205 205 205 205 205 205 205 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+121 : ADD_STACK_VARIABLE(0) > 20(20, 0, 0, 0)
+stack mem
+176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+126 : FUNC(153)
+stack mem
+176 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+127 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+176 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+136 : A=&VID(159) > 20(20, 0, 0, 0)
+stack mem
+176 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+141 : LA=A(161)
+stack mem
+176 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4075	( | 4067 | 0 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: pSprite circle_spr = _pSprite ( ) 
+142 : *LA=*A_N(182) > 8(8, 0, 0, 0)
+stack mem
+176 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+add var : prbuffer circle_buff 
+147 : ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+stack mem
+192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+152 : FUNC(153)
+stack mem
+192 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+153 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+192 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+158 : PARAM_1(154)
+stack mem
+192 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 4067 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+159 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 4067 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+164 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : rbuff_Init ( circle_buff , false ) 
+169 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+183 : FUNC(153)
+stack mem
+205 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+184 : PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+stack mem
+205 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+189 : PARAM_1(154)
+stack mem
+205 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 255	( | 4067 | 0 | 4067
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+190 : PUSH_A_CONST_4(6) > 96(96, 0, 0, 0)
+stack mem
+205 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 255	( | 4067 | 0 | 4067
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+195 : PARAM_1(154)
+stack mem
+205 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 96	( | 255 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+196 : PUSH_A_CONST_4(6) > 200(200, 0, 0, 0)
+stack mem
+205 96 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 96	( | 255 | 4067 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+201 : PARAM_1(154)
+stack mem
+205 96 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 200	( | 96 | 255 | 4067
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+202 : PUSH_A_CONST_4(6) > 244(244, 0, 0, 0)
+stack mem
+205 200 96 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 200	( | 96 | 255 | 4067
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+207 : PARAM_1(154)
+stack mem
+205 200 96 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 244	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+208 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+205 244 200 96 255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 244	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+217 : A=&VID(159) > 44(44, 0, 0, 0)
+stack mem
+255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+222 : LA=A(161)
+stack mem
+255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4051	( | 4031 | 200 | 96
+b : 0	( | 0 | 0 | 0
+adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+223 : *LA=*A_N(182) > 16(16, 0, 0, 0)
+stack mem
+255 205 205 205 205 205 205 0 173 252 156 205 1 0 0 205 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+228 : ADD_STACK_VARIABLE(0) > 52(52, 0, 0, 0)
+stack mem
+206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+233 : FUNC(153)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+234 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 200 | 96 | 255
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+239 : CASTING_A(163) > 12
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 4031 | 200 | 96
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+241 : PARAM_4(156)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 4031 | 200 | 96
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+242 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 4031 | 200 | 96
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+247 : CASTING_A(163) > 12
+stack mem
+0 0 0 0 193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+249 : PARAM_4(156)
+stack mem
+0 0 0 0 193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+250 : Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+259 : A=&VID(159) > 52(52, 0, 0, 0)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4027	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+264 : LA=A(161)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4043	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+265 : *LA=*A_N(182) > 8(8, 0, 0, 0)
+stack mem
+193 192 192 62 205 244 200 96 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4027	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+270 : ADD_STACK_VARIABLE(0) > 56(56, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4027	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+275 : PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4027	( | 0 | 4031 | 200
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+280 : CASTING_A(163) > 12
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 100	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+282 : A=&VID(159) > 56(56, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1120403456	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+287 : LA=A(161)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4039	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float radius = 100 
+288 : *LA=A_4(171)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1120403456	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+289 : ADD_STACK_VARIABLE(0) > 60(60, 0, 0, 0)
+stack mem
+0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1120403456	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+294 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1120403456	( | 4027 | 0 | 4031
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+299 : CASTING_A(163) > 12
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+301 : A=&VID(159) > 60(60, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+306 : LA=A(161)
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4035	( | 0 | 1120403456 | 4027
+b : 0	( | 0 | 0 | 0
+adsetvar: float angle = 0 
+307 : *LA=A_4(171)
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+308 : ADD_STACK_VARIABLE(0) > 64(64, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+313 : A=&VID(159) > 4(4, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1120403456 | 4027 | 0
+b : 0	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+318 : A=*A_nopush(165)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4091	( | 0 | 1120403456 | 4027
+b : 0	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+319 : PUSH_B_CONST_4(12) > 30(30, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 1120403456 | 4027
+b : 0	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+324 : CASTING_B(164) > 12
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 1120403456 | 4027
+b : 30	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+326 : AU_FLOAT_DIV_A(71)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1078530008	( | 0 | 1120403456 | 4027
+b : 1106247680	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+327 : A=&VID(159) > 64(64, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1037465421	( | 0 | 1120403456 | 4027
+b : 1106247680	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+332 : LA=A(161)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4031	( | 1037465421 | 0 | 1120403456
+b : 1106247680	( | 0 | 0 | 0
+adsetvar: float delta_angle = PI / 30 
+333 : *LA=A_4(171)
+stack mem
+0 0 0 0 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1037465421	( | 0 | 1120403456 | 4027
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+334 : FUNC(153)
+stack mem
+77 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1037465421	( | 0 | 1120403456 | 4027
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+335 : PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+stack mem
+77 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 1037465421	( | 0 | 1120403456 | 4027
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+340 : PARAM_1(154)
+stack mem
+77 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1037465421 | 0 | 1120403456
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+341 : A=&VID(159) > 28(28, 0, 0, 0)
+stack mem
+0 0 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 0	( | 1037465421 | 0 | 1120403456
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+346 : PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+stack mem
+0 0 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 1037465421 | 0
+b : 1106247680	( | 0 | 0 | 0
+usefunc : begin ( circle_buff , false ) 
+351 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+0 173 252 156 205 1 0 0 0 0 119 214 61 0 0 0 0 0 0 200 66 0 0 0 0 0 0 0 0 206 205 77 63 245 244 116 63 201 200 72 63 193 192 192 62 0 173 252 156 205 1 0 0 192 173 252 156 205 1 0 0 176 173 252 156 205 1 0 0 216 15 73 64 
+data mem
+160 186 251 156 205 1 0 0 0 0 0 63 205 204 76 62 205 204 76 62 205 204 76 62 205 204 204 61 205 204 76 62 
+a : 4067	( | 0 | 1037465421 | 0
+b : 1106247680	( | 0 | 0 | 0

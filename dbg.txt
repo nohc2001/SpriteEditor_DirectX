@@ -1,5 +1,3 @@
-bake
-pc input
 2585
 enum class mainpm{
 present_center = 0

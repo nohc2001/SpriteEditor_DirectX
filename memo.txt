@@ -11,8 +11,7 @@
 5. 오른쪽 클릭이 인식이 안되나?
 
 -> 부족한거
+InsideCode -> 수식 괄호 인식이 불안정
 exGraphic
-1. acolor 함수
-2. pSprite 에 prbuffer 넣기
 exGeometry
 1. sin, cos, tan ...
