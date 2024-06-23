@@ -683,7 +683,7 @@ void compile_addFunction(code_sen *cs, ICB_Extension *ext)
     typen = nullptr;
 
     sen* params_sen = InsideCode_Bake::wbss.sen_cut(code, nameloc + 2, loc - 1);
-    InsideCode_Bake::wbss.dbg_sen(params_sen);
+    //InsideCode_Bake::wbss.dbg_sen(params_sen);
     int coma = InsideCode_Bake::wbss.search_word_first(0, params_sen, ",");
     int savecoma = 0;
     int last = params_sen->size() - 1;

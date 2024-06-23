@@ -1,13 +1,13 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
-Create_New_ICB[000002114CC8399B] Initialization...finish
-ICB[000002114CC8399B] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_face.txt]
-ICB[000002114CC8399B] BakeCode_GetCodeFromText...finish
-ICB[000002114CC8399B] BakeCode_AddTextBlocks...finish
-ICB[000002114CC8399B] BakeCode_ScanStructTypes...finish
-ICB[000002114CC8399B] BakeCode_AddStructTypes...finish
-ICB[000002114CC8399B] BakeCode_ScanCodes...start
+Create_New_ICB[00000193FD89E99B] Initialization...finish
+ICB[00000193FD89E99B] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_face.txt]
+ICB[00000193FD89E99B] BakeCode_GetCodeFromText...finish
+ICB[00000193FD89E99B] BakeCode_AddTextBlocks...finish
+ICB[00000193FD89E99B] BakeCode_ScanStructTypes...finish
+ICB[00000193FD89E99B] BakeCode_AddStructTypes...finish
+ICB[00000193FD89E99B] BakeCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
 [3] ~ add and set variable : adsetvar: float eyeStartPos_rate = 0.5  ~ [7]
 [8] ~ add and set variable : adsetvar: float eyeEndPos_rateX = 0.2  ~ [12]
@@ -24,14 +24,32 @@ ICB[000002114CC8399B] BakeCode_ScanCodes...start
 [24] ~  ~ [24]
 [25] ~ set Variable : set_var : circle_buff = _prbuffer ( false )  ~ [30]
 [31] ~ add and set variable : adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 )  ~ [44]
-[45] ~ add and set variable : adsetvar: vec2f center = _vec2f ( 0 , 0 )  ~ [54]
-[55] ~ add and set variable : adsetvar: float radius = 200  ~ [59]
-[60] ~ add and set variable : adsetvar: float angle = 0  ~ [64]
-[65] ~ add and set variable : adsetvar: float delta_angle = PI / 30  ~ [71]
-[72] ~ use Function : usefunc : begin ( circle_buff , false )  ~ [78]
-[79] ~ add and set variable : adsetvar: int i = 0  ~ [83]
-[84] ~ while : while__ : while ( i < 31 )  ~ [89]
-[90] ~ blocks : start
+[45] ~ add and set variable : adsetvar: pSprite EyeLine_spr = _pSprite ( 1 )  ~ [52]
+[53] ~ add and set variable : adsetvar: pSprite EyeLineRU_spr = _pSprite ( 0 )  ~ [60]
+[61] ~ add variable : add_var : prbuffer EyeLine_rbuff_RU  ~ [63]
+[64] ~  ~ [64]
+[65] ~ set Variable : set_var : EyeLine_rbuff_RU = _prbuffer ( false )  ~ [70]
+[71] ~ add and set variable : adsetvar: pSprite EyeLineLU_spr = _pSprite ( 0 )  ~ [78]
+[79] ~ add variable : add_var : prbuffer EyeLine_rbuff_LU  ~ [81]
+[82] ~  ~ [82]
+[83] ~ set Variable : set_var : EyeLine_rbuff_LU = _prbuffer ( false )  ~ [88]
+[89] ~ add and set variable : adsetvar: pSprite EyeLineRD_spr = _pSprite ( 0 )  ~ [96]
+[97] ~ add variable : add_var : prbuffer EyeLine_rbuff_RD  ~ [99]
+[100] ~  ~ [100]
+[101] ~ set Variable : set_var : EyeLine_rbuff_RD = _prbuffer ( false )  ~ [106]
+[107] ~ add and set variable : adsetvar: pSprite EyeLineLD_spr = _pSprite ( 0 )  ~ [114]
+[115] ~ add variable : add_var : prbuffer EyeLine_rbuff_LD  ~ [117]
+[118] ~  ~ [118]
+[119] ~ set Variable : set_var : EyeLine_rbuff_LD = _prbuffer ( false )  ~ [124]
+[125] ~ add and set variable : adsetvar: gcolor EyeLine_color = _gcolor ( 0 , 0 , 0 , 255 )  ~ [138]
+[139] ~ add and set variable : adsetvar: vec2f center = _vec2f ( 0 , 0 )  ~ [148]
+[149] ~ add and set variable : adsetvar: float radius = 200  ~ [153]
+[154] ~ add and set variable : adsetvar: float angle = 0  ~ [158]
+[159] ~ add and set variable : adsetvar: float delta_angle = PI / 30  ~ [165]
+[166] ~ use Function : usefunc : begin ( circle_buff , false )  ~ [172]
+[173] ~ add and set variable : adsetvar: int i = 0  ~ [177]
+[178] ~ while : while__ : while ( i < 31 )  ~ [183]
+[184] ~ blocks : start
 [0] ~ add and set variable : adsetvar: angle2d anglevec = _angle2d ( angle )  ~ [7]
 [8] ~ add and set variable : adsetvar: gpos pos = _gpos ( radius * anglevec . delta . x , radius * anglevec . delta . y , 0 )  ~ [31]
 [32] ~ use Function : usefunc : av ( circle_buff , pos , skin_color )  ~ [40]
@@ -46,20 +64,20 @@ usefunc : av ( circle_buff , pos , skin_color )
 set_var : angle += delta_angle 
 set_var : i += 1 
 closed_ : }
- ~ [140]
-[141] ~ add and set variable : adsetvar: circle face_outline = _circle ( center , radius )  ~ [150]
-[151] ~ add and set variable : adsetvar: vec2f downPos = _vec2f ( center . x , center . y - radius )  ~ [166]
-[167] ~ add and set variable : adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 )  ~ [183]
-[184] ~ add and set variable : adsetvar: vec2f MouseCenter = downPos  ~ [188]
-[189] ~ add and set variable : adsetvar: vec2f ChinBorder = _vec2f ( center . x , center . y - 1.5 * radius )  ~ [206]
-[207] ~ add and set variable : adsetvar: vec2f rightPos = _vec2f ( center . x + radius , center . y )  ~ [222]
-[223] ~ add and set variable : adsetvar: vec2f leftPos = _vec2f ( center . x - radius , center . y )  ~ [238]
-[239] ~ add and set variable : adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( center . x + radius * 0.75 , ChinBorder . y ) , 64 )  ~ [268]
-[269] ~ add and set variable : adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( center . x - radius * 0.75 , ChinBorder . y ) , 64 )  ~ [298]
-[299] ~  ~ [299]
-[300] ~ set Variable : set_var : i = 0  ~ [302]
-[303] ~ while : while__ : while ( i < 64 )  ~ [308]
-[309] ~ blocks : start
+ ~ [234]
+[235] ~ add and set variable : adsetvar: circle face_outline = _circle ( center , radius )  ~ [244]
+[245] ~ add and set variable : adsetvar: vec2f downPos = _vec2f ( center . x , center . y - radius )  ~ [260]
+[261] ~ add and set variable : adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 )  ~ [277]
+[278] ~ add and set variable : adsetvar: vec2f MouseCenter = downPos  ~ [282]
+[283] ~ add and set variable : adsetvar: vec2f ChinBorder = _vec2f ( center . x , center . y - 1.5 * radius )  ~ [300]
+[301] ~ add and set variable : adsetvar: vec2f rightPos = _vec2f ( center . x + radius , center . y )  ~ [316]
+[317] ~ add and set variable : adsetvar: vec2f leftPos = _vec2f ( center . x - radius , center . y )  ~ [332]
+[333] ~ add and set variable : adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( center . x + radius * 0.75 , ChinBorder . y ) , 64 )  ~ [362]
+[363] ~ add and set variable : adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( center . x - radius * 0.75 , ChinBorder . y ) , 64 )  ~ [392]
+[393] ~  ~ [393]
+[394] ~ set Variable : set_var : i = 0  ~ [396]
+[397] ~ while : while__ : while ( i < 64 )  ~ [402]
+[403] ~ blocks : start
 [0] ~ use Function : usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color )  ~ [11]
 [12] ~  ~ [12]
 [13] ~ set Variable : set_var : i += 1  ~ [15]
@@ -67,11 +85,11 @@ BakeCode_ScanCodes...block__ : {
 usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color ) 
 set_var : i += 1 
 closed_ : }
- ~ [326]
-[327] ~  ~ [327]
-[328] ~ set Variable : set_var : i = 0  ~ [330]
-[331] ~ while : while__ : while ( i < 64 )  ~ [336]
-[337] ~ blocks : start
+ ~ [420]
+[421] ~  ~ [421]
+[422] ~ set Variable : set_var : i = 0  ~ [424]
+[425] ~ while : while__ : while ( i < 64 )  ~ [430]
+[431] ~ blocks : start
 [0] ~ use Function : usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color )  ~ [11]
 [12] ~  ~ [12]
 [13] ~ set Variable : set_var : i += 1  ~ [15]
@@ -79,19 +97,186 @@ BakeCode_ScanCodes...block__ : {
 usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color ) 
 set_var : i += 1 
 closed_ : }
- ~ [354]
-[355] ~ use Function : usefunc : end ( circle_buff )  ~ [359]
-[360] ~ use Function : usefunc : spr_push_rbuffer ( circle_spr , circle_buff )  ~ [366]
-[367] ~ use Function : usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [405]
-[406] ~ use Function : usefunc : obj_setsource ( this , mainspr )  ~ [412]
-[413] ~ while : while__ : while ( true )  ~ [416]
-[417] ~ blocks : start
+ ~ [448]
+[449] ~ use Function : usefunc : end ( circle_buff )  ~ [453]
+[454] ~ use Function : usefunc : spr_push_rbuffer ( circle_spr , circle_buff )  ~ [460]
+[461] ~ add and set variable : adsetvar: vec2f RightEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 1 , 2 )  ~ [477]
+[478] ~ add and set variable : adsetvar: vec2f LeftEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 2 , 1 )  ~ [494]
+[495] ~  ~ [495]
+[496] ~ set Variable : set_var : RightEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( RightEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) )  ~ [519]
+[520] ~  ~ [520]
+[521] ~ set Variable : set_var : LeftEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( LeftEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) )  ~ [544]
+[545] ~ add and set variable : adsetvar: vec2f RightEyeEnd = _vec2f ( eyeEndPos_rateX * RightEyeStart . x + ( 1 - eyeEndPos_rateX ) * rightPos . x , eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y )  ~ [582]
+[583] ~ add and set variable : adsetvar: vec2f LeftEyeEnd = _vec2f ( eyeEndPos_rateX * LeftEyeStart . x + ( 1 - eyeEndPos_rateX ) * leftPos . x , eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y )  ~ [620]
+[621] ~ add and set variable : adsetvar: vec2f RightEyeTop = _vec2f ( ( eyeTopPos_rateX ) * RightEyeEnd . x + ( 1 - eyeTopPos_rateX ) * RightEyeStart . x , ( eyeTopPos_rateY ) * cetner . y + ( 1 - eyeTopPos_rateY ) * NoseCenter . y )  ~ [662]
+[663] ~ add and set variable : adsetvar: vec2f LeftEyeTop = _vec2f ( ( eyeTopPos_rateX ) * LeftEyeEnd . x + ( 1 - eyeTopPos_rateX ) * LeftEyeStart . x , ( eyeTopPos_rateY ) * cetner . y + ( 1 - eyeTopPos_rateY ) * NoseCenter . y )  ~ [704]
+[705] ~ add and set variable : adsetvar: vec2f RightEyeBot = _vec2f ( 0.5 * RightEyeEnd + 0.5 * center . x , ( eyeBotPos_rateY ) * cetner . y + ( 1 - eyeBotPos_rateY ) * NoseCenter . y )  ~ [738]
+[739] ~ add and set variable : adsetvar: vec2f LeftEyeBot = _vec2f ( 0.5 * LeftEyeEnd + 0.5 * center . x , ( eyeBotPos_rateY ) * cetner . y + ( 1 - eyeBotPos_rateY ) * NoseCenter . y )  ~ [772]
+[773] ~ add variable : add_var : vec2f [ 48 ] RightEyeOutline  ~ [778]
+[779] ~  ~ [779]
+[780] ~ set Variable : set_var : RightEyeOutline = get_poses_in_Bezier1F ( RightEyeStart , RightEyeTop , _vec2f ( RightEyeStart . x , center . y ) , 16 )  ~ [800]
+[801] ~  ~ [801]
+[802] ~  ~ [802]
+[803] ~  ~ [803]
+[804] ~  ~ [804]
+[805] ~ set Variable : set_var : RightEyeOutline [ 16 ] = get_poses_in_Bezier1F ( RightEyeTop , RightEyeEnd , _vec2f ( RightEyeEnd . x , center . y ) , 16 )  ~ [825]
+[826] ~  ~ [826]
+[827] ~  ~ [827]
+[828] ~  ~ [828]
+[829] ~  ~ [829]
+[830] ~ set Variable : set_var : RightEyeOutline [ 32 ] = get_poses_in_Bezier1F ( RightEyeEnd , RightEyeBot , _vec2f ( RightEyeEnd . x , RightEyeBot . y ) , 16 )  ~ [850]
+[851] ~ add variable : add_var : vec2f [ 48 ] LeftEyeOutline  ~ [856]
+[857] ~  ~ [857]
+[858] ~ set Variable : set_var : LeftEyeOutline = get_poses_in_Bezier1F ( LeftEyeStart , LeftEyeTop , _vec2f ( LeftEyeStart . x , center . y ) , 16 )  ~ [878]
+[879] ~  ~ [879]
+[880] ~  ~ [880]
+[881] ~  ~ [881]
+[882] ~  ~ [882]
+[883] ~ set Variable : set_var : LeftEyeOutline [ 16 ] = get_poses_in_Bezier1F ( LeftEyeTop , LeftEyeEnd , _vec2f ( LeftEyeEnd . x , center . y ) , 16 )  ~ [903]
+[904] ~  ~ [904]
+[905] ~  ~ [905]
+[906] ~  ~ [906]
+[907] ~  ~ [907]
+[908] ~ set Variable : set_var : LeftEyeOutline [ 32 ] = get_poses_in_Bezier1F ( LeftEyeEnd , LeftEyeBot , _vec2f ( LeftEyeEnd . x , LeftEyeBot . y ) , 16 )  ~ [928]
+[929] ~ use Function : usefunc : begin ( EyeLine_rbuff_RU , false )  ~ [935]
+[936] ~  ~ [936]
+[937] ~ set Variable : set_var : i = 0  ~ [939]
+[940] ~ while : while__ : while ( i < 32 )  ~ [945]
+[946] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 )  ~ [21]
+[22] ~ use Function : usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color )  ~ [30]
+[31] ~  ~ [31]
+[32] ~ set Variable : set_var : i += 1  ~ [34]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [982]
+[983] ~  ~ [983]
+[984] ~ set Variable : set_var : i = 31  ~ [986]
+[987] ~ while : while__ : while ( i >= 0 )  ~ [992]
+[993] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 )  ~ [23]
+[24] ~ use Function : usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color )  ~ [32]
+[33] ~  ~ [33]
+[34] ~ set Variable : set_var : i -= 1  ~ [36]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+ ~ [1031]
+[1032] ~ use Function : usefunc : end ( EyeLine_rbuff_RU )  ~ [1036]
+[1037] ~ use Function : usefunc : begin ( EyeLine_rbuff_RD , false )  ~ [1043]
+[1044] ~  ~ [1044]
+[1045] ~ set Variable : set_var : i = 32  ~ [1047]
+[1048] ~ while : while__ : while ( i < 48 )  ~ [1053]
+[1054] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 )  ~ [21]
+[22] ~ use Function : usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color )  ~ [30]
+[31] ~  ~ [31]
+[32] ~ set Variable : set_var : i += 1  ~ [34]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [1090]
+[1091] ~  ~ [1091]
+[1092] ~ set Variable : set_var : i = 47  ~ [1094]
+[1095] ~ while : while__ : while ( i >= 32 )  ~ [1100]
+[1101] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 )  ~ [23]
+[24] ~ use Function : usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color )  ~ [32]
+[33] ~  ~ [33]
+[34] ~ set Variable : set_var : i -= 1  ~ [36]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+ ~ [1139]
+[1140] ~ use Function : usefunc : end ( EyeLine_rbuff_RD )  ~ [1144]
+[1145] ~ use Function : usefunc : begin ( EyeLine_rbuff_LU , false )  ~ [1151]
+[1152] ~  ~ [1152]
+[1153] ~ set Variable : set_var : i = 0  ~ [1155]
+[1156] ~ while : while__ : while ( i < 32 )  ~ [1161]
+[1162] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y , 0 )  ~ [21]
+[22] ~ use Function : usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color )  ~ [30]
+[31] ~  ~ [31]
+[32] ~ set Variable : set_var : i += 1  ~ [34]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [1198]
+[1199] ~  ~ [1199]
+[1200] ~ set Variable : set_var : i = 31  ~ [1202]
+[1203] ~ while : while__ : while ( i >= 0 )  ~ [1208]
+[1209] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y - 10 , 0 )  ~ [23]
+[24] ~ use Function : usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color )  ~ [32]
+[33] ~  ~ [33]
+[34] ~ set Variable : set_var : i -= 1  ~ [36]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+ ~ [1247]
+[1248] ~ use Function : usefunc : end ( EyeLine_rbuff_LU )  ~ [1252]
+[1253] ~ use Function : usefunc : begin ( EyeLine_rbuff_LD , false )  ~ [1259]
+[1260] ~  ~ [1260]
+[1261] ~ set Variable : set_var : i = 32  ~ [1263]
+[1264] ~ while : while__ : while ( i < 48 )  ~ [1269]
+[1270] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 )  ~ [21]
+[22] ~ use Function : usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color )  ~ [30]
+[31] ~  ~ [31]
+[32] ~ set Variable : set_var : i += 1  ~ [34]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+ ~ [1306]
+[1307] ~  ~ [1307]
+[1308] ~ set Variable : set_var : i = 47  ~ [1310]
+[1311] ~ while : while__ : while ( i >= 32 )  ~ [1316]
+[1317] ~ blocks : start
+[0] ~ add and set variable : adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 )  ~ [23]
+[24] ~ use Function : usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color )  ~ [32]
+[33] ~  ~ [33]
+[34] ~ set Variable : set_var : i -= 1  ~ [36]
+BakeCode_ScanCodes...block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+ ~ [1355]
+[1356] ~ use Function : usefunc : end ( EyeLine_rbuff_LD )  ~ [1360]
+[1361] ~ use Function : usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_RU )  ~ [1367]
+[1368] ~ use Function : usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_LU )  ~ [1374]
+[1375] ~ use Function : usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_RD )  ~ [1381]
+[1382] ~ use Function : usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_LD )  ~ [1388]
+[1389] ~ use Function : usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1427]
+[1428] ~ use Function : usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1466]
+[1467] ~ use Function : usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1505]
+[1506] ~ use Function : usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1544]
+[1545] ~ use Function : usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1583]
+[1584] ~ use Function : usefunc : spr_pushchild ( mainspr , _pObject ( EyeLine_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) )  ~ [1622]
+[1623] ~ use Function : usefunc : obj_setsource ( this , mainspr )  ~ [1629]
+[1630] ~ while : while__ : while ( true )  ~ [1633]
+[1634] ~ blocks : start
 [0] ~ add and set variable : adsetvar: int aaa = 10  ~ [4]
 BakeCode_ScanCodes...block__ : {
 adsetvar: int aaa = 10 
 closed_ : }
- ~ [423]
-[424] ~ return in Function : return_ : return 0  ~ [426]
+ ~ [1640]
+[1641] ~ return in Function : return_ : return 0  ~ [1643]
 BakeCode_ScanCodes...block__ : {
 adsetvar: float PI = 3.141592 
 adsetvar: pSprite mainspr = _pSprite ( 1 ) 
@@ -99,6 +284,20 @@ adsetvar: pSprite circle_spr = _pSprite ( 0 )
 add_var : prbuffer circle_buff 
 set_var : circle_buff = _prbuffer ( false ) 
 adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+adsetvar: pSprite EyeLine_spr = _pSprite ( 1 ) 
+adsetvar: pSprite EyeLineRU_spr = _pSprite ( 0 ) 
+add_var : prbuffer EyeLine_rbuff_RU 
+set_var : EyeLine_rbuff_RU = _prbuffer ( false ) 
+adsetvar: pSprite EyeLineLU_spr = _pSprite ( 0 ) 
+add_var : prbuffer EyeLine_rbuff_LU 
+set_var : EyeLine_rbuff_LU = _prbuffer ( false ) 
+adsetvar: pSprite EyeLineRD_spr = _pSprite ( 0 ) 
+add_var : prbuffer EyeLine_rbuff_RD 
+set_var : EyeLine_rbuff_RD = _prbuffer ( false ) 
+adsetvar: pSprite EyeLineLD_spr = _pSprite ( 0 ) 
+add_var : prbuffer EyeLine_rbuff_LD 
+set_var : EyeLine_rbuff_LD = _prbuffer ( false ) 
+adsetvar: gcolor EyeLine_color = _gcolor ( 0 , 0 , 0 , 255 ) 
 adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
 adsetvar: float radius = 200 
 adsetvar: float angle = 0 
@@ -139,7 +338,106 @@ closed_ : }
 
 usefunc : end ( circle_buff ) 
 usefunc : spr_push_rbuffer ( circle_spr , circle_buff ) 
+adsetvar: vec2f RightEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 1 , 2 ) 
+adsetvar: vec2f LeftEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 2 , 1 ) 
+set_var : RightEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( RightEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) ) 
+set_var : LeftEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( LeftEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) ) 
+adsetvar: vec2f RightEyeEnd = _vec2f ( eyeEndPos_rateX * RightEyeStart . x + ( 1 - eyeEndPos_rateX ) * rightPos . x , eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y ) 
+adsetvar: vec2f LeftEyeEnd = _vec2f ( eyeEndPos_rateX * LeftEyeStart . x + ( 1 - eyeEndPos_rateX ) * leftPos . x , eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y ) 
+adsetvar: vec2f RightEyeTop = _vec2f ( ( eyeTopPos_rateX ) * RightEyeEnd . x + ( 1 - eyeTopPos_rateX ) * RightEyeStart . x , ( eyeTopPos_rateY ) * cetner . y + ( 1 - eyeTopPos_rateY ) * NoseCenter . y ) 
+adsetvar: vec2f LeftEyeTop = _vec2f ( ( eyeTopPos_rateX ) * LeftEyeEnd . x + ( 1 - eyeTopPos_rateX ) * LeftEyeStart . x , ( eyeTopPos_rateY ) * cetner . y + ( 1 - eyeTopPos_rateY ) * NoseCenter . y ) 
+adsetvar: vec2f RightEyeBot = _vec2f ( 0.5 * RightEyeEnd + 0.5 * center . x , ( eyeBotPos_rateY ) * cetner . y + ( 1 - eyeBotPos_rateY ) * NoseCenter . y ) 
+adsetvar: vec2f LeftEyeBot = _vec2f ( 0.5 * LeftEyeEnd + 0.5 * center . x , ( eyeBotPos_rateY ) * cetner . y + ( 1 - eyeBotPos_rateY ) * NoseCenter . y ) 
+add_var : vec2f [ 48 ] RightEyeOutline 
+set_var : RightEyeOutline = get_poses_in_Bezier1F ( RightEyeStart , RightEyeTop , _vec2f ( RightEyeStart . x , center . y ) , 16 ) 
+set_var : RightEyeOutline [ 16 ] = get_poses_in_Bezier1F ( RightEyeTop , RightEyeEnd , _vec2f ( RightEyeEnd . x , center . y ) , 16 ) 
+set_var : RightEyeOutline [ 32 ] = get_poses_in_Bezier1F ( RightEyeEnd , RightEyeBot , _vec2f ( RightEyeEnd . x , RightEyeBot . y ) , 16 ) 
+add_var : vec2f [ 48 ] LeftEyeOutline 
+set_var : LeftEyeOutline = get_poses_in_Bezier1F ( LeftEyeStart , LeftEyeTop , _vec2f ( LeftEyeStart . x , center . y ) , 16 ) 
+set_var : LeftEyeOutline [ 16 ] = get_poses_in_Bezier1F ( LeftEyeTop , LeftEyeEnd , _vec2f ( LeftEyeEnd . x , center . y ) , 16 ) 
+set_var : LeftEyeOutline [ 32 ] = get_poses_in_Bezier1F ( LeftEyeEnd , LeftEyeBot , _vec2f ( LeftEyeEnd . x , LeftEyeBot . y ) , 16 ) 
+usefunc : begin ( EyeLine_rbuff_RU , false ) 
+set_var : i = 0 
+while__ : while ( i < 32 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+
+set_var : i = 31 
+while__ : while ( i >= 0 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_RU , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+
+usefunc : end ( EyeLine_rbuff_RU ) 
+usefunc : begin ( EyeLine_rbuff_RD , false ) 
+set_var : i = 32 
+while__ : while ( i < 48 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+
+set_var : i = 47 
+while__ : while ( i >= 32 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_RD , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+
+usefunc : end ( EyeLine_rbuff_RD ) 
+usefunc : begin ( EyeLine_rbuff_LU , false ) 
+set_var : i = 0 
+while__ : while ( i < 32 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+
+set_var : i = 31 
+while__ : while ( i >= 0 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( LeftEyeOutline [ i ] . x , LeftEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_LU , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+
+usefunc : end ( EyeLine_rbuff_LU ) 
+usefunc : begin ( EyeLine_rbuff_LD , false ) 
+set_var : i = 32 
+while__ : while ( i < 48 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y , 0 ) 
+usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color ) 
+set_var : i += 1 
+closed_ : }
+
+set_var : i = 47 
+while__ : while ( i >= 32 ) 
+block__ : {
+adsetvar: gpos pos = _gpos ( RightEyeOutline [ i ] . x , RightEyeOutline [ i ] . y - 10 , 0 ) 
+usefunc : av ( EyeLine_rbuff_LD , pos , EyeLine_color ) 
+set_var : i -= 1 
+closed_ : }
+
+usefunc : end ( EyeLine_rbuff_LD ) 
+usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_RU ) 
+usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_LU ) 
+usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_RD ) 
+usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuff_LD ) 
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
 usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+usefunc : spr_pushchild ( mainspr , _pObject ( EyeLine_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
 usefunc : obj_setsource ( this , mainspr ) 
 while__ : while ( true ) 
 block__ : {
@@ -148,10 +446,10 @@ closed_ : }
 
 return_ : return 0 
 closed_ : }
- ~ [465]
+ ~ [1682]
 BakeCode_ScanCodes...finish
-ICB[000002114CC8399B] BakeCode_GlobalMemoryInit...finish
-ICB[000002114CC8399B] BakeCode_CompileCodes...start
+ICB[00000193FD89E99B] BakeCode_GlobalMemoryInit...finish
+ICB[00000193FD89E99B] BakeCode_CompileCodes...start
 BakeCode_CompileCodes__add_var : pObject this 
 BakeCode_CompileCodes__adsetvar: float eyeStartPos_rate = 0.5 
 6	:PUSH_A_CONST_4(6) > 1056964608(0, 0, 0, 63)
@@ -220,6 +518,9 @@ BakeCode_CompileCodes__set_var : circle_buff = _prbuffer ( false )
 185	:LA=A(161)
 186	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 255 ) 
+255 
+96 
+200 
 191	:ADD_STACK_VARIABLE(0) > 44(44, 0, 0, 0)
 196	:FUNC(153)
 197	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
@@ -234,446 +535,894 @@ BakeCode_CompileCodes__adsetvar: gcolor skin_color = _gcolor ( 244 , 200 , 96 , 
 230	:A=&VID(159) > 44(44, 0, 0, 0)
 235	:LA=A(161)
 236	:*LA=*A_N(182) > 16(16, 0, 0, 0)
-BakeCode_CompileCodes__adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+BakeCode_CompileCodes__adsetvar: pSprite EyeLine_spr = _pSprite ( 1 ) 
 241	:ADD_STACK_VARIABLE(0) > 52(52, 0, 0, 0)
 246	:FUNC(153)
-247	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-252	:CASTING_A(163) > 12
-254	:PARAM_4(156)
-255	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-260	:CASTING_A(163) > 12
-262	:PARAM_4(156)
-263	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-272	:A=&VID(159) > 52(52, 0, 0, 0)
-277	:LA=A(161)
-278	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+247	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+252	:PARAM_4(156)
+253	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+262	:A=&VID(159) > 52(52, 0, 0, 0)
+267	:LA=A(161)
+268	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: pSprite EyeLineRU_spr = _pSprite ( 0 ) 
+273	:ADD_STACK_VARIABLE(0) > 60(60, 0, 0, 0)
+278	:FUNC(153)
+279	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+284	:PARAM_4(156)
+285	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+294	:A=&VID(159) > 60(60, 0, 0, 0)
+299	:LA=A(161)
+300	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__add_var : prbuffer EyeLine_rbuff_RU 
+305	:ADD_STACK_VARIABLE(0) > 68(68, 0, 0, 0)
+BakeCode_CompileCodes__set_var : EyeLine_rbuff_RU = _prbuffer ( false ) 
+310	:FUNC(153)
+311	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+316	:PARAM_1(154)
+317	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+326	:A=&VID(159) > 68(68, 0, 0, 0)
+331	:LA=A(161)
+332	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: pSprite EyeLineLU_spr = _pSprite ( 0 ) 
+337	:ADD_STACK_VARIABLE(0) > 76(76, 0, 0, 0)
+342	:FUNC(153)
+343	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+348	:PARAM_4(156)
+349	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+358	:A=&VID(159) > 76(76, 0, 0, 0)
+363	:LA=A(161)
+364	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__add_var : prbuffer EyeLine_rbuff_LU 
+369	:ADD_STACK_VARIABLE(0) > 84(84, 0, 0, 0)
+BakeCode_CompileCodes__set_var : EyeLine_rbuff_LU = _prbuffer ( false ) 
+374	:FUNC(153)
+375	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+380	:PARAM_1(154)
+381	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+390	:A=&VID(159) > 84(84, 0, 0, 0)
+395	:LA=A(161)
+396	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: pSprite EyeLineRD_spr = _pSprite ( 0 ) 
+401	:ADD_STACK_VARIABLE(0) > 92(92, 0, 0, 0)
+406	:FUNC(153)
+407	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+412	:PARAM_4(156)
+413	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+422	:A=&VID(159) > 92(92, 0, 0, 0)
+427	:LA=A(161)
+428	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__add_var : prbuffer EyeLine_rbuff_RD 
+433	:ADD_STACK_VARIABLE(0) > 100(100, 0, 0, 0)
+BakeCode_CompileCodes__set_var : EyeLine_rbuff_RD = _prbuffer ( false ) 
+438	:FUNC(153)
+439	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+444	:PARAM_1(154)
+445	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+454	:A=&VID(159) > 100(100, 0, 0, 0)
+459	:LA=A(161)
+460	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: pSprite EyeLineLD_spr = _pSprite ( 0 ) 
+465	:ADD_STACK_VARIABLE(0) > 108(108, 0, 0, 0)
+470	:FUNC(153)
+471	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+476	:PARAM_4(156)
+477	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+486	:A=&VID(159) > 108(108, 0, 0, 0)
+491	:LA=A(161)
+492	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__add_var : prbuffer EyeLine_rbuff_LD 
+497	:ADD_STACK_VARIABLE(0) > 116(116, 0, 0, 0)
+BakeCode_CompileCodes__set_var : EyeLine_rbuff_LD = _prbuffer ( false ) 
+502	:FUNC(153)
+503	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+508	:PARAM_1(154)
+509	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+518	:A=&VID(159) > 116(116, 0, 0, 0)
+523	:LA=A(161)
+524	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: gcolor EyeLine_color = _gcolor ( 0 , 0 , 0 , 255 ) 
+255 
+0 
+0 
+529	:ADD_STACK_VARIABLE(0) > 132(132, 0, 0, 0)
+534	:FUNC(153)
+535	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+540	:PARAM_1(154)
+541	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+546	:PARAM_1(154)
+547	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+552	:PARAM_1(154)
+553	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+558	:PARAM_1(154)
+559	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
+568	:A=&VID(159) > 132(132, 0, 0, 0)
+573	:LA=A(161)
+574	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f center = _vec2f ( 0 , 0 ) 
+0 
+579	:ADD_STACK_VARIABLE(0) > 140(140, 0, 0, 0)
+584	:FUNC(153)
+585	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+590	:CASTING_A(163) > 12
+592	:PARAM_4(156)
+593	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+598	:CASTING_A(163) > 12
+600	:PARAM_4(156)
+601	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+610	:A=&VID(159) > 140(140, 0, 0, 0)
+615	:LA=A(161)
+616	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: float radius = 200 
-283	:ADD_STACK_VARIABLE(0) > 56(56, 0, 0, 0)
-288	:PUSH_A_CONST_4(6) > 200(200, 0, 0, 0)
-293	:CASTING_A(163) > 12
-295	:A=&VID(159) > 56(56, 0, 0, 0)
-300	:LA=A(161)
-301	:*LA=A_4(171)
+621	:ADD_STACK_VARIABLE(0) > 144(144, 0, 0, 0)
+626	:PUSH_A_CONST_4(6) > 200(200, 0, 0, 0)
+631	:CASTING_A(163) > 12
+633	:A=&VID(159) > 144(144, 0, 0, 0)
+638	:LA=A(161)
+639	:*LA=A_4(171)
 BakeCode_CompileCodes__adsetvar: float angle = 0 
-302	:ADD_STACK_VARIABLE(0) > 60(60, 0, 0, 0)
-307	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-312	:CASTING_A(163) > 12
-314	:A=&VID(159) > 60(60, 0, 0, 0)
-319	:LA=A(161)
-320	:*LA=A_4(171)
+640	:ADD_STACK_VARIABLE(0) > 148(148, 0, 0, 0)
+645	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+650	:CASTING_A(163) > 12
+652	:A=&VID(159) > 148(148, 0, 0, 0)
+657	:LA=A(161)
+658	:*LA=A_4(171)
 BakeCode_CompileCodes__adsetvar: float delta_angle = PI / 30 
-321	:ADD_STACK_VARIABLE(0) > 64(64, 0, 0, 0)
-326	:A=&VID(159) > 4(4, 0, 0, 0)
-331	:A=*A_nopush(165)
-332	:PUSH_B_CONST_4(12) > 30(30, 0, 0, 0)
-337	:CASTING_B(164) > 12
-339	:AU_FLOAT_DIV_A(71)
-340	:A=&VID(159) > 64(64, 0, 0, 0)
-345	:LA=A(161)
-346	:*LA=A_4(171)
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+PI ][ / ][ 30 ][ 
+659	:ADD_STACK_VARIABLE(0) > 152(152, 0, 0, 0)
+664	:A=&VID(159) > 4(4, 0, 0, 0)
+669	:A=*A_nopush(165)
+670	:PUSH_B_CONST_4(12) > 30(30, 0, 0, 0)
+675	:CASTING_B(164) > 12
+677	:AU_FLOAT_DIV_A(71)
+678	:A=&VID(159) > 152(152, 0, 0, 0)
+683	:LA=A(161)
+684	:*LA=A_4(171)
 BakeCode_CompileCodes__usefunc : begin ( circle_buff , false ) 
-347	:FUNC(153)
-348	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-353	:PARAM_1(154)
-354	:A=&VID(159) > 28(28, 0, 0, 0)
-359	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-364	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
+685	:FUNC(153)
+686	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+691	:PARAM_1(154)
+692	:A=&VID(159) > 28(28, 0, 0, 0)
+697	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+702	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: int i = 0 
-373	:ADD_STACK_VARIABLE(0) > 68(68, 0, 0, 0)
-378	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-383	:A=&VID(159) > 68(68, 0, 0, 0)
-388	:LA=A(161)
-389	:*LA=A_4(171)
+711	:ADD_STACK_VARIABLE(0) > 156(156, 0, 0, 0)
+716	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+721	:A=&VID(159) > 156(156, 0, 0, 0)
+726	:LA=A(161)
+727	:*LA=A_4(171)
 BakeCode_CompileCodes__while__ : while ( i < 31 ) 
-390	:A=&VID(159) > 68(68, 0, 0, 0)
-395	:A=*A_nopush(165)
-396	:PUSH_B_CONST_4(12) > 31(31, 0, 0, 0)
-401	:CM_BOOL_INT_RBIG_A(131)
-402	:IF(151) > -16843010(254, 254, 254, 254)
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+i ][ < ][ 31 ][ 
+728	:A=&VID(159) > 156(156, 0, 0, 0)
+733	:A=*A_nopush(165)
+734	:PUSH_B_CONST_4(12) > 31(31, 0, 0, 0)
+739	:CM_BOOL_INT_RBIG_A(131)
+740	:IF(151) > -16843010(254, 254, 254, 254)
 BakeCode_CompileCodes Block Start {
 BakeCode_CompileCodes__adsetvar: angle2d anglevec = _angle2d ( angle ) 
-407	:ADD_STACK_VARIABLE(0) > 80(80, 0, 0, 0)
-412	:FUNC(153)
-413	:A=&VID(159) > 60(60, 0, 0, 0)
-418	:A=*A_nopush(165)
-419	:PARAM_4(156)
-420	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 4(4, 0, 0, 0)
-429	:A=&VID(159) > 80(80, 0, 0, 0)
-434	:LA=A(161)
-435	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+745	:ADD_STACK_VARIABLE(0) > 168(168, 0, 0, 0)
+750	:FUNC(153)
+751	:A=&VID(159) > 148(148, 0, 0, 0)
+756	:A=*A_nopush(165)
+757	:PARAM_4(156)
+758	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 4(4, 0, 0, 0)
+767	:A=&VID(159) > 168(168, 0, 0, 0)
+772	:LA=A(161)
+773	:*LA=*A_N(182) > 12(12, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: gpos pos = _gpos ( radius * anglevec . delta . x , radius * anglevec . delta . y , 0 ) 
-440	:ADD_STACK_VARIABLE(0) > 92(92, 0, 0, 0)
-445	:FUNC(153)
-446	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-451	:CASTING_A(163) > 12
-453	:PARAM_4(156)
-454	:A=&VID(159) > 56(56, 0, 0, 0)
-459	:A=*A_nopush(165)
-460	:A<=&VID[Const](183) > 80(80, 0, 0, 0) > 0(0, 0, 0, 0)
-469	:PUSH_B_CONST_4(12) > 4(4, 0, 0, 0)
-474	:AU_INT_ADD_A(25)
-475	:B=A(181)
-476	:POP_A(174)
-477	:B=*B_nopush(166)
-478	:AU_FLOAT_MUL_A(57)
-479	:PARAM_4(156)
-480	:A=&VID(159) > 56(56, 0, 0, 0)
-485	:A=*A_nopush(165)
-486	:A<=&VID[Const](183) > 80(80, 0, 0, 0) > 0(0, 0, 0, 0)
-495	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
-500	:AU_INT_ADD_A(25)
-501	:B=A(181)
-502	:POP_A(174)
-503	:B=*B_nopush(166)
-504	:AU_FLOAT_MUL_A(57)
-505	:PARAM_4(156)
-506	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-515	:A=&VID(159) > 92(92, 0, 0, 0)
-520	:LA=A(161)
-521	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+0 
+radius * anglevec . delta . y 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ y ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ y ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ y ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ y ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ y ][ 
+radius ][ * ][ radius ][ . ][ y ][ 
+radius ][ * ][  ][ 
+radius ][ * ][  ][ 
+radius ][ * ][  ][ 
+radius ][ * ][  ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ x ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ x ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ x ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ x ][ 
+radius ][ * ][ anglevec ][ . ][ delta ][ . ][ x ][ 
+radius ][ * ][ radius ][ . ][ x ][ 
+radius ][ * ][ 8 ][ 
+radius ][ * ][ 8 ][ 
+radius ][ * ][ 8 ][ 
+radius ][ * ][ 8 ][ 
+778	:ADD_STACK_VARIABLE(0) > 180(180, 0, 0, 0)
+783	:FUNC(153)
+784	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+789	:CASTING_A(163) > 12
+791	:PARAM_4(156)
+792	:A=&VID(159) > 144(144, 0, 0, 0)
+797	:A=*A_nopush(165)
+798	:A<=&VID[Const](183) > 168(168, 0, 0, 0) > 0(0, 0, 0, 0)
+807	:PUSH_B_CONST_4(12) > 4(4, 0, 0, 0)
+812	:AU_INT_ADD_A(25)
+813	:B=A(181)
+814	:POP_A(174)
+815	:B=*B_nopush(166)
+816	:AU_FLOAT_MUL_A(57)
+817	:PARAM_4(156)
+818	:A=&VID(159) > 144(144, 0, 0, 0)
+823	:A=*A_nopush(165)
+824	:A<=&VID[Const](183) > 168(168, 0, 0, 0) > 0(0, 0, 0, 0)
+833	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
+838	:AU_INT_ADD_A(25)
+839	:B=A(181)
+840	:POP_A(174)
+841	:B=*B_nopush(166)
+842	:AU_FLOAT_MUL_A(57)
+843	:PARAM_4(156)
+844	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+853	:A=&VID(159) > 180(180, 0, 0, 0)
+858	:LA=A(161)
+859	:*LA=*A_N(182) > 12(12, 0, 0, 0)
 BakeCode_CompileCodes__usefunc : av ( circle_buff , pos , skin_color ) 
-526	:FUNC(153)
-527	:A=&VID(159) > 44(44, 0, 0, 0)
-532	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-537	:A=&VID(159) > 92(92, 0, 0, 0)
-542	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-547	:A=&VID(159) > 28(28, 0, 0, 0)
-552	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-557	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+864	:FUNC(153)
+865	:A=&VID(159) > 44(44, 0, 0, 0)
+870	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+875	:A=&VID(159) > 180(180, 0, 0, 0)
+880	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+885	:A=&VID(159) > 28(28, 0, 0, 0)
+890	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+895	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 BakeCode_CompileCodes__set_var : angle += delta_angle 
-566	:B=&VID(160) > 64(64, 0, 0, 0)
-571	:B=*B_nopush(166)
-572	:A=&VID(159) > 60(60, 0, 0, 0)
-577	:A=*A_nopush(165)
-578	:AU_FLOAT_ADD_A(29)
-579	:A=&VID(159) > 60(60, 0, 0, 0)
-584	:LA=A(161)
-585	:*LA=A_4(171)
+904	:B=&VID(160) > 152(152, 0, 0, 0)
+909	:B=*B_nopush(166)
+910	:A=&VID(159) > 148(148, 0, 0, 0)
+915	:A=*A_nopush(165)
+916	:AU_FLOAT_ADD_A(29)
+917	:A=&VID(159) > 148(148, 0, 0, 0)
+922	:LA=A(161)
+923	:*LA=A_4(171)
 BakeCode_CompileCodes__set_var : i += 1 
-586	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
-591	:A=&VID(159) > 68(68, 0, 0, 0)
-596	:A=*A_nopush(165)
-597	:AU_INT_ADD_A(25)
-598	:A=&VID(159) > 68(68, 0, 0, 0)
-603	:LA=A(161)
-604	:*LA=A_4(171)
+924	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+929	:A=&VID(159) > 156(156, 0, 0, 0)
+934	:A=*A_nopush(165)
+935	:AU_INT_ADD_A(25)
+936	:A=&VID(159) > 156(156, 0, 0, 0)
+941	:LA=A(161)
+942	:*LA=A_4(171)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes__adsetvar: circle face_outline = _circle ( center , radius ) 
-610	:ADD_STACK_VARIABLE(0) > 80(80, 0, 0, 0)
-615	:FUNC(153)
-616	:A=&VID(159) > 56(56, 0, 0, 0)
-621	:A=*A_nopush(165)
-622	:PARAM_4(156)
-623	:A=&VID(159) > 52(52, 0, 0, 0)
-628	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-633	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 1(1, 0, 0, 0)
-642	:A=&VID(159) > 80(80, 0, 0, 0)
-647	:LA=A(161)
-648	:*LA=*A_N(182) > 12(12, 0, 0, 0)
+radius 
+948	:ADD_STACK_VARIABLE(0) > 168(168, 0, 0, 0)
+953	:FUNC(153)
+954	:A=&VID(159) > 144(144, 0, 0, 0)
+959	:A=*A_nopush(165)
+960	:PARAM_4(156)
+961	:A=&VID(159) > 140(140, 0, 0, 0)
+966	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+971	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 1(1, 0, 0, 0)
+980	:A=&VID(159) > 168(168, 0, 0, 0)
+985	:LA=A(161)
+986	:*LA=*A_N(182) > 12(12, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f downPos = _vec2f ( center . x , center . y - radius ) 
-653	:ADD_STACK_VARIABLE(0) > 88(88, 0, 0, 0)
-658	:FUNC(153)
-659	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
-668	:A=*A_nopush(165)
-669	:B=&VID(160) > 56(56, 0, 0, 0)
-674	:B=*B_nopush(166)
-675	:AU_FLOAT_MIN_A(43)
-676	:PARAM_4(156)
-677	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-686	:A=*A_nopush(165)
-687	:PARAM_4(156)
-688	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-697	:A=&VID(159) > 88(88, 0, 0, 0)
-702	:LA=A(161)
-703	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+center . y - radius 
+center ][ . ][ y ][ - ][ radius ][ 
+center ][ . ][ y ][ - ][ radius ][ 
+center ][ . ][ y ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ . ][ x ][ 
+center ][ . ][ x ][ 
+991	:ADD_STACK_VARIABLE(0) > 176(176, 0, 0, 0)
+996	:FUNC(153)
+997	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 4(4, 0, 0, 0)
+1006	:A=*A_nopush(165)
+1007	:B=&VID(160) > 144(144, 0, 0, 0)
+1012	:B=*B_nopush(166)
+1013	:AU_FLOAT_MIN_A(43)
+1014	:PARAM_4(156)
+1015	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1024	:A=*A_nopush(165)
+1025	:PARAM_4(156)
+1026	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1035	:A=&VID(159) > 176(176, 0, 0, 0)
+1040	:LA=A(161)
+1041	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f NoseCenter = get_pos_in_LineAndRatioAB ( _line2d ( downPos , center ) , 1 , 1 ) 
-708	:ADD_STACK_VARIABLE(0) > 96(96, 0, 0, 0)
-713	:FUNC(153)
-714	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-719	:CASTING_A(163) > 12
-721	:PARAM_4(156)
-722	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-727	:CASTING_A(163) > 12
-729	:PARAM_4(156)
-730	:FUNC(153)
-731	:A=&VID(159) > 52(52, 0, 0, 0)
-736	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-741	:A=&VID(159) > 88(88, 0, 0, 0)
-746	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-751	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
-760	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-765	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
-774	:A=&VID(159) > 96(96, 0, 0, 0)
-779	:LA=A(161)
-780	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+1 
+1 
+center 
+center 
+1046	:ADD_STACK_VARIABLE(0) > 184(184, 0, 0, 0)
+1051	:FUNC(153)
+1052	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1057	:CASTING_A(163) > 12
+1059	:PARAM_4(156)
+1060	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1065	:CASTING_A(163) > 12
+1067	:PARAM_4(156)
+1068	:FUNC(153)
+1069	:A=&VID(159) > 140(140, 0, 0, 0)
+1074	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1079	:A=&VID(159) > 176(176, 0, 0, 0)
+1084	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1089	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+1098	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1103	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+1112	:A=&VID(159) > 184(184, 0, 0, 0)
+1117	:LA=A(161)
+1118	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f MouseCenter = downPos 
-785	:ADD_STACK_VARIABLE(0) > 104(104, 0, 0, 0)
-790	:A=&VID(159) > 88(88, 0, 0, 0)
-795	:A=&VID(159) > 104(104, 0, 0, 0)
-800	:LA=A(161)
-801	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+1123	:ADD_STACK_VARIABLE(0) > 192(192, 0, 0, 0)
+1128	:A=&VID(159) > 176(176, 0, 0, 0)
+1133	:A=&VID(159) > 192(192, 0, 0, 0)
+1138	:LA=A(161)
+1139	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f ChinBorder = _vec2f ( center . x , center . y - 1.5 * radius ) 
-806	:ADD_STACK_VARIABLE(0) > 112(112, 0, 0, 0)
-811	:FUNC(153)
-812	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
-821	:A=*A_nopush(165)
-822	:PUSH_A_CONST_4(6) > 1069547520(0, 0, 192, 63)
-827	:B=&VID(160) > 56(56, 0, 0, 0)
-832	:B=*B_nopush(166)
-833	:AU_FLOAT_MUL_A(57)
-834	:B=A(181)
-835	:POP_A(174)
-836	:AU_FLOAT_MIN_A(43)
-837	:PARAM_4(156)
-838	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-847	:A=*A_nopush(165)
-848	:PARAM_4(156)
-849	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-858	:A=&VID(159) > 112(112, 0, 0, 0)
-863	:LA=A(161)
-864	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+center . y - 1.5 * radius 
+center ][ . ][ y ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ . ][ y ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ . ][ y ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ . ][ y ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ 1.5 ][ * ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ . ][ x ][ 
+center ][ . ][ x ][ 
+1144	:ADD_STACK_VARIABLE(0) > 200(200, 0, 0, 0)
+1149	:FUNC(153)
+1150	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 4(4, 0, 0, 0)
+1159	:A=*A_nopush(165)
+1160	:PUSH_A_CONST_4(6) > 1069547520(0, 0, 192, 63)
+1165	:B=&VID(160) > 144(144, 0, 0, 0)
+1170	:B=*B_nopush(166)
+1171	:AU_FLOAT_MUL_A(57)
+1172	:B=A(181)
+1173	:POP_A(174)
+1174	:AU_FLOAT_MIN_A(43)
+1175	:PARAM_4(156)
+1176	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1185	:A=*A_nopush(165)
+1186	:PARAM_4(156)
+1187	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1196	:A=&VID(159) > 200(200, 0, 0, 0)
+1201	:LA=A(161)
+1202	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f rightPos = _vec2f ( center . x + radius , center . y ) 
-869	:ADD_STACK_VARIABLE(0) > 120(120, 0, 0, 0)
-874	:FUNC(153)
-875	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
-884	:A=*A_nopush(165)
-885	:PARAM_4(156)
-886	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-895	:A=*A_nopush(165)
-896	:B=&VID(160) > 56(56, 0, 0, 0)
-901	:B=*B_nopush(166)
-902	:AU_FLOAT_ADD_A(29)
-903	:PARAM_4(156)
-904	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-913	:A=&VID(159) > 120(120, 0, 0, 0)
-918	:LA=A(161)
-919	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+center . y 
+center ][ . ][ y ][ 
+center ][ . ][ y ][ 
+center ][ . ][ x ][ + ][ radius ][ 
+center ][ . ][ x ][ + ][ radius ][ 
+center ][ . ][ x ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+enter ][ + ][ radius ][ 
+1207	:ADD_STACK_VARIABLE(0) > 208(208, 0, 0, 0)
+1212	:FUNC(153)
+1213	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 4(4, 0, 0, 0)
+1222	:A=*A_nopush(165)
+1223	:PARAM_4(156)
+1224	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1233	:A=*A_nopush(165)
+1234	:B=&VID(160) > 144(144, 0, 0, 0)
+1239	:B=*B_nopush(166)
+1240	:AU_FLOAT_ADD_A(29)
+1241	:PARAM_4(156)
+1242	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1251	:A=&VID(159) > 208(208, 0, 0, 0)
+1256	:LA=A(161)
+1257	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f leftPos = _vec2f ( center . x - radius , center . y ) 
-924	:ADD_STACK_VARIABLE(0) > 128(128, 0, 0, 0)
-929	:FUNC(153)
-930	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 4(4, 0, 0, 0)
-939	:A=*A_nopush(165)
-940	:PARAM_4(156)
-941	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-950	:A=*A_nopush(165)
-951	:B=&VID(160) > 56(56, 0, 0, 0)
-956	:B=*B_nopush(166)
-957	:AU_FLOAT_MIN_A(43)
-958	:PARAM_4(156)
-959	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-968	:A=&VID(159) > 128(128, 0, 0, 0)
-973	:LA=A(161)
-974	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+center . y 
+center ][ . ][ y ][ 
+center ][ . ][ y ][ 
+center ][ . ][ x ][ - ][ radius ][ 
+center ][ . ][ x ][ - ][ radius ][ 
+center ][ . ][ x ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+enter ][ - ][ radius ][ 
+1262	:ADD_STACK_VARIABLE(0) > 216(216, 0, 0, 0)
+1267	:FUNC(153)
+1268	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 4(4, 0, 0, 0)
+1277	:A=*A_nopush(165)
+1278	:PARAM_4(156)
+1279	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1288	:A=*A_nopush(165)
+1289	:B=&VID(160) > 144(144, 0, 0, 0)
+1294	:B=*B_nopush(166)
+1295	:AU_FLOAT_MIN_A(43)
+1296	:PARAM_4(156)
+1297	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1306	:A=&VID(159) > 216(216, 0, 0, 0)
+1311	:LA=A(161)
+1312	:*LA=*A_N(182) > 8(8, 0, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f [ 64 ] RightChinLine = get_poses_in_Bezier1F ( ChinBorder , rightPos , _vec2f ( center . x + radius * 0.75 , ChinBorder . y ) , 64 ) 
-979	:ADD_STACK_VARIABLE(0) > 640(128, 2, 0, 0)
-984	:FUNC(153)
-985	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
-990	:PARAM_4(156)
-991	:FUNC(153)
-992	:A<=&VID[Const](183) > 112(112, 0, 0, 0) > 4(4, 0, 0, 0)
-1001	:A=*A_nopush(165)
-1002	:PARAM_4(156)
-1003	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-1012	:A=*A_nopush(165)
-1013	:A=&VID(159) > 56(56, 0, 0, 0)
-1018	:A=*A_nopush(165)
-1019	:PUSH_B_CONST_4(12) > 1061158912(0, 0, 64, 63)
-1024	:AU_FLOAT_MUL_A(57)
-1025	:B=A(181)
-1026	:POP_A(174)
-1027	:AU_FLOAT_ADD_A(29)
-1028	:PARAM_4(156)
-1029	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-1038	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1043	:A=&VID(159) > 120(120, 0, 0, 0)
-1048	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1053	:A=&VID(159) > 112(112, 0, 0, 0)
-1058	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1063	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
-1072	:A=&VID(159) > 640(128, 2, 0, 0)
-1077	:LA=A(161)
-1078	:*LA=*A_N(182) > 512(0, 2, 0, 0)
+64 
+_vec2f ( center . x + radius * 0.75 , ChinBorder . y ) 
+ChinBorder . y 
+ChinBorder ][ . ][ y ][ 
+ChinBorder ][ . ][ y ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ * ][ 0.75 ][ 
+ÿÿÿ ][ + ][ radius ][ 
+ÿÿÿ ][ + ][ radius ][ 
+ÿÿÿ ][ + ][ radius ][ 
+ChinBorder . y 
+ChinBorder ][ . ][ y ][ 
+ChinBorder ][ . ][ y ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ * ][ 0.75 ][ 
+center ][ + ][ radius ][ 
+center ][ + ][ radius ][ 
+center ][ + ][ radius ][ 
+rightPos 
+1317	:ADD_STACK_VARIABLE(0) > 728(216, 2, 0, 0)
+1322	:FUNC(153)
+1323	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
+1328	:PARAM_4(156)
+1329	:FUNC(153)
+1330	:A<=&VID[Const](183) > 200(200, 0, 0, 0) > 4(4, 0, 0, 0)
+1339	:A=*A_nopush(165)
+1340	:PARAM_4(156)
+1341	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1350	:A=*A_nopush(165)
+1351	:A=&VID(159) > 144(144, 0, 0, 0)
+1356	:A=*A_nopush(165)
+1357	:PUSH_B_CONST_4(12) > 1061158912(0, 0, 64, 63)
+1362	:AU_FLOAT_MUL_A(57)
+1363	:B=A(181)
+1364	:POP_A(174)
+1365	:AU_FLOAT_ADD_A(29)
+1366	:PARAM_4(156)
+1367	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1376	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1381	:A=&VID(159) > 208(208, 0, 0, 0)
+1386	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1391	:A=&VID(159) > 200(200, 0, 0, 0)
+1396	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1401	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
+1410	:A=&VID(159) > 728(216, 2, 0, 0)
+1415	:LA=A(161)
+1416	:*LA=*A_N(182) > 512(0, 2, 0, 0)
 BakeCode_CompileCodes__adsetvar: vec2f [ 64 ] LeftChinLine = get_poses_in_Bezier1F ( leftPos , ChinBorder , _vec2f ( center . x - radius * 0.75 , ChinBorder . y ) , 64 ) 
-1083	:ADD_STACK_VARIABLE(0) > 1152(128, 4, 0, 0)
-1088	:FUNC(153)
-1089	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
-1094	:PARAM_4(156)
-1095	:FUNC(153)
-1096	:A<=&VID[Const](183) > 112(112, 0, 0, 0) > 4(4, 0, 0, 0)
-1105	:A=*A_nopush(165)
-1106	:PARAM_4(156)
-1107	:A<=&VID[Const](183) > 52(52, 0, 0, 0) > 0(0, 0, 0, 0)
-1116	:A=*A_nopush(165)
-1117	:A=&VID(159) > 56(56, 0, 0, 0)
-1122	:A=*A_nopush(165)
-1123	:PUSH_B_CONST_4(12) > 1061158912(0, 0, 64, 63)
-1128	:AU_FLOAT_MUL_A(57)
-1129	:B=A(181)
-1130	:POP_A(174)
-1131	:AU_FLOAT_MIN_A(43)
-1132	:PARAM_4(156)
-1133	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
-1142	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1147	:A=&VID(159) > 112(112, 0, 0, 0)
-1152	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1157	:A=&VID(159) > 128(128, 0, 0, 0)
-1162	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1167	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
-1176	:A=&VID(159) > 1152(128, 4, 0, 0)
-1181	:LA=A(161)
-1182	:*LA=*A_N(182) > 512(0, 2, 0, 0)
+64 
+_vec2f ( center . x - radius * 0.75 , ChinBorder . y ) 
+ChinBorder . y 
+ChinBorder ][ . ][ y ][ 
+ChinBorder ][ . ][ y ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+ChinBorder . y 
+ChinBorder ][ . ][ y ][ 
+ChinBorder ][ . ][ y ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ . ][ x ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ * ][ 0.75 ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+center ][ - ][ radius ][ 
+ChinBorder 
+1421	:ADD_STACK_VARIABLE(0) > 1240(216, 4, 0, 0)
+1426	:FUNC(153)
+1427	:PUSH_A_CONST_4(6) > 64(64, 0, 0, 0)
+1432	:PARAM_4(156)
+1433	:FUNC(153)
+1434	:A<=&VID[Const](183) > 200(200, 0, 0, 0) > 4(4, 0, 0, 0)
+1443	:A=*A_nopush(165)
+1444	:PARAM_4(156)
+1445	:A<=&VID[Const](183) > 140(140, 0, 0, 0) > 0(0, 0, 0, 0)
+1454	:A=*A_nopush(165)
+1455	:A=&VID(159) > 144(144, 0, 0, 0)
+1460	:A=*A_nopush(165)
+1461	:PUSH_B_CONST_4(12) > 1061158912(0, 0, 64, 63)
+1466	:AU_FLOAT_MUL_A(57)
+1467	:B=A(181)
+1468	:POP_A(174)
+1469	:AU_FLOAT_MIN_A(43)
+1470	:PARAM_4(156)
+1471	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+1480	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1485	:A=&VID(159) > 200(200, 0, 0, 0)
+1490	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1495	:A=&VID(159) > 216(216, 0, 0, 0)
+1500	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1505	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 7(7, 0, 0, 0)
+1514	:A=&VID(159) > 1240(216, 4, 0, 0)
+1519	:LA=A(161)
+1520	:*LA=*A_N(182) > 512(0, 2, 0, 0)
 BakeCode_CompileCodes__set_var : i = 0 
-1187	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1192	:A=&VID(159) > 68(68, 0, 0, 0)
-1197	:LA=A(161)
-1198	:*LA=A_4(171)
+1525	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1530	:A=&VID(159) > 156(156, 0, 0, 0)
+1535	:LA=A(161)
+1536	:*LA=A_4(171)
 BakeCode_CompileCodes__while__ : while ( i < 64 ) 
-1199	:A=&VID(159) > 68(68, 0, 0, 0)
-1204	:A=*A_nopush(165)
-1205	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
-1210	:CM_BOOL_INT_RBIG_A(131)
-1211	:IF(151) > -16843010(254, 254, 254, 254)
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+1537	:A=&VID(159) > 156(156, 0, 0, 0)
+1542	:A=*A_nopush(165)
+1543	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
+1548	:CM_BOOL_INT_RBIG_A(131)
+1549	:IF(151) > -16843010(254, 254, 254, 254)
 BakeCode_CompileCodes Block Start {
 BakeCode_CompileCodes__usefunc : av ( circle_buff , LeftChinLine [ i ] , skin_color ) 
-1216	:FUNC(153)
-1217	:A=&VID(159) > 44(44, 0, 0, 0)
-1222	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-1227	:A=&VID(159) > 68(68, 0, 0, 0)
-1232	:A=*A_nopush(165)
-1233	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
-1238	:AU_UINT_MUL_B(56)
-1239	:A=&VID(159) > 1152(128, 4, 0, 0)
-1244	:AU_INT_ADD_A(25)
-1245	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-1250	:A=&VID(159) > 28(28, 0, 0, 0)
-1255	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1260	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+LeftChinLine ][ [ ][ i ][ ] ][ 
+1554	:FUNC(153)
+1555	:A=&VID(159) > 44(44, 0, 0, 0)
+1560	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1565	:A=&VID(159) > 156(156, 0, 0, 0)
+1570	:A=*A_nopush(165)
+1571	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1576	:AU_UINT_MUL_B(56)
+1577	:A=&VID(159) > 1240(216, 4, 0, 0)
+1582	:AU_INT_ADD_A(25)
+1583	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+1588	:A=&VID(159) > 28(28, 0, 0, 0)
+1593	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1598	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 BakeCode_CompileCodes__set_var : i += 1 
-1269	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
-1274	:A=&VID(159) > 68(68, 0, 0, 0)
-1279	:A=*A_nopush(165)
-1280	:AU_INT_ADD_A(25)
-1281	:A=&VID(159) > 68(68, 0, 0, 0)
-1286	:LA=A(161)
-1287	:*LA=A_4(171)
+1607	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+1612	:A=&VID(159) > 156(156, 0, 0, 0)
+1617	:A=*A_nopush(165)
+1618	:AU_INT_ADD_A(25)
+1619	:A=&VID(159) > 156(156, 0, 0, 0)
+1624	:LA=A(161)
+1625	:*LA=A_4(171)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes__set_var : i = 0 
-1293	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1298	:A=&VID(159) > 68(68, 0, 0, 0)
-1303	:LA=A(161)
-1304	:*LA=A_4(171)
+1631	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+1636	:A=&VID(159) > 156(156, 0, 0, 0)
+1641	:LA=A(161)
+1642	:*LA=A_4(171)
 BakeCode_CompileCodes__while__ : while ( i < 64 ) 
-1305	:A=&VID(159) > 68(68, 0, 0, 0)
-1310	:A=*A_nopush(165)
-1311	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
-1316	:CM_BOOL_INT_RBIG_A(131)
-1317	:IF(151) > -16843010(254, 254, 254, 254)
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+i ][ < ][ 64 ][ 
+1643	:A=&VID(159) > 156(156, 0, 0, 0)
+1648	:A=*A_nopush(165)
+1649	:PUSH_B_CONST_4(12) > 64(64, 0, 0, 0)
+1654	:CM_BOOL_INT_RBIG_A(131)
+1655	:IF(151) > -16843010(254, 254, 254, 254)
 BakeCode_CompileCodes Block Start {
 BakeCode_CompileCodes__usefunc : av ( circle_buff , RightChinLine [ i ] , skin_color ) 
-1322	:FUNC(153)
-1323	:A=&VID(159) > 44(44, 0, 0, 0)
-1328	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-1333	:A=&VID(159) > 68(68, 0, 0, 0)
-1338	:A=*A_nopush(165)
-1339	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
-1344	:AU_UINT_MUL_B(56)
-1345	:A=&VID(159) > 640(128, 2, 0, 0)
-1350	:AU_INT_ADD_A(25)
-1351	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-1356	:A=&VID(159) > 28(28, 0, 0, 0)
-1361	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1366	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+RightChinLine ][ [ ][ i ][ ] ][ 
+1660	:FUNC(153)
+1661	:A=&VID(159) > 44(44, 0, 0, 0)
+1666	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1671	:A=&VID(159) > 156(156, 0, 0, 0)
+1676	:A=*A_nopush(165)
+1677	:PUSH_B_CONST_4(12) > 8(8, 0, 0, 0)
+1682	:AU_UINT_MUL_B(56)
+1683	:A=&VID(159) > 728(216, 2, 0, 0)
+1688	:AU_INT_ADD_A(25)
+1689	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+1694	:A=&VID(159) > 28(28, 0, 0, 0)
+1699	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1704	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 BakeCode_CompileCodes__set_var : i += 1 
-1375	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
-1380	:A=&VID(159) > 68(68, 0, 0, 0)
-1385	:A=*A_nopush(165)
-1386	:AU_INT_ADD_A(25)
-1387	:A=&VID(159) > 68(68, 0, 0, 0)
-1392	:LA=A(161)
-1393	:*LA=A_4(171)
+1713	:PUSH_B_CONST_4(12) > 1(1, 0, 0, 0)
+1718	:A=&VID(159) > 156(156, 0, 0, 0)
+1723	:A=*A_nopush(165)
+1724	:AU_INT_ADD_A(25)
+1725	:A=&VID(159) > 156(156, 0, 0, 0)
+1730	:LA=A(161)
+1731	:*LA=A_4(171)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes__usefunc : end ( circle_buff ) 
-1399	:FUNC(153)
-1400	:A=&VID(159) > 28(28, 0, 0, 0)
-1405	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1410	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
+1737	:FUNC(153)
+1738	:A=&VID(159) > 28(28, 0, 0, 0)
+1743	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1748	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
 BakeCode_CompileCodes__usefunc : spr_push_rbuffer ( circle_spr , circle_buff ) 
-1419	:FUNC(153)
-1420	:A=&VID(159) > 28(28, 0, 0, 0)
-1425	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1430	:A=&VID(159) > 20(20, 0, 0, 0)
-1435	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1440	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
-BakeCode_CompileCodes__usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
-1449	:FUNC(153)
-1450	:FUNC(153)
-1451	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1456	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1461	:FUNC(153)
-1462	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-1467	:CASTING_A(163) > 12
-1469	:PARAM_4(156)
-1470	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-1475	:CASTING_A(163) > 12
-1477	:PARAM_4(156)
-1478	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-1483	:CASTING_A(163) > 12
-1485	:PARAM_4(156)
-1486	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-1495	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-1500	:FUNC(153)
-1501	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1506	:CASTING_A(163) > 12
-1508	:PARAM_4(156)
-1509	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1514	:CASTING_A(163) > 12
-1516	:PARAM_4(156)
-1517	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1522	:CASTING_A(163) > 12
-1524	:PARAM_4(156)
-1525	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-1534	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-1539	:FUNC(153)
-1540	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1545	:CASTING_A(163) > 12
-1547	:PARAM_4(156)
-1548	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1553	:CASTING_A(163) > 12
-1555	:PARAM_4(156)
-1556	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1561	:CASTING_A(163) > 12
-1563	:PARAM_4(156)
-1564	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-1573	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-1578	:A=&VID(159) > 20(20, 0, 0, 0)
-1583	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1588	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
-1597	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1602	:A=&VID(159) > 12(12, 0, 0, 0)
-1607	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1612	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
-BakeCode_CompileCodes__usefunc : obj_setsource ( this , mainspr ) 
-1621	:FUNC(153)
-1622	:A=&VID(159) > 12(12, 0, 0, 0)
-1627	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1632	:A=&Global_VID(178) > 0(0, 0, 0, 0)
-1637	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-1642	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
-BakeCode_CompileCodes__while__ : while ( true ) 
-1651	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-1656	:IF(151) > -16843010(254, 254, 254, 254)
-BakeCode_CompileCodes Block Start {
-BakeCode_CompileCodes__adsetvar: int aaa = 10 
-1661	:ADD_STACK_VARIABLE(0) > 1156(132, 4, 0, 0)
-1666	:PUSH_A_CONST_4(6) > 10(10, 0, 0, 0)
-1671	:A=&VID(159) > 1156(132, 4, 0, 0)
-1676	:LA=A(161)
-1677	:*LA=A_4(171)
-}; BakeCode_CompileCodes Block Finish
-BakeCode_CompileCodes__return_ : return 0 
-1683	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-1688	:RETURN(157)
-}; BakeCode_CompileCodes Block Finish
-BakeCode_CompileCodes...finish
-ICB[000002114CC8399B] BakeCode finish.
-Create_New_ICB_Context From ICB[000002114CC8399B], with 4096 size memory...finish.
+1757	:FUNC(153)
+1758	:A=&VID(159) > 28(28, 0, 0, 0)
+1763	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1768	:A=&VID(159) > 20(20, 0, 0, 0)
+1773	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1778	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f RightEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 1 , 2 ) 
+2 
+1 
+leftPos 
+leftPos 
+1787	:ADD_STACK_VARIABLE(0) > 1248(224, 4, 0, 0)
+1792	:FUNC(153)
+1793	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+1798	:CASTING_A(163) > 12
+1800	:PARAM_4(156)
+1801	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1806	:CASTING_A(163) > 12
+1808	:PARAM_4(156)
+1809	:FUNC(153)
+1810	:A=&VID(159) > 216(216, 0, 0, 0)
+1815	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1820	:A=&VID(159) > 208(208, 0, 0, 0)
+1825	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1830	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+1839	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1844	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+1853	:A=&VID(159) > 1248(224, 4, 0, 0)
+1858	:LA=A(161)
+1859	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f LeftEyeStart = get_pos_in_LineAndRatioAB ( _line2d ( rightPos , leftPos ) , 2 , 1 ) 
+1 
+2 
+leftPos 
+leftPos 
+1864	:ADD_STACK_VARIABLE(0) > 1256(232, 4, 0, 0)
+1869	:FUNC(153)
+1870	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1875	:CASTING_A(163) > 12
+1877	:PARAM_4(156)
+1878	:PUSH_A_CONST_4(6) > 2(2, 0, 0, 0)
+1883	:CASTING_A(163) > 12
+1885	:PARAM_4(156)
+1886	:FUNC(153)
+1887	:A=&VID(159) > 216(216, 0, 0, 0)
+1892	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1897	:A=&VID(159) > 208(208, 0, 0, 0)
+1902	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1907	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+1916	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+1921	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+1930	:A=&VID(159) > 1256(232, 4, 0, 0)
+1935	:LA=A(161)
+1936	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__set_var : RightEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( RightEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) ) 
+get_pos_in_LineAndRatioAB ( _line2d ( RightEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) 
+1 - eyeStartPos_rate 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+eyeStartPos_rate 
+NoseCenter 
+NoseCenter 
+1 - eyeStartPos_rate 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+eyeStartPos_rate 
+NoseCenter 
+NoseCenter 
+RightEyeStart ][ . ][ x ][ 
+RightEyeStart ][ . ][ x ][ 
+1941	:FUNC(153)
+1942	:FUNC(153)
+1943	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+1948	:CASTING_A(163) > 12
+1950	:B=&Global_VID(179) > 8(8, 0, 0, 0)
+1955	:B=*B_nopush(166)
+1956	:AU_FLOAT_MIN_A(43)
+1957	:PARAM_4(156)
+1958	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+1963	:A=*A_nopush(165)
+1964	:PARAM_4(156)
+1965	:FUNC(153)
+1966	:A=&VID(159) > 184(184, 0, 0, 0)
+1971	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1976	:A=&VID(159) > 1248(224, 4, 0, 0)
+1981	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+1986	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+1995	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+2000	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+2009	:PARAM_4(156)
+2010	:A<=&VID[Const](183) > 1248(224, 4, 0, 0) > 0(0, 0, 0, 0)
+2019	:A=*A_nopush(165)
+2020	:PARAM_4(156)
+2021	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+2030	:A=&VID(159) > 1248(224, 4, 0, 0)
+2035	:LA=A(161)
+2036	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__set_var : LeftEyeStart = _vec2f ( RightEyeStart . x , get_pos_in_LineAndRatioAB ( _line2d ( LeftEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) ) 
+get_pos_in_LineAndRatioAB ( _line2d ( LeftEyeStart , NoseCenter ) , eyeStartPos_rate , 1 - eyeStartPos_rate ) 
+1 - eyeStartPos_rate 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+eyeStartPos_rate 
+NoseCenter 
+NoseCenter 
+1 - eyeStartPos_rate 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+1 ][ - ][ eyeStartPos_rate ][ 
+eyeStartPos_rate 
+NoseCenter 
+NoseCenter 
+RightEyeStart ][ . ][ x ][ 
+RightEyeStart ][ . ][ x ][ 
+2041	:FUNC(153)
+2042	:FUNC(153)
+2043	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+2048	:CASTING_A(163) > 12
+2050	:B=&Global_VID(179) > 8(8, 0, 0, 0)
+2055	:B=*B_nopush(166)
+2056	:AU_FLOAT_MIN_A(43)
+2057	:PARAM_4(156)
+2058	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+2063	:A=*A_nopush(165)
+2064	:PARAM_4(156)
+2065	:FUNC(153)
+2066	:A=&VID(159) > 184(184, 0, 0, 0)
+2071	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2076	:A=&VID(159) > 1256(232, 4, 0, 0)
+2081	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+2086	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 2(2, 0, 0, 0)
+2095	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+2100	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 6(6, 0, 0, 0)
+2109	:PARAM_4(156)
+2110	:A<=&VID[Const](183) > 1248(224, 4, 0, 0) > 0(0, 0, 0, 0)
+2119	:A=*A_nopush(165)
+2120	:PARAM_4(156)
+2121	:Extend_Instruction(255) > 0(0, 0, 0, 0) > 0(0, 0, 0, 0)
+2130	:A=&VID(159) > 1256(232, 4, 0, 0)
+2135	:LA=A(161)
+2136	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+BakeCode_CompileCodes__adsetvar: vec2f RightEyeEnd = _vec2f ( eyeEndPos_rateX * RightEyeStart . x + ( 1 - eyeEndPos_rateX ) * rightPos . x , eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y ) 
+eyeEndPos_rateY * NoseCenter . y + ( 1 - eyeEndPos_rateY ) * center . y 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ NoseCenter ][ . ][ y ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ . ][ y ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 
+eyeEndPos_rateY ][ * ][ center ][ + ][ 1 ][ ) ][ * ][ center ][ 

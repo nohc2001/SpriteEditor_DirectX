@@ -73,20 +73,20 @@ public:
 		wordlist.NULLState();
 	}
 
-	void dbg_sen(sen* s)
+	void dbg_sen(sen* s, ostream& ofs)
 	{
 		for (int i = 0; i < s->size(); ++i)
 		{
 			if (s->at(i).type == 'w')
 			{
-				cout << s->at(i).data.str << " ";
+				ofs << s->at(i).data.str << " ";
 			}
 			else
 			{
-				cout << "var(" << s->at(i).data.symbol << ") ";
+				ofs << "var(" << s->at(i).data.symbol << ") ";
 			}
 		}
-		cout << endl;
+		ofs << endl;
 	}
 
 	void dbg_varcases(var_cases* cases)
@@ -106,7 +106,7 @@ public:
 					cout << "\t[" << sym << "]";
 				}
 
-				dbg_sen(cases->at(i)->at(k).value);
+				dbg_sen(cases->at(i)->at(k).value, cout);
 			}
 		}
 	}

@@ -3281,13 +3281,13 @@ public:
 			{
 				inner_params->pop_back();
 				inner_params->erase(0);
-				wbss.dbg_sen(inner_params);
+				//wbss.dbg_sen(inner_params, InsideCode_Bake::icl);
 				int coma = wbss.search_word_first_in_specific_oc_layer(inner_params, 0, "(", ")", 0, ",");
 				int savecomma = -1;
 				while (coma != -1)
 				{
 					sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
-					wbss.dbg_sen(param_sen);
+					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 					for (int k = 0; k < rtm->mem.size(); ++k)
 					{
@@ -3303,7 +3303,7 @@ public:
 				}
 
 				sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, inner_params->size() - 1);
-				wbss.dbg_sen(param_sen);
+				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 				temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 
 				for (int k = 0; k < rtm->mem.size(); ++k)
@@ -3391,7 +3391,7 @@ public:
 				while (coma != -1)
 				{
 					sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
-					wbss.dbg_sen(param_sen);
+					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 
 					if (rtm->valuetype_detail->typetype == 's')
@@ -3575,7 +3575,7 @@ public:
 					return tm;
 				}
 
-				wbss.dbg_sen(params_sen);
+				//wbss.dbg_sen(params_sen, InsideCode_Bake::icl);
 				int last = params_sen->size() - 1;
 
 				int coma = wbss.search_word_end_in_specific_oc_layer(params_sen, last, "(", ")", 0, ",");
@@ -3588,7 +3588,7 @@ public:
 				while (coma != -1)
 				{
 					sen* param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
-					wbss.dbg_sen(param_sen);
+					wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 
 					if (rtm->valuetype_detail->typetype == 's')
@@ -3659,9 +3659,9 @@ public:
 					--paramCount;
 				}
 
-				wbss.dbg_sen(params_sen);
+				//wbss.dbg_sen(params_sen, InsideCode_Bake::icl);
 				sen* param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
-				wbss.dbg_sen(param_sen);
+				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 				temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 				if (rtm->valuetype_detail->typetype == 's')
 				{
@@ -3802,7 +3802,7 @@ public:
 				}
 			}
 
-			wbss.dbg_sen(ten);
+			//wbss.dbg_sen(ten, InsideCode_Bake::icl);
 			int varid = get_address_with_name(ten->at(0).data.str);
 			if (varid >= 0)
 			{
@@ -4048,8 +4048,10 @@ public:
 			if (c == '(')
 			{
 				temp = wbss.oc_search(ten, i, "(", ")");
-				i += temp->size();
+				temp->erase(0);
+				temp->pop_back();
 				segs.push_back(temp);
+				i += temp->size();
 			}
 			else if (c == '[')
 			{
@@ -4134,9 +4136,9 @@ public:
 				if (tbt == TBT::_operation)
 				{
 					for (int u = 0; u < segs.size(); ++u) {
-						cout << segs.at(u)->at(0).data.str << " ][ ";
+						icl << segs.at(u)->at(0).data.str << " ][ ";
 					}
-					cout << endl;
+					icl << endl;
 					if (strcmp(str.Arr, basicoper[k].symbol) == 0)
 					{
 						if (basicoper[k].mod == 'o')
@@ -4662,7 +4664,7 @@ public:
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 
 								temp_mem* left_ten = nullptr;
-								wbss.dbg_sen(segs.at(i - 1));
+								//wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
 								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
 								type_data* member_td = nullptr;
 								int add_address = 0;
@@ -5174,7 +5176,7 @@ public:
 	void compile_addVariable(code_sen *cs)
 	{
 		sen *code = get_sen_from_codesen(cs);
-		wbss.dbg_sen(code);
+		//wbss.dbg_sen(code, InsideCode_Bake::icl);
 		int loc = code->up - 1;
 		char *variable_name = code->at(loc).data.str;
 		sen *type_name = wbss.sen_cut(code, 0, loc - 1);
@@ -5419,7 +5421,7 @@ public:
 			sen *left_expr = wbss.sen_cut(code, 0, loc - 1);
 			sen *right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
 
-			wbss.dbg_sen(left_expr);
+			//wbss.dbg_sen(left_expr, InsideCode_Bake::icl);
 			// wbss.dbg_sen(right_expr);
 
 			temp_mem *left_tm = get_asm_from_sen(left_expr, true, false);
@@ -5496,7 +5498,7 @@ public:
 	void compile_if(code_sen *cs)
 	{
 		sen *code = get_sen_from_codesen(cs);
-		wbss.dbg_sen(code);
+		//wbss.dbg_sen(code, InsideCode_Bake::icl);
 		int loc = wbss.search_word_first(0, code, "if");
 		if (loc == -1){
 			//else
@@ -5534,13 +5536,13 @@ public:
 		// fm->dbg_fm1_lifecheck();
 		sen *code = get_sen_from_codesen(cs);
 		// fm->dbg_fm1_lifecheck();
-		wbss.dbg_sen(code);
+		//wbss.dbg_sen(code, InsideCode_Bake::icl);
 		int loc = wbss.search_word_first(0, code, "while");
 		sen *inner_expr = wbss.oc_search(code, loc, "(", ")");
 
 		inner_expr->pop_back();
 		inner_expr->erase(0);
-		wbss.dbg_sen(inner_expr);
+		//wbss.dbg_sen(inner_expr, InsideCode_Bake::icl);
 		int save = writeup;
 		temp_mem *inner_tm = get_asm_from_sen(inner_expr, true, true);
 		for (int i = 0; i < inner_tm->mem.size(); ++i)
@@ -5913,7 +5915,7 @@ public:
 		}
 
 		sen *param_sen = wbss.sen_cut(params_sen, savecoma+1, last);
-		wbss.dbg_sen(param_sen);
+		//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 		NamingData nd;
 
 		sen *typestr = (sen *)fm->_New(sizeof(sen), true);
@@ -5924,7 +5926,7 @@ public:
 			typestr->push_back(param_sen->at(i));
 		}
 
-		wbss.dbg_sen(typestr);
+		//wbss.dbg_sen(typestr, InsideCode_Bake::icl);
 		nd.td = get_type_with_namesen(typestr);
 		nd.name = param_sen->last().data.str;
 
@@ -5995,7 +5997,7 @@ public:
 			while (coma != -1)
 			{
 				sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
-				wbss.dbg_sen(param_sen);
+				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 				temp_mem* tm = get_asm_from_sen(param_sen, true, true);
 				for (int k = 0; k < tm->mem.size(); ++k)
 				{
@@ -6960,7 +6962,7 @@ public:
 			}
 
 			sen *code2 = get_sen_from_codesen(cs0);
-			wbss.dbg_sen(code2);
+			//wbss.dbg_sen(code2, InsideCode_Bake::icl);
 			int loc2 = code2->up - 1;
 			char *variable_name = code2->at(loc2).data.str;
 			sen *type_name = wbss.sen_cut(code2, 0, loc2 - 1);
