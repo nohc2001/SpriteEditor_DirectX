@@ -1,0 +1,27 @@
+while(true)
+	{
+		vec2f RightEyeStart = get_pos_in_LineAndRatioAB(_line2d(rightPos, leftPos), 1, 2);
+		vec2f LeftEyeStart = get_pos_in_LineAndRatioAB(_line2d(rightPos, leftPos), 2, 1);
+
+		RightEyeStart = _vec2f(RightEyeStart.x, get_pos_in_LineAndRatioAB(_line2d(RightEyeStart, NoseCenter), eyeStartPos_rate, 1-eyeStartPos_rate));
+		LeftEyeStart = _vec2f(RightEyeStart.x, get_pos_in_LineAndRatioAB(_line2d(LeftEyeStart, NoseCenter), eyeStartPos_rate, 1-eyeStartPos_rate));
+
+		vec2f RightEyeEnd = _vec2f(eyeEndPos_rateX*RightEyeStart.x + (1-eyeEndPos_rateX)*rightPos.x, eyeEndPos_rateY*NoseCenter.y + (1-eyeEndPos_rateY)*center.y);
+		vec2f LeftEyeEnd = _vec2f(eyeEndPos_rateX*LeftEyeStart.x + (1-eyeEndPos_rateX)*leftPos.x, eyeEndPos_rateY*NoseCenter.y + (1-eyeEndPos_rateY)*center.y);
+
+		vec2f RightEyeTop = _vec2f((eyeTopPos_rateX)*RightEyeEnd.x + (1-eyeTopPos_rateX)*RightEyeStart.x, (eyeTopPos_rateY)*cetner.y + (1-eyeTopPos_rateY)*NoseCenter.y);
+		vec2f LeftEyeTop = _vec2f((eyeTopPos_rateX)*LeftEyeEnd.x + (1-eyeTopPos_rateX)*LeftEyeStart.x, (eyeTopPos_rateY)*cetner.y + (1-eyeTopPos_rateY)*NoseCenter.y);
+		vec2f RightEyeBot = _vec2f(0.5 * RightEyeEnd + 0.5 * center.x, (eyeBotPos_rateY)*cetner.y + (1-eyeBotPos_rateY)*NoseCenter.y);
+		vec2f LeftEyeBot = _vec2f(0.5 * LeftEyeEnd + 0.5 * center.x, (eyeBotPos_rateY)*cetner.y + (1-eyeBotPos_rateY)*NoseCenter.y);
+
+		vec2f[48] RightEyeOutline;
+		RightEyeOutline = get_poses_in_Bezier1F(RightEyeStart, RightEyeTop, _vec2f(RightEyeStart.x, center.y), 16);
+		RightEyeOutline[16] = get_poses_in_Bezier1F(RightEyeTop, RightEyeEnd, _vec2f(RightEyeEnd.x, center.y), 16);
+		RightEyeOutline[32] = get_poses_in_Bezier1F(RightEyeEnd, RightEyeBot, _vec2f(RightEyeEnd.x, RightEyeBot.y), 16);
+		vec2f[48] LeftEyeOutline;
+		LeftEyeOutline = get_poses_in_Bezier1F(LeftEyeStart, LeftEyeTop, _vec2f(LeftEyeStart.x, center.y), 16);
+		LeftEyeOutline[16] = get_poses_in_Bezier1F(LeftEyeTop, LeftEyeEnd, _vec2f(LeftEyeEnd.x, center.y), 16);
+		LeftEyeOutline[32] = get_poses_in_Bezier1F(LeftEyeEnd, LeftEyeBot, _vec2f(LeftEyeEnd.x, LeftEyeBot.y), 16);
+		
+		obj_setsource(this, mainspr);
+	}

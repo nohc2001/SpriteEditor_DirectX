@@ -1,0 +1,19 @@
+pObject this;
+
+int main(){
+	float deltaTime = 0;
+	float past = 0;
+	uint t0 = rdtsc();
+	while(true)
+	{
+		uint t1 = rdtsc();
+		deltaTime = get_deltatime(t0, t1);
+		
+		gpos p = obj_getpos(this);
+		p.x += 0.01;
+		obj_setpos(this, p);
+		
+		t0 = t1;
+	}
+	return 0;
+}

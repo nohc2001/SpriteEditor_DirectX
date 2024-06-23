@@ -3134,7 +3134,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				{
 					// performance pi is 2/10(exerate)
 					//dbgcount(0, dbg << "execute" << endl);
-					execute_switch(ecss, 1, code_control, exerate, icbindex_cxt);
+					execute_switch(ecss, 100, code_control, exerate, icbindex_cxt);
 					//dbgcount(0, dbg << "executeend" << endl);
 				}
 

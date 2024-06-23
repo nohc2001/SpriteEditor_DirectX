@@ -7662,8 +7662,8 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = 191;
-bool isDbg = true;
+int stopnum = -1;
+bool isDbg = false;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {
@@ -7949,32 +7949,64 @@ CAST_SWITCH:
 DBG_SWITCH:
 	switch (dbg_type) {
 	case dbgtype::DBG_A_BYTE:
-		printf("%c", (char)registerA0);
+	{
+		char c = (char)registerA0;
+		InsideCode_Bake::icl << c;
+	}
+		//printf("%c", (char)registerA0);
 		break;
 	case dbgtype::DBG_A_UBYTE:
-		printf("%d", (byte8)registerA0);
+	{
+		unsigned char c = (unsigned char)registerA0;
+		InsideCode_Bake::icl << (int)c;
+	}
+		//printf("%d", (byte8)registerA0);
 		break;
 	case dbgtype::DBG_A_SHORT:
-		printf("%d", (short)registerA0);
+	{
+		short c = (short)registerA0;
+		InsideCode_Bake::icl << (int)c;
+	}
+		//printf("%d", (short)registerA0);
 		break;
 	case dbgtype::DBG_A_USHORT:
-		printf("%d", (ushort)registerA0);
+	{
+		unsigned short c = (unsigned short)registerA0;
+		InsideCode_Bake::icl << (int)c;
+	}
+		//printf("%d", (ushort)registerA0);
 		break;
 	case dbgtype::DBG_A_INT:
-		printf("%d", (int)registerA0);
+	{
+		int c = (int)registerA0;
+		InsideCode_Bake::icl << c;
+	}
+		//printf("%d", (int)registerA0);
 		break;
 	case dbgtype::DBG_A_UINT:
-		printf("%d", (uint)registerA0);
+	{
+		unsigned int c = (unsigned int)registerA0;
+		InsideCode_Bake::icl << c;
+	}
+		//printf("%d", (uint)registerA0);
 		break;
 	case dbgtype::DBG_A_FLOAT:
 		*reinterpret_cast<uint*>(&fmem) = (uint)registerA0;
-		printf("%lf", fmem);
+		InsideCode_Bake::icl << fmem;
+		//printf("%lf", fmem);
 		break;
-	case dbgtype::DBG_A_BOOL:
-		printf((bool)registerA0 ? "true" : "false");
+	case dbgtype::DBG_A_BOOL: 
+	{
+		InsideCode_Bake::icl << ((bool)registerA0 ? "true" : "false");
+	}
+		//printf((bool)registerA0 ? "true" : "false");
 		break;
 	case dbgtype::DBG_A_STRING:
-		printf("%s", reinterpret_cast<char*>(mem + (unsigned long long)registerA0));
+	{
+		char* c = reinterpret_cast<char*>(mem + (unsigned long long)registerA0);
+		InsideCode_Bake::icl << c;
+	}
+		//printf("%s", reinterpret_cast<char*>(mem + (unsigned long long)registerA0));
 		break;
 	}
 
@@ -8857,13 +8889,13 @@ INST_SWITCH:
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_PARAM_1:
-		**sp = (byte8)registerA0;
 		--*sp;
+		**sp = (byte8)registerA0;
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_PARAM_2:
-		**sps = (ushort)registerA0;
 		--*sps;
+		**sps = (ushort)registerA0;
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_PARAM_4:

@@ -1,0 +1,63 @@
+pObject this;
+float eyeStartPos_rate = 0.5;
+float eyeEndPos_rateX = 0.2;
+float eyeEndPos_rateY = 0.2;
+float eyeTopPos_rateX = 0.2;
+float eyeTopPos_rateY = 0.1;
+float eyeBotPos_rateY = 0.2;
+
+int main(){
+	float PI = 3.141592;
+
+	pSprite mainspr = _pSprite(1);
+
+	pSprite circle_spr = _pSprite(0);
+	prbuffer circle_buff;
+	circle_buff = _prbuffer(false);
+	gcolor skin_color = _gcolor(244, 200, 96, 255);
+
+	vec2f center = _vec2f(0, 0);
+	float radius = 200;
+	float angle = 0;
+	float delta_angle = PI / 30;
+	
+	begin(circle_buff, false);
+	int i=0; while(i<31){
+		angle2d anglevec = _angle2d(angle);
+		gpos pos = _gpos(radius*anglevec.delta.x, radius*anglevec.delta.y, 0);
+		av(circle_buff, pos, skin_color);
+		angle += delta_angle;
+		i += 1;
+	}
+	circle face_outline = _circle(center, radius);
+	vec2f downPos = _vec2f(center.x, center.y - radius);
+
+	vec2f NoseCenter = get_pos_in_LineAndRatioAB(_line2d(downPos, center), 1, 1);
+	vec2f MouseCenter = downPos;
+	vec2f ChinBorder = _vec2f(center.x, center.y - 1.5 * radius);
+
+	vec2f rightPos = _vec2f(center.x + radius, center.y);
+	vec2f leftPos = _vec2f(center.x - radius, center.y);
+
+	vec2f[64] RightChinLine = get_poses_in_Bezier1F(ChinBorder, rightPos, _vec2f(center.x+radius*0.75, ChinBorder.y), 64);
+	vec2f[64] LeftChinLine = get_poses_in_Bezier1F(leftPos, ChinBorder, _vec2f(center.x-radius*0.75, ChinBorder.y), 64);
+	i=0;while(i<64){
+		av(circle_buff, LeftChinLine[i], skin_color);
+		i += 1;
+	}
+	i=0;while(i<64){
+		av(circle_buff, RightChinLine[i], skin_color);
+		i += 1;
+	}
+
+	end(circle_buff);
+	spr_push_rbuffer(circle_spr, circle_buff);
+	spr_pushchild(mainspr, _pObject(circle_spr, _gpos(0, 0, 0), _gpos(0, 0, 0), _gpos(1, 1, 1), 0));
+
+	obj_setsource(this, mainspr);
+
+	while(true){
+		int aaa = 10;
+	}
+	return 0;
+}
