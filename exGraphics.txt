@@ -85,7 +85,7 @@ void rbuff_set_choice(prbuffer buff, uint n);
 
 void rbuff_set_inherit(prbuffer buff, bool b);
 
-void rbuff_Init(prbuffer buff, bool local);
+prbuffer _prbuffer(bool local);
 
 void begin(prbuffer buff, bool inherit);
 
@@ -109,7 +109,7 @@ void spr_push_rbuffer(pSprite spr, prbuffer rb);
 
 pObject _pObject(pSprite spr, gpos p, gpos r, gpos s, pECS ecs);
 
-pSprite _pSprite();
+pSprite _pSprite(int sprtype);
 
 pObject spr_getchild(pSprite spr, int id);
 

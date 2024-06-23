@@ -229,14 +229,18 @@ void exGraphics_rbuff_set_inherit(int *pcontext)
 	rb->set_inherit(b);
 }
 
-// void rbuff_Init(prbuffer buff, bool local);
-void exGraphics_rbuff_Init(int *pcontext)
+// prbuffer _prbuffer(bool local);
+void exGraphics__prbuffer(int *pcontext)
 {
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
-	rbuffer *rb = *reinterpret_cast < rbuffer ** >(icc->rfsp - 9);
 	bool b = *reinterpret_cast < bool * >(icc->rfsp - 1);
-	rb = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+	rbuffer* rb = (rbuffer*)fm->_New(sizeof(rbuffer), true);
 	rb->Init(false);
+
+	icc->sp -= sizeof(int*);
+	*reinterpret_cast <rbuffer**>(icc->sp) = rb;
+	icc->getA(0) = icc->sp - icc->mem;
+	icc->Amove_pivot(-1);
 }
 
 // void begin(prbuffer buff, bool inherit = false);
@@ -261,7 +265,7 @@ void exGraphics_end(int *pcontext)
 void exGraphics_av(int *pcontext)
 {
 	ICB_Context *icc = reinterpret_cast < ICB_Context * >(pcontext);
-	rbuffer *rb = *reinterpret_cast < rbuffer ** >(icc->rfsp - 32);
+	rbuffer *rb = *reinterpret_cast < rbuffer ** >(icc->rfsp - 36);
 	shp::vec3f pos = *reinterpret_cast <shp::vec3f* >(icc->rfsp - 28);
 	DX11Color col = *reinterpret_cast <DX11Color* >(icc->rfsp - 16);
 	rb->av(SimpleVertex(pos, col));
@@ -360,15 +364,44 @@ void exGraphics__pObject(int *pcontext)
     icc->Amove_pivot(-1);
 }
 
-// pSprite _pSprite();
+// pSprite _pSprite(int sprtype);
+/*
+* sprtype == 0 : freepolygon
+* sprtype == 1 : objs
+* sprtype == 2 : sprdir
+*/
 void exGraphics__pSprite(int* pcontext)
 {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+	int mod = *reinterpret_cast <int*>(icc->rfsp - 4);
 	Sprite* spr;
 	spr = (Sprite*)fm->_New(sizeof(Sprite), true);
 	spr->null();
+
 	spr->st = sprite_type::st_none;
 	spr->data.freepoly = nullptr;
+	switch (mod) {
+	case 0:
+	{
+		spr->st = sprite_type::st_freepolygon;
+		spr->data.freepoly = nullptr;
+	}
+		break;
+	case 1:
+	{
+		spr->st = sprite_type::st_objects;
+		spr->data.objs = (fmvecarr<int*>*)fm->_New(sizeof(fmvecarr<int*>), true);
+		spr->data.objs->NULLState();
+		spr->data.objs->Init(2, false, true);
+	}
+		break;
+	case 2:
+	{
+		spr->st = sprite_type::st_sprite_filedir;
+		spr->data.dir = nullptr;
+	}
+		break;
+	}
 
 	icc->sp -= sizeof(Sprite*);
 	*reinterpret_cast <Sprite**>(icc->sp) = spr;
@@ -573,7 +606,7 @@ ICB_Extension *Init_exGraphics()
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_get_inherit);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_set_choice);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_set_inherit);
-	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rbuff_Init);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics__prbuffer);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_begin);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_end);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_av);
@@ -589,6 +622,7 @@ ICB_Extension *Init_exGraphics()
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_getchild);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_erasechild);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_pushchild);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_spr_clearchild);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getpos);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getrot);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_getsca);

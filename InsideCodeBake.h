@@ -3779,7 +3779,7 @@ public:
 					}
 				}
 
-				if (isvalue)
+				if (isvalue && td->typesiz <= 4)
 				{
 					if (is_a)
 					{
@@ -3796,7 +3796,6 @@ public:
 				}
 				else
 				{
-
 					tm->valuetype = 8;
 					tm->valuetype_detail = get_addpointer_type(td);
 					return tm;
@@ -3830,7 +3829,7 @@ public:
 					}
 				}
 
-				if (isvalue)
+				if (isvalue && td->typesiz <= 4)
 				{
 					if (is_a)
 					{
@@ -7663,7 +7662,7 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = 0;
+int stopnum = 191;
 bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
