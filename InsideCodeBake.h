@@ -4050,8 +4050,8 @@ public:
 				temp = wbss.oc_search(ten, i, "(", ")");
 				temp->erase(0);
 				temp->pop_back();
+				i += temp->size() + 1;
 				segs.push_back(temp);
-				i += temp->size();
 			}
 			else if (c == '[')
 			{
@@ -4199,11 +4199,13 @@ public:
 								{
 									int opp = basicoper[k].startop + 2 * opertype;
 									result_ten->mem.push_back((byte8)opp);
+									result_ten->mem.push_back((byte8)insttype::IT_POP_B);
 									result_ten->registerMod = 'A';
 								}
 								else
 								{
 									int opp = basicoper[k].startop + 2 * opertype + 1;
+									result_ten->mem.push_back((byte8)insttype::IT_POP_A);
 									result_ten->mem.push_back((byte8)opp);
 									result_ten->registerMod = 'B';
 								}
@@ -4294,12 +4296,14 @@ public:
 									{
 										int opp = basicoper[k].startop;
 										result_ten->mem.push_back((byte8)opp);
+										result_ten->mem.push_back((byte8)insttype::IT_POP_B);
 										result_ten->registerMod = 'A';
 									}
 									else
 									{
 										int opp = basicoper[k].startop;
 										result_ten->mem.push_back((byte8)opp);
+										result_ten->mem.push_back((byte8)insttype::IT_POP_A);
 										result_ten->registerMod = 'B';
 									}
 
@@ -4664,7 +4668,7 @@ public:
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 
 								temp_mem* left_ten = nullptr;
-								//wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
+								wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
 								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
 								type_data* member_td = nullptr;
 								int add_address = 0;
