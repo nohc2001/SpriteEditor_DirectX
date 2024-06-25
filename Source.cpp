@@ -1490,6 +1490,13 @@ void main_render(Page* p)
 				objrt.ly -= 100;
 			}
 
+			//additional IC Param
+			fmvecarr<NamingData*> params = obj->ecs->icb->globalVariables;
+			for (int i = 0; i < params.size(); ++i) {
+				NamingData nd = *params.at(i);
+				
+			}
+
 			switch (*paramselect_id)
 			{
 			case 0:
