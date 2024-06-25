@@ -18,6 +18,8 @@ InsideCode
 	값이 8 이상이면 무조건 그냥 나뒀다가 -> *LA=*A_N 처리
 	PARAM_8 만들자. *LA=*A_8 만들자.
 -> 주석처리
+-> i += const 명령 만들기
+-> extened_Instruction -> 오직 상수 파라미터만 받을때의 명령
 exGraphic
 -> 디버깅용 선 그리기 / 텍스트 출력
 -> 원과 선의 교차점을 찾는 함수가 가끔 오류남 nan nan

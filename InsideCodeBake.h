@@ -3588,7 +3588,7 @@ public:
 				while (coma != -1)
 				{
 					sen* param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
-					wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
+					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
 					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
 
 					if (rtm->valuetype_detail->typetype == 's')
@@ -4135,9 +4135,12 @@ public:
 				TBT tbt = DecodeTextBlock(str);
 				if (tbt == TBT::_operation)
 				{
+					/*
 					for (int u = 0; u < segs.size(); ++u) {
 						icl << segs.at(u)->at(0).data.str << " ][ ";
 					}
+					*/
+					
 					icl << endl;
 					if (strcmp(str.Arr, basicoper[k].symbol) == 0)
 					{
@@ -4668,7 +4671,7 @@ public:
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 
 								temp_mem* left_ten = nullptr;
-								wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
+								//wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
 								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
 								type_data* member_td = nullptr;
 								int add_address = 0;
@@ -5337,7 +5340,7 @@ public:
 
 		if (loc < 0)
 		{
-			// += oper
+			// += oper, -= ... 
 			loc = wbss.search_word_first_cd(0, code, cd_eqoper);
 			char operc = code->at(loc).data.str[0];
 
@@ -5378,7 +5381,7 @@ public:
 
 			for (int k = 0; k < basicoper_max; ++k)
 			{
-				if (basicoper[k].symbol[0] == operc)
+				if (basicoper[k].symbol[0] == operc && basicoper[k].mod == 'o')
 				{
 					mem[writeup++] = basicoper[k].startop + ltype * 2;
 					break;
@@ -7668,7 +7671,7 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = -1;
+int stopnum = 0;
 bool isDbg = false;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
