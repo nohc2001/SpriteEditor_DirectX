@@ -15,6 +15,12 @@
     <Filter Include="DevInfo">
       <UniqueIdentifier>{a56ea951-1fbc-4eb0-8a0d-e4e4dbbf7f53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ECS">
+      <UniqueIdentifier>{6b0931b4-9b8c-4bb4-ab48-196292bd7130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension">
+      <UniqueIdentifier>{18bff66d-a85c-4ce4-b155-e9fe850c7619}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShapeObject.h" />
@@ -27,14 +33,20 @@
     <ClInclude Include="dbg.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="hancom.h" />
-    <ClInclude Include="exGraphics.h" />
     <ClInclude Include="time_rdtsc.h" />
-    <ClInclude Include="exGeometry.h" />
     <ClInclude Include="ICB_Extension.h" />
     <ClInclude Include="InsideCodeBake.h" />
     <ClInclude Include="multifor.h" />
     <ClInclude Include="sen_tr.h" />
-    <ClInclude Include="exEvent.h" />
+    <ClInclude Include="exGeometry.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="exGraphics.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="exTool.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
@@ -51,16 +63,34 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="dbg.txt" />
-    <Text Include="exGraphics.txt" />
     <Text Include="icb_dbg.txt" />
-    <Text Include="exGeometry.txt" />
     <Text Include="DevInfo\Layer.txt">
       <Filter>DevInfo</Filter>
     </Text>
     <Text Include="DevInfo\memo.txt">
       <Filter>DevInfo</Filter>
     </Text>
-    <Text Include="exEvent.txt" />
+    <Text Include="ECS_examples\tool_Compas.txt">
+      <Filter>ECS</Filter>
+    </Text>
+    <Text Include="ECS_examples\ecs_face.txt">
+      <Filter>ECS</Filter>
+    </Text>
+    <Text Include="ECS_examples\ecs0.txt">
+      <Filter>ECS</Filter>
+    </Text>
+    <Text Include="ECS_examples\face_writeup.txt">
+      <Filter>ECS</Filter>
+    </Text>
+    <Text Include="exGeometry.txt">
+      <Filter>Extension</Filter>
+    </Text>
+    <Text Include="exGraphics.txt">
+      <Filter>Extension</Filter>
+    </Text>
+    <Text Include="exTool.txt">
+      <Filter>Extension</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

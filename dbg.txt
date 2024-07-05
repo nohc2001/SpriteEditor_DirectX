@@ -65,4 +65,3 @@ VKeyboard = 0
 , isshift = 10001
 , deststring = 10002
 };
-mainSprite_init

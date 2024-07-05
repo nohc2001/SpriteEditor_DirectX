@@ -24,7 +24,6 @@ struct RenderData{
 
 struct rdBuffer{
 	int*[2] rdbuffer;
-	uint rdchoice = 0;
 };
 
 struct vec2f{

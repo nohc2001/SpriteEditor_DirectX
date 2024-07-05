@@ -34,7 +34,6 @@ struct RenderData {
 
 struct rdBuffer {
     fmvecarr<RenderData>* data[2];
-    unsigned int rdchoice = 0;
 };
 
 //RenderData _rdLine(float fx, float fy, float lx, float ly);
@@ -80,9 +79,9 @@ void exTool__rdText(int* pcontext) {
     rd.params[3] = *reinterpret_cast<float*>(icc->rfsp - 16);
     char* strptr = *reinterpret_cast<char**>(icc->rfsp - 8);
     int len = strlen(strptr);
-    rd.ptr = (wchar_t*)fm->_New(sizeof(wchar_t) * len + 1, true);
+    rd.ptr = (wchar_t*)fm->_New(sizeof(wchar_t) * (len + 1), true);
     for (int i = 0; i < len; ++i) {
-        rd.ptr[i] = strptr[i];
+        rd.ptr[i] = (wchar_t)strptr[i];
     }
     rd.ptr[len] = 0;
 
@@ -97,7 +96,7 @@ void exTool__rdText(int* pcontext) {
 void exTool_PushRD_ready(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     
-    rdBuffer rdb = *reinterpret_cast<rdBuffer*>(icc->rfsp - 44);
+    rdBuffer rdb = *reinterpret_cast<rdBuffer*>(icc->rfsp - 40);
     RenderData rd = *reinterpret_cast<RenderData*>(icc->rfsp - 24);
 
     rdb.data[1]->push_back(rd);
@@ -107,11 +106,19 @@ void exTool_PushRD_ready(int* pcontext) {
 void exTool_rdbuffer_push(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
 
-    rdBuffer rdb = *reinterpret_cast<rdBuffer*>(icc->rfsp - 20);
+    rdBuffer rdb = *reinterpret_cast<rdBuffer*>(icc->rfsp - 16);
     fmvecarr<RenderData>* temp = nullptr;
     temp = rdb.data[0];
     rdb.data[0] = rdb.data[1];
     rdb.data[1] = temp;
+    for (int i = 0; i < rdb.data[1]->size(); ++i) {
+        if (rdb.data[1]->at(i).ptr != nullptr) {
+            wchar_t* wstr = rdb.data[1]->at(i).ptr;
+            int len = wcslen(wstr);
+            fm->_Delete((byte8*)wstr, sizeof(wchar_t) * (len + 1));
+            rdb.data[1]->at(i).ptr = nullptr;
+        }
+    }
     rdb.data[1]->up = 0;
 }
 

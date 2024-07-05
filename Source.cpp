@@ -255,6 +255,96 @@ shp::vec2f GetMousePos_notcenter(LPARAM lParam) {
 	return shp::vec2f((float)x, (float)y);
 }
 
+class ICB_Editor {
+public:
+	ICB_Editor() {
+	}
+	~ICB_Editor() {
+	}
+
+	bool visible = true;
+	bool focus = false;
+	shp::rect4f loc;
+	InsideCode_Bake* SelectedICB;
+	fmvecarr<fmlwstr> codeLines;
+	unsigned int selected_codeline;
+	unsigned int selected_charindex;
+	float codeline_height = 20.0f;
+
+	void Init(shp::rect4f _loc, InsideCode_Bake* sicb) {
+		visible = true;
+		loc = _loc;
+		SelectedICB = sicb;
+		codeLines.NULLState();
+		codeLines.Init(8, false, true);
+		for (int i = 0; i < 8; ++i) {
+			codeLines[i].NULLState();
+			codeLines[i].Init(16, false);
+		}
+		selected_codeline = 0;
+		selected_charindex = 0;
+		codeline_height = 20.0f;
+	}
+
+	void Render() {
+		DX11Color col;
+		if (focus) {
+			col = DX11Color(0.2f, 0.2f, 0.2f, 1.0f);
+		}
+		else {
+			col = DX11Color(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+		drawline(shp::vec2f(loc.fx, loc.getCenter().y), shp::vec2f(loc.lx, loc.getCenter().y), loc.geth(), col, 0.3f);
+		shp::rect4f lineloc = shp::rect4f(loc.fx, loc.fy, loc.lx, codeline_height);
+		lineloc.fy += codeline_height; lineloc.ly += codeline_height;
+		for (int i = 0; i < codeLines.size(); ++i) {
+			if (i != selected_codeline) {
+				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.45f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+			}
+			else {
+				shp::rect4f textcursorLoc = GetLoc_stringIndex(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, selected_charindex);
+				drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.getCenter().y), shp::vec2f(textcursorLoc.lx, textcursorLoc.getCenter().y), codeline_height * 0.45f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+			}
+		}
+	}
+
+	void Event(DX_Event event) {
+		if (event.message == WM_LBUTTONDOWN) {
+			shp::vec2f mpos = GetMousePos(event.lParam);
+			if (shp::bPointInRectRange(mpos, loc)) {
+				focus = true;
+			}
+			else {
+				focus = false;
+			}
+		}
+
+		if (focus) {
+			if (event.message == WM_KEYDOWN) {
+				wchar_t key = event.wParam;
+				bool bcharinput = 40 <= key && key <= 126;
+				bool backspace = 10 == key;
+				if (bcharinput) {
+					codeLines[selected_codeline].insert(selected_charindex, key);
+					codeLines[selected_codeline].c_str();
+					++selected_charindex;
+				}
+				else if (backspace) {
+					if (codeLines[selected_codeline].size() > selected_charindex) {
+						codeLines[selected_codeline].erase(selected_charindex);
+						--selected_charindex;
+					}
+				}
+			}
+		}
+	}
+
+	void Update(float delta) {
+	}
+};
+
 //control
 bool ctrl_3d = true;
 //shp::vec2f DX_UI::mousePos = shp::vec2f(0, 0);
@@ -271,6 +361,8 @@ void Render();
 
 extern FM_System0* fm;
 bool FinishInit = false;
+
+ICB_Editor icbE;
 
 void basicbtn_init(DXBtn* btn)
 {
@@ -1243,6 +1335,8 @@ void mainpageslider_render(DXSlider* slider)
 
 void main_init(Page* p)
 {
+	
+
 	basicSprite = (Sprite*)fm->_New(sizeof(Sprite), true);
 	basicSprite->null();
 	basicSprite->st == sprite_type::st_freepolygon;
@@ -3969,6 +4063,8 @@ HRESULT InitDevice()
 
 	FinishInit = true;
 
+	icbE.Init(shp::rect4f(300, 300, 600, 0), nullptr);
+
     return S_OK;
 }
 
@@ -4041,6 +4137,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 	if (FinishInit) {
 		presentPage->event_func(presentPage, evt);
 	}
+
+	icbE.Event(evt);
 
     return DefWindowProc(hWnd, message, wParam, lParam);;
 }
@@ -4115,6 +4213,8 @@ void Render()
 		// dbgcount(0, dbg << "render : " << i << endl);
 		pagestack[i]->render_func(pagestack[i]);
 	}
+
+	icbE.Render();
 
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();

@@ -2,11 +2,12 @@ EventData event;
 pICB selected;
 bool isupdate = false;
 int main(){
-	renderpivot = renderpivot % 2;
 	while(true){
 		if(event.key == 'A'){
-			toolRender[renderpivot]
 		}
+
+
+
 		while(isupdate == false){}
 	}
 }

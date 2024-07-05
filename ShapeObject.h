@@ -695,8 +695,7 @@ struct string_check {
     int index;
 };
 
-string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc,
-    ID3D11VertexShader* vshader, ID3D11PixelShader* fshader, shp::vec2f checkpos) {
+string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, shp::vec2f checkpos) {
     string_check sc;
     sc.index = 0;
     sc.loc = shp::rect4f(0, 0, 0, 0);
@@ -708,7 +707,7 @@ string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f 
     if (char_map.find((unsigned int)c) == char_map.end())
     {
         CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
-        cbuf->ready((unsigned int)c, vshader, fshader);
+        cbuf->ready((unsigned int)c, g_pVertexShader, g_pPixelShader);
         char_map.insert(CharMap::value_type((unsigned int)c, cbuf));
     }
 
@@ -724,7 +723,7 @@ string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f 
         if (nextC != 0 && char_map.find(nextC) == char_map.end())
         {
             CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
-            cbuf->ready(nextC, vshader, fshader);
+            cbuf->ready(nextC, g_pVertexShader, g_pPixelShader);
             char_map.insert(CharMap::value_type(nextC, cbuf));
         }
 
@@ -740,6 +739,51 @@ string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f 
             sc.index = i;
             sc.loc = stackrange;
             return sc;
+        }
+    }
+}
+
+shp::rect4f GetLoc_stringIndex(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, int checkIndex) {
+    //dbg << "insert start" << endl;
+    shp::rect4f rloc = shp::rect4f(0, 0, 0, 0);
+    float fsiz = (float)fontsiz / 500.0f;
+    shp::rect4f stackrange = shp::rect4f(loc.fx, 0, loc.fy, 0);
+
+    unsigned int c = (unsigned int)wstr[0];
+    if (char_map.find((unsigned int)c) == char_map.end())
+    {
+        CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
+        cbuf->ready((unsigned int)c, g_pVertexShader, g_pPixelShader);
+        char_map.insert(CharMap::value_type((unsigned int)c, cbuf));
+    }
+
+    unsigned int nextC = c;
+    for (int i = 0; i < len; ++i)
+    {
+        if (i == checkIndex) {
+            rloc.fx = stackrange.fx;
+            rloc.fy = stackrange.fy - fontsiz / 2;
+        }
+        c = nextC;
+        if (len > i + 1) {
+            nextC = (unsigned int)wstr[i + 1];
+        }
+
+        if (nextC != 0 && char_map.find(nextC) == char_map.end())
+        {
+            CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
+            cbuf->ready(nextC, g_pVertexShader, g_pPixelShader);
+            char_map.insert(CharMap::value_type(nextC, cbuf));
+        }
+
+        if (nextC != 0) {
+            stackrange.fx += (fsiz) * (float)(char_map.at(c)->range.lx + char_map.at(nextC)->range.fx);
+        }
+
+        if (i == checkIndex) {
+            rloc.lx = stackrange.fx;
+            rloc.ly = stackrange.fy + fontsiz / 2;
+            return rloc;
         }
     }
 }

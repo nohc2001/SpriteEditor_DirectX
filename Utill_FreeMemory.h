@@ -2856,6 +2856,192 @@ namespace freemem {
 		}
 	};
 
+	class fmlwstr
+	{
+	public:
+		wchar_t* Arr;
+		size_t maxsize = 0;
+		size_t up = 0;
+		bool islocal = true;
+		bool isdebug = true;
+		short fmlayer = -1;
+
+		fmlwstr()
+		{
+			Arr = nullptr;
+			maxsize = 0;
+			up = 0;
+			islocal = true;
+			isdebug = true;
+			fmlayer = -1;
+		}
+
+		virtual ~fmlwstr()
+		{
+			if (islocal && isdebug)
+			{
+				fm->_Delete((byte8*)Arr, sizeof(wchar_t)*maxsize);
+				Arr = nullptr;
+			}
+		}
+
+		void NULLState()
+		{
+			Arr = nullptr;
+			maxsize = 0;
+			up = 0;
+			islocal = true;
+			isdebug = true;
+			fmlayer = -1;
+		}
+
+		void Init(size_t siz, bool local, bool isdbg = true, int flayer = -1)
+		{
+			islocal = local;
+			isdebug = isdbg;
+			fmlayer = flayer;
+			wchar_t* newArr = (wchar_t*)fm->_New(sizeof(wchar_t)*siz, isdebug, fmlayer);
+			if (isdbg == false && fmlayer < 0) {
+				fmlayer = fm->tempStack[fm->get_threadid(std::this_thread::get_id())]->tempFM.size() - 1;
+			}
+
+			if (Arr != nullptr)
+			{
+				for (int i = 0; i < maxsize; ++i)
+				{
+					newArr[i] = Arr[i];
+				}
+
+				fm->_Delete((byte8*)Arr, sizeof(wchar_t)*maxsize);
+				Arr = nullptr;
+			}
+
+			Arr = newArr;
+			maxsize = siz;
+		}
+
+		void operator=(wchar_t* str)
+		{
+			int len = wcslen(str) + 1;
+			if (Arr == nullptr)
+			{
+				Arr = (wchar_t*)fm->_New(sizeof(wchar_t) * len, isdebug, fmlayer);
+				maxsize = len;
+			}
+			else {
+				if (maxsize < len)
+				{
+					Init(len + 1, islocal, isdebug, fmlayer);
+				}
+			}
+
+			wcscpy_s(Arr, maxsize, str);
+			up = len - 1;
+		}
+
+		bool operator==(wchar_t* str)
+		{
+			if (wcscmp(Arr, str) == 0)
+				return true;
+			else
+				return false;
+		}
+
+		bool operator==(const wchar_t* str)
+		{
+			if (wcscmp(Arr, str) == 0)
+				return true;
+			else
+				return false;
+		}
+
+		wchar_t& at(size_t i)
+		{
+			return Arr[i];
+		}
+
+		wchar_t* c_str()
+		{
+			Arr[up] = 0;
+			return Arr;
+		}
+
+		wchar_t& operator[](size_t i)
+		{
+			return Arr[i];
+		}
+
+		void push_back(wchar_t value)
+		{
+			if (up < maxsize - 1)
+			{
+				Arr[up] = value;
+				up += 1;
+				Arr[up] = 0;
+			}
+			else
+			{
+				Init(sizeof(wchar_t)*(maxsize * 2 + 1), islocal, isdebug, fmlayer);
+				Arr[up] = value;
+				up += 1;
+				Arr[up] = 0;
+			}
+		}
+
+		void pop_back()
+		{
+			if (up - 1 >= 0)
+			{
+				up -= 1;
+				Arr[up] = 0;
+			}
+		}
+
+		void erase(size_t i)
+		{
+			for (int k = i; k < up; ++k)
+			{
+				Arr[k] = Arr[k + 1];
+			}
+			up -= 1;
+		}
+
+		void insert(size_t i, wchar_t value)
+		{
+			push_back(value);
+			for (int k = maxsize - 1; k > i; k--)
+			{
+				Arr[k] = Arr[k - 1];
+			}
+			Arr[i] = value;
+		}
+
+		size_t size()
+		{
+			return up;
+		}
+
+		void clear()
+		{
+			if (Arr != nullptr && isdebug)
+				fm->_Delete((byte8*)Arr, sizeof(wchar_t)*maxsize);
+			Arr = nullptr;
+			up = 0;
+
+			Init(2, islocal);
+		}
+
+		void release()
+		{
+			if (Arr != nullptr && isdebug)
+				fm->_Delete((byte8*)Arr, sizeof(wchar_t)*maxsize);
+			Arr = nullptr;
+			up = 0;
+			islocal = false;
+		}
+	};
+
+
 	typedef struct VP
 	{
 		char mod = 0;			// mod 0:value 1:ptr
