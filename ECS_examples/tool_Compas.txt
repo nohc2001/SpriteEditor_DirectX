@@ -1,6 +1,4 @@
 EventData event;
-RenderData[2] toolRender;
-uint renderpivot = 0;
 pICB selected;
 bool isupdate = false;
 int main(){

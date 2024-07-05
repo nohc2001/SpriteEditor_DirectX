@@ -1,0 +1,40 @@
+struct EventData{
+	bool keydownhit;
+	bool keyuphit;
+	bool keydown;
+	char key;
+	
+	float mouseX;
+	float mouseY;
+	
+	bool mouse_leftdownhit;
+	bool mouse_rightdownhit;
+	bool mouse_leftuphit;
+	bool mouse_rightuphit;
+	bool mouse_leftdown;
+	bool mouse_rightdown;
+
+	uint currentEvent;
+};
+
+struct RenderData{
+	float[4] params;
+	int* ptr;
+};
+
+struct rdBuffer{
+	int*[2] rdbuffer;
+	uint rdchoice = 0;
+};
+
+struct vec2f{
+	float x;
+	float y;
+};
+
+RenderData _rdLine(float fx, float fy, float lx, float ly);
+RenderData _rdCircle(float cx, float cy, float raidus);
+RenderData _rdText(float fx, float fy, float lx, float ly, char* string);
+
+void PushRD_ready(rdbuffer rdb, RenderData rd);
+void rdbuffer_push(rdbuffer rdb);
