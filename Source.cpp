@@ -88,6 +88,8 @@ fmvecarr < ICB_Extension* >basic_ext;
 fmvecarr < ICB_Context* >ecss;
 float exerate = 0.01f;
 
+const char BlankICB_Code[128] = "pObject this;\nint main(){\n\nreturn 0;\n}";
+
 wchar_t* GetFileNameFromDlg_open() {
 	OPENFILENAME OFN;
 	TCHAR filePathName[256] = L"";
@@ -194,11 +196,13 @@ enum class mainpm {
 	, loadbydirbtn = 4500
 	, fpsprbtn = 4700
 	, addicbtn = 4900
-	, layer_backinfo = 5100
-	, layer_obj = 5108
-	, layer_ui = 5116
-	, layer_uitext = 5124
+	, loadicbtn = 5100
+	, layer_backinfo = 5300
+	, layer_obj = 5308
+	, layer_ui = 5316
+	, layer_uitext = 5324
 };
+
 enum class colorpm {
 	presentcolor = 0
 	, RSlider = 16
@@ -234,7 +238,7 @@ void drawline_cam(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color
 {
 	shp::vec2f delta = p1 - p0;
 	float radian = shp::angle2f::usedxdy(delta.x, delta.y).radian;
-	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), Z), shp::vec3f(0, 0, radian),
+	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), 0.0f), shp::vec3f(0, 0, radian),
 		shp::vec3f(sqrtf(delta.x * delta.x + delta.y * delta.y), linewidth, 1), color);
 	linedrt->render(cb);
 }
@@ -307,7 +311,7 @@ void basicbtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	rb->render(cb);
 }
 
@@ -1113,6 +1117,65 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 	}
 }
 
+void loadicbtn_event(DXBtn* btn, DX_Event evt)
+{
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			wchar_t* loadfiledir = GetFileNameFromDlg_open();
+			int objselect_id = mainpage->pfm.Data[(int)mainpm::objselect_id];
+			if (loadfiledir != nullptr) {
+				// load ic
+				//dbg << "loadic" << endl;
+				string filename = wstr_to_utf8(loadfiledir);
+				InsideCode_Bake* icb = nullptr;
+				if (icmap.find((char*)filename.c_str()) == icmap.end())
+				{
+					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+					icb->init(40960);
+					for (int i = 0; i < basic_ext.size(); ++i)
+					{
+						icb->extension.push_back(basic_ext[i]);
+					}
+					//dbg << "bake" << endl;
+					icb->bake_code((char*)filename.c_str());
+					//dbg << "s0" << endl;
+					icmap.insert(ICMAP::value_type((char*)filename.c_str(), icb));
+					//dbg << "s0" << endl;
+				}
+				else
+				{
+					icb = icmap[(char*)filename.c_str()];
+				}
+
+				//dbg << "sec0" << endl;
+
+				ICB_Context* ctx = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
+				ctx->SetICB(icb, 4096);	// 40KB
+				Object* o = (Object*)mainSprite->data.objs->at(objselect_id);
+				*reinterpret_cast <Object**>(&ctx->datamem[0]) = o;
+				if (o->ecs != nullptr)
+				{
+					// todo : disable origin ecs
+				}
+				o->ecs = ctx;
+				ecss.push_back(ctx);
+				sprloadmod = 'n';
+				//dbg << "icend" << endl;
+				//counting[0] = 1000;
+			}
+		}
+	}
+}
+
 void mainpagebtn_render(DXBtn* btn)
 {
 	float layer_uitext = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_uitext];
@@ -1132,7 +1195,7 @@ void mainpagebtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
 }
 
@@ -1452,7 +1515,12 @@ void main_init(Page* p)
 
 	dbg << ", addicbtn = " << p->pfm.Fup << endl;
 	DXBtn* addicbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	addicbtn->init(L"LoadIC", basicbtn_init, mainpagebtn_render, basicbtn_update, addicbtn_event,
+	addicbtn->init(L"AddIC", basicbtn_init, mainpagebtn_render, basicbtn_update, addicbtn_event,
+		shp::rect4f(-600, -sch / 2.0f, -400, -sch / 2.0f + 100));
+
+	dbg << ", loadicbtn = " << p->pfm.Fup << endl;
+	DXBtn* loadicbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
+	loadicbtn->init(L"LoadIC", basicbtn_init, mainpagebtn_render, basicbtn_update, loadicbtn_event,
 		shp::rect4f(-300, -sch / 2.0f, 300, -sch / 2.0f + 100));
 
 	LayerInfo* li;
@@ -1650,6 +1718,9 @@ void main_render(Page* p)
 			{
 				DXBtn* addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
 				addicbtn->Render();
+
+				DXBtn* loadicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadicbtn];
+				loadicbtn->Render();
 			}
 			break;
 			}
@@ -1718,7 +1789,7 @@ void main_render(Page* p)
 	}
 
 	// obj redering_2d
-	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -1.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(pc->x, pc->y, -500.0f, 0.0f);
 	XMVECTOR At = XMVectorSet(pc->x, pc->y, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	CamView = XMMatrixLookAtLH(Eye, At, Up);
@@ -1897,10 +1968,12 @@ void main_update(Page* p, float delta)
 		DXBtn* loadbydirbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadbydirbtn];
 		DXBtn* fpsprbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::fpsprbtn];
 		DXBtn* addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
+		DXBtn* loadicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadicbtn];
 		sprdirbtn->Update(delta);
 		loadbydirbtn->Update(delta);
 		fpsprbtn->Update(delta);
 		addicbtn->Update(delta);
+		loadicbtn->Update(delta);
 	}
 	else
 	{
@@ -2148,6 +2221,9 @@ void main_event(Page* p, DX_Event evt)
 				// ic
 				DXBtn * addicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::addicbtn];
 				addicbtn->Event(evt);
+
+				DXBtn* loadicbtn = (DXBtn*)&p->pfm.Data[(int)mainpm::loadicbtn];
+				loadicbtn->Event(evt);
 				break;
 			}
 		}
@@ -2676,7 +2752,7 @@ void colorpagebtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
 }
 

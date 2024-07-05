@@ -1,0 +1,18 @@
+struct EventData{
+	bool keydownhit;
+	bool keyuphit;
+	bool keydown;
+	char key;
+	
+	float mouseX;
+	float mouseY;
+	
+	bool mouse_leftdownhit;
+	bool mouse_rightdownhit;
+	bool mouse_leftuphit;
+	bool mouse_rightuphit;
+	bool mouse_leftdown;
+	bool mouse_rightdown;
+
+	uint currentEvent;
+};

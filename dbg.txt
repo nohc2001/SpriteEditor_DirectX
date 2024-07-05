@@ -38,10 +38,11 @@ present_center = 0
 , loadbydirbtn = 4500
 , fpsprbtn = 4700
 , addicbtn = 4900
-, layer_backinfo = 5100
-, layer_obj = 5108
-, layer_ui = 5116
-, layer_uitext = 5124
+, loadicbtn = 5100
+, layer_backinfo = 5300
+, layer_obj = 5308
+, layer_ui = 5316
+, layer_uitext = 5324
 };
 enum class colorpm{
 presentcolor = 0
@@ -64,3 +65,4 @@ VKeyboard = 0
 , isshift = 10001
 , deststring = 10002
 };
+mainSprite_init

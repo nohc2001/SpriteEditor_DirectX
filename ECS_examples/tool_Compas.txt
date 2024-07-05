@@ -1,0 +1,14 @@
+EventData event;
+RenderData[2] toolRender;
+uint renderpivot = 0;
+pICB selected;
+bool isupdate = false;
+int main(){
+	renderpivot = renderpivot % 2;
+	while(true){
+		if(event.key == 'A'){
+			toolRender[renderpivot]
+		}
+		while(isupdate == false){}
+	}
+}

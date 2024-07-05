@@ -34,6 +34,7 @@
     <ClInclude Include="InsideCodeBake.h" />
     <ClInclude Include="multifor.h" />
     <ClInclude Include="sen_tr.h" />
+    <ClInclude Include="exEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
@@ -59,6 +60,7 @@
     <Text Include="DevInfo\memo.txt">
       <Filter>DevInfo</Filter>
     </Text>
+    <Text Include="exEvent.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

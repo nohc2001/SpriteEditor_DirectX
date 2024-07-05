@@ -375,6 +375,7 @@
     <Text Include="dbg.txt" />
     <Text Include="DevInfo\Layer.txt" />
     <Text Include="DevInfo\memo.txt" />
+    <Text Include="exEvent.txt" />
     <Text Include="exGeometry.txt" />
     <Text Include="exGraphics.txt" />
     <Text Include="icb_dbg.txt" />
@@ -392,6 +393,7 @@
     <ClInclude Include="DX11_UI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="exEvent.h" />
     <ClInclude Include="exGeometry.h" />
     <ClInclude Include="exGraphics.h" />
     <ClInclude Include="hancom.h" />
