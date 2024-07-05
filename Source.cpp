@@ -40,6 +40,7 @@ IDXGISwapChain*         g_pSwapChain = NULL;
 ID3D11RenderTargetView* g_pRenderTargetView = NULL;
 ID3D11Texture2D*        g_pDepthStencil = NULL;
 ID3D11DepthStencilView* g_pDepthStencilView = NULL;
+ID3D11DepthStencilState* g_pDepthStencilState = NULL;
 ID3D11VertexShader*     g_pVertexShader = NULL;
 ID3D11PixelShader*      g_pPixelShader = NULL;
 ID3D11InputLayout*      g_pVertexLayout = NULL;
@@ -78,7 +79,9 @@ rbuffer cursor_obj;
 rbuffer polygon_obj;
 rbuffer dbgpos_obj;
 
-char sprloadmod = 'n'; 
+char sprloadmod = 'n';
+
+LayerManager layerManager;
 // n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
 
 fmvecarr < ICB_Extension* >basic_ext;
@@ -191,8 +194,11 @@ enum class mainpm {
 	, loadbydirbtn = 4500
 	, fpsprbtn = 4700
 	, addicbtn = 4900
+	, layer_backinfo = 5100
+	, layer_obj = 5108
+	, layer_ui = 5116
+	, layer_uitext = 5124
 };
-
 enum class colorpm {
 	presentcolor = 0
 	, RSlider = 16
@@ -202,6 +208,10 @@ enum class colorpm {
 	, done = 752
 	, pallete = 952
 	, selectnum = 2552
+	, layer_backinfo = 2556
+	, layer_obj = 2564
+	, layer_ui = 2572
+	, layer_uitext = 2580
 };
 
 enum class texteditpm {
@@ -211,20 +221,20 @@ enum class texteditpm {
 	, deststring = 10002
 };
 
-void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
+void drawline(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color, float Z = 0.0f)
 {
     shp::vec2f delta = p1 - p0;
     float radian = shp::angle2f::usedxdy(delta.x, delta.y).radian;
-    ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), 0), shp::vec3f(0, 0, radian),
+    ConstantBuffer cb = GetBasicModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), Z), shp::vec3f(0, 0, radian),
             shp::vec3f(sqrtf(delta.x * delta.x + delta.y * delta.y), linewidth, 1), color);
     linedrt->render(cb);
 }
 
-void drawline_cam(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color)
+void drawline_cam(shp::vec2f p0, shp::vec2f p1, float linewidth, DX11Color color, float Z = 0.0f)
 {
 	shp::vec2f delta = p1 - p0;
 	float radian = shp::angle2f::usedxdy(delta.x, delta.y).radian;
-	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), 0), shp::vec3f(0, 0, radian),
+	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y), Z), shp::vec3f(0, 0, radian),
 		shp::vec3f(sqrtf(delta.x * delta.x + delta.y * delta.y), linewidth, 1), color);
 	linedrt->render(cb);
 }
@@ -338,6 +348,7 @@ void basicslider_render(DXSlider* slider)
 {
 	shp::vec2f cen = slider->sup()->loc.getCenter();
 	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
+
 	//GLuint shader = linedrt->get_shader();
 	shp::rect4f bar;
 	if (slider->horizontal)
@@ -518,6 +529,9 @@ void freepolybtn_init(DXBtn* btn)
 
 void freepolybtn_render(DXBtn* btn)
 {
+	float layer_uitext = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_uitext];
+	float layer_ui = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_ui];
+
 	rbuffer* rb = (rbuffer*)btn->param[0];
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
 	bool* enable = (bool*)btn->param[2];
@@ -526,13 +540,13 @@ void freepolybtn_render(DXBtn* btn)
 	shp::vec2f cen = btn->sup()->loc.getCenter();
 
 	float expendrate = 0.6f + 0.5f * rate;
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), 
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, layer_ui),
 		shp::vec3f(0, 0, 0), shp::vec3f(btn->sup()->loc.getw() * expendrate, 
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	
 
 	expendrate = 0.5f + 0.5f * rate;
-	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), shp::vec3f(0, 0, 0),
+	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(cen.x, cen.y, layer_ui), shp::vec3f(0, 0, 0),
 		shp::vec3f(btn->sup()->loc.getw() * expendrate,
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	
@@ -540,7 +554,7 @@ void freepolybtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	
-	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb2);
 	if (*enable)
 	{
@@ -796,11 +810,13 @@ void objselectbtn_render(DXBtn* btn)
 {
 	rbuffer* rb = (rbuffer*)btn->param[0];
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+	float layer_uitext = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_uitext];
+	float layer_ui = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_ui];
 
 	float rate = AnimClass::EaseOut(flow->x / flow->y, 5.0f);
 	shp::vec2f cen = btn->sup()->loc.getCenter();
 	float expendrate = 0.5f + 0.5f * rate;
-	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, 0), shp::vec3f(0, 0, 0),
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, layer_ui), shp::vec3f(0, 0, 0),
 		shp::vec3f(btn->sup()->loc.getw() * expendrate,
 			btn->sup()->loc.geth() * expendrate, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	
@@ -808,7 +824,7 @@ void objselectbtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	
-	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));	
+	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
 }
 
@@ -1061,7 +1077,7 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 				if (icmap.find((char*)filename.c_str()) == icmap.end())
 				{
 					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-					icb->init();
+					icb->init(40960);
 					for (int i = 0; i < basic_ext.size(); ++i)
 					{
 						icb->extension.push_back(basic_ext[i]);
@@ -1095,6 +1111,71 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 			}
 		}
 	}
+}
+
+void mainpagebtn_render(DXBtn* btn)
+{
+	float layer_uitext = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_uitext];
+	float layer_ui = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_ui];
+
+	rbuffer* rb = (rbuffer*)btn->param[0];
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	float rate = AnimClass::EaseOut(flow->x / flow->y, 5.0f);
+	shp::vec2f cen = btn->sup()->loc.getCenter();
+	float expendrate = 0.5f + 0.5f * rate;
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, layer_ui), shp::vec3f(0, 0, 0),
+		shp::vec3f(btn->sup()->loc.getw() * expendrate, btn->sup()->loc.geth() * expendrate, 1),
+		DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	shp::rect4f loc = btn->sup()->loc;
+	loc.fx += loc.getw() / 4.0f;
+	loc.fy += loc.geth() / 4.0f;
+
+	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
+	rb->render(cb);
+}
+
+void mainpageslider_render(DXSlider* slider)
+{
+	float layer_ui = **(float**)&mainpage->pfm.Data[(int)mainpm::layer_ui];
+	shp::vec2f cen = slider->sup()->loc.getCenter();
+	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
+
+	//GLuint shader = linedrt->get_shader();
+	shp::rect4f bar;
+	if (slider->horizontal)
+	{
+		bar = shp::rect4f(cen.x - wh.x, cen.y - wh.y / 3, cen.x + wh.x, cen.y + wh.y / 3);
+	}
+	else
+	{
+		bar = shp::rect4f(cen.x - wh.x / 3, cen.y - wh.y, cen.x + wh.x / 3, cen.y + wh.y);
+	}
+
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(bar.getCenter().x, bar.getCenter().y, layer_ui), shp::vec3f(0, 0, 0),
+		shp::vec3f(bar.getw(), bar.geth(), 1), DX11Color(1.0f, 1.0f, 1.0f, 0.5f));
+	DX11Color col = DX11Color(1, 1, 1, 0.5f);
+
+
+	float rate = slider->setter / slider->max;
+	shp::rect4f pos;
+	shp::vec2f setp;
+	if (slider->horizontal)
+	{
+		setp = shp::vec2f(cen.x - wh.x + rate * wh.x * 2, cen.y);
+		pos = shp::rect4f(setp.x - wh.y, setp.y - wh.y, setp.x + wh.y, setp.y + wh.y);
+	}
+	else
+	{
+		setp = shp::vec2f(cen.x, cen.y + wh.y - rate * wh.y * 2);
+		pos = shp::rect4f(setp.x - wh.x, setp.y - wh.x, setp.x + wh.x, setp.y + wh.x);
+	}
+
+	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pos.getCenter().x, pos.getCenter().y, layer_ui), shp::vec3f(0, 0, shp::PI / 4.0f),
+		shp::vec3f(pos.getw() * 0.7f, pos.geth() * 0.7f, 1), DX11Color(0.1f, 0.4f, 0.6f, 1.0f));
+	linedrt->render(cb2);
+	linedrt->render(cb);
 }
 
 void main_init(Page* p)
@@ -1136,7 +1217,7 @@ void main_init(Page* p)
 
 	dbg << ", behavetop = " << p->pfm.Fup << endl;
 	DXBtn* behavetop = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	behavetop->init(L"+", behavetopbtn_init, basicbtn_render, basicbtn_update, behavetopbtn_event,
+	behavetop->init(L"+", behavetopbtn_init, mainpagebtn_render, basicbtn_update, behavetopbtn_event,
 		shp::rect4f(-scw / 2.0f, sch / 2.0f - 100, -scw / 2.0f + 100, sch / 2.0f));
 
 	dbg << ", freepoly = " << p->pfm.Fup << endl;
@@ -1289,14 +1370,14 @@ void main_init(Page* p)
 
 	dbg << ", opencolorpage = " << p->pfm.Fup << endl;
 	DXBtn* opencolorpage = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	opencolorpage->init(L"C", basicbtn_init, basicbtn_render, basicbtn_update,
+	opencolorpage->init(L"C", basicbtn_init, mainpagebtn_render, basicbtn_update,
 		opencolorpagebtn_event, shp::rect4f(-scw / 2.0f + 200, sch / 2.0f - 100.0f,
 			-scw / 2.0f + 300, sch / 2.0f));
 
 
 	dbg << ", openobjlist = " << p->pfm.Fup << endl;
 	DXBtn* openobjlist = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	openobjlist->init(L"<", basicbtn_init, basicbtn_render, basicbtn_update, openobjlistbtn_event,
+	openobjlist->init(L"<", basicbtn_init, mainpagebtn_render, basicbtn_update, openobjlistbtn_event,
 		shp::rect4f(scw / 2.0f - 100, -sch / 2.0f, scw / 2.0f, -sch / 2.0f + 100));
 
 	dbg << ", showobjlist = " << p->pfm.Fup << endl;
@@ -1305,7 +1386,7 @@ void main_init(Page* p)
 
 	dbg << ", closeobjlist = " << p->pfm.Fup << endl;
 	DXBtn* closeobjlist = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	closeobjlist->init(L">", basicbtn_init, basicbtn_render, basicbtn_update,
+	closeobjlist->init(L">", basicbtn_init, mainpagebtn_render, basicbtn_update,
 		closeobjlistbtn_event, shp::rect4f(scw / 2.0f - 500, -sch / 2.0f,
 			scw / 2.0f - 400, -sch / 2.0f + 100));
 
@@ -1318,13 +1399,13 @@ void main_init(Page* p)
 
 	dbg << ", tabbtn_objs = " << p->pfm.Fup << endl;
 	DXBtn* tabbtn_objs = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	tabbtn_objs->init(L"objs", basicbtn_init, basicbtn_render, basicbtn_update, tabbtn_event,
+	tabbtn_objs->init(L"objs", basicbtn_init, mainpagebtn_render, basicbtn_update, tabbtn_event,
 		shp::rect4f(scw / 2.0f - 400, sch / 2.0f - 100.0f, scw / 2.0f - 200,
 			sch / 2.0f));
 
 	dbg << ", tabbtn_property = " << p->pfm.Fup << endl;
 	DXBtn* tabbtn_property = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	tabbtn_property->init(L"property", basicbtn_init, basicbtn_render, basicbtn_update,
+	tabbtn_property->init(L"property", basicbtn_init, mainpagebtn_render, basicbtn_update,
 		tabbtn_event, shp::rect4f(scw / 2.0f - 200, sch / 2.0f - 100.0f,
 			scw / 2.0f, sch / 2.0f));
 	tabbtn_objs->param[2] = &tabid_arr[0];
@@ -1339,7 +1420,7 @@ void main_init(Page* p)
 	DXSlider* tabSlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
 	tabSlider->init(1.0f, 'f', (int*)list_height,
 		shp::rect4f(scw / 2.0f - 60.0f, -sch / 2.0f, scw / 2.0f, sch / 2.0f - 100.0f),
-		basicslider_init, basicslider_render, basicslider_update, basicslider_event,
+		basicslider_init, mainpageslider_render, basicslider_update, basicslider_event,
 		false);
 
 	dbg << ", objselect_id = " << p->pfm.Fup << endl;
@@ -1356,23 +1437,45 @@ void main_init(Page* p)
 
 	dbg << ", sprdirbtn = " << p->pfm.Fup << endl;
 	DXBtn* sprdirbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	sprdirbtn->init(L"sprdir", basicbtn_init, basicbtn_render, basicbtn_update, sprdirbtn_event,
+	sprdirbtn->init(L"sprdir", basicbtn_init, mainpagebtn_render, basicbtn_update, sprdirbtn_event,
 		shp::rect4f(-700, -sch / 2.0f, -400, -sch / 2.0f + 100));
 
 	dbg << ", loadbydirbtn = " << p->pfm.Fup << endl;
 	DXBtn* loadbydirbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	loadbydirbtn->init(L"loadByDir", basicbtn_init, basicbtn_render, basicbtn_update,
+	loadbydirbtn->init(L"loadByDir", basicbtn_init, mainpagebtn_render, basicbtn_update,
 		loadfromfilebtn_event, shp::rect4f(-300, -sch / 2.0f, 300, -sch / 2.0f + 100));
 
 	dbg << ", fpsprbtn = " << p->pfm.Fup << endl;
 	DXBtn* fpsprbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	fpsprbtn->init(L"Fp", basicbtn_init, basicbtn_render, basicbtn_update, fpsprbtn_event,
+	fpsprbtn->init(L"Fp", basicbtn_init, mainpagebtn_render, basicbtn_update, fpsprbtn_event,
 		shp::rect4f(400, -sch / 2.0f, 700, -sch / 2.0f + 100));
 
 	dbg << ", addicbtn = " << p->pfm.Fup << endl;
 	DXBtn* addicbtn = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	addicbtn->init(L"LoadIC", basicbtn_init, basicbtn_render, basicbtn_update, addicbtn_event,
+	addicbtn->init(L"LoadIC", basicbtn_init, mainpagebtn_render, basicbtn_update, addicbtn_event,
 		shp::rect4f(-300, -sch / 2.0f, 300, -sch / 2.0f + 100));
+
+	LayerInfo* li;
+
+	dbg << ", layer_backinfo = " << p->pfm.Fup << endl;
+	float** layer_backinfo = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("main_backinfo");
+	*layer_backinfo = &li->Z;
+
+	dbg << ", layer_obj = " << p->pfm.Fup << endl;
+	float** layer_obj = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("main_obj");
+	*layer_obj = &li->Z;
+
+	dbg << ", layer_ui = " << p->pfm.Fup << endl;
+	float** layer_ui = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("main_UI");
+	*layer_ui = &li->Z;
+
+	dbg << ", layer_uitext = " << p->pfm.Fup << endl;
+	float** layer_uitext = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("main_UI_text");
+	*layer_uitext = &li->Z;
 
 	dbg << "};" << endl;
 }
@@ -1390,6 +1493,10 @@ void main_render(Page* p)
 	DXBtn* ocp = (DXBtn*)&p->pfm.Data[(int)mainpm::opencolorpage];
 
 	int* behave_selected = (int*)&p->pfm.Data[(int)mainpm::behave_selected];
+	float layer_uitext = **(float**)&p->pfm.Data[(int)mainpm::layer_uitext];
+	float layer_ui = **(float**)&p->pfm.Data[(int)mainpm::layer_ui];
+	float layer_obj = **(float**)&p->pfm.Data[(int)mainpm::layer_obj];
+	float layer_backinfo = **(float**)&p->pfm.Data[(int)mainpm::layer_backinfo];
 
 	// ui rendering
 
@@ -1433,7 +1540,7 @@ void main_render(Page* p)
 				wchar_t nstr[16];
 				wcscpy_s(nstr, (wchar_t*)to_wstring(i).c_str());
 				int len = wcslen(nstr);
-				draw_string(nstr, len, 30, objrt, DX11Color(1, 1, 1, 1));
+				draw_string(nstr, len, 30, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 				
 				if (*objselect_id == i)
 				{
@@ -1441,7 +1548,7 @@ void main_render(Page* p)
 						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), DX11Color(0.2f,
 							0.7f,
 							0.8f,
-							1.0f));
+							1.0f), layer_ui);
 				}
 				else
 				{
@@ -1449,7 +1556,7 @@ void main_render(Page* p)
 						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), DX11Color(0.2f,
 							0.3f,
 							0.3f,
-							1.0f));
+							1.0f), layer_ui);
 				}
 				objrt.fy -= 100;
 				objrt.ly -= 100;
@@ -1458,7 +1565,7 @@ void main_render(Page* p)
 			drawline(shp::vec2f(tabrt.getCenter().x, tabrt.fy),
 				shp::vec2f(tabrt.getCenter().x, tabrt.ly), tabrt.geth() / 2.0f, DX11Color(0, 0,
 					0,
-					0.8f));
+					0.8f), layer_ui);
 		}
 		else
 		{
@@ -1469,10 +1576,10 @@ void main_render(Page* p)
 			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
 			fmvecarr < int*>* objarr = mainSprite->data.objs;
 			float* tab_height = (float*)&p->pfm.Data[(int)mainpm::list_height];
-			float th = tab_height[1] * (float)objarr->size() * 100.0f;
+			float th = tab_height[1] * (float)objarr->size() * 50.0f;
 			shp::rect4f objrt =
 				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + th, scw / 2.0f,
-					sch / 2.0f - 100.0f + th);
+					sch / 2.0f - 150.0f + th);
 
 			wchar_t nstr[5][16] = { L"spr", L"pos", L"rot", L"sca", L"ic" };
 			// source
@@ -1483,18 +1590,28 @@ void main_render(Page* p)
 					(*paramselect_id == i) ? DX11Color(0.2f, 0.7f, 0.8f, 0.8f) : DX11Color(0.2f, 0.3f,
 						0.3f, 0.8f);
 				int len = wcslen(nstr[i]);
-				draw_string(nstr[i], len, 30, objrt, DX11Color(1, 1, 1, 1));
+				draw_string(nstr[i], len, 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 				drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
-					shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col);
-				objrt.fy -= 100;
-				objrt.ly -= 100;
+					shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col, layer_ui);
+				objrt.fy -= 50;
+				objrt.ly -= 50;
 			}
 
-			//additional IC Param
-			fmvecarr<NamingData*> params = obj->ecs->icb->globalVariables;
-			for (int i = 0; i < params.size(); ++i) {
-				NamingData nd = *params.at(i);
-				
+			if (obj->ecs != nullptr) {
+				//additional IC Param
+				fmvecarr<NamingData*> params = obj->ecs->icb->globalVariables;
+				for (int i = 0; i < params.size(); ++i) {
+					NamingData nd = *params.at(i);
+					DX11Color col = DX11Color(0, 0, 0, 1);
+					col = (*paramselect_id == i+5) ? DX11Color(0.2f, 0.7f, 0.8f, 0.8f) : DX11Color(0.2f, 0.3f, 0.3f, 0.8f);
+					
+					wstring wstr = utf8_to_wstr(nd.name);
+					draw_string((wchar_t*)wstr.c_str(), wstr.size(), 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
+					drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
+						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col, layer_ui);
+					objrt.fy -= 50;
+					objrt.ly -= 50;
+				}
 			}
 
 			switch (*paramselect_id)
@@ -1542,7 +1659,7 @@ void main_render(Page* p)
 
 		drawline(shp::vec2f(tabrt.getCenter().x, tabrt.fy),
 			shp::vec2f(tabrt.getCenter().x, tabrt.ly), tabrt.geth() / 2.0f, DX11Color(0, 0, 0,
-				0.5f));
+				0.5f), layer_ui);
 	}
 	else
 	{
@@ -1614,7 +1731,7 @@ void main_render(Page* p)
 		0, 0, 1.0f / (farZ - nearZ), 0,
 		0, 0, 1.0f / (nearZ - farZ), 1);
 
-	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0, 0, 0), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+	ConstantBuffer cb = GetCamModelCB(shp::vec3f(0, 0, layer_obj), shp::vec3f(0, 0, 0), shp::vec3f(1, 1, 1), DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	linedrt->render(cb);
 
 	if (fpSprite != nullptr && fpedit) {
@@ -1649,13 +1766,13 @@ void main_render(Page* p)
 			if (!BeSelect) linedrt->render(normalCB);
 
 			drawline_cam(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
-				DX11Color(1, 1, 1, 1));
+				DX11Color(1, 1, 1, 1), layer_obj);
 			savpos = pos;
 		}
 		temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
 		shp::vec3f initpos = shp::vec3f(temp.x, temp.y, temp.z);
 		drawline_cam(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
-			4 * zoomrate, DX11Color(1, 1, 1, 1));
+			4 * zoomrate, DX11Color(1, 1, 1, 1), layer_obj);
 		fpSprite->render(cb);
 	}
 	// dbgcount(0, dbg << "try render sprite" << endl);
@@ -1696,13 +1813,13 @@ void main_render(Page* p)
 				if (!BeSelect) linedrt->render(normalCB);
 
 				drawline_cam(shp::vec2f(savpos.x, savpos.y), shp::vec2f(pos.x, pos.y), 4 * zoomrate,
-					DX11Color(1, 1, 1, 1));
+					DX11Color(1, 1, 1, 1), layer_obj);
 				savpos = pos;
 			}
 			temp = ap->buffer[ap->get_renderChoice()]->at(0).Pos;
 			shp::vec3f initpos = shp::vec3f(temp.x, temp.y, temp.z);
 			drawline_cam(shp::vec2f(initpos.x, initpos.y), shp::vec2f(savpos.x, savpos.y),
-				4 * zoomrate, DX11Color(1, 1, 1, 1));
+				4 * zoomrate, DX11Color(1, 1, 1, 1), layer_obj);
 		}
 
 		mainSprite->render(cb);
@@ -1710,21 +1827,21 @@ void main_render(Page* p)
 
 	shp::rect4f* selectrt = (shp::rect4f*)&p->pfm.Data[(int)mainpm::select_rect];
 	drawline_cam(shp::vec2f(selectrt->fx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+		4 * zoomrate, DX11Color(1, 1, 1, 1), layer_backinfo);
 	drawline_cam(shp::vec2f(selectrt->fx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->ly),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+		4 * zoomrate, DX11Color(1, 1, 1, 1), layer_backinfo);
 	drawline_cam(shp::vec2f(selectrt->lx, selectrt->ly), shp::vec2f(selectrt->lx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+		4 * zoomrate, DX11Color(1, 1, 1, 1), layer_backinfo);
 	drawline_cam(shp::vec2f(selectrt->lx, selectrt->fy), shp::vec2f(selectrt->fx, selectrt->fy),
-		4 * zoomrate, DX11Color(1, 1, 1, 1));
+		4 * zoomrate, DX11Color(1, 1, 1, 1), layer_backinfo);
 
 	float d = 50.0f * (int)(zoomrate);
 	float lw = 2.0f;
 	float alpha = 0.2f;
 	drawline_cam(shp::vec2f(pc->x - scwh.x, 0), shp::vec2f(pc->x + scwh.x, 0), 4.0f * zoomrate,
-		DX11Color(1, 1, 1, 1.0f));
+		DX11Color(1, 1, 1, 1.0f), layer_backinfo);
 	drawline_cam(shp::vec2f(0, pc->y - scwh.y), shp::vec2f(0, pc->y + scwh.y), 4.0f * zoomrate,
-		DX11Color(1, 1, 1, 1.0f));
+		DX11Color(1, 1, 1, 1.0f), layer_backinfo);
 	for (int k = 0; k < 3; ++k)
 	{
 		// dbg << "scwh.x : " << scwh.x << endl;
@@ -1734,14 +1851,14 @@ void main_render(Page* p)
 		for (; ax < max; ++ax)
 		{
 			drawline_cam(shp::vec2f(pc->x - scwh.x, (float)ax * d),
-				shp::vec2f(pc->x + scwh.x, (float)ax * d), lw * zoomrate, DX11Color(1, 1, 1, alpha));
+				shp::vec2f(pc->x + scwh.x, (float)ax * d), lw * zoomrate, DX11Color(1, 1, 1, alpha), layer_backinfo);
 		}
 		ax = (pc->x - scwh.x) / d;
 		max = (pc->x + scwh.x) / d;
 		for (; ax < max; ++ax)
 		{
 			drawline_cam(shp::vec2f((float)ax * d, pc->y - scwh.y),
-				shp::vec2f((float)ax * d, pc->y + scwh.y), lw * zoomrate, DX11Color(1, 1, 1, alpha));
+				shp::vec2f((float)ax * d, pc->y + scwh.y), lw * zoomrate, DX11Color(1, 1, 1, alpha), layer_backinfo);
 		}
 		d = d * 2.0f;
 		lw = lw + 1.0f;
@@ -1910,10 +2027,10 @@ void main_event(Page* p, DX_Event evt)
 			Object* obj = (Object*)mainSprite->data.objs->at(*objselect_id);
 			fmvecarr < int*>* objarr = mainSprite->data.objs;
 			float* tab_height = (float*)&p->pfm.Data[(int)mainpm::list_height];
-			float th = tab_height[1] * (float)objarr->size() * 100;
+			float th = tab_height[1] * (float)objarr->size() * 50;
 			shp::rect4f objrt =
 				shp::rect4f(scw / 2.0f - 400, +sch / 2.0f - 190 + th, scw / 2.0f,
-					sch / 2.0f - 100.0f + th);
+					sch / 2.0f - 150.0f + th);
 
 			wchar_t nstr[5][16] = { L"spr", L"pos", L"rot", L"sca", L"ic" };
 			// source
@@ -1927,8 +2044,22 @@ void main_event(Page* p, DX_Event evt)
 					{
 						*paramselect_id = i;
 					}
-					objrt.fy -= 100;
-					objrt.ly -= 100;
+					objrt.fy -= 50;
+					objrt.ly -= 50;
+				}
+
+				if (obj->ecs != nullptr) {
+					//additional IC Param
+					shp::vec2f mpos = GetMousePos(evt.lParam);
+					fmvecarr<NamingData*> params = obj->ecs->icb->globalVariables;
+					for (int i = 0; i < params.size(); ++i) {
+						if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), objrt))
+						{
+							*paramselect_id = i+5;
+						}
+						objrt.fy -= 50;
+						objrt.ly -= 50;
+					}
 				}
 			}
 
@@ -2526,6 +2657,71 @@ void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
 	}
 }
 
+void colorpagebtn_render(DXBtn* btn)
+{
+	float layer_uitext = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_uitext];
+	float layer_ui = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_ui];
+
+	rbuffer* rb = (rbuffer*)btn->param[0];
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	float rate = AnimClass::EaseOut(flow->x / flow->y, 5.0f);
+	shp::vec2f cen = btn->sup()->loc.getCenter();
+	float expendrate = 0.5f + 0.5f * rate;
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(cen.x, cen.y, layer_ui), shp::vec3f(0, 0, 0),
+		shp::vec3f(btn->sup()->loc.getw() * expendrate, btn->sup()->loc.geth() * expendrate, 1),
+		DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	shp::rect4f loc = btn->sup()->loc;
+	loc.fx += loc.getw() / 4.0f;
+	loc.fy += loc.geth() / 4.0f;
+
+	draw_string(btn->text, wcslen(btn->text), 40.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
+	rb->render(cb);
+}
+
+void colorpageslider_render(DXSlider* slider)
+{
+	float layer_ui = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_ui];
+	shp::vec2f cen = slider->sup()->loc.getCenter();
+	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
+
+	//GLuint shader = linedrt->get_shader();
+	shp::rect4f bar;
+	if (slider->horizontal)
+	{
+		bar = shp::rect4f(cen.x - wh.x, cen.y - wh.y / 3, cen.x + wh.x, cen.y + wh.y / 3);
+	}
+	else
+	{
+		bar = shp::rect4f(cen.x - wh.x / 3, cen.y - wh.y, cen.x + wh.x / 3, cen.y + wh.y);
+	}
+
+	ConstantBuffer cb = GetBasicModelCB(shp::vec3f(bar.getCenter().x, bar.getCenter().y, layer_ui), shp::vec3f(0, 0, 0),
+		shp::vec3f(bar.getw(), bar.geth(), 1), DX11Color(1.0f, 1.0f, 1.0f, 0.5f));
+	DX11Color col = DX11Color(1, 1, 1, 0.5f);
+
+
+	float rate = slider->setter / slider->max;
+	shp::rect4f pos;
+	shp::vec2f setp;
+	if (slider->horizontal)
+	{
+		setp = shp::vec2f(cen.x - wh.x + rate * wh.x * 2, cen.y);
+		pos = shp::rect4f(setp.x - wh.y, setp.y - wh.y, setp.x + wh.y, setp.y + wh.y);
+	}
+	else
+	{
+		setp = shp::vec2f(cen.x, cen.y + wh.y - rate * wh.y * 2);
+		pos = shp::rect4f(setp.x - wh.x, setp.y - wh.x, setp.x + wh.x, setp.y + wh.x);
+	}
+
+	ConstantBuffer cb2 = GetBasicModelCB(shp::vec3f(pos.getCenter().x, pos.getCenter().y, layer_ui), shp::vec3f(0, 0, shp::PI / 4.0f),
+		shp::vec3f(pos.getw() * 0.7f, pos.geth() * 0.7f, 1), DX11Color(0.1f, 0.4f, 0.6f, 1.0f));
+	linedrt->render(cb2);
+	linedrt->render(cb);
+}
+
 void colorpage_init(Page* p)
 {
 	p->pfm.SetHeapData(new byte8[4096], 4096);
@@ -2537,23 +2733,23 @@ void colorpage_init(Page* p)
 
 	dbg << ", RSlider = " << p->pfm.Fup << endl;
 	DXSlider* RSlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
-	RSlider->init(1.0f, 'f', (int*)&presentcolor->r, shp::rect4f(-500, 450, 500, 550), basicslider_init, basicslider_render, basicslider_update, basicslider_event, true);	// 16
+	RSlider->init(1.0f, 'f', (int*)&presentcolor->r, shp::rect4f(-500, 450, 500, 550), basicslider_init, colorpageslider_render, basicslider_update, basicslider_event, true);	// 16
 
 	dbg << ", GSlider = " << p->pfm.Fup << endl;
 	DXSlider* GSlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
-	GSlider->init(1.0f, 'f', (int*)&presentcolor->g, shp::rect4f(-500, 300, 500, 400), basicslider_init, basicslider_render, basicslider_update, basicslider_event, true);	// 200
+	GSlider->init(1.0f, 'f', (int*)&presentcolor->g, shp::rect4f(-500, 300, 500, 400), basicslider_init, colorpageslider_render, basicslider_update, basicslider_event, true);	// 200
 
 	dbg << ", BSlider = " << p->pfm.Fup << endl;
 	DXSlider* BSlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
-	BSlider->init(1.0f, 'f', (int*)&presentcolor->b, shp::rect4f(-500, 150, 500, 250), basicslider_init, basicslider_render, basicslider_update, basicslider_event, true);	// 384
+	BSlider->init(1.0f, 'f', (int*)&presentcolor->b, shp::rect4f(-500, 150, 500, 250), basicslider_init, colorpageslider_render, basicslider_update, basicslider_event, true);	// 384
 
 	dbg << ", ASlider = " << p->pfm.Fup << endl;
 	DXSlider* ASlider = (DXSlider*)p->pfm._New(sizeof(DXSlider));
-	ASlider->init(1.0f, 'f', (int*)&presentcolor->a, shp::rect4f(-500, 0, 500, 100), basicslider_init, basicslider_render, basicslider_update, basicslider_event, true);	// 568
+	ASlider->init(1.0f, 'f', (int*)&presentcolor->a, shp::rect4f(-500, 0, 500, 100), basicslider_init, colorpageslider_render, basicslider_update, basicslider_event, true);	// 568
 
 	dbg << ", done = " << p->pfm.Fup << endl;
 	DXBtn* done = (DXBtn*)p->pfm._New(sizeof(DXBtn));
-	done->init(L"done", basicbtn_init, basicbtn_render, basicbtn_update, colorpage_donebtn_event, shp::rect4f(scw / 2.0f - 500, sch / 2.0f - 500, scw / 2.0f, sch / 2.0f));	// 752
+	done->init(L"done", basicbtn_init, colorpagebtn_render, basicbtn_update, colorpage_donebtn_event, shp::rect4f(scw / 2.0f - 500, sch / 2.0f - 500, scw / 2.0f, sch / 2.0f));	// 752
 
 	dbg << ", pallete = " << p->pfm.Fup << endl;
 	DX11Color* pallete = (DX11Color*)p->pfm._New(sizeof(DX11Color) * 20 * 5);	// 10*5
@@ -2565,6 +2761,27 @@ void colorpage_init(Page* p)
 	dbg << ", selectnum = " << p->pfm.Fup << endl;
 	int* selectnum = (int*)p->pfm._New(sizeof(int));
 	*selectnum = 0;				// 2616
+
+	LayerInfo* li;
+	dbg << ", layer_backinfo = " << p->pfm.Fup << endl;
+	float** layer_backinfo = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("color_backinfo");
+	*layer_backinfo = &li->Z;
+
+	dbg << ", layer_obj = " << p->pfm.Fup << endl;
+	float** layer_obj = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("color_obj");
+	*layer_obj = &li->Z;
+
+	dbg << ", layer_ui = " << p->pfm.Fup << endl;
+	float** layer_ui = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("color_UI");
+	*layer_ui = &li->Z;
+
+	dbg << ", layer_uitext = " << p->pfm.Fup << endl;
+	float** layer_uitext = (float**)p->pfm._New(sizeof(float*));
+	li = layerManager.PushLayer("color_UI_text");
+	*layer_uitext = &li->Z;
 
 	dbg << "};" << endl;
 
@@ -3100,6 +3317,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     const char* subfont_path = "ARLRDBD.TTF";
     error = TTFFontParser::parse_file(subfont_path, sub_font_data[0], &font_parsed, &condition_variable);
 
+	layerManager.Init();
+
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
 
@@ -3153,6 +3372,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     CleanupDevice();
 
     fm->_tempPopLayer();
+
+	layerManager.Release();
+
     return ( int )msg.wParam;
 }
 
@@ -3328,7 +3550,7 @@ HRESULT InitDevice()
 
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	ZeroMemory( &descDSV, sizeof(descDSV) );
+	ZeroMemory( &descDSV, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC) );
     descDSV.Format = descDepth.Format;
     descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     descDSV.Texture2D.MipSlice = 0;
@@ -3338,6 +3560,27 @@ HRESULT InitDevice()
 
     g_pImmediateContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_pDepthStencilView );
 
+	/*D3D11_DEPTH_STENCIL_DESC dsd;
+	ZeroMemory(&descDSV, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dsd.DepthEnable = TRUE;
+	dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D11_COMPARISON_LESS;
+	dsd.StencilEnable = TRUE;
+	dsd.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	dsd.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dsd.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsd.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dsd.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsd.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	hr = g_pd3dDevice->CreateDepthStencilState(&dsd, &g_pDepthStencilState);
+	if (FAILED(hr)) {
+		return hr;
+	}*/
 	
 	D3D11_BLEND_DESC BlendState;
 	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
@@ -3764,11 +4007,15 @@ void Render()
     //
     // Clear the depth buffer to 1.0 (max depth)
     //
-    g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+    g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0 );
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	UINT sampleMask = 0xffffffff;
 	g_pImmediateContext->OMSetBlendState(g_pBlendStateBlend, blendFactor, sampleMask);
+
+	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
+
+	//g_pImmediateContext->OMSetDepthStencilState(g_pDepthStencilState, NULL);
 
     //
     // Update variables for the first cube

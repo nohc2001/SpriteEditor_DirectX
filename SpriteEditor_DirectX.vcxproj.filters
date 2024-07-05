@@ -12,6 +12,9 @@
       <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
       <Extensions>fx;fxh;hlsl</Extensions>
     </Filter>
+    <Filter Include="DevInfo">
+      <UniqueIdentifier>{a56ea951-1fbc-4eb0-8a0d-e4e4dbbf7f53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShapeObject.h" />
@@ -46,11 +49,16 @@
     </CLInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="memo.txt" />
     <Text Include="dbg.txt" />
     <Text Include="exGraphics.txt" />
     <Text Include="icb_dbg.txt" />
     <Text Include="exGeometry.txt" />
+    <Text Include="DevInfo\Layer.txt">
+      <Filter>DevInfo</Filter>
+    </Text>
+    <Text Include="DevInfo\memo.txt">
+      <Filter>DevInfo</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

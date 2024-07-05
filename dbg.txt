@@ -38,6 +38,10 @@ present_center = 0
 , loadbydirbtn = 4500
 , fpsprbtn = 4700
 , addicbtn = 4900
+, layer_backinfo = 5100
+, layer_obj = 5108
+, layer_ui = 5116
+, layer_uitext = 5124
 };
 enum class colorpm{
 presentcolor = 0
@@ -48,12 +52,15 @@ presentcolor = 0
 , done = 752
 , pallete = 952
 , selectnum = 2552
+, layer_backinfo = 2556
+, layer_obj = 2564
+, layer_ui = 2572
+, layer_uitext = 2580
 };
-total fup : 2556
+total fup : 2588
 enum class texteditpm{
 VKeyboard = 0
 , ishan = 10000
 , isshift = 10001
 , deststring = 10002
 };
-mainSprite_init

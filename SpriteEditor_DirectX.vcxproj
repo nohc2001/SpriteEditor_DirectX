@@ -373,10 +373,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="dbg.txt" />
+    <Text Include="DevInfo\Layer.txt" />
+    <Text Include="DevInfo\memo.txt" />
     <Text Include="exGeometry.txt" />
     <Text Include="exGraphics.txt" />
     <Text Include="icb_dbg.txt" />
-    <Text Include="memo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

@@ -76,7 +76,7 @@ void exGraphics_get_icb(int* pcontext)
 	InsideCode_Bake* icb = nullptr;
 	if(icmap.find(filename) == icmap.end()){
 		icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-		icb->init();
+		icb->init(40960);
     	ICB_Extension* ext = Init_exGeometry();
     	icb->extension.push_back(ext);
     	ext = Init_exGraphics();

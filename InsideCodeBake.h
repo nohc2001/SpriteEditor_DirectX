@@ -612,13 +612,14 @@ enum class codeKind
 
 struct code_sen
 {
-	char **sen;
+	char** sen;
 	int maxlen;
 	codeKind ck;
-	fmvecarr<int *> *codeblocks = nullptr;
+	fmvecarr<int*>* codeblocks = nullptr;
 
 	int start_line = 0;
 	int end_line = 0;
+	int codeline = 0;
 
 	code_sen() :
 		start_line(0),
@@ -626,13 +627,14 @@ struct code_sen
 		codeblocks(nullptr),
 		sen(nullptr),
 		maxlen(0),
+		codeline(0),
 		ck(codeKind::ck_none)
 	{
 
 	}
 };
 
-void dbg_codesen(code_sen *cs, ostream& ofs)
+void dbg_codesen(code_sen* cs, ostream& ofs)
 {
 	switch (cs->ck)
 	{
@@ -689,7 +691,7 @@ void dbg_codesen(code_sen *cs, ostream& ofs)
 		ofs << "{" << endl;
 		for (int i = 0; i < cs->codeblocks->size(); ++i)
 		{
-			dbg_codesen(reinterpret_cast<code_sen *>(cs->codeblocks->at(i)), ofs);
+			dbg_codesen(reinterpret_cast<code_sen*>(cs->codeblocks->at(i)), ofs);
 		}
 		ofs << "closed_ : }" << endl;
 	}
@@ -705,21 +707,21 @@ struct type_data
 	// b - basictype / s - struct type
 	// p - pointer / a - array
 
-	int *structptr = nullptr;
+	int* structptr = nullptr;
 	// a or p - it is subtype
 	// s - struct_data*
 };
 
 struct NamingData
 {
-	char *name;
-	type_data *td;
+	char* name;
+	type_data* td;
 	int add_address;
 };
 
 struct operator_data
 {
-	const char *symbol;
+	const char* symbol;
 	char mod = 'f'; // f : front / o - asmoper
 	int startop = 0;
 	int endop = 0;
@@ -736,13 +738,13 @@ enum class blockstate
 
 struct block_data
 {
-	byte8 *start_pc;
+	byte8* start_pc;
 	fmvecarr<NamingData> variable_data;
 	int add_address_up = 0;
 	blockstate bs;
 	uint64_t parameter[5] = {};
-	fmvecarr<int> *breakpoints;
-	fmvecarr<int> *continuepoints;
+	fmvecarr<int>* breakpoints;
+	fmvecarr<int>* continuepoints;
 
 	bool ifin = false;
 	int lastcsindex = 0;
@@ -752,9 +754,9 @@ struct block_data
 struct func_data
 {
 	fmlcstr name;
-	byte8 *start_pc;
+	byte8* start_pc;
 	fmvecarr<NamingData> param_data; // save sizeoftype
-	type_data *returntype;
+	type_data* returntype;
 };
 
 struct struct_data
@@ -907,9 +909,9 @@ struct instruct_data
 
 typedef void (*exInst)(int*); // int -> ICB_Context
 
-struct ICB_Extension{
-    fmvecarr<type_data*> exstructArr;
-    fmvecarr<func_data*> exfuncArr;
+struct ICB_Extension {
+	fmvecarr<type_data*> exstructArr;
+	fmvecarr<func_data*> exfuncArr;
 	void Release();
 };
 
@@ -938,6 +940,8 @@ enum class ICL_FLAG {
 	BakeCode_CompileCodes__adsetvar = 21,
 };
 
+#define ICB_ERR_CHECK(A) if(curErrMsg[0] != 0) goto A;
+
 class InsideCode_Bake
 {
 private:
@@ -945,38 +949,38 @@ private:
 
 public:
 	static constexpr uint32_t max_instruction = 256;
-	void *inst[max_instruction] = {};
+	void* inst[max_instruction] = {};
 
 	static constexpr int max_casting_type = 20;
-	void *cast[max_casting_type] = {};
+	void* cast[max_casting_type] = {};
 
 	static constexpr int max_dbgtype = 9;
-	void *dbgt[max_dbgtype] = {};
-	void *inpt[max_dbgtype] = {};
+	void* dbgt[max_dbgtype] = {};
+	void* inpt[max_dbgtype] = {};
 
 	// compile var
-	fmvecarr<char *> allcode_sen;
+	fmvecarr<char*> allcode_sen;
 	static word_base_sen_sys wbss;
-	fmvecarr<code_sen *> *csarr;
+	fmvecarr<code_sen*>* csarr;
 	// infArray < code_sen > sen_arr;
 
-    //code memory
-    uint32_t max_mem_byte = 40960; // 40KB
-	byte8 *mem = nullptr;
+	//code memory
+	uint32_t max_mem_byte = 40960; // 40KB
+	byte8* mem = nullptr;
 	fmvecarr<byte8> init_datamem;
 
-	fmvecarr<func_data *> functions;
-	fmvecarr<type_data *> types;
-	fmvecarr<block_data *> blockstack;
-	fmvecarr<NamingData *> globalVariables;
+	fmvecarr<func_data*> functions;
+	fmvecarr<type_data*> types;
+	fmvecarr<block_data*> blockstack;
+	fmvecarr<NamingData*> globalVariables;
 
 	block_data nextbd;
-	struct_data *nextsd;
+	struct_data* nextsd;
 
 	static instruct_data inst_meta[256];
 
 	int writeup = 0;
-    int datamem_up = 0;
+	int datamem_up = 0;
 
 	static constexpr int basictype_max = 8;
 	static type_data basictype[basictype_max];
@@ -987,7 +991,137 @@ public:
 	static ofstream icl; // icb log
 	static uint32_t icl_optionFlag;
 
+	fmvecarr<unsigned int> codeLineVec;
+	fmvecarr<unsigned int> codeLineVec_Word;
+
+	fmlcstr curErrMsg;
+	unsigned int currentCodeLine = 0;
+
 	fmvecarr<ICB_Extension*> extension; // 확장코드
+
+	void UpdateErrMsg(int errorcode, const char* message, char* param) {
+		curErrMsg.up = 0;
+		curErrMsg.at(0) = 0;
+
+		curErrMsg = (char*)"[COMPILE ERROR ";
+
+		string numstr;
+		numstr = to_string(errorcode);
+		for (int i = 0; i < numstr.size(); ++i) {
+			curErrMsg.push_back(numstr[i]);
+		}
+		curErrMsg.push_back(']');
+		curErrMsg.push_back('_');
+		curErrMsg.push_back('l'); curErrMsg.push_back('i'); curErrMsg.push_back('n'); curErrMsg.push_back('e');
+		numstr = to_string(currentCodeLine);
+		for (int i = 0; i < numstr.size(); ++i) {
+			curErrMsg.push_back(numstr[i]);
+		}
+		curErrMsg.push_back(' '); curErrMsg.push_back(':'); curErrMsg.push_back(' ');
+
+		int mlen = strlen(message);
+		for (int i = 0; i < mlen; ++i) {
+			if (message[i] == '%') {
+				int plen = strlen(param);
+				for (int k = 0; k < plen; ++k) {
+					curErrMsg.push_back(param[k]);
+				}
+				++i;
+			}
+			curErrMsg.push_back(message[i]);
+		}
+	}
+
+	fmlcstr* GetCodeTXT(const char* filename, FM_System0* fm)
+	{
+		codeLineVec.push_back(0);
+		char comment_mod = '/';
+		FILE* fp;
+		fopen_s(&fp, filename, "rt");
+		if (fp)
+		{
+			fmlcstr* codetxt = (fmlcstr*)fm->_New(sizeof(fmlcstr), true);
+			codetxt->NULLState();
+			codetxt->Init(10, false);
+			int max = 0;
+			fseek(fp, 0, SEEK_END);
+			max = ftell(fp);
+			fclose(fp);
+
+			int stack = 0;
+			fopen_s(&fp, filename, "rt");
+			int k = 0;
+			while (k < max)
+			{
+				char c;
+				c = fgetc(fp);
+
+				//line check
+				if (c == '\n') {
+					codeLineVec.push_back(k + 1);
+				}
+
+				if (c == '/')
+				{
+					stack += 1;
+				}
+				else if (stack == 1 && c == '*') {
+					stack += 1;
+					comment_mod = '*';
+				}
+				else
+				{
+					stack = 0;
+				}
+
+				if (stack == 2)
+				{
+					if (comment_mod == '/') {
+						codetxt->pop_back();
+						int mm = 0;
+						while (c != '\n' && k + mm < max)
+						{
+							mm += 1;
+							c = fgetc(fp);
+							//line check
+							if (c == '\n') {
+								codeLineVec.push_back(codeLineVec.last());
+							}
+						}
+						max -= mm + 1;
+						continue;
+					}
+					else if (comment_mod == '*') {
+						codetxt->pop_back();
+						int mm = 0;
+						char saveC = 0;
+						while ((saveC != '*' || c != '/') && k + mm < max)
+						{
+							mm += 1;
+							saveC = c;
+							c = fgetc(fp);
+							//line check
+							if (c == '\n') {
+								codeLineVec.push_back(codeLineVec.last());
+							}
+						}
+						max -= mm + 1;
+						comment_mod = '/';
+						continue;
+					}
+				}
+				codetxt->push_back(c);
+				k++;
+			}
+			return codetxt;
+		}
+		else
+		{
+			UpdateErrMsg(0, "<%s> file is not exist.", (char*)filename);
+			//printf("[ERROR] : %s file is not exist.", filename);
+			return nullptr;
+		}
+	}
 
 	static void ReleaseCodeSen(code_sen* cs) {
 		if ((cs->ck == codeKind::ck_blocks || cs->ck == codeKind::ck_addStruct) && cs->codeblocks != nullptr) {
@@ -1059,6 +1193,11 @@ public:
 	struct_data *nextsd;
 	fmvecarr<ICB_Extension*> extension; // 확장코드
 		*/
+
+		codeLineVec.release();
+		codeLineVec_Word.release();
+		curErrMsg.release();
+
 		for (int i = 0; i < allcode_sen.size(); ++i) {
 			allcode_sen.at(i) = nullptr;
 		}
@@ -1197,10 +1336,11 @@ public:
 		return icl_optionFlag & temp;
 	}
 
-	void release_tempmem(temp_mem *ptr)
+	void release_tempmem(temp_mem* ptr)
 	{
+		if (ptr == nullptr) return;
 		ptr->mem.release();
-		fm->_Delete((byte8 *)ptr, sizeof(temp_mem));
+		fm->_Delete((byte8*)ptr, sizeof(temp_mem));
 		// type_data memeory management reqired.. but how?
 	}
 
@@ -1323,7 +1463,7 @@ public:
 		}
 	}
 
-	func_data *get_func_with_name(char *name)
+	func_data* get_func_with_name(char* name)
 	{
 		for (int i = 0; i < functions.size(); ++i)
 		{
@@ -1336,7 +1476,7 @@ public:
 		for (int i = 0; i < extension.size(); ++i)
 		{
 			ICB_Extension* ext = extension.at(i);
-			for(int k=0;k<ext->exfuncArr.size();++k){
+			for (int k = 0; k < ext->exfuncArr.size(); ++k) {
 				if (strcmp(ext->exfuncArr.at(k)->name.c_str(), name) == 0)
 				{
 					return ext->exfuncArr.at(k);
@@ -1344,12 +1484,22 @@ public:
 			}
 		}
 
+		UpdateErrMsg(4, "<%s> function is not exist.", name);
 		return nullptr;
 	}
 
-	static type_data *get_sub_type(type_data *t)
+	type_data* get_sub_type(type_data* t)
 	{
-		return reinterpret_cast<type_data *>(t->structptr);
+		if (t->structptr == nullptr) {
+			UpdateErrMsg(3, "<%s> type cannot have sub type.", t->name.c_str());
+			return nullptr;
+		}
+		return reinterpret_cast<type_data*>(t->structptr);
+	}
+
+	static type_data* static_get_sub_type(type_data* t)
+	{
+		return reinterpret_cast<type_data*>(t->structptr);
 	}
 
 	static type_data* static_get_addpointer_type(type_data* td)
@@ -1462,7 +1612,7 @@ public:
 		return rtd;
 	}
 
-	static type_data *get_basic_type_with_int(int n)
+	static type_data* get_basic_type_with_int(int n)
 	{
 		switch (n)
 		{
@@ -1486,7 +1636,7 @@ public:
 		return nullptr;
 	}
 
-	static int get_int_with_basictype(type_data *td)
+	static int get_int_with_basictype(type_data* td)
 	{
 		if (td == &basictype[1])
 			return 0;
@@ -1515,7 +1665,7 @@ public:
 	{
 	}
 
-	bool IsTypeString(const char *str)
+	bool IsTypeString(const char* str)
 	{
 		for (int i = 0; i < types.size(); ++i)
 		{
@@ -1526,7 +1676,7 @@ public:
 		for (int i = 0; i < extension.size(); ++i)
 		{
 			ICB_Extension* ext = extension.at(i);
-			for(int k=0;k<ext->exstructArr.size();++k){
+			for (int k = 0; k < ext->exstructArr.size(); ++k) {
 				if (strcmp(str, ext->exstructArr.at(k)->name.c_str()) == 0)
 				{
 					return true;
@@ -1537,9 +1687,9 @@ public:
 		return false;
 	}
 
-	static sen *get_sen_from_codesen(code_sen *cs)
+	static sen* get_sen_from_codesen(code_sen* cs)
 	{
-		sen *rs = (sen *)fm->_New(sizeof(sen), true);
+		sen* rs = (sen*)fm->_New(sizeof(sen), true);
 		rs->NULLState();
 		rs->Init(2, false, true);
 
@@ -1625,18 +1775,18 @@ public:
 		}
 	}
 
-	code_sen *find_codesen_with_linenum(fmvecarr<code_sen *> *csa, int line)
+	code_sen* find_codesen_with_linenum(fmvecarr<code_sen*>* csa, int line)
 	{
 		for (int i = 0; i < csa->size(); ++i)
 		{
-			code_sen *cs = csa->at(i);
+			code_sen* cs = csa->at(i);
 			if (cs->start_line <= line && line <= cs->end_line)
 			{
 				if (cs->ck == codeKind::ck_blocks)
 				{
 					return find_codesen_with_linenum(reinterpret_cast<fmvecarr<
-														 code_sen *> *>(cs->codeblocks),
-													 line);
+						code_sen*> *>(cs->codeblocks),
+						line);
 				}
 				else
 				{
@@ -1781,26 +1931,26 @@ public:
 						break;
 					case 2:
 						++i;
-						n = *reinterpret_cast<ushort *>(&mem[i]);
+						n = *reinterpret_cast<ushort*>(&mem[i]);
 						ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ")";
 						i += 1;
 						break;
 					case 4:
 						++i;
-						n = *reinterpret_cast<uint *>(&mem[i]);
+						n = *reinterpret_cast<uint*>(&mem[i]);
 						strmax = n;
 						ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ", "
-							 << (uint)mem[i + 2] << ", " << (uint)mem[i + 3] << ")";
+							<< (uint)mem[i + 2] << ", " << (uint)mem[i + 3] << ")";
 						i += 3;
 						break;
 					case 8:
 						++i;
-						n = *reinterpret_cast<uint *>(&mem[i]);
+						n = *reinterpret_cast<uint*>(&mem[i]);
 						strmax = n;
 						ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ", "
-							 << (uint)mem[i + 2] << ", " << (uint)mem[i + 3]
-							 << (uint)mem[i + 4] << ", " << (uint)mem[i + 5] << ", "
-							 << (uint)mem[i + 6] << ", " << (uint)mem[i + 7] << ")";
+							<< (uint)mem[i + 2] << ", " << (uint)mem[i + 3]
+							<< (uint)mem[i + 4] << ", " << (uint)mem[i + 5] << ", "
+							<< (uint)mem[i + 6] << ", " << (uint)mem[i + 7] << ")";
 						i += 7;
 						break;
 					}
@@ -1828,21 +1978,21 @@ public:
 					break;
 				case 2:
 					++i;
-					n = *reinterpret_cast<ushort *>(&mem[i]);
+					n = *reinterpret_cast<ushort*>(&mem[i]);
 					ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ")";
 					i += 1;
 					break;
 				case 4:
 					++i;
-					n = *reinterpret_cast<uint *>(&mem[i]);
+					n = *reinterpret_cast<uint*>(&mem[i]);
 					ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ", " << (uint)mem[i + 2] << ", " << (uint)mem[i + 3] << ")";
 					i += 3;
 					break;
 				case 8:
 					++i;
-					n = *reinterpret_cast<uint *>(&mem[i]);
+					n = *reinterpret_cast<uint*>(&mem[i]);
 					ofs << " > " << n << "(" << (uint)mem[i] << ", " << (uint)mem[i + 1] << ", " << (uint)mem[i + 2] << ", " << (uint)mem[i + 3]
-					<< (uint)mem[i+4] << ", " << (uint)mem[i + 5] << ", " << (uint)mem[i + 6] << ", " << (uint)mem[i + 7] << ")";
+						<< (uint)mem[i + 4] << ", " << (uint)mem[i + 5] << ", " << (uint)mem[i + 6] << ", " << (uint)mem[i + 7] << ")";
 					i += 7;
 					break;
 				}
@@ -1851,13 +2001,13 @@ public:
 		}
 	}
 
-	void dbg_bakecode(fmvecarr<code_sen *> *csa, int sav)
+	void dbg_bakecode(fmvecarr<code_sen*>* csa, int sav)
 	{
 		// cout << "all asm :" << endl;
 		int save = sav;
 		for (int i = 0; i < csa->size(); ++i)
 		{
-			code_sen *cs = csa->at(i);
+			code_sen* cs = csa->at(i);
 			if (cs->start_line > save)
 			{
 				cout << "\033[0;36m";
@@ -1869,8 +2019,8 @@ public:
 			}
 			if (cs->ck == codeKind::ck_blocks)
 			{
-				fmvecarr<code_sen *> *css =
-					reinterpret_cast<fmvecarr<code_sen *> *>(cs->codeblocks);
+				fmvecarr<code_sen*>* css =
+					reinterpret_cast<fmvecarr<code_sen*> *>(cs->codeblocks);
 				dbg_bakecode(css, save);
 				save = css->last()->end_line + 1;
 			}
@@ -1886,7 +2036,7 @@ public:
 		}
 	}
 
-	static void StaticInit(){
+	static void StaticInit() {
 		wbss.Init();
 		icl.open("icb_dbg.txt");
 		icl << "Inside Code Bake System Start" << endl;
@@ -1977,7 +2127,7 @@ public:
 		}
 	}
 
-	void init()
+	void init(int codemem_siz)
 	{
 		icl << "Create_New_ICB[" << this << "] Initialization...";
 		allcode_sen.NULLState();
@@ -1992,13 +2142,13 @@ public:
 			types.push_back(&basictype[i]);
 		}
 
-		block_data *bd = (block_data *)fm->_New(sizeof(block_data), true);
+		block_data* bd = (block_data*)fm->_New(sizeof(block_data), true);
 		bd->start_pc = &mem[0];
 		bd->add_address_up = 0;
 		bd->variable_data.NULLState();
 		bd->variable_data.Init(10, false, true);
-
-		max_mem_byte = 40960;
+		
+		max_mem_byte = codemem_siz;
 		mem = (byte8*)fm->_New(max_mem_byte, true);
 		for (int i = 0; i < max_mem_byte; ++i)
 		{
@@ -2024,6 +2174,16 @@ public:
 
 		extension.NULLState();
 		extension.Init(8, false, true);
+
+		curErrMsg.NULLState();
+		curErrMsg.Init(128, false);
+
+		codeLineVec.NULLState();
+		codeLineVec.Init(32, false, true);
+
+		codeLineVec_Word.NULLState();
+		codeLineVec_Word.Init(32, false, true);
+
 		icl << "finish" << endl;
 	}
 
@@ -2057,8 +2217,10 @@ public:
 		allcode_sen[index] = cstr;
 	}
 
-	void AddTextBlocks(fmlcstr &codetxt)
+	void AddTextBlocks(fmlcstr& codetxt)
 	{
+		//codeLineVec_Word.push_back(0);
+		int present_line = 1;
 		fmlcstr insstr;
 		insstr.NULLState();
 		insstr.Init(2, false);
@@ -2084,6 +2246,11 @@ public:
 						++ti;
 					}
 					push_word(insstr.c_str());
+					while (i + 1 >= codeLineVec.at(present_line - 1)) {
+						codeLineVec_Word.push_back(allcode_sen.size() - 1);
+						++present_line;
+					}
+
 					continue;
 				}
 				insstr.push_back(codetxt.at(i + 1));
@@ -2100,6 +2267,10 @@ public:
 						++ti;
 					}
 					push_word(insstr.c_str());
+					while (i + 1 >= codeLineVec.at(present_line - 1)) {
+						codeLineVec_Word.push_back(allcode_sen.size() - 1);
+						++present_line;
+					}
 					insstr.clear();
 				}
 				else
@@ -2122,6 +2293,10 @@ public:
 						push_word(insstr.c_str());
 						insstr.clear();
 						insstr.push_back(c);
+						while (i + 1 >= codeLineVec.at(present_line - 1)) {
+							codeLineVec_Word.push_back(allcode_sen.size() - 1);
+							++present_line;
+						}
 						if (icldetail) {
 							if (ti % textper == 0) {
 								icl << i << "\"" << insstr.c_str() << "\"" << endl;
@@ -2133,6 +2308,10 @@ public:
 						}
 						push_word(insstr.c_str());
 						insstr.clear();
+						while (i + 1 >= codeLineVec.at(present_line - 1)) {
+							codeLineVec_Word.push_back(allcode_sen.size() - 1);
+							++present_line;
+						}
 						i++;
 					}
 					else
@@ -2188,6 +2367,12 @@ public:
 					set_word(i, insstr.c_str());
 					if (icldetail) icl << i + 1 << " : \"" << t1.c_str() << "\" => " << insstr.c_str() << endl;
 					allcode_sen.erase(i + 1);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i + 1) {
+							codeLineVec_Word.at(k) -= 1;
+						}
+					}
 				}
 			}
 
@@ -2211,6 +2396,12 @@ public:
 					set_word(i - 1, insstr.c_str());
 					if (icldetail) icl << i << " : \"" << allcode_sen[i] << "\" => \"" << insstr.c_str() << "\"" << endl;
 					allcode_sen.erase(i);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i) {
+							codeLineVec_Word.at(k) -= 1;
+						}
+					}
 				}
 			}
 			if (s == "|")
@@ -2230,6 +2421,12 @@ public:
 					set_word(i, insstr.c_str());
 					if (icldetail) icl << i << " : \"" << allcode_sen[i] << "\" => \"" << insstr.c_str() << "\"" << endl;
 					allcode_sen.erase(i + 1);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i + 1) {
+							codeLineVec_Word.at(k) -= 1;
+						}
+					}
 				}
 			}
 			if (s == "&")
@@ -2249,6 +2446,12 @@ public:
 					set_word(i, insstr.c_str());
 					if (icldetail) icl << i + 1 << " : \"" << allcode_sen[i + 1] << "\" => \"" << insstr.c_str() << "\"" << endl;
 					allcode_sen.erase(i + 1);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i + 1) {
+							codeLineVec_Word.at(k) -= 1;
+						}
+					}
 				}
 			}
 			if (s == ".")
@@ -2296,6 +2499,12 @@ public:
 					if (icldetail) icl << i + 1 << " : \"" << back.c_str() << "\" => \"" << insstr.c_str() << "\"" << endl;
 					allcode_sen.erase(i);
 					allcode_sen.erase(i);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i) {
+							codeLineVec_Word.at(k) -= 2;
+						}
+					}
 				}
 			}
 
@@ -2328,6 +2537,12 @@ public:
 					set_word(i, insstr.c_str());
 					allcode_sen.erase(i + 1);
 					allcode_sen.erase(i + 1);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i + 1) {
+							codeLineVec_Word.at(k) -= 2;
+						}
+					}
 
 					if (icldetail) icl << "combine block : " << i << " ~ " << i + 2 << "\"" << insstr.c_str() << "\"" << endl;
 				}
@@ -2367,10 +2582,16 @@ public:
 					set_word(i, insstr.c_str());
 
 					if (icldetail) icl << "combine block : " << i << " ~ " << i + 2 << "\"" << insstr.c_str() << "\"" << endl;
-					
+
 					allcode_sen.erase(i + 1);
 					allcode_sen.erase(i + 1);
 					allcode_sen.erase(i + 1);
+
+					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
+						if (codeLineVec_Word.at(k) >= i + 1) {
+							codeLineVec_Word.at(k) -= 3;
+						}
+					}
 				}
 			}
 
@@ -2380,26 +2601,28 @@ public:
 		insstr.islocal = true;
 	}
 
-	static void set_codesen(code_sen *sen, fmvecarr<char *> &arr)
+	static void set_codesen(code_sen* sen, fmvecarr<char*>& arr)
 	{
 		sen->maxlen = arr.size();
-		sen->sen = (char **)fm->_New(sizeof(char *) * sen->maxlen, true);
+		sen->sen = (char**)fm->_New(sizeof(char*) * sen->maxlen, true);
 		for (int i = 0; i < sen->maxlen; ++i)
 		{
 			sen->sen[i] = arr[i];
 		}
 	}
 
-	fmvecarr<code_sen *> *AddCodeFromBlockData(fmvecarr<char *> &allcodesen, const char *ScanMod)
+	fmvecarr<code_sen*>* AddCodeFromBlockData(fmvecarr<char*>& allcodesen, const char* ScanMod, unsigned int currentLine = 0)
 	{
 		// allcode_sen-> allcode_sen
 		// ic -> this
 		// code -> sen_arr
 
-		fmvecarr<code_sen *> *senarr =
-			(fmvecarr<code_sen *> *)fm->_New(sizeof(fmvecarr<code_sen *>), true);
+		fmvecarr<code_sen*>* senarr =
+			(fmvecarr<code_sen*> *)fm->_New(sizeof(fmvecarr<code_sen*>), true);
 		senarr->NULLState();
 		senarr->Init(10, false, true);
+
+		unsigned int clwi = currentLine + 1;
 
 		bool readytoStart = true;
 		int StartI = 0;
@@ -2469,6 +2692,12 @@ public:
 							fm->_tempPopLayer();
 							if (icldetail) dbg_codesen(cs, false);
 
+							while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+								clwi += 1;
+							}
+							clwi -= 1;
+							cs->codeline = clwi + 1;
+
 							senarr->push_back(cs);
 							i = startI - 1;
 							StartI = i + 1;
@@ -2528,6 +2757,11 @@ public:
 
 								set_codesen(cs, cbs);
 								fm->_tempPopLayer();
+								while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+									clwi += 1;
+								}
+								clwi -= 1;
+								cs->codeline = clwi + 1;
 								if (icldetail) dbg_codesen(cs, false);
 								senarr->push_back(cs);
 								i += k;
@@ -2549,6 +2783,13 @@ public:
 								}
 
 								set_codesen(cs, cbs);
+
+								while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+									clwi += 1;
+								}
+								clwi -= 1;
+								cs->codeline = clwi + 1;
+
 								fm->_tempPopLayer();
 								if (icldetail) dbg_codesen(cs, false);
 								senarr->push_back(cs);
@@ -2590,6 +2831,13 @@ public:
 						}
 
 						set_codesen(cs, cbs);
+
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2627,7 +2875,12 @@ public:
 						// cbs.pop_back();
 						// cbs.erase(0);
 
-						fmvecarr<code_sen*>* cbv = AddCodeFromBlockData(cbs, "none");
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						//clwi -= 1;
+
+						fmvecarr<code_sen*>* cbv = AddCodeFromBlockData(cbs, "none", clwi);
 						cbs.release();
 						cbs.NULLState();
 
@@ -2640,6 +2893,8 @@ public:
 						{
 							cs->codeblocks->push_back(reinterpret_cast<int*>((*cbv)[u]));
 						}
+
+						cs->codeline = clwi;
 
 						cbv->release();
 						fm->_Delete((byte8*)cbv, sizeof(fmvecarr<code_sen*>));
@@ -2674,6 +2929,13 @@ public:
 						}
 
 						set_codesen(cs, cbs);
+
+						while (codeLineVec_Word.at(clwi) <= StartI + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2705,6 +2967,13 @@ public:
 						}
 
 						set_codesen(cs, cbs);
+
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2739,6 +3008,12 @@ public:
 							}
 
 							set_codesen(cs, cbs);
+							while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+								clwi += 1;
+							}
+							clwi -= 1;
+							cs->codeline = clwi + 1;
+
 							fm->_tempPopLayer();
 							senarr->push_back(cs);
 							if (icldetail) dbg_codesen(cs, false);
@@ -2759,6 +3034,12 @@ public:
 							// �׳� else�� ���
 							cbs.push_back(allcodesen[i]);
 							set_codesen(cs, cbs);
+							while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+								clwi += 1;
+							}
+							clwi -= 1;
+							cs->codeline = clwi + 1;
+
 							fm->_tempPopLayer();
 							senarr->push_back(cs);
 							if (icldetail) dbg_codesen(cs, false);
@@ -2787,6 +3068,12 @@ public:
 							cbs.push_back(allcodesen[i + h]);
 						}
 						set_codesen(cs, cbs);
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2810,6 +3097,12 @@ public:
 							h++;
 						}
 						set_codesen(cs, cbs);
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2833,6 +3126,12 @@ public:
 							h++;
 						}
 						set_codesen(cs, cbs);
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2851,6 +3150,12 @@ public:
 						cbs.Init(3, false, false);
 						cbs.push_back(allcodesen[i]);
 						set_codesen(cs, cbs);
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2868,6 +3173,12 @@ public:
 						cbs.Init(3, false, false);
 						cbs.push_back(allcodesen[i]);
 						set_codesen(cs, cbs);
+						while (codeLineVec_Word.at(clwi) <= i + codeLineVec_Word.at(currentLine) && codeLineVec_Word.size() > clwi) {
+							clwi += 1;
+						}
+						clwi -= 1;
+						cs->codeline = clwi + 1;
+
 						fm->_tempPopLayer();
 						senarr->push_back(cs);
 						if (icldetail) dbg_codesen(cs, false);
@@ -2949,7 +3260,7 @@ public:
 						}
 
 						if (icldetail) icl << "BakeCode_ScanStructTypes : add struct member code block...";
-						fmvecarr<code_sen*>* cbv = AddCodeFromBlockData(bd, "none");
+						fmvecarr<code_sen*>* cbv = AddCodeFromBlockData(bd, "none", clwi);
 						if (icldetail) icl << "finish" << endl;
 
 						cs->codeblocks = (fmvecarr<int*> *)fm->_New(sizeof(fmvecarr<int*>), true);
@@ -2978,7 +3289,7 @@ public:
 		return senarr;
 	}
 
-	int get_global_address_with_globalv_name(char *name)
+	int get_global_address_with_globalv_name(char* name)
 	{
 		for (int i = 0; i < globalVariables.size(); ++i)
 		{
@@ -2992,7 +3303,7 @@ public:
 		return -1;
 	}
 
-	int get_address_with_name(char *name)
+	int get_address_with_name(char* name)
 	{
 		bool found = false;
 		int si = 0;
@@ -3030,11 +3341,11 @@ public:
 		return -1;
 	}
 
-	type_data *get_type_with_namesen(sen *tname)
+	type_data* get_type_with_namesen(sen* tname)
 	{
-		type_data *td = nullptr;
-		type_data *ntd = nullptr;
-		char *bt = tname->at(0).data.str;
+		type_data* td = nullptr;
+		type_data* ntd = nullptr;
+		char* bt = tname->at(0).data.str;
 		for (int i = 0; i < types.size(); ++i)
 		{
 			if (strcmp(bt, types[i]->name.c_str()) == 0)
@@ -3044,21 +3355,26 @@ public:
 			}
 		}
 
-		if(td == nullptr){
+		if (td == nullptr) {
 			for (int i = 0; i < extension.size(); ++i)
 			{
 				ICB_Extension* ext = extension.at(i);
-				for(int k=0;k<ext->exstructArr.size();++k){
+				for (int k = 0; k < ext->exstructArr.size(); ++k) {
 					if (strcmp(bt, ext->exstructArr.at(k)->name.c_str()) == 0)
 					{
 						td = ext->exstructArr.at(k);
 						break;
 					}
 				}
-				if(td != nullptr) break;
+				if (td != nullptr) break;
 			}
 		}
-		
+
+		if (td == nullptr) {
+			UpdateErrMsg(1, "<%s> type is not exist.", bt);
+			return nullptr;
+		}
+
 		for (int i = 1; i < tname->size(); ++i)
 		{
 			char c = 0;
@@ -3072,7 +3388,7 @@ public:
 				ntd = get_addpointer_type(td);
 				if (i != 1)
 				{
-					fm->_Delete((byte8 *)td, sizeof(type_data));
+					fm->_Delete((byte8*)td, sizeof(type_data));
 				}
 				td = ntd;
 			}
@@ -3082,12 +3398,18 @@ public:
 				// get array type with siz
 				ntd = get_array_type(td, siz);
 				td = ntd;
+				i += 2;
+			}
+			else {
+				char cstr[2] = { c, 0 };
+				UpdateErrMsg(2, "<%s> type typeoperation is not exist", cstr);
+				return nullptr;
 			}
 		}
 		return td;
 	}
 
-	type_data *get_type_with_global_vname(char *name)
+	type_data* get_type_with_global_vname(char* name)
 	{
 		for (int i = 0; i < globalVariables.size(); ++i)
 		{
@@ -3098,10 +3420,11 @@ public:
 				return nd.td;
 			}
 		}
+
 		return nullptr;
 	}
 
-	type_data *get_type_with_vname(char *name)
+	type_data* get_type_with_vname(char* name)
 	{
 		bool found = false;
 		int si = 0;
@@ -3150,12 +3473,16 @@ public:
 	{
 		// fm->dbg_fm1_lifecheck();
 		temp_mem* tm = nullptr;
+		fmvecarr<sen*> segs; // term
+		sen* vtemp = nullptr;
+		sen* temp = nullptr;
 		if (ten->at(0).type == 'a')
 		{
 			tm = reinterpret_cast<temp_mem*>(ten->at(0).data.str);
 			if (isvalue) {
 				if (tm->isValue == false) {
 					tm->valuetype_detail = get_sub_type(tm->valuetype_detail);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_EXIT);
 					tm->valuetype = get_int_with_basictype(tm->valuetype_detail);
 					tm->isValue = true;
 					switch (tm->registerMod) {
@@ -3281,14 +3608,18 @@ public:
 			{
 				inner_params->pop_back();
 				inner_params->erase(0);
-				//wbss.dbg_sen(inner_params, InsideCode_Bake::icl);
+				//wbss.dbg_sen(inner_params);
 				int coma = wbss.search_word_first_in_specific_oc_layer(inner_params, 0, "(", ")", 0, ",");
 				int savecomma = -1;
+				temp_mem* rtm = nullptr;
+				sen* param_sen = nullptr;
 				while (coma != -1)
 				{
-					sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
-					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+					param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
+					//wbss.dbg_sen(param_sen);
+					rtm = get_asm_from_sen(param_sen, true, true);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_DBG_RTM);
+
 					for (int k = 0; k < rtm->mem.size(); ++k)
 					{
 						tm->mem.push_back(rtm->mem[k]);
@@ -3302,9 +3633,10 @@ public:
 					fm->_Delete((byte8*)param_sen, sizeof(sen));
 				}
 
-				sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, inner_params->size() - 1);
-				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-				temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+				param_sen = wbss.sen_cut(inner_params, savecomma + 1, inner_params->size() - 1);
+				//wbss.dbg_sen(param_sen);
+				rtm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_DBG_RTM);
 
 				for (int k = 0; k < rtm->mem.size(); ++k)
 				{
@@ -3319,12 +3651,22 @@ public:
 				fm->_Delete((byte8*)param_sen, sizeof(sen));
 				release_tempmem(rtm);
 				return tm;
+
+			ERR_GETASMFROMSEN_USEFUNCTION_DBG_RTM:
+				inner_params->release();
+				fm->_Delete((byte8*)inner_params, sizeof(sen));
+				param_sen->release();
+				fm->_Delete((byte8*)param_sen, sizeof(sen));
+				release_tempmem(rtm);
+				release_tempmem(tm);
+				return nullptr;
 			}
 			else if (strcmp(funcname, "inp") == 0)
 			{
 				inner_params->pop_back();
 				inner_params->erase(0);
 				temp_mem* rtm = get_asm_from_sen(inner_params, true, true);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_INP_RTM);
 				for (int k = 0; k < rtm->mem.size(); ++k)
 				{
 					tm->mem.push_back(rtm->mem[k]);
@@ -3336,28 +3678,30 @@ public:
 				fm->_Delete((byte8*)inner_params, sizeof(sen));
 				release_tempmem(rtm);
 				return tm;
-			}
-			else if (strcmp(funcname, "sizeof") == 0)
-			{
-				inner_params->pop_back();
-				inner_params->erase(0);
-				// type_data* td = get_type_with_namesen(inner_params);
 
-				// release_tempmem(rtm);
-			}
-			else if (strcmp(funcname, "codeptr") == 0)
-			{
-				// release_tempmem(rtm);
-			}
-			else if (strcmp(funcname, "goto") == 0)
-			{
-				// release_tempmem(rtm);
+			ERR_GETASMFROMSEN_USEFUNCTION_INP_RTM:
+				inner_params->release();
+				fm->_Delete((byte8*)inner_params, sizeof(sen));
+				release_tempmem(rtm);
+				release_tempmem(tm);
+				return nullptr;
 			}
 
 			if (isext == false) {
+				sen* params_sen = nullptr;
+				sen* param_sen = nullptr;
+				temp_mem* rtm = nullptr;
+				int coma = 0;
+				int savecoma = -1;
+				int last = 0;
+				int addadd = 0;
+				int paramid = 0;
+				int paramCount = 0;
+				int ll = 0;
 				fd = get_func_with_name(code->at(nameloc).data.str);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_FD_NOTEXIST);
 
-				sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
+				params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
 				if (params_sen->size() == 0)
 				{
 					tm->mem.push_back((byte8)insttype::IT_FUNC); // FUNC
@@ -3378,21 +3722,22 @@ public:
 				}
 
 				//wbss.dbg_sen(params_sen);
-				int coma = wbss.search_word_first_in_specific_oc_layer(params_sen, 0, "(", ")", 0, ",");
-				int savecoma = -1;
-				int last = params_sen->size() - 1;
+				coma = wbss.search_word_first_in_specific_oc_layer(params_sen, 0, "(", ")", 0, ",");
+				savecoma = -1;
+				last = params_sen->size() - 1;
 
-				int addadd = 0;
-				int paramid = 0;
-				int paramCount = 0;
+				addadd = 0;
+				paramid = 0;
+				paramCount = 0;
 
 				tm->mem.push_back((byte8)insttype::IT_FUNC);
 
 				while (coma != -1)
 				{
-					sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
-					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+					param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
+					//wbss.dbg_sen(param_sen);
+					rtm = get_asm_from_sen(param_sen, true, true);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_RTM);
 
 					if (rtm->valuetype_detail->typetype == 's')
 					{
@@ -3402,6 +3747,7 @@ public:
 							tm->mem.push_back(ptrtm->mem[i]);
 						}
 						release_tempmem(ptrtm);
+						ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_RTM);
 					}
 					else
 					{
@@ -3451,22 +3797,25 @@ public:
 					}
 
 					++paramid;
-
-					param_sen->release();
-					fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-					release_tempmem(rtm);
-
 					savecoma = coma;
 					coma = wbss.search_word_first_in_specific_oc_layer(params_sen, coma + 1, "(", ")", 0, ",");
 					// coma = wbss.search_word_first(coma + 1, params_sen, ",");
 					paramCount += 1;
+
+					param_sen->release();
+					fm->_Delete((byte8*)param_sen, sizeof(sen));
+					release_tempmem(rtm);
+
+					continue;
+
+
 				}
 
 				//wbss.dbg_sen(params_sen);
-				sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
+				param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
 				//wbss.dbg_sen(param_sen);
-				temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+				rtm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_RTM);
 				if (rtm->valuetype_detail->typetype == 's')
 				{
 					temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -3475,6 +3824,7 @@ public:
 						tm->mem.push_back(ptrtm->mem[i]);
 					}
 					release_tempmem(ptrtm);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_RTM);
 				}
 				else
 				{
@@ -3523,7 +3873,7 @@ public:
 				}
 
 				tm->mem.push_back((byte8)insttype::IT_FUNCJMP); // jmp
-				int ll = tm->mem.size();
+				ll = tm->mem.size();
 				for (int k = 0; k < 4; ++k)
 				{
 					tm->mem.push_back(0);
@@ -3545,51 +3895,73 @@ public:
 				release_tempmem(rtm);
 
 				return tm;
+
+			ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_RTM:
+				inner_params->release();
+				fm->_Delete((byte8*)inner_params, sizeof(sen));
+				params_sen->release();
+				fm->_Delete((byte8*)params_sen, sizeof(sen));
+				param_sen->release();
+				fm->_Delete((byte8*)param_sen, sizeof(sen));
+				release_tempmem(rtm);
+				release_tempmem(tm);
+
+			ERR_GETASMFROMSEN_USEFUNCTION_NORMAL_FD_NOTEXIST:
+				return nullptr;
 			}
 			else
 			{
 				sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
+				int last = 0;
+				int coma = 0;
+				int savecoma = 0;
+				int paramCount = 0;
+				temp_mem* rtm = nullptr;
+				sen* param_sen = nullptr;
+				int ll = 0;
+
 				if (params_sen->size() == 0)
 				{
 					tm->mem.push_back((byte8)insttype::IT_FUNC);		// FUNC
 					tm->mem.push_back((byte8)insttype::EXTENSION_INST); // jmp
 					int ll = tm->mem.size();
-					
+
 					for (int k = 0; k < 4; ++k)
 					{
 						tm->mem.push_back(0);
 					}
-					*reinterpret_cast<uint *>(&tm->mem[ll]) = (uint)(extID);
+					*reinterpret_cast<uint*>(&tm->mem[ll]) = (uint)(extID);
 					ll += 4;
 					for (int k = 0; k < 4; ++k)
 					{
 						tm->mem.push_back(0);
 					}
-					*reinterpret_cast<uint *>(&tm->mem[ll]) = (uint)(exfuncID); // byte8* but real value is function pointer of extension.
+					*reinterpret_cast<uint*>(&tm->mem[ll]) = (uint)(exfuncID); // byte8* but real value is function pointer of extension.
 
 					inner_params->release();
-					fm->_Delete((byte8 *)inner_params, sizeof(sen));
+					fm->_Delete((byte8*)inner_params, sizeof(sen));
 
 					params_sen->release();
 					fm->_Delete((byte8*)params_sen, sizeof(sen));
 					return tm;
 				}
 
-				//wbss.dbg_sen(params_sen, InsideCode_Bake::icl);
-				int last = params_sen->size() - 1;
+				//wbss.dbg_sen(params_sen);
+				last = params_sen->size() - 1;
 
-				int coma = wbss.search_word_end_in_specific_oc_layer(params_sen, last, "(", ")", 0, ",");
-				int savecoma = last + 1;
+				coma = wbss.search_word_end_in_specific_oc_layer(params_sen, last, "(", ")", 0, ",");
+				savecoma = last + 1;
 
-				int paramCount = fd->param_data.size() - 1;
+				paramCount = fd->param_data.size() - 1;
 
 				tm->mem.push_back((byte8)insttype::IT_FUNC);
 
 				while (coma != -1)
 				{
-					sen* param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
-					//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-					temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+					param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
+					//wbss.dbg_sen(param_sen);
+					rtm = get_asm_from_sen(param_sen, true, true);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_EXT_RTM);
 
 					if (rtm->valuetype_detail->typetype == 's')
 					{
@@ -3599,6 +3971,7 @@ public:
 							tm->mem.push_back(ptrtm->mem[i]);
 						}
 						release_tempmem(ptrtm);
+						ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_EXT_RTM);
 					}
 					else
 					{
@@ -3647,22 +4020,21 @@ public:
 						}
 					}
 
-
-					param_sen->release();
-					fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-					release_tempmem(rtm);
-
 					savecoma = coma;
 					coma = wbss.search_word_end_in_specific_oc_layer(params_sen, savecoma - 1, "(", ")", 0, ",");
 					// coma = wbss.search_word_first(coma + 1, params_sen, ",");
 					--paramCount;
+
+					param_sen->release();
+					fm->_Delete((byte8*)param_sen, sizeof(sen));
+					release_tempmem(rtm);
 				}
 
-				//wbss.dbg_sen(params_sen, InsideCode_Bake::icl);
-				sen* param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
-				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-				temp_mem* rtm = get_asm_from_sen(param_sen, true, true);
+				//wbss.dbg_sen(params_sen);
+				param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
+				//wbss.dbg_sen(param_sen);
+				rtm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_EXT_RTM);
 				if (rtm->valuetype_detail->typetype == 's')
 				{
 					temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -3671,6 +4043,7 @@ public:
 						tm->mem.push_back(ptrtm->mem[i]);
 					}
 					release_tempmem(ptrtm);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_EXT_RTM);
 				}
 				else
 				{
@@ -3683,7 +4056,7 @@ public:
 						tm->mem.push_back((byte8)insttype::IT_CASTING_A);
 						tm->mem.push_back((byte8)ct);
 					}
-					
+
 					/*
 					int ll = tm->mem.size();
 					for(int k=0;k<4;++k){
@@ -3720,7 +4093,7 @@ public:
 				}
 
 				tm->mem.push_back((byte8)insttype::EXTENSION_INST); // ext instruction
-				int ll = tm->mem.size();
+				ll = tm->mem.size();
 				for (int k = 0; k < 4; ++k)
 				{
 					tm->mem.push_back(0);
@@ -3748,6 +4121,17 @@ public:
 				release_tempmem(rtm);
 
 				return tm;
+
+			ERR_GETASMFROMSEN_USEFUNCTION_EXT_RTM:
+				inner_params->release();
+				fm->_Delete((byte8*)inner_params, sizeof(sen));
+				params_sen->release();
+				fm->_Delete((byte8*)params_sen, sizeof(sen));
+				param_sen->release();
+				fm->_Delete((byte8*)param_sen, sizeof(sen));
+				release_tempmem(rtm);
+				release_tempmem(tm);
+				return nullptr;
 			}
 		}
 
@@ -3779,7 +4163,7 @@ public:
 					}
 				}
 
-				if (isvalue && td->typesiz <= 4)
+				if (isvalue)
 				{
 					if (is_a)
 					{
@@ -3796,13 +4180,14 @@ public:
 				}
 				else
 				{
+
 					tm->valuetype = 8;
 					tm->valuetype_detail = get_addpointer_type(td);
 					return tm;
 				}
 			}
 
-			//wbss.dbg_sen(ten, InsideCode_Bake::icl);
+			//wbss.dbg_sen(ten);
 			int varid = get_address_with_name(ten->at(0).data.str);
 			if (varid >= 0)
 			{
@@ -3829,7 +4214,7 @@ public:
 					}
 				}
 
-				if (isvalue && td->typesiz <= 4)
+				if (isvalue)
 				{
 					if (is_a)
 					{
@@ -3858,6 +4243,7 @@ public:
 				str.Init(2, false);
 				str = ten->at(0).data.str;
 				TBT t = DecodeTextBlock(str);
+
 				switch (t)
 				{
 				case TBT::_value_bool:
@@ -4025,6 +4411,14 @@ public:
 					tm->valuetype = 8;
 				}
 				break;
+				default:
+				{
+					UpdateErrMsg(5, "Unknown identifier <%s>", str.c_str());
+					str.release();
+					release_tempmem(tm);
+					return nullptr;
+				}
+				break;
 				}
 				tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				str.islocal = true;
@@ -4034,14 +4428,13 @@ public:
 
 		// seperate term and operator of expr
 		fm->_tempPushLayer(); // this layer pop when return.
-		fmvecarr<sen*> segs; // term
+
 		segs.NULLState();
 		segs.Init(2, false, false);
-		sen* vtemp = (sen*)fm->_New(sizeof(sen), true);
+		vtemp = (sen*)fm->_New(sizeof(sen), true);
 		vtemp->NULLState();
 		vtemp->Init(2, false, true);
 
-		sen* temp = nullptr;
 		for (int i = 0; i < ten->size(); ++i)
 		{
 			char c = ten->at(i).data.str[0];
@@ -4050,7 +4443,9 @@ public:
 				temp = wbss.oc_search(ten, i, "(", ")");
 				temp->erase(0);
 				temp->pop_back();
+				//wbss.dbg_sen(temp);
 				i += temp->size() + 1;
+				//wbss.dbg_sen(segs.at(i));
 				segs.push_back(temp);
 			}
 			else if (c == '[')
@@ -4135,13 +4530,10 @@ public:
 				TBT tbt = DecodeTextBlock(str);
 				if (tbt == TBT::_operation)
 				{
-					/*
 					for (int u = 0; u < segs.size(); ++u) {
-						icl << segs.at(u)->at(0).data.str << " ][ ";
+						cout << segs.at(u)->at(0).data.str << " ][ ";
 					}
-					*/
-					
-					icl << endl;
+					cout << endl;
 					if (strcmp(str.Arr, basicoper[k].symbol) == 0)
 					{
 						if (basicoper[k].mod == 'o')
@@ -4153,18 +4545,26 @@ public:
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 								temp_mem* left_ten = nullptr;
 								temp_mem* right_ten = nullptr;
+								int opertype = 0;
+								int add = 1;
+								int leftcast = 0;
+								int rightcast = 0;
+								sen* tempseg = nullptr;
+
 								left_ten = get_asm_from_sen(segs.at(i - 1), true, true);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_OPER_ARITHMATH_TEMPMEM);
 								right_ten = get_asm_from_sen(segs.at(i + 1), false, true);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_OPER_ARITHMATH_TEMPMEM);
 								/*
 								wbss.dbg_sen(segs.at(i-1));
 								cout << basicoper[k].symbol << endl;
 								wbss.dbg_sen(segs.at(i+1));
 								*/
-								int opertype = combine_opertype(left_ten->valuetype,
+								opertype = combine_opertype(left_ten->valuetype,
 									right_ten->valuetype);
-								int add = 1;
-								int leftcast = (int)get_cast_type(left_ten->valuetype, opertype);
-								int rightcast = (int)get_cast_type(right_ten->valuetype, opertype);
+								add = 1;
+								leftcast = (int)get_cast_type(left_ten->valuetype, opertype);
+								rightcast = (int)get_cast_type(right_ten->valuetype, opertype);
 
 								if (leftcast != (int)casting_type::nocasting)
 									++add;
@@ -4208,8 +4608,8 @@ public:
 								else
 								{
 									int opp = basicoper[k].startop + 2 * opertype + 1;
-									result_ten->mem.push_back((byte8)insttype::IT_POP_A);
 									result_ten->mem.push_back((byte8)opp);
+									result_ten->mem.push_back((byte8)insttype::IT_POP_A);
 									result_ten->registerMod = 'B';
 								}
 
@@ -4225,7 +4625,7 @@ public:
 								result_ten->valuetype_detail =
 									get_basic_type_with_int(result_ten->valuetype);
 
-								sen* tempseg = segs.at(i + 1);
+								tempseg = segs.at(i + 1);
 								tempseg->release();
 								fm->_Delete((byte8*)tempseg, sizeof(sen));
 								segs.erase(i + 1);
@@ -4241,6 +4641,13 @@ public:
 
 								release_tempmem(left_ten);
 								release_tempmem(right_ten);
+								continue;
+
+							ERR_GETASMFROMSEN_OPER_ARITHMATH_TEMPMEM:
+								release_tempmem(left_ten);
+								release_tempmem(right_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
 							else if (basicoper[k].endop - basicoper[k].startop == 1)
 							{
@@ -4250,18 +4657,26 @@ public:
 										(temp_mem*)fm->_New(sizeof(temp_mem), true);
 									temp_mem* left_ten = nullptr;
 									temp_mem* right_ten = nullptr;
+									int opertype = 0;
+									int add = 1;
+									int leftcast = 0;
+									int rightcast = 0;
+									sen* tempseg = nullptr;
+
 									left_ten = get_asm_from_sen(segs.at(i - 1), true, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_OPER_CONDITIONAL_TEMPMEM);
 									right_ten = get_asm_from_sen(segs.at(i + 1), false, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_OPER_CONDITIONAL_TEMPMEM);
 									/*
 									wbss.dbg_sen(segs.at(i-1));
 									cout << basicoper[k].symbol << endl;
 									wbss.dbg_sen(segs.at(i+1));
 									*/
-									int opertype = combine_opertype(left_ten->valuetype,
+									opertype = combine_opertype(left_ten->valuetype,
 										right_ten->valuetype);
-									int add = 1;
-									int leftcast = (int)get_cast_type(left_ten->valuetype, opertype);
-									int rightcast = (int)get_cast_type(right_ten->valuetype, opertype);
+									add = 1;
+									leftcast = (int)get_cast_type(left_ten->valuetype, opertype);
+									rightcast = (int)get_cast_type(right_ten->valuetype, opertype);
 
 									if (leftcast != (int)casting_type::nocasting)
 										++add;
@@ -4322,7 +4737,7 @@ public:
 										get_basic_type_with_int(result_ten->valuetype);
 									result_ten->isValue = true;
 
-									sen* tempseg = segs.at(i + 1);
+									tempseg = segs.at(i + 1);
 									tempseg->release();
 									fm->_Delete((byte8*)tempseg, sizeof(sen));
 									segs.erase(i + 1);
@@ -4338,16 +4753,26 @@ public:
 
 									release_tempmem(left_ten);
 									release_tempmem(right_ten);
+
+									continue;
+
+								ERR_GETASMFROMSEN_OPER_CONDITIONAL_TEMPMEM:
+									release_tempmem(left_ten);
+									release_tempmem(right_ten);
+									release_tempmem(result_ten);
+									goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 								}
 								else if (k == 16)
 								{
 
 									// ! not
+									sen* tempseg = nullptr;
+									int add = 1;
 									temp_mem* result_ten =
 										(temp_mem*)fm->_New(sizeof(temp_mem), true);
 									temp_mem* right_ten = nullptr;
 									right_ten = get_asm_from_sen(segs.at(i + 1), true, true);
-									int add = 1;
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_NOTOPER_TEMPMEM);
 									result_ten->mem.NULLState();
 									result_ten->mem.Init(result_ten->mem.size() + 1, false, true);
 									for (int u = 0; u < right_ten->mem.size(); ++u)
@@ -4376,7 +4801,7 @@ public:
 										get_basic_type_with_int(result_ten->valuetype);
 									result_ten->isValue = true;
 
-									sen* tempseg = segs.at(i + 1);
+									tempseg = segs.at(i + 1);
 									tempseg->release();
 									fm->_Delete((byte8*)tempseg, sizeof(sen));
 									segs.erase(i + 1);
@@ -4386,16 +4811,26 @@ public:
 										reinterpret_cast<char*>(result_ten);
 
 									release_tempmem(right_ten);
+
+									continue;
+
+								ERR_GETASMFROMSEN_NOTOPER_TEMPMEM:
+									release_tempmem(right_ten);
+									release_tempmem(result_ten);
+									goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 								}
 								else
 								{
 									// && and ||
+									sen* tempseg = nullptr;
 									temp_mem* result_ten =
 										(temp_mem*)fm->_New(sizeof(temp_mem), true);
 									temp_mem* left_ten = nullptr;
 									temp_mem* right_ten = nullptr;
 									left_ten = get_asm_from_sen(segs.at(i - 1), true, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_BOOLOPER_TEMPMEM);
 									right_ten = get_asm_from_sen(segs.at(i + 1), false, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_BOOLOPER_TEMPMEM);
 									result_ten->mem.NULLState();
 									result_ten->mem.Init(result_ten->mem.size() + 1, false, true);
 									for (int u = 0; u < left_ten->mem.size(); ++u)
@@ -4428,7 +4863,7 @@ public:
 										get_basic_type_with_int(result_ten->valuetype);
 									result_ten->isValue = true;
 
-									sen* tempseg = segs.at(i + 1);
+									tempseg = segs.at(i + 1);
 									tempseg->release();
 									fm->_Delete((byte8*)tempseg, sizeof(sen));
 									segs.erase(i + 1);
@@ -4445,7 +4880,13 @@ public:
 									release_tempmem(left_ten);
 									release_tempmem(right_ten);
 									--i;
+									continue;
 
+								ERR_GETASMFROMSEN_BOOLOPER_TEMPMEM:
+									release_tempmem(left_ten);
+									release_tempmem(right_ten);
+									release_tempmem(result_ten);
+									goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 								}
 							}
 						}
@@ -4465,16 +4906,28 @@ public:
 								temp_mem* left_ten = nullptr;
 								temp_mem* right_ten = nullptr;
 
+								type_data* std = nullptr;
+								char cc[4] = {};
+								sen* tempseg = nullptr;
+								type_data* td = nullptr;
+
 								bool is_array_type = false;
 								if (segs[i - 1]->at(0).type == 'a') {
 									//if asm
 									type_data* imtd = reinterpret_cast<type_data*>(reinterpret_cast<temp_mem*>(segs[i - 1]->at(0).data.str)->valuetype_detail->structptr);
 									is_array_type = imtd->typetype == 'a';
 								}
-								type_data* ltd = get_type_with_vname(segs[i - 1]->at(0).data.str);
+
+								type_data* ltd = get_type_with_global_vname(segs[i - 1]->at(0).data.str);;
 								if (ltd == nullptr) {
-									ltd = get_type_with_global_vname(segs[i - 1]->at(0).data.str);
+									ltd = get_type_with_vname(segs[i - 1]->at(0).data.str);
 								}
+
+								if (ltd == nullptr) {
+									UpdateErrMsg(5, "Unknown identifier %s", segs[i - 1]->at(0).data.str);
+									release_tempmem(result_ten);
+								}
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_RELEASE_SEGS);
 
 								if (ltd == nullptr) {
 									is_array_type |= false;
@@ -4486,12 +4939,15 @@ public:
 								if (is_array_type) {
 									//case 1 : array type
 									left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_ARRAYINDEX_SUBTYPE_NOTEXIST);
 								}
 								else {
 									//case 2 : pointer type
 									left_ten = get_asm_from_sen(segs.at(i - 1), true, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_ARRAYINDEX_SUBTYPE_NOTEXIST);
 								}
 								right_ten = get_asm_from_sen(segs.at(i + 1), true, true);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_ARRAYINDEX_SUBTYPE_NOTEXIST);
 
 								result_ten->mem.NULLState();
 								result_ten->mem.Init(result_ten->mem.size() + 1, false, true);
@@ -4501,8 +4957,9 @@ public:
 									result_ten->mem.push_back(right_ten->mem[u]);
 								}
 
-								type_data* td = get_sub_type(left_ten->valuetype_detail);
-								type_data* std = nullptr;
+								td = get_sub_type(left_ten->valuetype_detail);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_ARRAYINDEX_SUBTYPE_NOTEXIST);
+
 								if (is_array_type) {
 									std = get_sub_type(td);
 								}
@@ -4511,7 +4968,7 @@ public:
 								}
 								//type_data *std = get_sub_type(td);
 								result_ten->mem.push_back((byte8)insttype::IT_PUSH_B_CONST_4);
-								char cc[4] = {};
+
 								if (is_array_type) {
 									*reinterpret_cast<uint*>(cc) = std->typesiz;
 								}
@@ -4642,7 +5099,7 @@ public:
 									result_ten->valuetype_detail = get_addpointer_type(td);
 								}
 
-								sen* tempseg = segs.at(i + 1);
+								tempseg = segs.at(i + 1);
 								tempseg->release();
 								fm->_Delete((byte8*)tempseg, sizeof(sen));
 								segs.erase(i + 1);
@@ -4661,22 +5118,34 @@ public:
 								fm->_Delete((byte8*)tempseg, sizeof(sen));
 								segs.erase(i - 1);
 								--i;
+
 								release_tempmem(left_ten);
 								release_tempmem(right_ten);
+								break;
+
+							ERR_GETASMFROMSEN_PTROPER_ARRAYINDEX_SUBTYPE_NOTEXIST:
+								release_tempmem(left_ten);
+								release_tempmem(right_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
-							break;
 							case '.':
 							{
 								temp_mem* result_ten =
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 
 								temp_mem* left_ten = nullptr;
-								//wbss.dbg_sen(segs.at(i - 1), InsideCode_Bake::icl);
-								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
+								//wbss.dbg_sen(segs.at(i - 1));
+
 								type_data* member_td = nullptr;
 								int add_address = 0;
+								type_data* struct_td = nullptr;
 
-								type_data* struct_td = get_sub_type(left_ten->valuetype_detail);
+								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_STRUCTMEMBER_SUBTYPE_NOTEXIST);
+
+								struct_td = get_sub_type(left_ten->valuetype_detail);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_STRUCTMEMBER_SUBTYPE_NOTEXIST);
 								member_td = struct_td;
 
 								if (struct_td->typetype == 's' && segs.at(i + 1)->at(0).type == 'w') {
@@ -4793,21 +5262,39 @@ public:
 									fm->_Delete((byte8*)tempseg, sizeof(sen));
 									segs.erase(i - 1);
 									i -= 2;
-
-									release_tempmem(left_ten);
 								}
+
+								release_tempmem(left_ten);
+								break;
+
+							ERR_GETASMFROMSEN_PTROPER_STRUCTMEMBER_SUBTYPE_NOTEXIST:
+								release_tempmem(left_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
-							break;
+
 							case '-':
 							{
 								temp_mem* result_ten =
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 								temp_mem* left_ten = nullptr;
+								type_data* td = nullptr;
 								left_ten = get_asm_from_sen(segs.at(i - 1), true, false);
-								type_data* td;
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_ARROW_TEMPMEM);
 								if (segs.at(i + 1)->size() == 1 && segs.at(i + 1)->at(0).type == 'w')
 								{
-									td = get_type_with_vname(segs.at(i + 1)->at(0).data.str);
+									type_data* td = get_type_with_global_vname(segs.at(i + 1)->at(0).data.str);
+									if (td == nullptr) {
+										td = get_type_with_vname(segs.at(i + 1)->at(0).data.str);
+									}
+
+									if (td == nullptr) {
+										UpdateErrMsg(5, "Unknown identifier %s", segs.at(i + 1)->at(0).data.str);
+										release_tempmem(result_ten);
+										release_tempmem(left_ten);
+									}
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_RELEASE_SEGS);
+									//td = get_type_with_vname(segs.at(i + 1)->at(0).data.str);
 									// a.b
 									uint bid = 0;
 									bool perfect = false;
@@ -4892,6 +5379,13 @@ public:
 								}
 
 								release_tempmem(left_ten);
+
+								break;
+
+							ERR_GETASMFROMSEN_PTROPER_ARROW_TEMPMEM:
+								release_tempmem(left_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
 							break;
 							case '&':
@@ -4899,13 +5393,16 @@ public:
 								temp_mem* result_ten =
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 								temp_mem* right_ten = nullptr;
+								sen* tempseg = nullptr;
 								if (is_a)
 								{
 									right_ten = get_asm_from_sen(segs.at(i + 1), true, false);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_GETADDR_TEMPMEM);
 								}
 								else
 								{
 									right_ten = get_asm_from_sen(segs.at(i + 1), false, false);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_GETADDR_TEMPMEM);
 								}
 
 								result_ten->mem.NULLState();
@@ -4919,7 +5416,7 @@ public:
 								result_ten->valuetype = 8;
 								result_ten->valuetype_detail = right_ten->valuetype_detail;
 
-								sen* tempseg = segs.at(i + 1);
+								tempseg = segs.at(i + 1);
 								tempseg->release();
 								fm->_Delete((byte8*)tempseg, sizeof(sen));
 								segs.erase(i + 1);
@@ -4929,6 +5426,13 @@ public:
 									reinterpret_cast<char*>(result_ten);
 
 								release_tempmem(right_ten);
+
+								break;
+
+							ERR_GETASMFROMSEN_PTROPER_GETADDR_TEMPMEM:
+								release_tempmem(right_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
 							break;
 							case '*':
@@ -4939,15 +5443,19 @@ public:
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
 								temp_mem* right_ten =
 									(temp_mem*)fm->_New(sizeof(temp_mem), true);
+								sen* tempseg = nullptr;
 								type_data* td = get_sub_type(right_ten->valuetype_detail);
+								ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_GETVALUE_SUBTYPE_NOTEXIST);
 
 								if (is_a)
 								{
 									right_ten = get_asm_from_sen(segs.at(i + 1), true, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_GETVALUE_SUBTYPE_NOTEXIST);
 								}
 								else
 								{
 									right_ten = get_asm_from_sen(segs.at(i + 1), false, true);
+									ICB_ERR_CHECK(ERR_GETASMFROMSEN_PTROPER_GETVALUE_SUBTYPE_NOTEXIST);
 								}
 								result_ten->mem.NULLState();
 								result_ten->mem.Init(2, false, true);
@@ -4968,7 +5476,7 @@ public:
 								result_ten->valuetype = 8;
 								result_ten->valuetype_detail = td;
 
-								sen* tempseg = segs.at(i + 1);
+								tempseg = segs.at(i + 1);
 								tempseg->release();
 								fm->_Delete((byte8*)tempseg, sizeof(sen));
 								segs.erase(i + 1);
@@ -4976,8 +5484,13 @@ public:
 								segs[i]->at(0).type = 'a'; // asm
 								segs[i]->at(0).data.str =
 									reinterpret_cast<char*>(result_ten);
-
 								release_tempmem(right_ten);
+								break;
+
+							ERR_GETASMFROMSEN_PTROPER_GETVALUE_SUBTYPE_NOTEXIST:
+								release_tempmem(right_ten);
+								release_tempmem(result_ten);
+								goto ERR_GETASMFROMSEN_RELEASE_SEGS;
 							}
 							break;
 							}
@@ -4999,6 +5512,7 @@ public:
 				if (tm->isValue == false)
 				{
 					type_data* std = get_sub_type(tm->valuetype_detail);
+					ICB_ERR_CHECK(ERR_GETASMFROMSEN_RELEASE_SEGS);
 					if (std->typetype == 's' || std->typetype == 'a') {
 						switch (tm->registerMod)
 						{
@@ -5025,6 +5539,7 @@ public:
 					else
 					{
 						tm->valuetype_detail = get_sub_type(tm->valuetype_detail);
+						ICB_ERR_CHECK(ERR_GETASMFROMSEN_RELEASE_SEGS);
 						tm->valuetype = get_int_with_basictype(tm->valuetype_detail);
 						tm->isValue = true;
 						switch (tm->registerMod)
@@ -5130,6 +5645,8 @@ public:
 		}
 		cout << endl;
 
+	ERR_GETASMFROMSEN_RELEASE_SEGS:
+
 		for (int u = 0; u < segs.size(); ++u) {
 			sen* tempseg = segs.at(u);
 			tempseg->release();
@@ -5137,10 +5654,13 @@ public:
 		}
 
 		fm->_tempPopLayer();
+
+	ERR_GETASMFROMSEN_EXIT:
+
 		return nullptr;
 	}
 
-	void interpret_AddStruct(code_sen* cs){
+	void interpret_AddStruct(code_sen* cs) {
 		sen* code = get_sen_from_codesen(cs);
 		char* cname = code->at(1).data.str;
 		//char *name = (char*)fm->_New(strlen(cname)+1, true);
@@ -5154,6 +5674,8 @@ public:
 		int cpivot = 3;
 		int totalSiz = 0;
 		while (cpivot < code->size() - 1) {
+			sen* type_sen = nullptr;
+			type_data* td = nullptr;
 			int loc = wbss.search_word_first(cpivot, code, ";");
 			sen* member_sen = wbss.sen_cut(code, cpivot, loc - 1);
 			//wbss.dbg_sen(member_sen);
@@ -5161,8 +5683,9 @@ public:
 			cname = member_sen->last().data.str;
 			nd.name = cname; //(char*)fm->_New(strlen(cname)+1, true);
 			//strcpy(nd.name, cname);
-			sen* type_sen = wbss.sen_cut(member_sen, 0, member_sen->size() - 1);
-			type_data* td = get_type_with_namesen(type_sen);
+			type_sen = wbss.sen_cut(member_sen, 0, member_sen->size() - 1);
+			td = get_type_with_namesen(type_sen);
+			ICB_ERR_CHECK(ERR_INTERPRET_ADDSTRUCT_TD_NOTEXIST);
 			nd.td = td;
 			nd.add_address = totalSiz;
 			totalSiz += td->typesiz;
@@ -5174,27 +5697,51 @@ public:
 
 			type_sen->release();
 			fm->_Delete((byte8*)type_sen, sizeof(sen));
+
+			continue;
+
+		ERR_INTERPRET_ADDSTRUCT_TD_NOTEXIST:
+			member_sen->release();
+			fm->_Delete((byte8*)member_sen, sizeof(sen));
+
+			type_sen->release();
+			fm->_Delete((byte8*)type_sen, sizeof(sen));
+
+			stdata->member_data.release();
+			stdata->name.release();
+
+			code->release();
+			fm->_Delete((byte8*)code, sizeof(sen));
+
+			return;
 		}
 		type_data* newtype = (type_data*)fm->_New(sizeof(type_data), true);
 		*newtype = create_type(cname, totalSiz, 's', reinterpret_cast<int*>(stdata));
+
 		types.push_back(newtype);
+
+		code->release();
+		fm->_Delete((byte8*)code, sizeof(sen));
 	}
 
-	void compile_addVariable(code_sen *cs)
+	void compile_addVariable(code_sen* cs)
 	{
-		sen *code = get_sen_from_codesen(cs);
-		//wbss.dbg_sen(code, InsideCode_Bake::icl);
+		sen* code = get_sen_from_codesen(cs);
+		//wbss.dbg_sen(code);
 		int loc = code->up - 1;
-		char *variable_name = code->at(loc).data.str;
-		sen *type_name = wbss.sen_cut(code, 0, loc - 1);
+		char* variable_name = code->at(loc).data.str;
+		sen* type_name = wbss.sen_cut(code, 0, loc - 1);
 		// cout << variable_name << endl;
 		// wbss.dbg_sen(type_name);
 		if (blockstack.size() == 0)
 		{
 			// global variable
-			NamingData *nd = (NamingData *)fm->_New(sizeof(NamingData), true);
+			NamingData* nd = nullptr;
+			type_data* td = get_type_with_namesen(type_name);
+			ICB_ERR_CHECK(ERR_COMPILE_ADDVARIABLE_GLOBAL_TD_NOTEXIST);
+			nd = (NamingData*)fm->_New(sizeof(NamingData), true);
 			nd->name = variable_name;
-			nd->td = get_type_with_namesen(type_name);
+			nd->td = td;
 			if (globalVariables.size() == 0)
 			{
 				nd->add_address = 0;
@@ -5208,11 +5755,13 @@ public:
 		}
 		else
 		{
-			type_data *td = get_type_with_namesen(type_name);
-			mem[writeup] = 0;
-			++writeup;
 			int spup = 0;
 			int kst = 0;
+			NamingData nd;
+			type_data* td = get_type_with_namesen(type_name);
+			ICB_ERR_CHECK(ERR_COMPILE_ADDVARIABLE_NORMAL_TD_NOTEXIST);
+			mem[writeup] = 0;
+			++writeup;
 			for (int k = blockstack.size() - 1; k >= 0; --k)
 			{
 				if (blockstack.at(k)->bs == blockstate::bs_function)
@@ -5225,10 +5774,9 @@ public:
 				spup += blockstack.at(k)->add_address_up;
 			}
 			spup += td->typesiz;
-			*reinterpret_cast<int *>(&mem[writeup]) = spup;
+			*reinterpret_cast<int*>(&mem[writeup]) = spup;
 			writeup += 4;
 
-			NamingData nd;
 			nd.name = variable_name;
 			nd.td = td;
 			nd.add_address = blockstack.last()->add_address_up + td->typesiz;
@@ -5325,36 +5873,47 @@ public:
 				*/
 		}
 
+	ERR_COMPILE_ADDVARIABLE_GLOBAL_TD_NOTEXIST:
+	ERR_COMPILE_ADDVARIABLE_NORMAL_TD_NOTEXIST:
+
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
 		type_name->release();
-		fm->_Delete((byte8 *)type_name, sizeof(sen));
+		fm->_Delete((byte8*)type_name, sizeof(sen));
 	}
 
-	void compile_setVariable(code_sen *cs)
+	void compile_setVariable(code_sen* cs)
 	{
 		// dbg_codesen(cs);
-		sen *code = get_sen_from_codesen(cs);
+		sen* code = get_sen_from_codesen(cs);
 		int loc = wbss.search_word_first(0, code, "=");
 
 		if (loc < 0)
 		{
-			// += oper, -= ... 
+			// += oper
 			loc = wbss.search_word_first_cd(0, code, cd_eqoper);
 			char operc = code->at(loc).data.str[0];
-
-			sen *left_expr = wbss.sen_cut(code, 0, loc - 1);
-			sen *right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
-
-			temp_mem *left_tm_ptr = get_asm_from_sen(left_expr, true, false);
-			temp_mem *left_tm_v = get_asm_from_sen(left_expr, true, true);
-			temp_mem *right_tm = get_asm_from_sen(right_expr, false, true);
-
+			sen* left_expr = wbss.sen_cut(code, 0, loc - 1);
+			sen* right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
+			temp_mem* left_tm_ptr = nullptr;
+			temp_mem* left_tm_v = nullptr;
+			temp_mem* right_tm = nullptr;
 			bool need_casting = false;
 			casting_type castt;
-			type_data *lstd = get_sub_type(left_tm_ptr->valuetype_detail);
-			int ltype = get_int_with_basictype(lstd);
+			int ltype = 0;
+			type_data* lstd = nullptr;
+
+			left_tm_ptr = get_asm_from_sen(left_expr, true, false);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_COMPACTOPER_SUBTYPE_NOTEXIST);
+			left_tm_v = get_asm_from_sen(left_expr, true, true);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_COMPACTOPER_SUBTYPE_NOTEXIST);
+			right_tm = get_asm_from_sen(right_expr, false, true);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_COMPACTOPER_SUBTYPE_NOTEXIST);
+			lstd = get_sub_type(left_tm_ptr->valuetype_detail);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_COMPACTOPER_SUBTYPE_NOTEXIST);
+			ltype = get_int_with_basictype(lstd);
+
 			if (ltype != right_tm->valuetype)
 			{
 				castt = get_cast_type(right_tm->valuetype, ltype);
@@ -5410,35 +5969,41 @@ public:
 				break;
 			}
 
+		ERR_COMPILE_SETVARIABLE_COMPACTOPER_SUBTYPE_NOTEXIST:
 			code->release();
-			fm->_Delete((byte8 *)code, sizeof(sen));
-
+			fm->_Delete((byte8*)code, sizeof(sen));
 			left_expr->release();
-			fm->_Delete((byte8 *)left_expr, sizeof(sen));
-
+			fm->_Delete((byte8*)left_expr, sizeof(sen));
 			right_expr->release();
-			fm->_Delete((byte8 *)right_expr, sizeof(sen));
-
+			fm->_Delete((byte8*)right_expr, sizeof(sen));
 			release_tempmem(left_tm_ptr);
 			release_tempmem(left_tm_v);
 			release_tempmem(right_tm);
 		}
 		else
 		{
-			sen *left_expr = wbss.sen_cut(code, 0, loc - 1);
-			sen *right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
+			sen* left_expr = wbss.sen_cut(code, 0, loc - 1);
+			sen* right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
 
-			//wbss.dbg_sen(left_expr, InsideCode_Bake::icl);
+			//wbss.dbg_sen(left_expr);
 			// wbss.dbg_sen(right_expr);
 
-			temp_mem *left_tm = get_asm_from_sen(left_expr, true, false);
-			temp_mem *right_tm = get_asm_from_sen(right_expr, true, true);
+			temp_mem* left_tm = nullptr;
+			temp_mem* right_tm = nullptr;
 			//dbg_temp_codemem(right_tm);
 
 			bool need_casting = false;
 			casting_type castt;
-			type_data *lstd = get_sub_type(left_tm->valuetype_detail);
-			int ltype = get_int_with_basictype(lstd);
+			int ltype = 0;
+			type_data* lstd;
+
+			left_tm = get_asm_from_sen(left_expr, true, false);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_OPER_SUBTYPE_NOTEXIST);
+			right_tm = get_asm_from_sen(right_expr, true, true);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_OPER_SUBTYPE_NOTEXIST);
+			lstd = get_sub_type(left_tm->valuetype_detail);
+			ICB_ERR_CHECK(ERR_COMPILE_SETVARIABLE_OPER_SUBTYPE_NOTEXIST);
+			ltype = get_int_with_basictype(lstd);
 			if (ltype != right_tm->valuetype)
 			{
 				castt = get_cast_type(right_tm->valuetype, ltype);
@@ -5447,7 +6012,7 @@ public:
 					need_casting = true;
 				}
 			}
-			
+
 			for (int i = 0; i < right_tm->mem.size(); ++i)
 			{
 				mem[writeup++] = right_tm->mem[i];
@@ -5488,38 +6053,41 @@ public:
 				break;
 			}
 
+		ERR_COMPILE_SETVARIABLE_OPER_SUBTYPE_NOTEXIST:
+
 			code->release();
-			fm->_Delete((byte8 *)code, sizeof(sen));
+			fm->_Delete((byte8*)code, sizeof(sen));
 
 			left_expr->release();
-			fm->_Delete((byte8 *)left_expr, sizeof(sen));
+			fm->_Delete((byte8*)left_expr, sizeof(sen));
 
 			right_expr->release();
-			fm->_Delete((byte8 *)right_expr, sizeof(sen));
+			fm->_Delete((byte8*)right_expr, sizeof(sen));
 
 			release_tempmem(left_tm);
 			release_tempmem(right_tm);
 		}
 	}
 
-	void compile_if(code_sen *cs)
+	void compile_if(code_sen* cs)
 	{
-		sen *code = get_sen_from_codesen(cs);
-		//wbss.dbg_sen(code, InsideCode_Bake::icl);
+		sen* code = get_sen_from_codesen(cs);
+		//wbss.dbg_sen(code);
 		int loc = wbss.search_word_first(0, code, "if");
-		if (loc == -1){
+		if (loc == -1) {
 			//else
 			nextbd.bs = blockstate::bs_else;
 			code->release();
-			fm->_Delete((byte8 *)code, sizeof(sen));
+			fm->_Delete((byte8*)code, sizeof(sen));
 			return;
 		}
-			
-		sen *inner_expr = wbss.oc_search(code, loc, "(", ")");
+
+		sen* inner_expr = wbss.oc_search(code, loc, "(", ")");
 		// wbss.dbg_sen(inner_expr);
 		inner_expr->pop_back();
 		inner_expr->erase(0);
-		temp_mem *inner_tm = get_asm_from_sen(inner_expr, true, true);
+		temp_mem* inner_tm = get_asm_from_sen(inner_expr, true, true);
+		ICB_ERR_CHECK(ERR_COMPILEIF_PROBLEM);
 		for (int i = 0; i < inner_tm->mem.size(); ++i)
 		{
 			mem[writeup++] = inner_tm->mem[i];
@@ -5530,28 +6098,39 @@ public:
 		writeup += 4;
 
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
 		inner_expr->release();
-		fm->_Delete((byte8 *)inner_expr, sizeof(sen));
+		fm->_Delete((byte8*)inner_expr, sizeof(sen));
 
+		release_tempmem(inner_tm);
+
+		return;
+
+	ERR_COMPILEIF_PROBLEM:
+		code->release();
+		fm->_Delete((byte8*)code, sizeof(sen));
+		inner_expr->release();
+		fm->_Delete((byte8*)inner_expr, sizeof(sen));
 		release_tempmem(inner_tm);
 	}
 
-	void compile_while(code_sen *cs)
+	void compile_while(code_sen* cs)
 	{
 		// fm->dbg_fm1_lifecheck();
-		sen *code = get_sen_from_codesen(cs);
+		sen* code = get_sen_from_codesen(cs);
 		// fm->dbg_fm1_lifecheck();
-		//wbss.dbg_sen(code, InsideCode_Bake::icl);
+		//wbss.dbg_sen(code);
 		int loc = wbss.search_word_first(0, code, "while");
-		sen *inner_expr = wbss.oc_search(code, loc, "(", ")");
+		sen* inner_expr = wbss.oc_search(code, loc, "(", ")");
 
 		inner_expr->pop_back();
 		inner_expr->erase(0);
-		//wbss.dbg_sen(inner_expr, InsideCode_Bake::icl);
+		//wbss.dbg_sen(inner_expr);
 		int save = writeup;
-		temp_mem *inner_tm = get_asm_from_sen(inner_expr, true, true);
+		temp_mem* inner_tm = get_asm_from_sen(inner_expr, true, true);
+		ICB_ERR_CHECK(ERR_COMPILEWHILE_PROBLEM);
+
 		for (int i = 0; i < inner_tm->mem.size(); ++i)
 		{
 			mem[writeup++] = inner_tm->mem[i];
@@ -5560,7 +6139,7 @@ public:
 		nextbd.bs = blockstate::bs_while;
 		nextbd.parameter[0] = writeup;
 		nextbd.parameter[1] = save;
-		
+
 		if (nextbd.breakpoints != nullptr) {
 			nextbd.breakpoints->release();
 			fm->_Delete((byte8*)nextbd.breakpoints, sizeof(fmvecarr<int>));
@@ -5582,15 +6161,24 @@ public:
 		writeup += 4;
 
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
 		inner_expr->release();
-		fm->_Delete((byte8 *)inner_expr, sizeof(sen));
+		fm->_Delete((byte8*)inner_expr, sizeof(sen));
 
+		release_tempmem(inner_tm);
+
+		return;
+
+	ERR_COMPILEWHILE_PROBLEM:
+		code->release();
+		fm->_Delete((byte8*)code, sizeof(sen));
+		inner_expr->release();
+		fm->_Delete((byte8*)inner_expr, sizeof(sen));
 		release_tempmem(inner_tm);
 	}
 
-	void compile_block(code_sen *cs)
+	void compile_block(code_sen* cs)
 	{
 		if (nextbd.bs == blockstate::bs_struct)
 		{
@@ -5599,12 +6187,13 @@ public:
 			int addadd = 0;
 			for (int i = 0; i < cs->codeblocks->size(); ++i)
 			{
-				code_sen *css = reinterpret_cast<code_sen *>(cs->codeblocks->at(i));
+				code_sen* css = reinterpret_cast<code_sen*>(cs->codeblocks->at(i));
 				if (css->ck == codeKind::ck_addVariable)
 				{
 					NamingData nd;
+					sen* typesen = (sen*)fm->_New(sizeof(sen), true);
+
 					nd.name = css->sen[css->maxlen - 1];
-					sen *typesen = (sen *)fm->_New(sizeof(sen), true);
 					typesen->NULLState();
 					typesen->Init(2, false, true);
 					for (int k = 0; k < css->maxlen - 1; ++k)
@@ -5614,18 +6203,29 @@ public:
 						seg.type = 'w';
 						typesen->push_back(seg);
 					}
-					nd.td = get_type_with_namesen(typesen);
+					nd.td = get_type_with_namesen(typesen);;
+					ICB_ERR_CHECK(ERR_COMPILE_BLOCK_STRUCT_TD_NOTEXIST);
 					nd.add_address = addadd;
 					addadd += nd.td->typesiz;
 					nextsd->member_data.push_back(nd);
 
 					typesen->release();
-					fm->_Delete((byte8 *)typesen, sizeof(sen));
+					fm->_Delete((byte8*)typesen, sizeof(sen));
+
+					continue;
+
+				ERR_COMPILE_BLOCK_STRUCT_TD_NOTEXIST:
+					typesen->release();
+					fm->_Delete((byte8*)typesen, sizeof(sen));
+
+					nextsd->name.release();
+					nextsd->member_data.release();
+					return;
 				}
 			}
 
-			type_data *td = (type_data *)fm->_New(sizeof(type_data), true);
-			td->structptr = reinterpret_cast<int *>(nextsd);
+			type_data* td = (type_data*)fm->_New(sizeof(type_data), true);
+			td->structptr = reinterpret_cast<int*>(nextsd);
 			td->name = nextsd->name.c_str();
 			td->typetype = 's';
 			td->typesiz = addadd;
@@ -5633,7 +6233,7 @@ public:
 		}
 		else
 		{
-			block_data *bd = (block_data *)fm->_New(sizeof(block_data), true);
+			block_data* bd = (block_data*)fm->_New(sizeof(block_data), true);
 			bd->add_address_up = 0;
 			bd->start_pc = &mem[writeup];
 			bd->variable_data.NULLState();
@@ -5660,7 +6260,7 @@ public:
 
 			if (blockstack.last()->bs == blockstate::bs_function)
 			{
-				func_data *fd = reinterpret_cast<func_data *>(nextbd.parameter[0]);
+				func_data* fd = reinterpret_cast<func_data*>(nextbd.parameter[0]);
 				fd->start_pc = bd->start_pc;
 
 				for (int k = 0; k < fd->param_data.size(); ++k)
@@ -5670,7 +6270,7 @@ public:
 
 				if (strcmp(fd->name.c_str(), "main") == 0)
 				{
-					*reinterpret_cast<uint *>(&mem[2]) = (uint)(fd->start_pc - mem);
+					*reinterpret_cast<uint*>(&mem[2]) = (uint)(fd->start_pc - mem);
 				}
 
 				if (fd->param_data.size() != 0)
@@ -5688,7 +6288,7 @@ public:
 
 			for (int i = 0; i < cs->codeblocks->size(); ++i)
 			{
-				code_sen *css = reinterpret_cast<code_sen *>(cs->codeblocks->at(i));
+				code_sen* css = reinterpret_cast<code_sen*>(cs->codeblocks->at(i));
 				dbg_codesen(css); cout << endl;
 				if (css->ck == codeKind::ck_if)
 				{
@@ -5697,18 +6297,21 @@ public:
 					ifptr_arr.Init(2, true);
 					int ifi = i + 2;
 					int stack = 0;
+					code_sen* css2 = nullptr;
+					sen* css2sen = nullptr;
 					if (cs->codeblocks->size() <= i + 2)
 					{
 						current_if_is_multiple = false;
 						compile_code(css);
+						ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 						continue;
 					}
-					code_sen *css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(i + 2));
-					sen* css2sen = get_sen_from_codesen(css2);
+					css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(i + 2));
+					css2sen = get_sen_from_codesen(css2);
 					while (css2 != nullptr && css2->ck == codeKind::ck_if && strcmp(css2sen->at(0).data.str, "else") == 0)
 					{
 						stack += 1;
-						css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(ifi + 2));
+						css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(ifi + 2));
 						ifi += 2;
 						if (css2 == nullptr)
 						{
@@ -5729,53 +6332,61 @@ public:
 					{
 						current_if_is_multiple = false;
 						compile_code(css);
+						ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 						continue;
 					}
 					else
 					{
 						current_if_is_multiple = true;
 						// else if if
+						uint address = 0;
 						compile_code(css);
-						css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(i + 1));
-						uint address = nextbd.parameter[0];
+						ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
+						css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(i + 1));
+						address = nextbd.parameter[0];
 						compile_code(css2);
+						ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 						mem[writeup++] = (byte8)insttype::IT_JMP;
 						ifptr_arr.push_back(writeup);
 						writeup += 4;
 
-						*reinterpret_cast<uint *>(&mem[address]) = (uint)writeup;
+						*reinterpret_cast<uint*>(&mem[address]) = (uint)writeup;
 
 						int ifk = i + 2;
 						while (ifk + 1 <= ifi)
 						{
-							css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(ifk));
+							css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(ifk));
 							if (css2->maxlen == 1 && strcmp(css2->sen[0], "else") == 0)
 							{
 								// else
 								compile_code(css2);
-								css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(ifk + 1));
+								ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
+								css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(ifk + 1));
 								compile_code(css2);
+								ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 								ifk += 2;
 								continue;
 							}
 							else
 							{
 								compile_code(css2);
+								ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 								address = nextbd.parameter[0];
 							}
 
-							css2 = reinterpret_cast<code_sen *>(cs->codeblocks->at(ifk + 1));
+							css2 = reinterpret_cast<code_sen*>(cs->codeblocks->at(ifk + 1));
 							compile_code(css2);
+							ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 							mem[writeup++] = (byte8)insttype::IT_JMP;
 							ifptr_arr.push_back(writeup);
 							writeup += 4;
-							*reinterpret_cast<uint *>(&mem[address]) = (uint)writeup;
+							*reinterpret_cast<uint*>(&mem[address]) = (uint)writeup;
 							ifk += 2;
 						}
 
 						for (int k = 0; k < ifptr_arr.size(); ++k)
 						{
-							*reinterpret_cast<uint *>(&mem[ifptr_arr[k]]) = (uint)writeup;
+							*reinterpret_cast<uint*>(&mem[ifptr_arr[k]]) = (uint)writeup;
 						}
 
 						i = ifi;
@@ -5784,6 +6395,7 @@ public:
 				else
 				{
 					compile_code(css);
+					ICB_ERR_CHECK(ERR_COMPILEBLOCK_PROBLEM);
 				}
 			}
 
@@ -5792,34 +6404,34 @@ public:
 			case blockstate::bs_if:
 				// case 1 : if only - writeup;
 				// case 2 : if / else or more - writeup+5;
-				if(current_if_is_multiple){
-					*reinterpret_cast<uint *>(&mem[blockstack.last()->parameter[0]]) =
-					(uint)writeup + 5;
+				if (current_if_is_multiple) {
+					*reinterpret_cast<uint*>(&mem[blockstack.last()->parameter[0]]) =
+						(uint)writeup + 5;
 				}
-				else{
-					*reinterpret_cast<uint *>(&mem[blockstack.last()->parameter[0]]) =
-					(uint)writeup;
+				else {
+					*reinterpret_cast<uint*>(&mem[blockstack.last()->parameter[0]]) =
+						(uint)writeup;
 				}
 				break;
 			case blockstate::bs_while:
 			{
-				*reinterpret_cast<uint *>(&mem[blockstack.last()->parameter[0]]) =
+				*reinterpret_cast<uint*>(&mem[blockstack.last()->parameter[0]]) =
 					(uint)writeup + 5;
 				for (int i = 0; i < blockstack.last()->breakpoints->size(); ++i)
 				{
-					*reinterpret_cast<uint *>(&mem[blockstack.last()->breakpoints->at(i)]) =
+					*reinterpret_cast<uint*>(&mem[blockstack.last()->breakpoints->at(i)]) =
 						(uint)writeup + 5;
 				}
 
 				for (int i = 0; i < blockstack.last()->continuepoints->size(); ++i)
 				{
 					*reinterpret_cast<
-						uint *>(&mem[blockstack.last()->continuepoints->at(i)]) =
+						uint*>(&mem[blockstack.last()->continuepoints->at(i)]) =
 						(uint)blockstack.last()->parameter[1];
 				}
 
 				mem[writeup++] = (byte8)insttype::IT_JMP; // jmp
-				*reinterpret_cast<uint *>(&mem[writeup]) =
+				*reinterpret_cast<uint*>(&mem[writeup]) =
 					(uint)blockstack.last()->parameter[1];
 				writeup += 4;
 			}
@@ -5834,34 +6446,51 @@ public:
 			if (bd->breakpoints != nullptr)
 			{
 				bd->breakpoints->release();
-				fm->_Delete((byte8 *)bd->breakpoints, sizeof(fmvecarr<int>));
+				fm->_Delete((byte8*)bd->breakpoints, sizeof(fmvecarr<int>));
 			}
 			bd->variable_data.release();
 			if (bd->continuepoints != nullptr)
 			{
 				bd->continuepoints->release();
-				fm->_Delete((byte8 *)bd->continuepoints, sizeof(fmvecarr<int>));
+				fm->_Delete((byte8*)bd->continuepoints, sizeof(fmvecarr<int>));
 			}
-			fm->_Delete((byte8 *)bd, sizeof(block_data));
+			fm->_Delete((byte8*)bd, sizeof(block_data));
 			blockstack.pop_back();
+			return;
+
+		ERR_COMPILEBLOCK_PROBLEM:
+			if (bd->breakpoints != nullptr)
+			{
+				bd->breakpoints->release();
+				fm->_Delete((byte8*)bd->breakpoints, sizeof(fmvecarr<int>));
+			}
+			bd->variable_data.release();
+			if (bd->continuepoints != nullptr)
+			{
+				bd->continuepoints->release();
+				fm->_Delete((byte8*)bd->continuepoints, sizeof(fmvecarr<int>));
+			}
+			fm->_Delete((byte8*)bd, sizeof(block_data));
+			blockstack.pop_back();
+			return;
 		}
 	}
 
-	void compile_addFunction(code_sen *cs)
+	void compile_addFunction(code_sen* cs)
 	{
-		func_data *fd = (func_data *)fm->_New(sizeof(func_data), true);
+		func_data* fd = (func_data*)fm->_New(sizeof(func_data), true);
 		fd->name.NULLState();
 		fd->name.Init(2, false);
 
-		sen *code = get_sen_from_codesen(cs);
+		sen* code = get_sen_from_codesen(cs);
 		int loc = code->size() - 1;
-		sen *inner_params = wbss.oc_search_inv(code, loc, "(", ")");
+		sen* inner_params = wbss.oc_search_inv(code, loc, "(", ")");
 		int nameloc = loc - inner_params->size();
 
 		fd->name = code->at(nameloc).data.str;
 
 		//sen *typen = wbss.sen_cut(code, 0, nameloc - 1);
-		sen *params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
+		sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
 		//wbss.dbg_sen(params_sen);
 		int coma = wbss.search_word_first(0, params_sen, ",");
 		int savecoma = -1;
@@ -5878,10 +6507,10 @@ public:
 			nextbd.parameter[0] = reinterpret_cast<uint64_t>(fd);
 
 			code->release();
-			fm->_Delete((byte8 *)code, sizeof(sen));
+			fm->_Delete((byte8*)code, sizeof(sen));
 
 			params_sen->release();
-			fm->_Delete((byte8 *)params_sen, sizeof(sen));
+			fm->_Delete((byte8*)params_sen, sizeof(sen));
 
 			inner_params->release();
 			fm->_Delete((byte8*)inner_params, sizeof(sen));
@@ -5890,10 +6519,9 @@ public:
 
 		while (coma != -1)
 		{
-			sen *param_sen = wbss.sen_cut(params_sen, savecoma+1, coma - 1);
+			sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
 			NamingData nd;
-
-			sen *typestr = (sen *)fm->_New(sizeof(sen), true);
+			sen* typestr = (sen*)fm->_New(sizeof(sen), true);
 			typestr->NULLState();
 			typestr->Init(2, false);
 			for (int i = 0; i < param_sen->size() - 1; ++i)
@@ -5902,6 +6530,7 @@ public:
 			}
 
 			nd.td = get_type_with_namesen(typestr);
+			ICB_ERR_CHECK(ERR_COMPILE_ADDFUNCTION_PARAM_TD_NOTEXIST);
 			nd.name = param_sen->last().data.str;
 
 			addadd += nd.td->typesiz; //
@@ -5911,21 +6540,45 @@ public:
 			savecoma = coma + 1;
 			coma = wbss.search_word_first(savecoma, params_sen, ",");
 
-			param_sen->release();
-			fm->_Delete((byte8 *)param_sen, sizeof(sen));
+			savecoma = coma;
+			coma = wbss.search_word_first(savecoma + 1, params_sen, ",");
 
 			typestr->release();
-			fm->_Delete((byte8 *)typestr, sizeof(sen));
+			fm->_Delete((byte8*)typestr, sizeof(sen));
 
-			savecoma = coma;
-			coma = wbss.search_word_first(savecoma+1, params_sen, ",");
+			param_sen->release();
+			fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+			continue;
+
+		ERR_COMPILE_ADDFUNCTION_PARAM_TD_NOTEXIST:
+			typestr->release();
+			fm->_Delete((byte8*)typestr, sizeof(sen));
+
+			param_sen->release();
+			fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+			param_sen->release();
+			fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+			inner_params->release();
+			fm->_Delete((byte8*)inner_params, sizeof(sen));
+
+			code->release();
+			fm->_Delete((byte8*)code, sizeof(sen));
+
+			fd->name.release();
+			fd->param_data.release();
+			fm->_Delete((byte8*)fd, sizeof(func_data));
+
+			return;
 		}
 
-		sen *param_sen = wbss.sen_cut(params_sen, savecoma+1, last);
-		//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
+		sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
+		//wbss.dbg_sen(param_sen);
 		NamingData nd;
 
-		sen *typestr = (sen *)fm->_New(sizeof(sen), true);
+		sen* typestr = (sen*)fm->_New(sizeof(sen), true);
 		typestr->NULLState();
 		typestr->Init(2, false);
 		for (int i = 0; i < param_sen->size() - 1; ++i)
@@ -5933,8 +6586,9 @@ public:
 			typestr->push_back(param_sen->at(i));
 		}
 
-		//wbss.dbg_sen(typestr, InsideCode_Bake::icl);
+		//wbss.dbg_sen(typestr);
 		nd.td = get_type_with_namesen(typestr);
+		ICB_ERR_CHECK(ERR_COMPILE_ADDFUNCTION_LASTPARAM_TD_NOTEXIST);
 		nd.name = param_sen->last().data.str;
 
 		addadd += nd.td->typesiz;
@@ -5947,19 +6601,39 @@ public:
 		nextbd.parameter[0] = reinterpret_cast<uint64_t>(fd);
 
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
 		param_sen->release();
 		fm->_Delete((byte8*)param_sen, sizeof(sen));
 
 		param_sen->release();
-		fm->_Delete((byte8 *)param_sen, sizeof(sen));
+		fm->_Delete((byte8*)param_sen, sizeof(sen));
 
 		inner_params->release();
 		fm->_Delete((byte8*)inner_params, sizeof(sen));
 
 		typestr->release();
-		fm->_Delete((byte8 *)typestr, sizeof(sen));
+		fm->_Delete((byte8*)typestr, sizeof(sen));
+
+	ERR_COMPILE_ADDFUNCTION_LASTPARAM_TD_NOTEXIST:
+		typestr->release();
+		fm->_Delete((byte8*)typestr, sizeof(sen));
+
+		param_sen->release();
+		fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+		param_sen->release();
+		fm->_Delete((byte8*)param_sen, sizeof(sen));
+
+		inner_params->release();
+		fm->_Delete((byte8*)inner_params, sizeof(sen));
+
+		code->release();
+		fm->_Delete((byte8*)code, sizeof(sen));
+
+		fd->name.release();
+		fd->param_data.release();
+		fm->_Delete((byte8*)fd, sizeof(func_data));
 	}
 
 	void compile_useFunction(code_sen* cs)
@@ -6001,11 +6675,14 @@ public:
 			//wbss.dbg_sen(inner_params);
 			int coma = wbss.search_word_first_in_specific_oc_layer(inner_params, 0, "(", ")", 0, ",");
 			int savecomma = -1;
+			sen* param_sen = nullptr;
+			temp_mem* tm = nullptr;
 			while (coma != -1)
 			{
-				sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
-				//wbss.dbg_sen(param_sen, InsideCode_Bake::icl);
-				temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+				param_sen = wbss.sen_cut(inner_params, savecomma + 1, coma - 1);
+				//wbss.dbg_sen(param_sen);
+				tm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_DBG_TEMPMEM);
 				for (int k = 0; k < tm->mem.size(); ++k)
 				{
 					mem[writeup++] = tm->mem[k];
@@ -6015,14 +6692,15 @@ public:
 				mem[writeup++] = (byte8)tm->valuetype;
 				savecomma = coma;
 				coma = wbss.search_word_first_in_specific_oc_layer(inner_params, savecomma + 1, "(", ")", 0, ",");
-			
+
 				param_sen->release();
 				fm->_Delete((byte8*)param_sen, sizeof(sen));
 			}
 
-			sen* param_sen = wbss.sen_cut(inner_params, savecomma + 1, inner_params->size() - 1);
+			param_sen = wbss.sen_cut(inner_params, savecomma + 1, inner_params->size() - 1);
 			//wbss.dbg_sen(param_sen);
-			temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+			tm = get_asm_from_sen(param_sen, true, true);
+			ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_DBG_TEMPMEM);
 
 			for (int k = 0; k < tm->mem.size(); ++k)
 			{
@@ -6030,6 +6708,8 @@ public:
 			}
 			mem[writeup++] = (byte8)insttype::IT_DBG_A;
 			mem[writeup++] = (byte8)tm->valuetype;
+
+		ERR_COMPILEUSEFUNCTION_DBG_TEMPMEM:
 
 			code->release();
 			fm->_Delete((byte8*)code, sizeof(sen));
@@ -6048,7 +6728,10 @@ public:
 			inner_params->pop_back();
 			inner_params->erase(0);
 			//wbss.dbg_sen(inner_params);
-			temp_mem* tm = get_asm_from_sen(inner_params, true, true);
+			temp_mem* tm = nullptr;
+			type_data* std = nullptr;
+			tm = get_asm_from_sen(inner_params, true, true);
+			ICB_ERR_CHECK(ERR_COMPILE_USEFUNCTION_INP_SUBTYPE_NOTEXIST);
 			for (int k = 0; k < tm->mem.size(); ++k)
 			{
 				mem[writeup++] = tm->mem[k];
@@ -6056,8 +6739,11 @@ public:
 			release_tempmem(tm);
 			mem[writeup++] = (byte8)insttype::IT_INP_A_PTR;
 
-			type_data* std = get_sub_type(tm->valuetype_detail);
+			std = get_sub_type(tm->valuetype_detail);
+			ICB_ERR_CHECK(ERR_COMPILE_USEFUNCTION_INP_SUBTYPE_NOTEXIST);
 			mem[writeup++] = (byte8)get_int_with_basictype(std);
+
+		ERR_COMPILE_USEFUNCTION_INP_SUBTYPE_NOTEXIST:
 
 			code->release();
 			fm->_Delete((byte8*)code, sizeof(sen));
@@ -6066,27 +6752,28 @@ public:
 			fm->_Delete((byte8*)inner_params, sizeof(sen));
 			return;
 		}
-		else if (strcmp(funcname, "sizeof") == 0)
-		{
-			inner_params->pop_back();
-			inner_params->erase(0);
-			// type_data* td = get_type_with_namesen(inner_params);
-		}
-		else if (strcmp(funcname, "codeptr") == 0)
-		{
-		}
-		else if (strcmp(funcname, "goto") == 0)
-		{
-		}
 
 		if (isext == false)
 		{
+			sen* typen = nullptr;
+			sen* params_sen = nullptr;
+			int last = 0;
+			//wbss.dbg_sen(params_sen);
+			int coma = 0;
+			int savecoma = -1;
+			int addadd = 0;
+			int paramid = 0;
+			int paramCount = 0;
+			sen* param_sen = nullptr;
+			temp_mem* tm = nullptr;
+
 			fd = get_func_with_name(code->at(nameloc).data.str);
+			ICB_ERR_CHECK(ERR_COMPILE_USEFUNCTION_NORMAL_FD_NOTEXIST);
 			// mem[writeup++] = fd->start_pc; // func
 
-			sen* typen = wbss.sen_cut(code, 0, nameloc - 1);
+			typen = wbss.sen_cut(code, 0, nameloc - 1);
 
-			sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
+			params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
 			if (params_sen->size() == 0)
 			{
 				mem[writeup++] = (byte8)insttype::IT_FUNC;	  // FUNC
@@ -6104,22 +6791,23 @@ public:
 				fm->_Delete((byte8*)params_sen, sizeof(sen));
 				return;
 			}
-			int last = params_sen->size() - 1;
+			last = params_sen->size() - 1;
 			//wbss.dbg_sen(params_sen);
-			int coma = wbss.search_word_first_in_specific_oc_layer(params_sen, 0, "(", ")", 0, ",");
-			int savecoma = -1;
+			coma = wbss.search_word_first_in_specific_oc_layer(params_sen, 0, "(", ")", 0, ",");
+			savecoma = -1;
 
-			int addadd = 0;
-			int paramid = 0;
-			int paramCount = 0;
+			addadd = 0;
+			paramid = 0;
+			paramCount = 0;
 
 			mem[writeup++] = (byte8)insttype::IT_FUNC; // FUNC
 
 			while (coma != -1)
 			{
-				sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
+				param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
 				//wbss.dbg_sen(param_sen);
-				temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+				tm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_NORMAL_TEMPMEM);
 				if (tm->valuetype_detail->typetype == 's')
 				{
 					temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -6128,6 +6816,7 @@ public:
 						mem[writeup++] = ptrtm->mem[i];
 					}
 					release_tempmem(ptrtm);
+					ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_NORMAL_TEMPMEM);
 				}
 				else
 				{
@@ -6165,378 +6854,6 @@ public:
 				}
 				else
 				{
-					if (isext == false)
-					{
-						fd = get_func_with_name(code->at(nameloc).data.str);
-						// mem[writeup++] = fd->start_pc; // func
-
-						sen* typen = wbss.sen_cut(code, 0, nameloc - 1);
-
-						sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
-						if (params_sen->size() == 0)
-						{
-							mem[writeup++] = (byte8)insttype::IT_FUNC;	  // FUNC
-							mem[writeup++] = (byte8)insttype::IT_FUNCJMP; // jmp
-							*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(fd->start_pc - &mem[0]);
-							writeup += 4;
-
-							code->release();
-							fm->_Delete((byte8*)code, sizeof(sen));
-
-							inner_params->release();
-							fm->_Delete((byte8*)inner_params, sizeof(sen));
-
-							params_sen->release();
-							fm->_Delete((byte8*)params_sen, sizeof(sen));
-							return;
-						}
-						int last = params_sen->size() - 1;
-						//wbss.dbg_sen(params_sen);
-						int coma = wbss.search_word_first_in_specific_oc_layer(params_sen, 0, "(", ")", 0, ",");
-						int savecoma = -1;
-
-						int addadd = 0;
-						int paramid = 0;
-						int paramCount = 0;
-
-						mem[writeup++] = (byte8)insttype::IT_FUNC; // FUNC
-
-						while (coma != -1)
-						{
-							sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, coma - 1);
-							//wbss.dbg_sen(param_sen);
-							temp_mem* tm = get_asm_from_sen(param_sen, true, true);
-							if (tm->valuetype_detail->typetype == 's')
-							{
-								temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
-								for (int i = 0; i < ptrtm->mem.size(); ++i)
-								{
-									mem[writeup++] = ptrtm->mem[i];
-								}
-								release_tempmem(ptrtm);
-							}
-							else
-							{
-								for (int i = 0; i < tm->mem.size(); ++i)
-								{
-									mem[writeup++] = tm->mem[i];
-								}
-
-								casting_type ct = get_cast_type(tm->valuetype, get_int_with_basictype(fd->param_data.at(paramCount).td));
-								if (ct != casting_type::nocasting)
-								{
-									mem[writeup++] = (byte8)insttype::IT_CASTING_A;
-									mem[writeup++] = (byte8)ct;
-								}
-								/*
-					*reinterpret_cast<uint*>(&mem[writeup]) = (uint)ct;
-					writeup += 4;
-					*/
-							}
-
-							if (fd->param_data[paramid].td->typetype != 's')
-							{
-								switch (fd->param_data[paramid].td->typesiz)
-								{
-								case 1:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_1; // param
-									break;
-								case 2:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_2; // param
-									break;
-								case 4:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
-									break;
-								}
-							}
-							else
-							{
-								mem[writeup++] = (byte8)insttype::PARAM_N_COPY_BY_ADDRESS; // param N by address(a)
-								byte8* N = (byte8*)&fd->param_data[paramid].td->typesiz;
-								// write siz of struct type
-								for (int i = 0; i < 4; ++i)
-								{
-									mem[writeup++] = N[i];
-								}
-							}
-
-							savecoma = coma;
-							coma = wbss.search_word_first_in_specific_oc_layer(params_sen, savecoma + 1, "(", ")", 0, ",");
-							// coma = wbss.search_word_first(savecoma+1, params_sen, ",");
-
-							++paramid;
-
-							param_sen->release();
-							fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-							release_tempmem(tm);
-							++paramCount;
-						}
-
-						//wbss.dbg_sen(params_sen);
-
-						sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
-						//wbss.dbg_sen(param_sen);
-						temp_mem* tm = get_asm_from_sen(param_sen, true, true);
-						if (tm->valuetype_detail->typetype == 's')
-						{
-							temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
-							for (int i = 0; i < ptrtm->mem.size(); ++i)
-							{
-								mem[writeup++] = ptrtm->mem[i];
-							}
-							release_tempmem(ptrtm);
-						}
-						else
-						{
-							for (int i = 0; i < tm->mem.size(); ++i)
-							{
-								mem[writeup++] = tm->mem[i];
-							}
-
-							casting_type ct = get_cast_type(tm->valuetype, get_int_with_basictype(fd->param_data.at(paramCount).td));
-							if (ct != casting_type::nocasting)
-							{
-								mem[writeup++] = (byte8)insttype::IT_CASTING_A;
-								mem[writeup++] = (byte8)ct;
-							}
-							/*
-				*reinterpret_cast<uint*>(&mem[writeup]) = (uint)ct;
-				writeup += 4;
-				*/
-						}
-
-						if (fd->param_data[paramid].td->typetype != 's')
-						{
-							switch (fd->param_data[paramid].td->typesiz)
-							{
-							case 1:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_1; // param
-								break;
-							case 2:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_2; // param
-								break;
-							case 4:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
-								break;
-							}
-						}
-						else
-						{
-							mem[writeup++] = (byte8)insttype::PARAM_N_COPY_BY_ADDRESS; // param N by address(a)
-							byte8* N = (byte8*)&fd->param_data[paramid].td->typesiz;
-							// write siz of struct type
-							for (int i = 0; i < 4; ++i)
-							{
-								mem[writeup++] = N[i];
-							}
-						}
-
-						mem[writeup++] = (byte8)insttype::IT_FUNCJMP; // jmp
-						*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(fd->start_pc - &mem[0]);
-						writeup += 4;
-
-						code->release();
-						fm->_Delete((byte8*)code, sizeof(sen));
-
-						inner_params->release();
-						fm->_Delete((byte8*)inner_params, sizeof(sen));
-
-						typen->release();
-						fm->_Delete((byte8*)typen, sizeof(sen));
-
-						params_sen->release();
-						fm->_Delete((byte8*)params_sen, sizeof(sen));
-
-						param_sen->release();
-						fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-						release_tempmem(tm);
-					}
-					else
-					{
-						sen* typen = wbss.sen_cut(code, 0, nameloc - 1);
-
-						sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
-						if (params_sen->size() == 0)
-						{
-							mem[writeup++] = (byte8)insttype::IT_FUNC;	  // FUNC
-							mem[writeup++] = (byte8)insttype::IT_FUNCJMP; // jmp
-							*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(fd->start_pc - &mem[0]);
-							writeup += 4;
-
-							code->release();
-							fm->_Delete((byte8*)code, sizeof(sen));
-
-							inner_params->release();
-							fm->_Delete((byte8*)inner_params, sizeof(sen));
-
-							params_sen->release();
-							fm->_Delete((byte8*)params_sen, sizeof(sen));
-							return;
-						}
-						int last = params_sen->size() - 1;
-						//wbss.dbg_sen(params_sen);
-						int coma = wbss.search_word_end_in_specific_oc_layer(params_sen, last, "(", ")", 0, ",");
-						int savecoma = last + 1;
-
-						int addadd = 0;
-						int paramCount = fd->param_data.size() - 1;
-
-						mem[writeup++] = (byte8)insttype::IT_FUNC; // FUNC
-
-						while (coma != -1)
-						{
-							sen* param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
-							//wbss.dbg_sen(param_sen);
-							temp_mem* tm = get_asm_from_sen(param_sen, true, true);
-							if (tm->valuetype_detail->typetype == 's')
-							{
-								temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
-								for (int i = 0; i < ptrtm->mem.size(); ++i)
-								{
-									mem[writeup++] = ptrtm->mem[i];
-								}
-								release_tempmem(ptrtm);
-							}
-							else
-							{
-								for (int i = 0; i < tm->mem.size(); ++i)
-								{
-									mem[writeup++] = tm->mem[i];
-								}
-
-								casting_type ct = get_cast_type(tm->valuetype, get_int_with_basictype(fd->param_data.at(paramCount).td));
-								if (ct != casting_type::nocasting)
-								{
-									mem[writeup++] = (byte8)insttype::IT_CASTING_A;
-									mem[writeup++] = (byte8)ct;
-								}
-								/*
-					*reinterpret_cast<uint*>(&mem[writeup]) = (uint)ct;
-					writeup += 4;
-					*/
-							}
-
-							if (fd->param_data[paramCount].td->typetype != 's')
-							{
-								switch (fd->param_data[paramCount].td->typesiz)
-								{
-								case 1:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_1; // param
-									break;
-								case 2:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_2; // param
-									break;
-								case 4:
-									mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
-									break;
-								}
-							}
-							else
-							{
-								mem[writeup++] = (byte8)insttype::PARAM_N_COPY_BY_ADDRESS; // param N by address(a)
-								byte8* N = (byte8*)&fd->param_data[paramCount].td->typesiz;
-								// write siz of struct type
-								for (int i = 0; i < 4; ++i)
-								{
-									mem[writeup++] = N[i];
-								}
-							}
-
-							savecoma = coma;
-							coma = wbss.search_word_end_in_specific_oc_layer(params_sen, savecoma - 1, "(", ")", 0, ",");
-							// coma = wbss.search_word_first(savecoma+1, params_sen, ",");
-
-							param_sen->release();
-							fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-							release_tempmem(tm);
-							--paramCount;
-						}
-
-						//wbss.dbg_sen(params_sen);
-
-						sen* param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
-						//wbss.dbg_sen(param_sen);
-						temp_mem* tm = get_asm_from_sen(param_sen, true, true);
-						if (tm->valuetype_detail->typetype == 's')
-						{
-							temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
-							for (int i = 0; i < ptrtm->mem.size(); ++i)
-							{
-								mem[writeup++] = ptrtm->mem[i];
-							}
-							release_tempmem(ptrtm);
-						}
-						else
-						{
-							for (int i = 0; i < tm->mem.size(); ++i)
-							{
-								mem[writeup++] = tm->mem[i];
-							}
-
-							casting_type ct = get_cast_type(tm->valuetype, get_int_with_basictype(fd->param_data.at(paramCount).td));
-							if (ct != casting_type::nocasting)
-							{
-								mem[writeup++] = (byte8)insttype::IT_CASTING_A;
-								mem[writeup++] = (byte8)ct;
-							}
-							/*
-				*reinterpret_cast<uint*>(&mem[writeup]) = (uint)ct;
-				writeup += 4;
-				*/
-						}
-
-						if (fd->param_data[paramCount].td->typetype != 's')
-						{
-							switch (fd->param_data[paramCount].td->typesiz)
-							{
-							case 1:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_1; // param
-								break;
-							case 2:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_2; // param
-								break;
-							case 4:
-								mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
-								break;
-							}
-						}
-						else
-						{
-							mem[writeup++] = (byte8)insttype::PARAM_N_COPY_BY_ADDRESS; // param N by address(a)
-							byte8* N = (byte8*)&fd->param_data[paramCount].td->typesiz;
-							// write siz of struct type
-							for (int i = 0; i < 4; ++i)
-							{
-								mem[writeup++] = N[i];
-							}
-						}
-
-						mem[writeup++] = (byte8)insttype::EXTENSION_INST; // ext instruction
-						*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(extID);
-						writeup += 4;
-						*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(exfuncID); // byte8* but real value is function pointer of extension.
-						writeup += 4;
-
-						code->release();
-						fm->_Delete((byte8*)code, sizeof(sen));
-
-						inner_params->release();
-						fm->_Delete((byte8*)inner_params, sizeof(sen));
-
-						typen->release();
-						fm->_Delete((byte8*)typen, sizeof(sen));
-
-						params_sen->release();
-						fm->_Delete((byte8*)params_sen, sizeof(sen));
-
-						param_sen->release();
-						fm->_Delete((byte8*)param_sen, sizeof(sen));
-
-						release_tempmem(tm);
-					}
 					mem[writeup++] = (byte8)insttype::PARAM_N_COPY_BY_ADDRESS; // param N by address(a)
 					byte8* N = (byte8*)&fd->param_data[paramid].td->typesiz;
 					// write siz of struct type
@@ -6561,9 +6878,10 @@ public:
 
 			//wbss.dbg_sen(params_sen);
 
-			sen* param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
+			param_sen = wbss.sen_cut(params_sen, savecoma + 1, last);
 			//wbss.dbg_sen(param_sen);
-			temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+			tm = get_asm_from_sen(param_sen, true, true);
+			ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_NORMAL_TEMPMEM);
 			if (tm->valuetype_detail->typetype == 's')
 			{
 				temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -6572,6 +6890,7 @@ public:
 					mem[writeup++] = ptrtm->mem[i];
 				}
 				release_tempmem(ptrtm);
+				ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_NORMAL_TEMPMEM);
 			}
 			else
 			{
@@ -6622,28 +6941,33 @@ public:
 			*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(fd->start_pc - &mem[0]);
 			writeup += 4;
 
-			code->release();
-			fm->_Delete((byte8*)code, sizeof(sen));
+		ERR_COMPILEUSEFUNCTION_NORMAL_TEMPMEM:
 
-			inner_params->release();
-			fm->_Delete((byte8*)inner_params, sizeof(sen));
-
-			typen->release();
-			fm->_Delete((byte8*)typen, sizeof(sen));
-
-			params_sen->release();
-			fm->_Delete((byte8*)params_sen, sizeof(sen));
+			release_tempmem(tm);
 
 			param_sen->release();
 			fm->_Delete((byte8*)param_sen, sizeof(sen));
 
-			release_tempmem(tm);
+			params_sen->release();
+			fm->_Delete((byte8*)params_sen, sizeof(sen));
+
+			typen->release();
+			fm->_Delete((byte8*)typen, sizeof(sen));
+
+		ERR_COMPILE_USEFUNCTION_NORMAL_FD_NOTEXIST:
+
+			inner_params->release();
+			fm->_Delete((byte8*)inner_params, sizeof(sen));
+
+			code->release();
+			fm->_Delete((byte8*)code, sizeof(sen));
 		}
 		else
 		{
 			sen* typen = wbss.sen_cut(code, 0, nameloc - 1);
-
 			sen* params_sen = wbss.sen_cut(code, nameloc + 2, loc - 1);
+			sen* param_sen = nullptr;
+			temp_mem* tm = nullptr;
 			if (params_sen->size() == 0)
 			{
 				mem[writeup++] = (byte8)insttype::IT_FUNC;	  // FUNC
@@ -6675,9 +6999,10 @@ public:
 
 			while (coma != -1)
 			{
-				sen* param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
+				param_sen = wbss.sen_cut(params_sen, coma + 1, savecoma - 1);
 				//wbss.dbg_sen(param_sen);
-				temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+				tm = get_asm_from_sen(param_sen, true, true);
+				ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM);
 				if (tm->valuetype_detail->typetype == 's')
 				{
 					temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -6686,6 +7011,7 @@ public:
 						mem[writeup++] = ptrtm->mem[i];
 					}
 					release_tempmem(ptrtm);
+					ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM);
 				}
 				else
 				{
@@ -6745,9 +7071,10 @@ public:
 
 			//wbss.dbg_sen(params_sen);
 
-			sen* param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
+			param_sen = wbss.sen_cut(params_sen, 0, savecoma - 1);
 			//wbss.dbg_sen(param_sen);
-			temp_mem* tm = get_asm_from_sen(param_sen, true, true);
+			tm = get_asm_from_sen(param_sen, true, true);
+			ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM);
 			if (tm->valuetype_detail->typetype == 's')
 			{
 				temp_mem* ptrtm = get_asm_from_sen(param_sen, true, false);
@@ -6756,6 +7083,7 @@ public:
 					mem[writeup++] = ptrtm->mem[i];
 				}
 				release_tempmem(ptrtm);
+				ICB_ERR_CHECK(ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM);
 			}
 			else
 			{
@@ -6808,6 +7136,9 @@ public:
 			*reinterpret_cast<uint*>(&mem[writeup]) = (uint)(exfuncID); // byte8* but real value is function pointer of extension.
 			writeup += 4;
 
+		ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM:
+
+
 			code->release();
 			fm->_Delete((byte8*)code, sizeof(sen));
 
@@ -6827,12 +7158,13 @@ public:
 		}
 	}
 
-	void compile_returnInFunction(code_sen *cs)
+	void compile_returnInFunction(code_sen* cs)
 	{
-		sen *code = get_sen_from_codesen(cs);
+		sen* code = get_sen_from_codesen(cs);
 		int loc = wbss.search_word_first(0, code, "return");
-		sen *right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
-		temp_mem *right_tm = get_asm_from_sen(right_expr, true, true);
+		sen* right_expr = wbss.sen_cut(code, loc + 1, code->size() - 1);
+		temp_mem* right_tm = get_asm_from_sen(right_expr, true, true);
+		ICB_ERR_CHECK(ERR_COMPILERETURNINFUNCTION_PROBLEM);
 
 		for (int i = 0; i < right_tm->mem.size(); ++i)
 		{
@@ -6840,29 +7172,31 @@ public:
 		}
 		mem[writeup++] = (byte8)insttype::IT_RETURN;
 
+	ERR_COMPILERETURNINFUNCTION_PROBLEM:
+
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
 		right_expr->release();
-		fm->_Delete((byte8 *)right_expr, sizeof(sen));
+		fm->_Delete((byte8*)right_expr, sizeof(sen));
 
 		release_tempmem(right_tm);
 	}
 
-	void compile_addStruct(code_sen *cs)
+	void compile_addStruct(code_sen* cs)
 	{
-		sen *code = get_sen_from_codesen(cs);
+		sen* code = get_sen_from_codesen(cs);
 		int loc = wbss.search_word_first(0, code, "struct");
-		struct_data *sd = (struct_data *)fm->_New(sizeof(struct_data), true);
+		struct_data* sd = (struct_data*)fm->_New(sizeof(struct_data), true);
 		sd->name = code->at(loc).data.str;
 		nextsd = sd;
 		nextbd.bs = blockstate::bs_struct;
 
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 	}
 
-	void compile_break(code_sen *cs)
+	void compile_break(code_sen* cs)
 	{
 		if (nextbd.breakpoints != nullptr)
 		{
@@ -6877,7 +7211,7 @@ public:
 		}
 	}
 
-	void compile_continue(code_sen *cs)
+	void compile_continue(code_sen* cs)
 	{
 		if (nextbd.continuepoints != nullptr)
 		{
@@ -6892,15 +7226,17 @@ public:
 		}
 	}
 
-	void compile_addsetVariable(code_sen *cs)
+	void compile_addsetVariable(code_sen* cs)
 	{
-		sen *code = get_sen_from_codesen(cs);
-		// wbss.dbg_sen(code);
+		sen* code = get_sen_from_codesen(cs);
+		//wbss.dbg_sen(code);
 		int loc = wbss.search_word_first(0, code, "=");
 
-		code_sen *cs0 = (code_sen *)fm->_New(sizeof(code_sen), true);
+		code_sen* cs0 = (code_sen*)fm->_New(sizeof(code_sen), true);
+		code_sen* cs1 = nullptr;
+		int loc1 = 0;
 		*cs0 = code_sen();
-		cs0->sen = (char **)fm->_New(sizeof(char *) * loc, true);
+		cs0->sen = (char**)fm->_New(sizeof(char*) * loc, true);
 		cs0->maxlen = loc;
 		cs0->codeblocks = nullptr;
 		cs0->ck = codeKind::ck_addVariable;
@@ -6909,57 +7245,76 @@ public:
 			cs0->sen[i] = cs->sen[i];
 		}
 		compile_addVariable(cs0);
+		ICB_ERR_CHECK(ERR_COMPILEADDSETVARIABLE_PROBLEM);
 
-		code_sen *cs1 = (code_sen *)fm->_New(sizeof(code_sen), true);
+		cs1 = (code_sen*)fm->_New(sizeof(code_sen), true);
 		*cs1 = code_sen();
-		int loc1 = cs->maxlen - loc + 1;
+		loc1 = cs->maxlen - loc + 1;
 		cs1->maxlen = loc1;
 		cs1->codeblocks = nullptr;
 		cs1->ck = codeKind::ck_setVariable;
-		cs1->sen = (char **)fm->_New(sizeof(char *) * loc1, true);
+		cs1->sen = (char**)fm->_New(sizeof(char*) * loc1, true);
 		for (int i = loc - 1; i < cs->maxlen; ++i)
 		{
 			cs1->sen[i - loc + 1] = cs->sen[i];
 		}
 		// dbg_codesen(cs1);
 		compile_setVariable(cs1);
+		ICB_ERR_CHECK(ERR_COMPILEADDSETVARIABLE_PROBLEM);
+
+	ERR_COMPILEADDSETVARIABLE_PROBLEM:
 
 		code->release();
-		fm->_Delete((byte8 *)code, sizeof(sen));
+		fm->_Delete((byte8*)code, sizeof(sen));
 
-		fm->_Delete((byte8 *)cs0->sen, sizeof(char *) * loc);
-		fm->_Delete((byte8 *)cs1->sen, sizeof(char *) * loc1);
-		fm->_Delete((byte8 *)cs0, sizeof(code_sen));
-		fm->_Delete((byte8 *)cs1, sizeof(code_sen));
+		if (cs0 != nullptr) {
+			fm->_Delete((byte8*)cs0->sen, sizeof(char*) * loc);
+		}
+
+		if (cs1 != nullptr) {
+			fm->_Delete((byte8*)cs1->sen, sizeof(char*) * loc1);
+		}
+
+		fm->_Delete((byte8*)cs0, sizeof(code_sen));
+		fm->_Delete((byte8*)cs1, sizeof(code_sen));
 	}
 
-	int get_typesiz_with_addVariableCs(code_sen *cs)
+	int get_typesiz_with_addVariableCs(code_sen* cs)
 	{
 		if (cs->ck == codeKind::ck_addVariable)
 		{
-			sen *code = get_sen_from_codesen(cs);
+			sen* code = get_sen_from_codesen(cs);
 			// wbss.dbg_sen(code);
 			int loc = code->up - 1;
-			char *variable_name = code->at(loc).data.str;
-			sen *type_name = wbss.sen_cut(code, 0, loc - 1);
-			type_data *td = get_type_with_namesen(type_name);
-			int n = td->typesiz;
+			char* variable_name = code->at(loc).data.str;
+			sen* type_name = wbss.sen_cut(code, 0, loc - 1);
+			type_data* td = get_type_with_namesen(type_name);
+			int n = 0;
+			ICB_ERR_CHECK(ERR_GETTYPESIZ_ADDVARCS_TD_NOTEXIST);
 
+			n = td->typesiz;
 			code->release();
 			fm->_Delete((byte8*)code, sizeof(sen));
 			type_name->release();
 			fm->_Delete((byte8*)type_name, sizeof(sen));
 			return n;
+
+		ERR_GETTYPESIZ_ADDVARCS_TD_NOTEXIST:
+			code->release();
+			fm->_Delete((byte8*)code, sizeof(sen));
+			type_name->release();
+			fm->_Delete((byte8*)type_name, sizeof(sen));
+			return -1;
 		}
 		else
 		{
-			sen *code = get_sen_from_codesen(cs);
+			sen* code = get_sen_from_codesen(cs);
 			// wbss.dbg_sen(code);
 			int loc = wbss.search_word_first(0, code, "=");
 
-			code_sen *cs0 = (code_sen *)fm->_New(sizeof(code_sen), true);
+			code_sen* cs0 = (code_sen*)fm->_New(sizeof(code_sen), true);
 			*cs0 = code_sen();
-			cs0->sen = (char **)fm->_New(sizeof(char *) * loc, true);
+			cs0->sen = (char**)fm->_New(sizeof(char*) * loc, true);
 			cs0->maxlen = loc;
 			cs0->codeblocks = nullptr;
 			cs0->ck = codeKind::ck_addVariable;
@@ -6968,13 +7323,15 @@ public:
 				cs0->sen[i] = cs->sen[i];
 			}
 
-			sen *code2 = get_sen_from_codesen(cs0);
-			//wbss.dbg_sen(code2, InsideCode_Bake::icl);
+			sen* code2 = get_sen_from_codesen(cs0);
+			//wbss.dbg_sen(code2);
 			int loc2 = code2->up - 1;
-			char *variable_name = code2->at(loc2).data.str;
-			sen *type_name = wbss.sen_cut(code2, 0, loc2 - 1);
-			type_data *td = get_type_with_namesen(type_name);
-			int n = td->typesiz;
+			char* variable_name = code2->at(loc2).data.str;
+			sen* type_name = wbss.sen_cut(code2, 0, loc2 - 1);
+			int n = 0;
+			type_data* td = get_type_with_namesen(type_name);
+			ICB_ERR_CHECK(ERR_GETTYPESIZ_NONADDVARCS_TD_NOTEXIST);
+			n = td->typesiz;
 
 			ReleaseCodeSen(cs0);
 			fm->_Delete((byte8*)cs0, sizeof(code_sen));
@@ -6985,13 +7342,26 @@ public:
 			type_name->release();
 			fm->_Delete((byte8*)type_name, sizeof(sen));
 			return n;
+
+		ERR_GETTYPESIZ_NONADDVARCS_TD_NOTEXIST:
+			ReleaseCodeSen(cs0);
+			fm->_Delete((byte8*)cs0, sizeof(code_sen));
+			code->release();
+			fm->_Delete((byte8*)code, sizeof(sen));
+			code2->release();
+			fm->_Delete((byte8*)code2, sizeof(sen));
+			type_name->release();
+			fm->_Delete((byte8*)type_name, sizeof(sen));
+			return -1;
 		}
 	}
 
-	void compile_code(code_sen *cs)
+	void compile_code(code_sen* cs)
 	{
 		bool icldetail = GetICLFlag(ICL_FLAG::BakeCode_CompileCodes);
 		cs->start_line = writeup;
+		currentCodeLine = cs->codeline;
+		dbg_codesen(cs, false); icl << endl;
 		if (icldetail && cs->ck != codeKind::ck_blocks)
 		{
 			icl << "BakeCode_CompileCodes__";
@@ -7063,41 +7433,58 @@ public:
 			if (GetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar)) print_asm(cs->start_line, cs->end_line, false);
 			break;
 		}
-		
+
+		ICB_ERR_CHECK(ERR_COMPILE_CODE_PROBLEM);
+
 		//dbg_bakecode(csarr, 0);
 		if (icldetail && cs->ck == codeKind::ck_blocks)
 		{
 			icl << "}; BakeCode_CompileCodes Block Finish" << endl;
 		}
+
+	ERR_COMPILE_CODE_PROBLEM:
+		return;
 	}
 
-	void bake_code(const char *filename)
+	void bake_code(const char* filename, fmlcstr* PtrErrorCode = nullptr)
 	{
+		curErrMsg[0] = 0;
+		bool astdetail = GetICLFlag(ICL_FLAG::BakeCode_AddStructTypes);
+		bool gmidetail = GetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit);
+		bool ccdetail = GetICLFlag(ICL_FLAG::BakeCode_CompileCodes);
+		int gs = 0;
+		fmvecarr<code_sen*>* senptr = nullptr;
+		fmvecarr<code_sen*>* senstptr = nullptr;
+
 		icl << "ICB[" << this << "] BakeCode start. filename : [" << filename << "]" << endl;
 
 		icl << "ICB[" << this << "] BakeCode_GetCodeFromText...";
-		fmlcstr *allcodeptr = GetCodeTXT(filename, fm);
+		fmlcstr* allcodeptr = GetCodeTXT(filename, fm);
 		icl << "finish" << endl;
-		fmlcstr &allcode = *allcodeptr;
 
-		icl << "ICB[" << this << "] BakeCode_AddTextBlocks...";
-		AddTextBlocks(allcode);
-		allcodeptr->release();
-		fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
-		allcodeptr = nullptr;
-		icl << "finish" << endl;
+		ICB_ERR_CHECK(ERR_BAKECODE_GETCODETXT);
+
+		{
+			fmlcstr& allcode = *allcodeptr;
+			icl << "ICB[" << this << "] BakeCode_AddTextBlocks...";
+			AddTextBlocks(allcode);
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+			icl << "finish" << endl;
+		}
 
 		icl << "ICB[" << this << "] BakeCode_ScanStructTypes...";
-		fmvecarr<code_sen *> *senstptr = AddCodeFromBlockData(allcode_sen, "struct");
+		senstptr = AddCodeFromBlockData(allcode_sen, "struct");
 		icl << "finish" << endl;
 
 		icl << "ICB[" << this << "] BakeCode_AddStructTypes...";
-		bool astdetail = GetICLFlag(ICL_FLAG::BakeCode_AddStructTypes);
+
 		if (astdetail) icl << "start" << endl;
 		for (int i = 0; i < senstptr->size(); ++i)
 		{
 			if (astdetail) icl << "BakeCode_AddStructTypes interpret" << endl;
-			code_sen *cs = senstptr->at(i);
+			code_sen* cs = senstptr->at(i);
 			dbg_codesen(cs, false); icl << endl;
 			if (astdetail) icl << "...start" << endl;
 			interpret_AddStruct(cs);
@@ -7108,28 +7495,25 @@ public:
 		icl << "finish" << endl;
 
 		icl << "ICB[" << this << "] BakeCode_ScanCodes...";
-		fmvecarr<code_sen *> *senptr = AddCodeFromBlockData(allcode_sen, "none");
+		senptr = AddCodeFromBlockData(allcode_sen, "none", 0);
 		icl << "finish" << endl;
 		senptr->islocal = false;
-
 		csarr = senptr;
 
 		cout << endl;
 
 		icl << "ICB[" << this << "] BakeCode_GlobalMemoryInit...";
 
-		int gs = 0;
 		init_datamem.NULLState();
 		init_datamem.Init(8, false);
 
-		bool gmidetail = GetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit);
 		if (gmidetail) icl << "start" << endl;
 		for (int i = 0; i < senptr->size(); ++i)
 		{
-			code_sen *cs = senptr->at(i);
+			code_sen* cs = senptr->at(i);
 			if (cs->ck == codeKind::ck_addVariable || cs->ck == codeKind::ck_addsetVariable)
 			{
-				if (gmidetail) icl << "BakeCode_GlobalMemoryInit Scan Global Memory Code (in datamem["<< gs << "]) : ";
+				if (gmidetail) icl << "BakeCode_GlobalMemoryInit Scan Global Memory Code (in datamem[" << gs << "]) : ";
 				if (gmidetail) { dbg_codesen(cs, false); icl << endl; }
 				// global var count
 				if (gmidetail) icl << "BakeCode_GlobalMemoryInit Find Type Size : ...";
@@ -7290,7 +7674,7 @@ public:
 				}
 			}
 		}
-        datamem_up = gs;
+		datamem_up = gs;
 		if (gmidetail) icl << "BakeCode_GlobalMemoryInit...";
 		icl << "finish" << endl;
 
@@ -7300,14 +7684,15 @@ public:
 		writeup += 4;		  // start function address
 
 		icl << "ICB[" << this << "] BakeCode_CompileCodes...";
-		bool ccdetail = GetICLFlag(ICL_FLAG::BakeCode_CompileCodes);
+
 		if (ccdetail) icl << "start" << endl;
 		for (int i = 0; i < senptr->size(); ++i)
 		{
 			// fm->dbg_fm1_lifecheck();
-			code_sen *cs = senptr->at(i);
+			code_sen* cs = senptr->at(i);
 			//dbg_codesen(cs);
 			compile_code(cs);
+			ICB_ERR_CHECK(ERR_BAKECODE_PROBLEM);
 		}
 		if (ccdetail) icl << "BakeCode_CompileCodes...";
 		icl << "finish" << endl;
@@ -7323,8 +7708,27 @@ public:
 		dbg_bakecode(csarr, 0);
 
 		icl << "ICB[" << this << "] BakeCode finish." << endl;
+
+		return;
+
+	ERR_BAKECODE_GETCODETXT:
+		allcodeptr->release();
+		fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+		allcodeptr = nullptr;
+		return;
+
+	ERR_BAKECODE_PROBLEM:
+		senstptr->release();
+		senstptr->NULLState();
+		fm->_Delete((byte8*)senstptr, sizeof(fmvecarr<code_sen*>));
+		if (PtrErrorCode != nullptr) {
+			*PtrErrorCode = curErrMsg;
+		}
+		Release();
+		return;
 	}
 };
+
 
 void EXT_ReleaseTypeData(type_data* td, ICB_Extension* ext)
 {

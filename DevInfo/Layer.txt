@@ -1,0 +1,27 @@
+레이어는 0~1까지 사용됨.
+
+color page
+
+main page
+1. UI Layer [0, 1, 2, 3, 4 ...]
+2. Obj Layer [...]
+3. BackInfo Layer
+
+Layer float 를 변수로써 만들어서 유동적으로 작동하도록 하자.
+페이지가 늘어나더라도 다 표현 될 수 있게.
+
+struct LayerInfo{
+	char name[28] // 28 byte
+	float Z; // 4byte
+}; // 32byte
+
+class LayerManager{
+public:
+	LayerManager() {}
+	~LayerManager() {}
+	fmvecarr<LayerInfo> LayerManager;
+
+	void AddLayer(char* _name, float z){
+		
+	}
+};

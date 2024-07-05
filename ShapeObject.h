@@ -630,7 +630,7 @@ public:
 
 typedef unordered_map < uint32_t, CharBuffer* >CharMap;
 CharMap char_map;
-void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11Color staticColor)
+void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11Color staticColor, float Z = 0.0f)
 {
     XMMATRIX StringWorld = XMMatrixIdentity();
     ConstantBuffer cb = SetCB(StringWorld, g_View, g_Projection_2d, staticColor);
@@ -665,7 +665,7 @@ void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11
         }
 
         StringWorld = XMMatrixScaling(fsiz, fsiz, 1);
-        StringWorld = XMMatrixMultiply(StringWorld, XMMatrixTranslation(stackpos.x, stackpos.y, 0.0f));
+        StringWorld = XMMatrixMultiply(StringWorld, XMMatrixTranslation(stackpos.x, stackpos.y, Z));
         cb.mWorld = XMMatrixTranspose(StringWorld);
         char_map.at(c)->render(cb);
 
@@ -749,3 +749,60 @@ struct ShapeObject {
     ConstantBuffer uniform;
 };
 
+struct LayerInfo {
+    char name[28]; // 28 byte
+    float Z; // 4byte
+}; // 32byte
+
+class LayerManager {
+public:
+    LayerManager() {}
+    ~LayerManager() {}
+    fmvecarr<LayerInfo> LayerArr;
+
+    void Init() {
+        LayerArr.NULLState();
+        LayerArr.Init(8, false, true);
+    }
+
+    void Release() {
+        LayerArr.release();
+    }
+
+    LayerInfo* PushLayer(char* _name) {
+        LayerInfo li;
+        int len = strlen(_name);
+        int siz = 0;
+        if (len < 28) {
+            siz = len;
+            li.name[len] = 0;
+        }
+        else siz = 27;
+        strcpy_s(li.name, siz+1, _name);
+
+        li.Z = 0;
+        LayerArr.push_back(li);
+        float f = 1.0f / (float)LayerArr.size();
+        for (int i = 0; i < LayerArr.size(); ++i) {
+            float lZ = 1.0f - (float)i * f;
+            LayerArr[i].Z = lZ;
+        }
+
+        return &LayerArr.last();
+    }
+
+    void DestroyLayer(char* _name) {
+        for (int i = 0; i < LayerArr.size(); ++i) {
+            if (strcmp(LayerArr[i].name, _name) == 0) {
+                LayerArr.erase(i);
+            }
+        }
+
+        if (LayerArr.size() == 0) return;
+        float f = 1.0f / (float)LayerArr.size();
+        for (int i = 0; i < LayerArr.size(); ++i) {
+            float lZ = 1.0f - (float)i * f;
+            LayerArr[i].Z = lZ;
+        }
+    }
+};
