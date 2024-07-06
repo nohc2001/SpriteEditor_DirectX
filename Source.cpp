@@ -270,6 +270,8 @@ public:
 	unsigned int selected_codeline;
 	unsigned int selected_charindex;
 	float codeline_height = 20.0f;
+	bool BeShift = false;
+	bool CapsLock = false;
 
 	void Init(shp::rect4f _loc, InsideCode_Bake* sicb) {
 		visible = true;
@@ -278,12 +280,13 @@ public:
 		codeLines.NULLState();
 		codeLines.Init(8, false, true);
 		for (int i = 0; i < 8; ++i) {
+			codeLines.push_back(fmlwstr());
 			codeLines[i].NULLState();
 			codeLines[i].Init(16, false);
 		}
 		selected_codeline = 0;
 		selected_charindex = 0;
-		codeline_height = 20.0f;
+		codeline_height = 30.0f;
 	}
 
 	void Render() {
@@ -295,24 +298,26 @@ public:
 			col = DX11Color(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 		drawline(shp::vec2f(loc.fx, loc.getCenter().y), shp::vec2f(loc.lx, loc.getCenter().y), loc.geth(), col, 0.3f);
-		shp::rect4f lineloc = shp::rect4f(loc.fx, loc.fy, loc.lx, codeline_height);
+		shp::rect4f lineloc = shp::rect4f(loc.fx, loc.ly - 2*codeline_height, loc.lx, loc.ly-codeline_height);
 		lineloc.fy += codeline_height; lineloc.ly += codeline_height;
 		for (int i = 0; i < codeLines.size(); ++i) {
 			if (i != selected_codeline) {
 				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.45f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
-				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.25f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 			}
 			else {
 				shp::rect4f textcursorLoc = GetLoc_stringIndex(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, selected_charindex);
-				drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.getCenter().y), shp::vec2f(textcursorLoc.lx, textcursorLoc.getCenter().y), codeline_height * 0.45f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
-				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.75f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.25f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx+10, textcursorLoc.ly), codeline_height * 0.75f, DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.2f);
 			}
+
+			lineloc.fy -= codeline_height; lineloc.ly -= codeline_height;
 		}
 	}
 
-	void Event(DX_Event event) {
-		if (event.message == WM_LBUTTONDOWN) {
-			shp::vec2f mpos = GetMousePos(event.lParam);
+	void Event(DX_Event evt) {
+		if (evt.message == WM_LBUTTONDOWN) {
+			shp::vec2f mpos = GetMousePos(evt.lParam);
 			if (shp::bPointInRectRange(mpos, loc)) {
 				focus = true;
 			}
@@ -322,20 +327,197 @@ public:
 		}
 
 		if (focus) {
-			if (event.message == WM_KEYDOWN) {
-				wchar_t key = event.wParam;
-				bool bcharinput = 40 <= key && key <= 126;
-				bool backspace = 10 == key;
+			if (evt.message == WM_KEYDOWN) {
+				wchar_t key = evt.wParam;
+				bool bcharinput = 41 <= key && key <= 126;
+				bool alphainput = 'A' <= key && key <= 'Z';
+				bool numinput = '0' <= key && key <= '9';
+				int casedelta = 'a' - 'A';
 				if (bcharinput) {
+					if (alphainput) {
+						if (BeShift == false && CapsLock == false) {
+							key += casedelta;
+						}
+						else if (CapsLock && BeShift) {
+							key += casedelta;
+						}
+					}
+					if (numinput && BeShift) {
+						switch (key) {
+						case L'0':
+							key = L')';
+							break;
+						case L'1':
+							key = L'!';
+							break;
+						case L'2':
+							key = L'@';
+							break;
+						case L'3':
+							key = L'#';
+							break;
+						case L'4':
+							key = L'$';
+							break;
+						case L'5':
+							key = L'%';
+							break;
+						case L'6':
+							key = L'^';
+							break;
+						case L'7':
+							key = L'&';
+							break;
+						case L'8':
+							key = L'*';
+							break;
+						case L'9':
+							key = L'(';
+							break;
+						}
+					}
 					codeLines[selected_codeline].insert(selected_charindex, key);
 					codeLines[selected_codeline].c_str();
 					++selected_charindex;
 				}
-				else if (backspace) {
-					if (codeLines[selected_codeline].size() > selected_charindex) {
-						codeLines[selected_codeline].erase(selected_charindex);
-						--selected_charindex;
+				else if (((186 <= key && key <= 192) || key == 219) || (221 <= key && key <= 222)) {
+					if (BeShift) {
+						switch (key) {
+						case 186:
+							key = L':';
+							break;
+						case 187:
+							key = L'+';
+							break;
+						case 188:
+							key = L'<';
+							break;
+						case 189:
+							key = L'_';
+							break;
+						case 190:
+							key = L'>';
+							break;
+						case 191:
+							key = L'?';
+							break;
+						case 192:
+							key = L'~';
+							break;
+						case 219:
+							key = L'{';
+							break;
+						case 221:
+							key = L'}';
+							break;
+						case 222:
+							key = L'\"';
+							break;
+						}
 					}
+					else {
+						switch (key) {
+						case 186:
+							key = L';';
+							break;
+						case 187:
+							key = L'=';
+							break;
+						case 188:
+							key = L',';
+							break;
+						case 189:
+							key = L'-';
+							break;
+						case 190:
+							key = L'.';
+							break;
+						case 191:
+							key = L'/';
+							break;
+						case 192:
+							key = L'`';
+							break;
+						case 219:
+							key = L'[';
+							break;
+						case 221:
+							key = L']';
+							break;
+						case 222:
+							key = L'\'';
+							break;
+						}
+					}
+
+					codeLines[selected_codeline].insert(selected_charindex, key);
+					codeLines[selected_codeline].c_str();
+					++selected_charindex;
+				}
+				else if (evt.wParam == VK_BACK) {
+					if (codeLines[selected_codeline].size() >= selected_charindex-1) {
+						--selected_charindex;
+						codeLines[selected_codeline].erase(selected_charindex);
+					}
+				}
+				else if (evt.wParam == VK_SPACE) {
+					codeLines[selected_codeline].insert(selected_charindex, L' ');
+					codeLines[selected_codeline].c_str();
+					++selected_charindex;
+				}
+				else if (evt.wParam == VK_RETURN) {
+					//enter
+					codeLines.insert(selected_codeline + 1, fmlwstr());
+					selected_codeline += 1;
+					codeLines[selected_codeline].NULLState();
+					codeLines[selected_codeline].Init(8, false);
+					selected_charindex = 0;
+				}
+				else if (evt.wParam == VK_SHIFT) {
+					BeShift = true;
+				}
+				else if (evt.wParam == VK_CAPITAL) {
+					CapsLock != CapsLock;
+				}
+				else if (evt.wParam == VK_UP) {
+					if (selected_codeline != 0) {
+						unsigned int prevCL = selected_codeline;
+						--selected_codeline;
+						selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[prevCL].size() + 1));
+					}
+				}
+				else if (evt.wParam == VK_DOWN) {
+					if (codeLines.size() > selected_codeline + 1) {
+						++selected_codeline;
+						selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[selected_codeline - 1].size() + 1));
+					}
+				}
+				else if (evt.wParam == VK_LEFT) {
+					if (selected_charindex != 0) {
+						selected_charindex -= 1;
+					}
+					else {
+						if (selected_codeline != 0) {
+							selected_codeline -= 1;
+							selected_charindex = codeLines[selected_codeline].size();
+						}
+					}
+				}
+				else if (evt.wParam == VK_RIGHT) {
+					if (selected_charindex < codeLines[selected_codeline].size()) {
+						selected_charindex += 1;
+					}
+					else {
+						if (selected_codeline < codeLines.size()) {
+							selected_codeline += 1;
+							selected_charindex = 0;
+						}
+					}
+				}
+			}
+			else if (evt.message == WM_KEYUP) {
+				if (evt.wParam == VK_SHIFT) {
+					BeShift = false;
 				}
 			}
 		}
@@ -4063,7 +4245,7 @@ HRESULT InitDevice()
 
 	FinishInit = true;
 
-	icbE.Init(shp::rect4f(300, 300, 600, 0), nullptr);
+	icbE.Init(shp::rect4f(0, 0, 700, 500), nullptr);
 
     return S_OK;
 }
@@ -4142,7 +4324,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
     return DefWindowProc(hWnd, message, wParam, lParam);;
 }
-
 
 //--------------------------------------------------------------------------------------
 // Render a frame
