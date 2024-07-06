@@ -599,6 +599,7 @@ public:
         range.fy = c.p0.y;
         range.ly = c.p0.y;
 
+        Curve sc = g.path_list.at(0).geometry.at(0);
         for (int i = g.path_list.size() - 1; i >= 0; --i)
         {
             rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
@@ -607,25 +608,12 @@ public:
             for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
             {
                 c = g.path_list.at(i).geometry.at(k);
-                //if (c.is_curve == false) {
-                    rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
-                //}
-                /*else {
-                    Curve NextC = g.path_list.at(i).geometry.at(k+1);
-                    float t = 0;
-                    constexpr float dt = 1.0f / 8.0f;
-                    for (int u = 0; u < 8; ++u) {
-                        shp::vec2f s0 = shp::vec2f(c.p0.x * (1.0f - t) + c.c.x * t, c.p0.y * (1.0f - t) + c.c.y * t);
-                        shp::vec2f s1 = shp::vec2f(c.c.x * (1.0f - t) + c.p1.x * t, c.c.y * (1.0f - t) + c.p1.y * t);
-                        shp::vec2f r = shp::vec2f(s0.x * (1.0f - t) + s1.x * t, s0.y * (1.0f - t) + s1.y * t);
-                        rbuff->av(SimpleVertex(r.x, r.y, 0, 255, 255, 255, 255));
-                        t += dt;
-                    }
-                }*/
+                rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
                 if (range.fx > c.p0.x) range.fx = c.p0.x;
                 if (range.lx < c.p0.x) range.lx = c.p0.x;
                 if (range.fy > c.p0.y) range.fy = c.p0.y;
                 if (range.ly < c.p0.y) range.ly = c.p0.y;
+                sc = c;
             }
             rbuff->end();
             frag.push_back(rbuff);
@@ -760,7 +748,7 @@ string_check check_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f 
 shp::rect4f GetLoc_stringIndex(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, int checkIndex) {
     //dbg << "insert start" << endl;
     shp::rect4f rloc = shp::rect4f(0, 0, 0, 0);
-    float fsiz = (float)fontsiz / 1500.0f;
+    float fsiz = (float)fontsiz / 500.0f;
     shp::rect4f stackrange = shp::rect4f(loc.fx, 0, loc.fy, 0);
 
     unsigned int c = (unsigned int)wstr[0];
