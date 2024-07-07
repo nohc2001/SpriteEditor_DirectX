@@ -2099,7 +2099,7 @@ namespace freemem
 			}
 			else
 			{
-				if (1 <= byteSiz && byteSiz <= midminsize - 1)
+				if (1 <= byteSiz && byteSiz <= 127)
 				{
 					int index = fm1_sizetable[byteSiz];
 					vecarr < FM_Model1* >* fm1 = SmallSize_HeapDebugFM[index];

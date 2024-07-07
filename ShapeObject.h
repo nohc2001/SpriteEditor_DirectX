@@ -380,7 +380,7 @@ public:
                     shp::triangle3v3f tri(shp::vec3f(buffer[nextchoice]->at(pi).Pos.x, buffer[nextchoice]->at(pi).Pos.y, buffer[nextchoice]->at(pi).Pos.z),
                         shp::vec3f(buffer[nextchoice]->at(pi1).Pos.x, buffer[nextchoice]->at(pi1).Pos.y, buffer[nextchoice]->at(pi1).Pos.z),
                         shp::vec3f(buffer[nextchoice]->at(pi2).Pos.x, buffer[nextchoice]->at(pi2).Pos.y, buffer[nextchoice]->at(pi2).Pos.z));
-                    if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 4) {
+                    if (shp::bTriangleInPolygonRange(tri, polygon) || lt.size <= 3) {
                         index_buf[nextchoice]->push_back(aindex(pi, pi1, pi2));
                         lt.erase(inslti1);
                         //lti = inslti2;
@@ -599,26 +599,89 @@ public:
         range.fy = c.p0.y;
         range.ly = c.p0.y;
 
-        Curve sc = g.path_list.at(0).geometry.at(0);
-        for (int i = g.path_list.size() - 1; i >= 0; --i)
-        {
+        //Curve sc = g.path_list.at(0).geometry.at(0);
+        //for (int i = g.path_list.size() - 1; i >= 0; --i)
+        //{
+        //    rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+        //    rbuff->Init(false);
+        //    rbuff->begin();
+        //    for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
+        //    {
+        //        c = g.path_list.at(i).geometry.at(k);
+        //        //rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
+        //        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+
+        //        if (range.fx > c.p0.x) range.fx = c.p0.x;
+        //        if (range.lx < c.p0.x) range.lx = c.p0.x;
+        //        if (range.fy > c.p0.y) range.fy = c.p0.y;
+        //        if (range.ly < c.p0.y) range.ly = c.p0.y;
+        //        sc = c;
+        //    }
+        //    rbuff->end();
+        //    frag.push_back(rbuff);
+        //}
+        //func_out;
+
+        shp::vec2f lastpos = shp::vec2f(0, 0);
+        for (int i = 0; i < g.path_list.size(); ++i) {
+            c = g.path_list.at(i).geometry.at(0);
+            lastpos = shp::vec2f(c.p0.x, c.p0.y);
             rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
             rbuff->Init(false);
             rbuff->begin();
-            for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
-            {
+            rbuff->av(SimpleVertex(lastpos.x, lastpos.y, 0, 255, 255, 255, 255));
+            for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
                 c = g.path_list.at(i).geometry.at(k);
-                rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
+                if (c.is_curve) {
+                    float fd = 0.125;
+                    float t = 0;
+                    float it = 1.0f;
+                    if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
+                        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+                        lastpos = shp::vec2f(c.p0.x, c.p0.y);
+                    }
+                    
+                    for (int u = 0; u < 8; ++u) {
+                        shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
+                        shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
+                        shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
+
+                        if (lastpos != shp::vec2f(rp.x, rp.y)) {
+                            rbuff->av(SimpleVertex(rp.x, rp.y, 0, 255, 255, 255, 255));
+                            lastpos = shp::vec2f(rp.x, rp.y);
+                        }
+
+                        t += fd;
+                        it -= fd;
+                    }
+                    if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
+                        rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
+                        lastpos = shp::vec2f(c.p1.x, c.p1.y);
+                    }
+                }
+                else {
+                    //rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+                    if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
+                        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+                        lastpos = shp::vec2f(c.p0.x, c.p0.y);
+                    }
+
+                    if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
+                        rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
+                        lastpos = shp::vec2f(c.p1.x, c.p1.y);
+                    }
+                }
+
                 if (range.fx > c.p0.x) range.fx = c.p0.x;
                 if (range.lx < c.p0.x) range.lx = c.p0.x;
                 if (range.fy > c.p0.y) range.fy = c.p0.y;
                 if (range.ly < c.p0.y) range.ly = c.p0.y;
-                sc = c;
             }
+
             rbuff->end();
             frag.push_back(rbuff);
+            //rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
         }
-        //func_out;
     }
 
     void render(const ConstantBuffer& uniform, bool debuging = false)
