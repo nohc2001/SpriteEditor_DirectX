@@ -634,6 +634,8 @@ typedef unordered_map < uint32_t, CharBuffer* >CharMap;
 CharMap char_map;
 void draw_string(wchar_t* wstr, size_t len, float fontsiz, shp::rect4f loc, DX11Color staticColor, float Z = 0.0f)
 {
+    if (len == 0) return;
+
     XMMATRIX StringWorld = XMMatrixIdentity();
     ConstantBuffer cb = SetCB(StringWorld, g_View, g_Projection_2d, staticColor);
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, NULL, &cb, 0, 0);
@@ -750,8 +752,12 @@ shp::rect4f GetLoc_stringIndex(wchar_t* wstr, size_t len, float fontsiz, shp::re
     shp::rect4f rloc = shp::rect4f(0, 0, 0, 0);
     float fsiz = (float)fontsiz / 500.0f;
     shp::rect4f stackrange = shp::rect4f(loc.fx, 0, loc.fy, 0);
+    unsigned int c = 0;
+    unsigned int nextC = 0;
 
-    unsigned int c = (unsigned int)wstr[0];
+    if (len == 0) goto GETLOC_STRINDEX_EXIT;
+
+    c = (unsigned int)wstr[0];
     if (char_map.find((unsigned int)c) == char_map.end())
     {
         CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
@@ -759,7 +765,7 @@ shp::rect4f GetLoc_stringIndex(wchar_t* wstr, size_t len, float fontsiz, shp::re
         char_map.insert(CharMap::value_type((unsigned int)c, cbuf));
     }
 
-    unsigned int nextC = c;
+    nextC = c;
     for (int i = 0; i < len; ++i)
     {
         if (i == checkIndex) {
@@ -788,6 +794,8 @@ shp::rect4f GetLoc_stringIndex(wchar_t* wstr, size_t len, float fontsiz, shp::re
             return rloc;
         }
     }
+
+GETLOC_STRINDEX_EXIT:
 
     rloc = shp::rect4f(stackrange.fx, loc.fy - fontsiz / 2, stackrange.fx + fontsiz, loc.fy + fontsiz / 2);
     return rloc;

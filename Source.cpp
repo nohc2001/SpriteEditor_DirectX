@@ -269,6 +269,7 @@ public:
 	InsideCode_Bake* SelectedICB;
 
 	fmvecarr<fmlwstr> codeLines;
+	fmvecarr<unsigned int> codeLine_expend; // v & 1 => isexpend / v>>1 => codelinenum
 	unsigned int selected_codeline;
 	unsigned int selected_charindex;
 	float codeline_height = 20.0f;
@@ -294,6 +295,183 @@ public:
 
 	int blockstack = 0;
 
+	void AddExpend(unsigned int index) {
+		int low = 0;
+		int high = codeLine_expend.size() - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
+			int presindex = codeLine_expend[mid] >> 1;
+			if (presindex == index)
+			{
+				low = mid;
+				return;
+				break;
+			}
+			else if (presindex > index)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+
+		codeLine_expend.insert(low, (index << 1) + 1);
+	}
+
+	unsigned int GetExpend(unsigned int index) {
+		int low = 0;
+		int high = codeLine_expend.size() - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
+			int presindex = codeLine_expend[mid] >> 1;
+			if (presindex == index)
+			{
+				low = mid;
+				return codeLine_expend[low] & 1;
+			}
+			else if (presindex > index)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+
+		return 0;
+	}
+
+	void SetExpend(unsigned int index, bool expend) {
+		int low = 0;
+		int high = codeLine_expend.size() - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
+			int presindex = codeLine_expend[mid] >> 1;
+			if (presindex == index)
+			{
+				low = mid;
+				int v = 0;
+				if (expend) v = 1;
+				codeLine_expend[low] = (codeLine_expend[low] << 1) + v;
+				break;
+			}
+			else if (presindex > index)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+	}
+
+	shp::vec2i GetExpendLimit(unsigned int index) {
+		bool enable = false;
+		shp::vec2i pair = shp::vec2i(-1, -1);
+		unsigned int n = index;
+		int si = 0;
+		for (int i = 0; i < codeLines[index].size();++i) {
+			if (codeLines[index][i] == L'{') {
+				enable = true;
+				si = i+1;
+				if (si >= codeLines[index].size()) {
+					si = 0;
+					n += 1;
+				}
+				break;
+			}
+		}
+		if (!enable) return pair;
+
+		int stack = 1;
+		bool end = false;
+		for (int i = n; i < codeLines.size(); ++i) {
+			for (int k = si; k < codeLines[i].size(); ++k) {
+				if (codeLines[i][k] == L'{') {
+					stack += 1;
+				}
+				else if (codeLines[i][k] == L'}') {
+					stack -= 1;
+					if (stack == 0) {
+						end = true;
+						pair.x = i;
+						pair.y = k;
+						return pair;
+					}
+				}
+			}
+			si = 0;
+		}
+	}
+
+	void WhenLineInsert(unsigned int index) {
+		int low = 0;
+		int high = codeLine_expend.size() - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
+			int presindex = codeLine_expend[mid] >> 1;
+			if (presindex == index)
+			{
+				low = mid;
+				//codeLine_expend.insert(low, (index<<1) + 1);
+				//low += 1;
+				break;
+			}
+			else if (presindex > index)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+
+		for (int i = low; i < codeLine_expend.size(); ++i) {
+			unsigned int v = codeLine_expend[i] & 1;
+			codeLine_expend[i] = (((codeLine_expend[i] >> 1) + 1) << 1) + v;
+		}
+	}
+
+	void WhenLineErase(unsigned int index) {
+		int low = 0;
+		int high = codeLine_expend.size() - 1;
+		while (low <= high) {
+			int mid = low + (high - low) / 2;
+			int presindex = codeLine_expend[mid] >> 1;
+			if (presindex == index)
+			{
+				low = mid;
+				codeLine_expend.erase(low);
+				break;
+			}
+			else if (presindex > index)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+
+		for (int i = low; i < codeLine_expend.size(); ++i) {
+			unsigned int v = codeLine_expend[i] & 1;
+			codeLine_expend[i] = (((codeLine_expend[i] >> 1) - 1) << 1) + v;
+		}
+	}
+
+	void WhenCharInsert(unsigned int index, unsigned int cindex, wchar_t wc) {
+		if (wc == L'{') {
+			AddExpend(index);
+		}
+	}
+
+	void BeforeCharErase(unsigned int index, unsigned int cindex) {
+		if (codeLines[index][cindex] == L'{') {
+			int low = 0;
+			int high = codeLine_expend.size() - 1;
+			while (low <= high) {
+				int mid = low + (high - low) / 2;
+				int presindex = codeLine_expend[mid] >> 1;
+				if (presindex == index)
+				{
+					low = mid;
+					codeLine_expend.erase(low);
+					return;
+				}
+				else if (presindex > index)
+					high = mid - 1;
+				else
+					low = mid + 1;
+			}
+		}
+	}
+
 	void ImportBlockToCodeLine(code_sen* cs) {
 		
 		codeLines.push_back(fmlwstr());
@@ -314,6 +492,7 @@ public:
 				codeLines.push_back(fmlwstr());
 				codeLines.last().NULLState();
 				codeLines.last().Init(8, false);
+				//codeLine_expend.push_back(false);
 
 				for (int k = 0; k < blockstack; ++k) {
 					codeLines.last().push_back(L' ');
@@ -364,6 +543,12 @@ public:
 			codeLines[i].NULLState();
 			codeLines[i].Init(16, false);
 		}
+
+		codeLine_expend.NULLState();
+		codeLine_expend.Init(8, false, true);
+		for (int i = 0; i < 8; ++i) {
+			codeLine_expend[i] = false;
+		}
 		selected_codeline = 0;
 		selected_charindex = 0;
 		codeline_height = 20.0f;
@@ -410,22 +595,94 @@ public:
 		int max_express = loc.geth() / codeline_height;
 		int maxx = max_express + codeLines.size() * SliderRate;
 		if (maxx > codeLines.size()) maxx = codeLines.size();
-		for (int i = codeLines.size() * SliderRate; i < maxx ; ++i) {
+		int i = codeLines.size() * SliderRate;
+		int smax = max_express;
+		int subi = 0;
+		for (int s = 0; s < smax; ++s) {
+			if (i >= codeLines.size()) break;
 			wstring wstr;
 			wstr = to_wstring(i);
 			draw_string((wchar_t*)wstr.c_str(), wstr.size(), codeline_height * 0.5f, linenumloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-			if (i != selected_codeline) {
-				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
-				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-			}
-			else {
-				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
-				shp::rect4f textcursorLoc = GetLoc_stringIndex(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.5f, lineloc, selected_charindex);
-				draw_string(codeLines.at(i).Arr, codeLines.at(i).size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-				drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx+3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
-			}
+			shp::vec2i lim = GetExpendLimit(i);
+			bool hold = false;
+			if (lim.x >= 0) {
+				if (GetExpend(i) == 0) {
+					hold = true;
+					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+					drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
+					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+					drawline(shp::vec2f(minrect.fx+1, minrect.getCenter().y), shp::vec2f(minrect.lx-1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 0.0f), 0.02f);
+					shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
+					drawline(shp::vec2f(plsrect.fx+1, plsrect.getCenter().y), shp::vec2f(plsrect.lx-1, plsrect.getCenter().y), plsrect.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.02f);
 
-			lineloc.fy -= codeline_height* linemargin; lineloc.ly -= codeline_height* linemargin;
+					fmlwstr wfstr;
+					wfstr.NULLState();
+					wfstr.Init(codeLines[i].size(), false);
+					int stack = 0;
+					for (int k = subi; k < codeLines[i].size(); ++k) {
+						if (codeLines[i][k] == L'{') {
+							stack += 1;
+							wfstr.push_back(L'{');
+							wfstr.push_back(L'.');
+							wfstr.push_back(L'.');
+							wfstr.push_back(L'.');
+							wfstr.push_back(L'}');
+						}
+						else if (codeLines[i][k] == L'}') {
+							stack -= 1;
+						}
+
+						if (stack == 0) {
+							wfstr.push_back(codeLines[i][k]);
+						}
+					}
+
+					if (i != selected_codeline) {
+						drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+						draw_string(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+					}
+					else {
+						drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
+						shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, selected_charindex);
+						draw_string(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+						drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx + 3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
+					}
+
+					i = lim.x;
+					subi = lim.y+1;
+					if (codeLines[i].size() <= subi) {
+						i += 1;
+					}
+				}
+				else {
+					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+					drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
+					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+					drawline(shp::vec2f(minrect.fx+1, minrect.getCenter().y), shp::vec2f(minrect.lx-1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
+				}
+			}
+			if (hold == false) {
+				fmlwstr wfstr;
+				wfstr.NULLState();
+				wfstr.Init(codeLines[i].size(), false);
+				for (int k = subi; k < codeLines[i].size(); ++k) {
+					wfstr.push_back(codeLines[i][k]);
+				}
+
+				if (i != selected_codeline) {
+					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+					draw_string(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				}
+				else {
+					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
+					shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, selected_charindex);
+					draw_string(wfstr.Arr, wfstr.size(), codeline_height * 0.5f, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+					drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx + 3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
+				}
+				++i;
+				subi = 0;
+			}
+			lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
 			linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
 		}
 
@@ -525,17 +782,21 @@ public:
 					}
 					codeLines.up = 0;
 
+					codeLine_expend.up = 0;
+
 					for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
 						code_sen* cs = SelectedICB->csarr->at(i);
 						if (cs->ck != codeKind::ck_blocks) {
 							codeLines.push_back(fmlwstr());
 							codeLines.last().NULLState();
 							codeLines.last().Init(8, false);
+							//codeLine_expend.push_back(false);
 							for (int k = 0; k < cs->maxlen; ++k) {
 								char* word = cs->sen[k];
 								int wlen = strlen(word);
 								for (int u = 0; u < wlen; ++u) {
 									codeLines.last().push_back((wchar_t)word[u]);
+									WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
 								}
 								codeLines.last().push_back(L' ');
 							}
@@ -708,12 +969,14 @@ public:
 					}
 
 					codeLines[selected_codeline].insert(selected_charindex, key);
+					WhenCharInsert(selected_codeline, selected_charindex, key);
 					codeLines[selected_codeline].c_str();
 					++selected_charindex;
 				}
 				else if (evt.wParam == VK_BACK) {
 					if (codeLines[selected_codeline].size() >= selected_charindex-1) {
 						--selected_charindex;
+						BeforeCharErase(selected_codeline, selected_charindex);
 						codeLines[selected_codeline].erase(selected_charindex);
 					}
 					else if (selected_charindex == 0 && selected_codeline != 0) {
@@ -723,6 +986,7 @@ public:
 						temp = codeLines.at(selected_codeline);
 						codeLines.at(selected_codeline).release();
 						codeLines.erase(selected_codeline);
+						WhenLineErase(selected_codeline);
 						--selected_codeline;
 						selected_charindex = codeLines.at(selected_codeline).size();
 						for (int i = 0; i < temp.size(); ++i) {
@@ -739,11 +1003,11 @@ public:
 				else if (evt.wParam == VK_RETURN) {
 					//enter
 					codeLines.insert(selected_codeline + 1, fmlwstr());
+					WhenLineInsert(selected_codeline + 1);
 					selected_codeline += 1;
 					codeLines[selected_codeline].NULLState();
 					codeLines[selected_codeline].Init(8, false);
 					selected_charindex = 0;
-
 				}
 				else if (evt.wParam == VK_SHIFT) {
 					BeShift = true;
@@ -809,6 +1073,42 @@ public:
 				}
 			}
 
+			//expending
+			if (evt.message == WM_LBUTTONDOWN) {
+				shp::vec2f mpos = GetMousePos(evt.lParam);
+				shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
+				shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
+				lineloc.fy += codeline_height; lineloc.ly += codeline_height;
+				shp::rect4f linenumloc = lineloc;
+				lineloc.fx += codeline_height * linenumwid;
+				int max_express = loc.geth() / codeline_height;
+				int maxx = max_express + codeLines.size() * SliderRate;
+				if (maxx > codeLines.size()) maxx = codeLines.size();
+				int i = codeLines.size() * SliderRate;
+				int smax = max_express;
+				int subi = 0;
+				for (int s = 0; s < smax; ++s) {
+					if (i >= codeLines.size()) break;
+					shp::vec2i lim = GetExpendLimit(i);
+					bool hold = false;
+					if (lim.x >= 0) {
+						shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+						if (shp::bPointInRectRange(mpos, expbtn)) {
+							if (GetExpend(i) == 0) {
+								SetExpend(i, true);
+							}
+							else {
+								SetExpend(i, false);
+							}
+						}
+					}
+					if (hold == false) {
+						++i;
+					}
+					lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
+					linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+				}
+			}
 		}
 	}
 
