@@ -551,7 +551,7 @@ public:
 		}
 		selected_codeline = 0;
 		selected_charindex = 0;
-		codeline_height = 50.0f;
+		codeline_height = 40.0f;
 		linemargin = 1.2f;
 		linenumwid = 3.0f;
 
@@ -4991,7 +4991,7 @@ void Render()
 
 	Glyph g;
 	int fontindex = -1;
-	uint32_t unicode = L'i';
+	uint32_t unicode = L'H';
 	unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
 	while (glyphmap->find(unicode) == glyphmap->end()) {
 		++fontindex;

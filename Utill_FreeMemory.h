@@ -1212,10 +1212,11 @@ namespace freemem
 				return true;
 			return false;
 		}
-	};
+	};	
 	*/
 	typedef byte8* AllocPtr;
 
+	//re write
 	class FM_Model2 :FM_Model
 	{
 	public:
@@ -1297,16 +1298,16 @@ namespace freemem
 			else
 			{
 				// fup �� �� á����
-				ptr_type start = (ptr_type)DataPtr;
-				ptr_type end = (ptr_type)DataPtr;
+				byte8* start = (byte8*)DataPtr;
+				byte8* end = (byte8*)DataPtr;
 				for (int i = 0; i < (int)AAsize; ++i)
 				{
 					start = end;
-					start = start + ((byte8)(*(byte8*)(start - 1)));
-					end = (ptr_type)AllocArr[i];
+					start = start + (int)(*(start - 1));
+					end = (byte8*)AllocArr[i];
 					if (end - start > (int)byteSiz + 1)
 					{
-						int index = start + 1 - (ptr_type)DataPtr;
+						int index = start + 1 - DataPtr;
 						if (SizeMemorySize == 1)
 						{
 							DataPtr[index] = (byte8)byteSiz;
@@ -1584,6 +1585,13 @@ namespace freemem
 	{
 		int* ptr;
 		int size = 0;
+
+		large_alloc() {}
+
+		large_alloc(int* p, int s) {
+			ptr = p;
+			size = s;
+		}
 	};
 
 	class TempStack
@@ -1749,21 +1757,24 @@ namespace freemem
 		unsigned int sshd_Size = 0;
 		unsigned int mshd_Size = 0;
 		unsigned int bshd_Size = 0;
-		int fm1_sizetable[128] = { };
+		int fm1_sizetable[257] = { };
 
 		vecarr < std::thread::id > thread_idarr;
 		vecarr < FM_Model0* >TempFM;
 		vecarr < TempStack* >tempStack;
+		// 1 ~ 256 bytes with no size data
 		vecarr < vecarr < FM_Model1* >*>SmallSize_HeapDebugFM;
-		// 1 ~ midminsize byte
-		vecarr < FM_Model2* >MidiumSize_HeapDebugFM;
-		// 40 ~ 255 byte
-		vecarr < FM_Model2* >BigSize_HeapDebugFM;
-		// 256 ~ 65535 byte
+		//
+		//vecarr < FM_Model2* >MidiumSize_HeapDebugFM;
+		//// 40 ~ 255 byte
+		//vecarr < FM_Model2* >BigSize_HeapDebugFM;
+		//// 256 ~ 65535 byte
+
+		// later fmDynamicArr
+		vecarr<byte8*> LargeSize_HeapDebugFM;
 
 		FM_System0()
 		{
-
 		}
 
 		virtual ~FM_System0()
@@ -1867,11 +1878,39 @@ namespace freemem
 
 			FILE* fp;
 			fopen_s(&fp, "fm1_sizetable.bin", "rb");
-			for (int i = 1; i < 128; ++i)
+			for (int i = 1; i < 257; ++i)
 			{
-				int a = (int)fgetc(fp);
-				int l = log2(a);
-				fm1_sizetable[i] = l;
+				char a = fgetc(fp);
+				switch (a) {
+				case 1:
+					fm1_sizetable[i] = 0;
+					break;
+				case 2:
+					fm1_sizetable[i] = 1;
+					break;
+				case 4:
+					fm1_sizetable[i] = 2;
+					break;
+				case 8:
+					fm1_sizetable[i] = 3;
+					break;
+				case 16:
+					fm1_sizetable[i] = 4;
+					break;
+				case 32:
+					fm1_sizetable[i] = 5;
+					break;
+				case 64:
+					fm1_sizetable[i] = 6;
+					break;
+				case 128:
+					fm1_sizetable[i] = 7;
+					break;
+				case 0:
+					fm1_sizetable[i] = 8;
+					break;
+				}
+				
 			}
 			fclose(fp);
 
@@ -1898,7 +1937,7 @@ namespace freemem
 
 			SmallSize_HeapDebugFM.NULLState();
 			SmallSize_HeapDebugFM.Init(2, false);
-			for (int i = 0; i < 8; ++i)
+			for (int i = 0; i < 9; ++i)
 			{
 				FM_Model1* sshdFM = new FM_Model1();
 				int n = pow(2, i);
@@ -1910,7 +1949,7 @@ namespace freemem
 				SmallSize_HeapDebugFM.push_back(ssfm1);
 			}
 
-			MidiumSize_HeapDebugFM.NULLState();
+			/*MidiumSize_HeapDebugFM.NULLState();
 			MidiumSize_HeapDebugFM.Init(2, false);
 			FM_Model2* mshdFM = new FM_Model2();
 			mshdFM->SetHeapData(new byte8[mshd], mshd, 1);
@@ -1920,7 +1959,10 @@ namespace freemem
 			BigSize_HeapDebugFM.Init(2, false);
 			FM_Model2* bshdFM = new FM_Model2();
 			bshdFM->SetHeapData(new byte8[bshd], bshd, 2);
-			BigSize_HeapDebugFM.push_back(bshdFM);
+			BigSize_HeapDebugFM.push_back(bshdFM);*/
+
+			LargeSize_HeapDebugFM.NULLState();
+			LargeSize_HeapDebugFM.Init(8, false);
 		}
 
 		void thread_tm_push()
@@ -2040,39 +2082,27 @@ namespace freemem
 				byte8* ptr = sshdFM->_fastnew(byteSiz);
 				return ptr;
 			}
-			else if (midminsize <= byteSiz && byteSiz <= 255)
+			else if (256 < byteSiz)
 			{
-				for (int i = 0; i < (int)MidiumSize_HeapDebugFM.size(); ++i)
-				{
-					byte8* ptr = MidiumSize_HeapDebugFM[i]->_New(byteSiz);
-					if (ptr != nullptr)
+				byte8* newm = (byte8*)malloc(byteSiz);
+				int low = 0;
+				int high = LargeSize_HeapDebugFM.size() - 1;
+				while (low <= high) {
+					int mid = low + (high - low) / 2;
+					byte8* presindex = LargeSize_HeapDebugFM[mid];
+					if (presindex == newm)
 					{
-						return ptr;
+						low = mid;
+						return nullptr;
 					}
+					else if (presindex > newm)
+						high = mid - 1;
+					else
+						low = mid + 1;
 				}
 
-				FM_Model2* mshdFM = new FM_Model2();
-				mshdFM->SetHeapData(new byte8[mshd_Size], mshd_Size, 1);
-				MidiumSize_HeapDebugFM.push_back(mshdFM);
-				byte8* ptr = mshdFM->_New(byteSiz);
-				return ptr;
-			}
-			else if (256 <= byteSiz && byteSiz <= 65535)
-			{
-				for (int i = 0; i < (int)BigSize_HeapDebugFM.size(); ++i)
-				{
-					byte8* ptr = BigSize_HeapDebugFM[i]->_New(byteSiz);
-					if (ptr != nullptr)
-					{
-						return ptr;
-					}
-				}
-
-				FM_Model2* bshdFM = new FM_Model2();
-				bshdFM->SetHeapData(new byte8[bshd_Size], bshd_Size, 2);
-				BigSize_HeapDebugFM.push_back(bshdFM);
-				byte8* ptr = BigSize_HeapDebugFM[BigSize_HeapDebugFM.size() - 1]->_New(byteSiz);
-				return ptr;
+				LargeSize_HeapDebugFM.insert(low, newm);
+				return newm;
 			}
 		}
 
@@ -2099,7 +2129,7 @@ namespace freemem
 			}
 			else
 			{
-				if (1 <= byteSiz && byteSiz <= 127)
+				if (1 <= byteSiz && byteSiz <= 256)
 				{
 					int index = fm1_sizetable[byteSiz];
 					vecarr < FM_Model1* >* fm1 = SmallSize_HeapDebugFM[index];
@@ -2130,40 +2160,28 @@ namespace freemem
 					byte8* ptr = sshdFM->_New(byteSiz);
 					return ptr;
 				}
-				else if (midminsize <= byteSiz && byteSiz <= 255)
+				else if (256 <= byteSiz)
 				{
-					for (int i = 0; i < (int)MidiumSize_HeapDebugFM.size(); ++i)
-					{
-						byte8* ptr = MidiumSize_HeapDebugFM[i]->_New(byteSiz);
-						if (ptr != nullptr)
+					byte8* newm = (byte8*)malloc(byteSiz);
+					int low = 0;
+					int high = LargeSize_HeapDebugFM.size() - 1;
+					while (low <= high) {
+						int mid = low + (high - low) / 2;
+						byte8* presindex = LargeSize_HeapDebugFM[mid];
+						if (presindex == newm)
 						{
-							return ptr;
+							low = mid;
+							return nullptr;
+							break;
 						}
+						else if (presindex > newm)
+							high = mid - 1;
+						else
+							low = mid + 1;
 					}
 
-					FM_Model2* mshdFM = new FM_Model2();
-					mshdFM->SetHeapData(new byte8[mshd_Size], mshd_Size, 1);
-					MidiumSize_HeapDebugFM.push_back(mshdFM);
-					byte8* ptr = mshdFM->_New(byteSiz);
-					return ptr;
-				}
-				else if (256 <= byteSiz && byteSiz <= 65535)
-				{
-					for (int i = 0; i < (int)BigSize_HeapDebugFM.size(); ++i)
-					{
-						byte8* ptr = BigSize_HeapDebugFM[i]->_New(byteSiz);
-						if (ptr != nullptr)
-						{
-							return ptr;
-						}
-					}
-
-					FM_Model2* bshdFM = new FM_Model2();
-					bshdFM->SetHeapData(new byte8[bshd_Size], bshd_Size, 2);
-					BigSize_HeapDebugFM.push_back(bshdFM);
-					byte8* ptr =
-						BigSize_HeapDebugFM[BigSize_HeapDebugFM.size() - 1]->_New(byteSiz);
-					return ptr;
+					LargeSize_HeapDebugFM.insert(low, newm);
+					return newm;
 				}
 			}
 			return nullptr;
@@ -2222,36 +2240,22 @@ namespace freemem
 			}
 			else if (midminsize <= size && size <= 255)
 			{
-				for (int i = 0; i < (int)MidiumSize_HeapDebugFM.size(); ++i)
-				{
-					FM_Model2* fm = MidiumSize_HeapDebugFM[i];
-					if (fm->canInclude(variable, size))
+				int low = 0;
+				int high = LargeSize_HeapDebugFM.size() - 1;
+				while (low <= high) {
+					int mid = low + (high - low) / 2;
+					byte8* presindex = LargeSize_HeapDebugFM[mid];
+					if (presindex == variable)
 					{
-						bool b = fm->_Delete(variable, size);
-						if (b)
-						{
-							return true;
-						}
+						free(LargeSize_HeapDebugFM[mid]);
+						LargeSize_HeapDebugFM.erase(mid);
+						return true;
 					}
+					else if (presindex > variable)
+						high = mid - 1;
+					else
+						low = mid + 1;
 				}
-
-				return false;
-			}
-			else if (256 <= size && size <= 65535)
-			{
-				for (int i = 0; i < (int)BigSize_HeapDebugFM.size(); ++i)
-				{
-					FM_Model2* fm = BigSize_HeapDebugFM[i];
-					if (fm->canInclude(variable, size))
-					{
-						bool b = fm->_Delete(variable, size);
-						if (b)
-						{
-							return true;
-						}
-					}
-				}
-
 				return false;
 			}
 
@@ -2260,7 +2264,7 @@ namespace freemem
 
 		bool bAlloc(byte8* variable, unsigned int size)
 		{
-			if (1 <= size && size <= 39)
+			if (1 <= size && size <= 256)
 			{
 				int index = fm1_sizetable[size];
 				vecarr < FM_Model1* >* fm1 = SmallSize_HeapDebugFM[index];
@@ -2275,30 +2279,22 @@ namespace freemem
 
 				return false;
 			}
-			else if (40 <= size && size <= 255)
+			else if (256 < size)
 			{
-				for (int i = 0; i < (int)MidiumSize_HeapDebugFM.size(); ++i)
-				{
-					bool b = MidiumSize_HeapDebugFM[i]->bAlloc(variable, size);
-					if (b)
+				int low = 0;
+				int high = LargeSize_HeapDebugFM.size() - 1;
+				while (low <= high) {
+					int mid = low + (high - low) / 2;
+					byte8* presindex = LargeSize_HeapDebugFM[mid];
+					if (presindex == variable)
 					{
 						return true;
 					}
+					else if (presindex > variable)
+						high = mid - 1;
+					else
+						low = mid + 1;
 				}
-
-				return false;
-			}
-			else if (256 <= size && size <= 65535)
-			{
-				for (int i = 0; i < (int)BigSize_HeapDebugFM.size(); ++i)
-				{
-					bool b = BigSize_HeapDebugFM[i]->bAlloc(variable, size);
-					if (b)
-					{
-						return true;
-					}
-				}
-
 				return false;
 			}
 
