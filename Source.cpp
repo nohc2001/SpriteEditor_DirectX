@@ -270,6 +270,7 @@ public:
 
 	fmvecarr<fmlwstr> codeLines;
 	fmvecarr<unsigned int> codeLine_expend; // v & 1 => isexpend / v>>1 => codelinenum
+	fmlwstr currentErrorMsg;
 	unsigned int selected_codeline;
 	unsigned int selected_charindex;
 	float codeline_height = 20.0f;
@@ -394,6 +395,59 @@ public:
 			}
 			si = 0;
 		}
+
+		return pair;
+	}
+
+	shp::vec2i GetExpendStart(unsigned int endindex) {
+		bool enable = false;
+		shp::vec2i pair = shp::vec2i(-1, -1);
+		unsigned int n = endindex;
+		int si = 0;
+		for (int i = 0; i < codeLines[endindex].size(); ++i) {
+			if (codeLines[endindex][i] == L'}') {
+				enable = true;
+				si = i - 1;
+				if (si < 0) {
+					if (endindex != 0) {
+						si = codeLines[endindex - 1].size() - 1;
+						n -= 1;
+					}
+					else {
+						si = 0;
+						n = 0;
+					}
+				}
+				break;
+			}
+		}
+		if (!enable) return pair;
+
+		int stack = 1;
+		bool end = false;
+		for (int i = n; i >= 0; --i) {
+			for (int k = si; k >= 0; --k) {
+				if (codeLines[i][k] == L'}') {
+					stack += 1;
+				}
+				else if (codeLines[i][k] == L'{') {
+					stack -= 1;
+					if (stack == 0) {
+						end = true;
+						pair.x = i;
+						pair.y = k;
+						return pair;
+					}
+				}
+			}
+
+			if (i != 0) {
+				si = codeLines[i - 1].size() - 1;
+			}
+			else si = 0;
+		}
+
+		return pair;
 	}
 
 	void WhenLineInsert(unsigned int index) {
@@ -473,7 +527,6 @@ public:
 	}
 
 	void ImportBlockToCodeLine(code_sen* cs) {
-		
 		codeLines.push_back(fmlwstr());
 		codeLines.last().NULLState();
 		codeLines.last().Init(8, false);
@@ -483,6 +536,7 @@ public:
 		}
 		codeLines.last().push_back(L'{');
 		codeLines.last().c_str();
+		AddExpend(codeLines.up - 1);
 
 		blockstack += 1;
 
@@ -551,7 +605,7 @@ public:
 		}
 		selected_codeline = 0;
 		selected_charindex = 0;
-		codeline_height = 40.0f;
+		codeline_height = 20.0f;
 		linemargin = 1.2f;
 		linenumwid = 3.0f;
 
@@ -565,9 +619,14 @@ public:
 		isMoving = false;
 		SliderRate = 0; // to 1.0f
 		showVarmod = true;
+
+		currentErrorMsg.NULLState();
+		currentErrorMsg.Init(8, false);
 	}
 
 	void Render() {
+		draw_string(currentErrorMsg.c_str(), currentErrorMsg.size(), codeline_height * 0.25f, shp::rect4f(loc.fx, loc.ly + 20, loc.lx, loc.ly + 100), DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
+
 		shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
 		shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
 		float fontsiz = codeline_height * 0.25f;
@@ -611,9 +670,9 @@ public:
 					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
 					drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
 					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
-					drawline(shp::vec2f(minrect.fx+1, minrect.getCenter().y), shp::vec2f(minrect.lx-1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 0.0f), 0.02f);
+					drawline(shp::vec2f(minrect.fx+1, minrect.getCenter().y), shp::vec2f(minrect.lx-1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
 					shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
-					drawline(shp::vec2f(plsrect.fx+1, plsrect.getCenter().y), shp::vec2f(plsrect.lx-1, plsrect.getCenter().y), plsrect.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.02f);
+					drawline(shp::vec2f(plsrect.fx+1, plsrect.getCenter().y), shp::vec2f(plsrect.lx-1, plsrect.getCenter().y), plsrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
 
 					fmlwstr wfstr;
 					wfstr.NULLState();
@@ -654,6 +713,7 @@ public:
 					subi = lim.y+1;
 					if (codeLines[i].size() <= subi) {
 						i += 1;
+						subi = 0;
 					}
 				}
 				else {
@@ -704,6 +764,8 @@ public:
 		draw_string(tempstr1, 4, atmargin * 0.5f, funcbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 		drawline(shp::vec2f(importbtnLoc.fx, importbtnLoc.getCenter().y), shp::vec2f(importbtnLoc.lx, importbtnLoc.getCenter().y), importbtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
 		draw_string(tempstr2, 6, atmargin * 0.5f, importbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+
+		
 	}
 
 	void Event(DX_Event evt) {
@@ -770,52 +832,124 @@ public:
 							}
 							//dbg << "bake" << endl;
 							SelectedICB->bake_code((char*)filename.c_str());
+
+							bool success = false;
+							if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
+								currentErrorMsg.up = 0;
+								currentErrorMsg.Arr[0] = 0;
+								for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
+									currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
+								}
+							}
+							else {
+								currentErrorMsg.up = 0;
+								currentErrorMsg.Arr[0] = 0;
+								success = true;
+							}
+
+							SelectedICB->curErrMsg.release();
+							
 							//dbg << "s0" << endl;
-							icmap.insert(ICMAP::value_type((char*)filename.c_str(), SelectedICB));
+							if (success) {
+								icmap.insert(ICMAP::value_type((char*)filename.c_str(), SelectedICB));
+							}
+							else {
+								SelectedICB = nullptr;
+							}
 							//dbg << "s0" << endl;
 						}
 						else
 						{
 							SelectedICB = icmap[(char*)filename.c_str()];
 						}
-					}
 
-					//update datas
-					for (int i = 0; i < codeLines.size(); ++i) {
-						codeLines[i].release();
-						codeLines[i].NULLState();
-					}
-					codeLines.up = 0;
 
-					codeLine_expend.up = 0;
+						if (SelectedICB == nullptr) {
+							for (int i = 0; i < codeLines.size(); ++i) {
+								codeLines[i].release();
+								codeLines[i].NULLState();
+							}
+							codeLines.up = 0;
 
-					for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
-						code_sen* cs = SelectedICB->csarr->at(i);
-						if (cs->ck != codeKind::ck_blocks) {
 							codeLines.push_back(fmlwstr());
-							codeLines.last().NULLState();
-							codeLines.last().Init(8, false);
-							//codeLine_expend.push_back(false);
-							for (int k = 0; k < cs->maxlen; ++k) {
-								char* word = cs->sen[k];
-								int wlen = strlen(word);
-								for (int u = 0; u < wlen; ++u) {
-									codeLines.last().push_back((wchar_t)word[u]);
-									WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+							codeLines[0].NULLState();
+							codeLines[0].Init(8, false);
+							int ss = 0;
+
+							FILE* fp;
+							fopen_s(&fp, (char*)filename.c_str(), "rt");
+							if (fp)
+							{
+								int max = 0;
+								fseek(fp, 0, SEEK_END);
+								max = ftell(fp);
+								fclose(fp);
+
+								int stack = 0;
+								fopen_s(&fp, (char*)filename.c_str(), "rt");
+								int k = 0;
+								while (k < max)
+								{
+									char c;
+									c = fgetc(fp);
+									if (c == '\n') {
+										codeLines.push_back(fmlwstr());
+										ss += 1;
+										codeLines[ss].NULLState();
+										codeLines[ss].Init(8, false);
+										max -= 1;
+									}
+									else {
+										codeLines[ss].push_back((wchar_t)c);
+										WhenCharInsert(ss, codeLines.last().size() - 1, (wchar_t)c);
+									}
+									++k;
 								}
-								codeLines.last().push_back(L' ');
 							}
 
-							if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
-								codeLines.last().push_back(L';');
-							}
-
-							codeLines.last().c_str();
+							return;
 						}
-						else {
-							ImportBlockToCodeLine(cs);
+
+						//update datas
+						for (int i = 0; i < codeLines.size(); ++i) {
+							codeLines[i].release();
+							codeLines[i].NULLState();
+						}
+						codeLines.up = 0;
+
+						codeLine_expend.up = 0;
+
+						for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
+							code_sen* cs = SelectedICB->csarr->at(i);
+							if (cs->ck != codeKind::ck_blocks) {
+								codeLines.push_back(fmlwstr());
+								codeLines.last().NULLState();
+								codeLines.last().Init(8, false);
+								//codeLine_expend.push_back(false);
+								for (int k = 0; k < cs->maxlen; ++k) {
+									char* word = cs->sen[k];
+									int wlen = strlen(word);
+									for (int u = 0; u < wlen; ++u) {
+										codeLines.last().push_back((wchar_t)word[u]);
+										//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+									}
+									codeLines.last().push_back(L' ');
+									//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+								}
+
+								if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
+									codeLines.last().push_back(L';');
+									//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+								}
+
+								codeLines.last().c_str();
+							}
+							else {
+								ImportBlockToCodeLine(cs);
+							}
 						}
 					}
+
 				}
 			}
 		}
@@ -1022,15 +1156,36 @@ public:
 				}
 				else if (evt.wParam == VK_UP) {
 					if (selected_codeline != 0) {
-						unsigned int prevCL = selected_codeline;
-						--selected_codeline;
-						selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[prevCL].size() + 1));
+						shp::vec2i lim = GetExpendStart(selected_codeline-1);
+						if (lim.x >= 0 && GetExpend(lim.x) == 0) {
+							selected_codeline = lim.x;
+							selected_charindex = lim.y - 1;
+							if (selected_charindex < 0) {
+								selected_charindex = 0;
+							}
+						}
+						else {
+							unsigned int prevCL = selected_codeline;
+							--selected_codeline;
+							selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[prevCL].size() + 1));
+						}
 					}
 				}
 				else if (evt.wParam == VK_DOWN) {
 					if (codeLines.size() > selected_codeline + 1) {
-						++selected_codeline;
-						selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[selected_codeline - 1].size() + 1));
+						shp::vec2i lim = GetExpendLimit(selected_codeline);
+						if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
+							selected_codeline = lim.x;
+							selected_charindex = lim.y + 1;
+							if (selected_charindex >= codeLines[selected_codeline].size()) {
+								selected_codeline += 1;
+								selected_charindex = 0;
+							}
+						}
+						else {
+							++selected_codeline;
+							selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[selected_codeline - 1].size() + 1));
+						}
 					}
 				}
 				else if (evt.wParam == VK_LEFT) {
@@ -1039,8 +1194,18 @@ public:
 					}
 					else {
 						if (selected_codeline != 0) {
-							selected_codeline -= 1;
-							selected_charindex = codeLines[selected_codeline].size();
+							shp::vec2i lim = GetExpendStart(selected_codeline - 1);
+							if (lim.x >= 0 && GetExpend(lim.x) == 0) {
+								selected_codeline = lim.x;
+								selected_charindex = lim.y - 1;
+								if (selected_charindex < 0) {
+									selected_charindex = 0;
+								}
+							}
+							else {
+								selected_codeline -= 1;
+								selected_charindex = codeLines[selected_codeline].size();
+							}
 						}
 					}
 				}
@@ -1050,8 +1215,19 @@ public:
 					}
 					else {
 						if (selected_codeline < codeLines.size()) {
-							selected_codeline += 1;
-							selected_charindex = 0;
+							shp::vec2i lim = GetExpendLimit(selected_codeline);
+							if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
+								selected_codeline = lim.x;
+								selected_charindex = lim.y + 1;
+								if (selected_charindex >= codeLines[selected_codeline].size()) {
+									selected_codeline += 1;
+									selected_charindex = 0;
+								}
+							}
+							else {
+								selected_codeline += 1;
+								selected_charindex = 0;
+							}
 						}
 					}
 				}
@@ -1184,8 +1360,8 @@ void basicbtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 	rb->render(cb);
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void basicbtn_update(DXBtn* btn, float delta)
@@ -1431,8 +1607,8 @@ void freepolybtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	
-	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb2);
+	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	if (*enable)
 	{
 		linedrt->render(cb);
@@ -1701,8 +1877,8 @@ void objselectbtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 	
-	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
+	draw_string(btn->text, wcslen(btn->text), 20.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 }
 
 void objselectbtn_event(DXBtn* btn, DX_Event evt)
@@ -3611,8 +3787,8 @@ void colorpage_donebtn_event(DXBtn* btn, DX_Event evt)
 
 void colorpagebtn_render(DXBtn* btn)
 {
-	float layer_uitext = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_uitext];
-	float layer_ui = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_ui];
+	float layer_uitext = **(float**)&colorpage->pfm.Data[(int)colorpm::layer_uitext];
+	float layer_ui = **(float**)&colorpage->pfm.Data[(int)colorpm::layer_ui];
 
 	rbuffer* rb = (rbuffer*)btn->param[0];
 	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
@@ -3628,13 +3804,13 @@ void colorpagebtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 }
 
 void colorpageslider_render(DXSlider* slider)
 {
-	float layer_ui = **(float**)&colorpage->pfm.Data[(int)mainpm::layer_ui];
+	float layer_ui = **(float**)&colorpage->pfm.Data[(int)colorpm::layer_ui];
 	shp::vec2f cen = slider->sup()->loc.getCenter();
 	shp::vec2f wh = shp::vec2f(slider->sup()->loc.getw() / 2, slider->sup()->loc.geth() / 2);
 
@@ -4408,7 +4584,6 @@ HRESULT CompileShaderFromFile( WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR sz
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
 
-
 void GetScreenWH() {
     RECT rc;
     GetClientRect(g_hWnd, &rc);
@@ -4477,6 +4652,10 @@ HRESULT InitDevice()
     if( FAILED( hr ) )
         return hr;
 
+	/*D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	ZeroMemory(&rtvDesc, sizeof(rtvDesc));
+	rtvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;*/
     hr = g_pd3dDevice->CreateRenderTargetView( pBackBuffer, NULL, &g_pRenderTargetView );
     pBackBuffer->Release();
     if( FAILED( hr ) )
@@ -4563,6 +4742,7 @@ HRESULT InitDevice()
     rasterizerDesc.CullMode = D3D11_CULL_NONE;
     rasterizerDesc.FillMode = D3D11_FILL_SOLID;
     rasterizerDesc.FrontCounterClockwise = false;
+	rasterizerDesc.AntialiasedLineEnable = true;
     ID3D11RasterizerState* rasterizerState;
     g_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 
@@ -4989,75 +5169,75 @@ void Render()
     // Present our back buffer to our front buffer
     //
 
-	Glyph g;
-	int fontindex = -1;
-	uint32_t unicode = L'H';
-	unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
-	while (glyphmap->find(unicode) == glyphmap->end()) {
-		++fontindex;
-		glyphmap = &sub_font_data[fontindex]->glyphs;
-		if (fontindex >= max_sub_font) {
-			return;
-		}
-	}
-	g = glyphmap->at(unicode);
+	//Glyph g;
+	//int fontindex = -1;
+	//uint32_t unicode = L'H';
+	//unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
+	//while (glyphmap->find(unicode) == glyphmap->end()) {
+	//	++fontindex;
+	//	glyphmap = &sub_font_data[fontindex]->glyphs;
+	//	if (fontindex >= max_sub_font) {
+	//		return;
+	//	}
+	//}
+	//g = glyphmap->at(unicode);
 
-	float rate = 0.35f;
-	float R = 0;
-	
-	Curve c;
-	shp::vec2f v;
-	shp::vec2f lastpos = shp::vec2f(0, 0);
-	for (int i = 0; i < g.path_list.size(); ++i) {
-		R = 0;
-		c = g.path_list.at(i).geometry.at(0);
-		shp::vec2f lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
-		float dr = 1.0f / (float)g.path_list.at(i).geometry.size();
-		for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
-			R += dr;
-			c = g.path_list.at(i).geometry.at(k);
-			if (c.is_curve) {
-				float fd = 0.125;
-				float t = 0;
-				float it = 1.0f;
-				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-				for (int u = 0; u < 8; ++u) {
-					shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
-					shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
-					shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
-					
-					v = shp::vec2f(rate * rp.x, rate * rp.y);
-					drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-					drawline(shp::vec2f(v.x - 7, v.y), shp::vec2f(v.x + 7, v.y), 10, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
-					lastpos = shp::vec2f(rate*rp.x, rate*rp.y);
+	//float rate = 0.35f;
+	//float R = 0;
+	//
+	//Curve c;
+	//shp::vec2f v;
+	//shp::vec2f lastpos = shp::vec2f(0, 0);
+	//for (int i = 0; i < g.path_list.size(); ++i) {
+	//	R = 0;
+	//	c = g.path_list.at(i).geometry.at(0);
+	//	shp::vec2f lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
+	//	float dr = 1.0f / (float)g.path_list.at(i).geometry.size();
+	//	for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
+	//		R += dr;
+	//		c = g.path_list.at(i).geometry.at(k);
+	//		if (c.is_curve) {
+	//			float fd = 0.125;
+	//			float t = 0;
+	//			float it = 1.0f;
+	//			v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
+	//			lastpos = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+	//			for (int u = 0; u < 8; ++u) {
+	//				shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
+	//				shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
+	//				shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
+	//				
+	//				v = shp::vec2f(rate * rp.x, rate * rp.y);
+	//				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+	//				drawline(shp::vec2f(v.x - 7, v.y), shp::vec2f(v.x + 7, v.y), 10, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
+	//				lastpos = shp::vec2f(rate*rp.x, rate*rp.y);
 
-					t += fd;
-					it -= fd;
-				}
-				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-			}
-			else {
-				//rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
-				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 10, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
+	//				t += fd;
+	//				it -= fd;
+	//			}
+	//			v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+	//			lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+	//		}
+	//		else {
+	//			//rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+	//			v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+	//			drawline(shp::vec2f(v.x - 10, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
+	//			lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
 
-				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 10, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-			}
-		}
+	//			v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 10, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+	//			lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+	//		}
+	//	}
 
-		//rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
-	}
+	//	//rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
+	//}
 
 	for (int i = maxpage-1; i >= 0; --i)
 	{

@@ -622,6 +622,12 @@ public:
         //}
         //func_out;
 
+        fmvecarr<shp::vec3f> prevpoly;
+        prevpoly.NULLState();
+        prevpoly.Init(8, false, true);
+        fmvecarr<shp::vec3f> poly;
+        poly.NULLState();
+        poly.Init(8, false, true);
         shp::vec2f lastpos = shp::vec2f(0, 0);
         for (int i = 0; i < g.path_list.size(); ++i) {
             c = g.path_list.at(i).geometry.at(0);
@@ -634,40 +640,61 @@ public:
                 c = g.path_list.at(i).geometry.at(k);
                 if (c.is_curve) {
                     float fd = 0.125;
-                    float t = 0;
-                    float it = 1.0f;
-                    if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
+                    float t = fd;
+                    float it = 1.0f - fd;
+                    /*if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
                         rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
                         lastpos = shp::vec2f(c.p0.x, c.p0.y);
-                    }
+                    }*/
                     
-                    for (int u = 0; u < 8; ++u) {
+                    for (int u = 1; u < 7; ++u) {
                         shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
                         shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
                         shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
 
                         if (lastpos != shp::vec2f(rp.x, rp.y)) {
-                            rbuff->av(SimpleVertex(rp.x, rp.y, 0, 255, 255, 255, 255));
+                            poly.push_back(shp::vec3f(rp.x, rp.y, 0));
+                            float alpha = 1.0f;
+                            float z = 0.01f;
+                            if (shp::bPointInPolygonRange(poly.last(), prevpoly)) {
+                                alpha = 0.01f;
+                                z = 0;
+                            }
+                            rbuff->av(SimpleVertex(rp.x, rp.y, z, alpha, alpha, alpha, alpha));
                             lastpos = shp::vec2f(rp.x, rp.y);
                         }
 
                         t += fd;
                         it -= fd;
                     }
-                    if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
+                    /*if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
                         rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
                         lastpos = shp::vec2f(c.p1.x, c.p1.y);
-                    }
+                    }*/
                 }
                 else {
                     //rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
                     if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
-                        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+                        poly.push_back(shp::vec3f(c.p0.x, c.p0.y, 0));
+                        float alpha = 1.0f;
+                        float z = 0.01f;
+                        if (shp::bPointInPolygonRange(poly.last(), prevpoly)) {
+                            alpha = 0.01f;
+                            z = 0;
+                        }
+                        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, z, alpha, alpha, alpha, alpha));
                         lastpos = shp::vec2f(c.p0.x, c.p0.y);
                     }
 
                     if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
-                        rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
+                        poly.push_back(shp::vec3f(c.p1.x, c.p1.y, 0));
+                        float alpha = 1.0f;
+                        float z = 0.01f;
+                        if (shp::bPointInPolygonRange(poly.last(), prevpoly)) {
+                            alpha = 0.01f;
+                            z = 0;
+                        }
+                        rbuff->av(SimpleVertex(c.p1.x, c.p1.y, z, alpha, alpha, alpha, alpha));
                         lastpos = shp::vec2f(c.p1.x, c.p1.y);
                     }
                 }
@@ -680,13 +707,22 @@ public:
 
             rbuff->end();
             frag.push_back(rbuff);
+
+            prevpoly.up = 0;
+            for (int p = 0; p < poly.size(); ++p) {
+                prevpoly.push_back(poly[p]);
+            }
+            poly.up = 0;
             //rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
         }
+
+        poly.release();
+        prevpoly.release();
     }
 
     void render(const ConstantBuffer& uniform, bool debuging = false)
     {
-        for (int i = 0; i < frag.size(); ++i)
+        for (int i = frag.size()-1; i >= 0; --i)
         {
             frag[i]->render(uniform);
         }

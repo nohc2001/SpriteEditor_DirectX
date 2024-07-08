@@ -1178,7 +1178,7 @@ public:
 		fm->_Delete((byte8*)td, sizeof(type_data));
 	}
 
-	void Release() {
+	void Release(bool all = true) {
 		/*
 	fmvecarr<char *> allcode_sen;
 	fmvecarr<code_sen *> *csarr;
@@ -1196,7 +1196,10 @@ public:
 
 		codeLineVec.release();
 		codeLineVec_Word.release();
-		curErrMsg.release();
+
+		if (all) {
+			curErrMsg.release();
+		}
 
 		for (int i = 0; i < allcode_sen.size(); ++i) {
 			allcode_sen.at(i) = nullptr;
@@ -2165,6 +2168,8 @@ public:
 		nextbd.breakpoints->Init(2, false, true);
 		nextbd.continuepoints->NULLState();
 		nextbd.continuepoints->Init(2, false, true);
+
+		nextsd = nullptr;
 
 		functions.NULLState();
 		functions.Init(2, false, true);
@@ -7724,7 +7729,7 @@ public:
 		if (PtrErrorCode != nullptr) {
 			*PtrErrorCode = curErrMsg;
 		}
-		Release();
+		Release(false);
 		return;
 	}
 };
