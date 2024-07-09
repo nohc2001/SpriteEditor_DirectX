@@ -1,13 +1,13 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
-Create_New_ICB[0000014AA2149790] Initialization...finish
-ICB[0000014AA2149790] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_face.txt]
-ICB[0000014AA2149790] BakeCode_GetCodeFromText...finish
-ICB[0000014AA2149790] BakeCode_AddTextBlocks...finish
-ICB[0000014AA2149790] BakeCode_ScanStructTypes...finish
-ICB[0000014AA2149790] BakeCode_AddStructTypes...finish
-ICB[0000014AA2149790] BakeCode_ScanCodes...start
+Create_New_ICB[0000028107EC0F70] Initialization...finish
+ICB[0000028107EC0F70] BakeCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_face.txt]
+ICB[0000028107EC0F70] BakeCode_GetCodeFromText...finish
+ICB[0000028107EC0F70] BakeCode_AddTextBlocks...finish
+ICB[0000028107EC0F70] BakeCode_ScanStructTypes...finish
+ICB[0000028107EC0F70] BakeCode_AddStructTypes...finish
+ICB[0000028107EC0F70] BakeCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
 [3] ~ add and set variable : adsetvar: float eyeStartPos_rate = 0.5  ~ [7]
 [8] ~ add and set variable : adsetvar: float eyeEndPos_rateX = 0.2  ~ [12]
@@ -448,8 +448,8 @@ return_ : return 0
 closed_ : }
  ~ [1686]
 BakeCode_ScanCodes...finish
-ICB[0000014AA2149790] BakeCode_GlobalMemoryInit...finish
-ICB[0000014AA2149790] BakeCode_CompileCodes...start
+ICB[0000028107EC0F70] BakeCode_GlobalMemoryInit...finish
+ICB[0000028107EC0F70] BakeCode_CompileCodes...start
 add_var : pObject this 
 BakeCode_CompileCodes__add_var : pObject this 
 adsetvar: float eyeStartPos_rate = 0.5 
@@ -2539,3 +2539,328 @@ BakeCode_CompileCodes__usefunc : spr_push_rbuffer ( EyeLineRU_spr , EyeLine_rbuf
 5274	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
 usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
 BakeCode_CompileCodes__usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+5283	:FUNC(153)
+5284	:FUNC(153)
+5285	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5290	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5295	:FUNC(153)
+5296	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5301	:CASTING_A(163) > 12
+5303	:PARAM_4(156)
+5304	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5309	:CASTING_A(163) > 12
+5311	:PARAM_4(156)
+5312	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5317	:CASTING_A(163) > 12
+5319	:PARAM_4(156)
+5320	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5329	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5334	:FUNC(153)
+5335	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5340	:CASTING_A(163) > 12
+5342	:PARAM_4(156)
+5343	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5348	:CASTING_A(163) > 12
+5350	:PARAM_4(156)
+5351	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5356	:CASTING_A(163) > 12
+5358	:PARAM_4(156)
+5359	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5368	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5373	:FUNC(153)
+5374	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5379	:CASTING_A(163) > 12
+5381	:PARAM_4(156)
+5382	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5387	:CASTING_A(163) > 12
+5389	:PARAM_4(156)
+5390	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5395	:CASTING_A(163) > 12
+5397	:PARAM_4(156)
+5398	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5407	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5412	:A=&VID(159) > 60(60, 0, 0, 0)
+5417	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5422	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+5431	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5436	:A=&VID(159) > 52(52, 0, 0, 0)
+5441	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5446	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+BakeCode_CompileCodes__usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLU_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+5455	:FUNC(153)
+5456	:FUNC(153)
+5457	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5462	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5467	:FUNC(153)
+5468	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5473	:CASTING_A(163) > 12
+5475	:PARAM_4(156)
+5476	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5481	:CASTING_A(163) > 12
+5483	:PARAM_4(156)
+5484	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5489	:CASTING_A(163) > 12
+5491	:PARAM_4(156)
+5492	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5501	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5506	:FUNC(153)
+5507	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5512	:CASTING_A(163) > 12
+5514	:PARAM_4(156)
+5515	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5520	:CASTING_A(163) > 12
+5522	:PARAM_4(156)
+5523	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5528	:CASTING_A(163) > 12
+5530	:PARAM_4(156)
+5531	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5540	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5545	:FUNC(153)
+5546	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5551	:CASTING_A(163) > 12
+5553	:PARAM_4(156)
+5554	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5559	:CASTING_A(163) > 12
+5561	:PARAM_4(156)
+5562	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5567	:CASTING_A(163) > 12
+5569	:PARAM_4(156)
+5570	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5579	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5584	:A=&VID(159) > 76(76, 0, 0, 0)
+5589	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5594	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+5603	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5608	:A=&VID(159) > 52(52, 0, 0, 0)
+5613	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5618	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+BakeCode_CompileCodes__usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineRD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+5627	:FUNC(153)
+5628	:FUNC(153)
+5629	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5634	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5639	:FUNC(153)
+5640	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5645	:CASTING_A(163) > 12
+5647	:PARAM_4(156)
+5648	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5653	:CASTING_A(163) > 12
+5655	:PARAM_4(156)
+5656	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5661	:CASTING_A(163) > 12
+5663	:PARAM_4(156)
+5664	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5673	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5678	:FUNC(153)
+5679	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5684	:CASTING_A(163) > 12
+5686	:PARAM_4(156)
+5687	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5692	:CASTING_A(163) > 12
+5694	:PARAM_4(156)
+5695	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5700	:CASTING_A(163) > 12
+5702	:PARAM_4(156)
+5703	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5712	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5717	:FUNC(153)
+5718	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5723	:CASTING_A(163) > 12
+5725	:PARAM_4(156)
+5726	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5731	:CASTING_A(163) > 12
+5733	:PARAM_4(156)
+5734	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5739	:CASTING_A(163) > 12
+5741	:PARAM_4(156)
+5742	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5751	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5756	:A=&VID(159) > 92(92, 0, 0, 0)
+5761	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5766	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+5775	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5780	:A=&VID(159) > 52(52, 0, 0, 0)
+5785	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5790	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+BakeCode_CompileCodes__usefunc : spr_pushchild ( EyeLine_spr , _pObject ( EyeLineLD_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+5799	:FUNC(153)
+5800	:FUNC(153)
+5801	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5806	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5811	:FUNC(153)
+5812	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5817	:CASTING_A(163) > 12
+5819	:PARAM_4(156)
+5820	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5825	:CASTING_A(163) > 12
+5827	:PARAM_4(156)
+5828	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5833	:CASTING_A(163) > 12
+5835	:PARAM_4(156)
+5836	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5845	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5850	:FUNC(153)
+5851	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5856	:CASTING_A(163) > 12
+5858	:PARAM_4(156)
+5859	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5864	:CASTING_A(163) > 12
+5866	:PARAM_4(156)
+5867	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5872	:CASTING_A(163) > 12
+5874	:PARAM_4(156)
+5875	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5884	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5889	:FUNC(153)
+5890	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5895	:CASTING_A(163) > 12
+5897	:PARAM_4(156)
+5898	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5903	:CASTING_A(163) > 12
+5905	:PARAM_4(156)
+5906	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5911	:CASTING_A(163) > 12
+5913	:PARAM_4(156)
+5914	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+5923	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+5928	:A=&VID(159) > 108(108, 0, 0, 0)
+5933	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5938	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+5947	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5952	:A=&VID(159) > 52(52, 0, 0, 0)
+5957	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5962	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+BakeCode_CompileCodes__usefunc : spr_pushchild ( mainspr , _pObject ( circle_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+5971	:FUNC(153)
+5972	:FUNC(153)
+5973	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+5978	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+5983	:FUNC(153)
+5984	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5989	:CASTING_A(163) > 12
+5991	:PARAM_4(156)
+5992	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+5997	:CASTING_A(163) > 12
+5999	:PARAM_4(156)
+6000	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+6005	:CASTING_A(163) > 12
+6007	:PARAM_4(156)
+6008	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6017	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6022	:FUNC(153)
+6023	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6028	:CASTING_A(163) > 12
+6030	:PARAM_4(156)
+6031	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6036	:CASTING_A(163) > 12
+6038	:PARAM_4(156)
+6039	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6044	:CASTING_A(163) > 12
+6046	:PARAM_4(156)
+6047	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6056	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6061	:FUNC(153)
+6062	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6067	:CASTING_A(163) > 12
+6069	:PARAM_4(156)
+6070	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6075	:CASTING_A(163) > 12
+6077	:PARAM_4(156)
+6078	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6083	:CASTING_A(163) > 12
+6085	:PARAM_4(156)
+6086	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6095	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6100	:A=&VID(159) > 20(20, 0, 0, 0)
+6105	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6110	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+6119	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6124	:A=&VID(159) > 12(12, 0, 0, 0)
+6129	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6134	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : spr_pushchild ( mainspr , _pObject ( EyeLine_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+BakeCode_CompileCodes__usefunc : spr_pushchild ( mainspr , _pObject ( EyeLine_spr , _gpos ( 0 , 0 , 0 ) , _gpos ( 0 , 0 , 0 ) , _gpos ( 1 , 1 , 1 ) , 0 ) ) 
+6143	:FUNC(153)
+6144	:FUNC(153)
+6145	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6150	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6155	:FUNC(153)
+6156	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+6161	:CASTING_A(163) > 12
+6163	:PARAM_4(156)
+6164	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+6169	:CASTING_A(163) > 12
+6171	:PARAM_4(156)
+6172	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+6177	:CASTING_A(163) > 12
+6179	:PARAM_4(156)
+6180	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6189	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6194	:FUNC(153)
+6195	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6200	:CASTING_A(163) > 12
+6202	:PARAM_4(156)
+6203	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6208	:CASTING_A(163) > 12
+6210	:PARAM_4(156)
+6211	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6216	:CASTING_A(163) > 12
+6218	:PARAM_4(156)
+6219	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6228	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6233	:FUNC(153)
+6234	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6239	:CASTING_A(163) > 12
+6241	:PARAM_4(156)
+6242	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6247	:CASTING_A(163) > 12
+6249	:PARAM_4(156)
+6250	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6255	:CASTING_A(163) > 12
+6257	:PARAM_4(156)
+6258	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+6267	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+6272	:A=&VID(159) > 52(52, 0, 0, 0)
+6277	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6282	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 22(22, 0, 0, 0)
+6291	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6296	:A=&VID(159) > 12(12, 0, 0, 0)
+6301	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6306	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 26(26, 0, 0, 0)
+usefunc : obj_setsource ( this , mainspr ) 
+BakeCode_CompileCodes__usefunc : obj_setsource ( this , mainspr ) 
+6315	:FUNC(153)
+6316	:A=&VID(159) > 12(12, 0, 0, 0)
+6321	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6326	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+6331	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+6336	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
+while__ : while ( true ) 
+BakeCode_CompileCodes__while__ : while ( true ) 
+6345	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+6350	:IF(151) > -16843010(254, 254, 254, 254)
+block__ : {
+adsetvar: int aaa = 10 
+closed_ : }
+
+BakeCode_CompileCodes Block Start {
+adsetvar: int aaa = 10 
+BakeCode_CompileCodes__adsetvar: int aaa = 10 
+6355	:ADD_STACK_VARIABLE(0) > 2076(28, 8, 0, 0)
+6360	:PUSH_A_CONST_4(6) > 10(10, 0, 0, 0)
+6365	:A=&VID(159) > 2076(28, 8, 0, 0)
+6370	:LA=A(161)
+6371	:*LA=A_4(171)
+}; BakeCode_CompileCodes Block Finish
+return_ : return 0 
+BakeCode_CompileCodes__return_ : return 0 
+6377	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+6382	:RETURN(157)
+}; BakeCode_CompileCodes Block Finish
+BakeCode_CompileCodes...finish
+ICB[0000028107EC0F70] BakeCode finish.
+Create_New_ICB_Context From ICB[0000028107EC0F70], with 4096 size memory...finish.

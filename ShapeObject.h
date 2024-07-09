@@ -590,7 +590,7 @@ public:
             c = g.path_list.at(0).geometry.at(0);
         }
         else {
-            range = shp::rect4f(0, 0, 500, 500);
+            range = shp::rect4f(0, 0, 1200, 1000);
             return;
         }
         
@@ -715,6 +715,8 @@ public:
             poly.up = 0;
             //rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
         }
+
+        range = shp::rect4f(0, 0, 1200, 1000);
 
         poly.release();
         prevpoly.release();

@@ -276,6 +276,7 @@ public:
 	float codeline_height = 20.0f;
 	float linemargin = 1.2f;
 	float linenumwid = 1.5f;
+	int Xofffset = 0;
 	//float cursorAlpha = 1.0f;
 	float headerRate = 2.0f;
 	float CodeEditorRate = 0.75f;
@@ -289,6 +290,7 @@ public:
 	float tipmov = 5.0f;
 	shp::rect4f movOffset;
 	bool showVarmod = true;
+	bool inCtrl = false;
 
 	static constexpr float lifeconst[10] = { 2.0f, 3.0f, 5.0f, 7.0f, 11.0f, 13.0f, 17.0f, 19.0f, 23.0f, 29.0f };
 	
@@ -605,7 +607,7 @@ public:
 		}
 		selected_codeline = 0;
 		selected_charindex = 0;
-		codeline_height = 20.0f;
+		codeline_height = 17.0f;
 		linemargin = 1.2f;
 		linenumwid = 3.0f;
 
@@ -619,9 +621,62 @@ public:
 		isMoving = false;
 		SliderRate = 0; // to 1.0f
 		showVarmod = true;
+		inCtrl = false;
+		Xofffset = 0;
+		blockstack = 0;
 
 		currentErrorMsg.NULLState();
 		currentErrorMsg.Init(8, false);
+
+		focus = false;
+		isExpend = false;
+		movOffset = shp::rect4f(0, 0, 0, 0);
+		showVarmod = true;
+
+		for (int i = 0; i < 10; ++i) {
+			life[i] = 0;
+		}
+
+		if (SelectedICB != nullptr) {
+			//update datas
+			for (int i = 0; i < codeLines.size(); ++i) {
+				codeLines[i].release();
+				codeLines[i].NULLState();
+			}
+			codeLines.up = 0;
+
+			codeLine_expend.up = 0;
+
+			for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
+				code_sen* cs = SelectedICB->csarr->at(i);
+				if (cs->ck != codeKind::ck_blocks) {
+					codeLines.push_back(fmlwstr());
+					codeLines.last().NULLState();
+					codeLines.last().Init(8, false);
+					//codeLine_expend.push_back(false);
+					for (int k = 0; k < cs->maxlen; ++k) {
+						char* word = cs->sen[k];
+						int wlen = strlen(word);
+						for (int u = 0; u < wlen; ++u) {
+							codeLines.last().push_back((wchar_t)word[u]);
+							//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+						}
+						codeLines.last().push_back(L' ');
+						//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+					}
+
+					if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
+						codeLines.last().push_back(L';');
+						//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+					}
+
+					codeLines.last().c_str();
+				}
+				else {
+					ImportBlockToCodeLine(cs);
+				}
+			}
+		}
 	}
 
 	void Render() {
@@ -657,6 +712,7 @@ public:
 		int i = codeLines.size() * SliderRate;
 		int smax = max_express;
 		int subi = 0;
+		int maxX = (int)(1.5f * codeEditorLoc.getw() / codeline_height);
 		for (int s = 0; s < smax; ++s) {
 			if (i >= codeLines.size()) break;
 			wstring wstr;
@@ -678,7 +734,7 @@ public:
 					wfstr.NULLState();
 					wfstr.Init(codeLines[i].size(), false);
 					int stack = 0;
-					for (int k = subi; k < codeLines[i].size(); ++k) {
+					for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
 						if (codeLines[i][k] == L'{') {
 							stack += 1;
 							wfstr.push_back(L'{');
@@ -695,6 +751,7 @@ public:
 							wfstr.push_back(codeLines[i][k]);
 						}
 					}
+					if (wfstr.up > maxX) wfstr.up = maxX;
 
 					if (i != selected_codeline) {
 						drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
@@ -727,9 +784,10 @@ public:
 				fmlwstr wfstr;
 				wfstr.NULLState();
 				wfstr.Init(codeLines[i].size(), false);
-				for (int k = subi; k < codeLines[i].size(); ++k) {
+				for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
 					wfstr.push_back(codeLines[i][k]);
 				}
+				if (wfstr.up > maxX) wfstr.up = maxX;
 
 				if (i != selected_codeline) {
 					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
@@ -764,8 +822,6 @@ public:
 		draw_string(tempstr1, 4, atmargin * 0.5f, funcbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 		drawline(shp::vec2f(importbtnLoc.fx, importbtnLoc.getCenter().y), shp::vec2f(importbtnLoc.lx, importbtnLoc.getCenter().y), importbtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
 		draw_string(tempstr2, 6, atmargin * 0.5f, importbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-
-		
 	}
 
 	void Event(DX_Event evt) {
@@ -1189,44 +1245,55 @@ public:
 					}
 				}
 				else if (evt.wParam == VK_LEFT) {
-					if (selected_charindex != 0) {
-						selected_charindex -= 1;
+					if (inCtrl) {
+						Xofffset -= 5;
+						if (Xofffset < 0) Xofffset = 0;
 					}
 					else {
-						if (selected_codeline != 0) {
-							shp::vec2i lim = GetExpendStart(selected_codeline - 1);
-							if (lim.x >= 0 && GetExpend(lim.x) == 0) {
-								selected_codeline = lim.x;
-								selected_charindex = lim.y - 1;
-								if (selected_charindex < 0) {
-									selected_charindex = 0;
+						if (selected_charindex != 0) {
+							selected_charindex -= 1;
+						}
+						else {
+							if (selected_codeline != 0) {
+								shp::vec2i lim = GetExpendStart(selected_codeline - 1);
+								if (lim.x >= 0 && GetExpend(lim.x) == 0) {
+									selected_codeline = lim.x;
+									selected_charindex = lim.y - 1;
+									if (selected_charindex < 0) {
+										selected_charindex = 0;
+									}
 								}
-							}
-							else {
-								selected_codeline -= 1;
-								selected_charindex = codeLines[selected_codeline].size();
+								else {
+									selected_codeline -= 1;
+									selected_charindex = codeLines[selected_codeline].size();
+								}
 							}
 						}
 					}
 				}
 				else if (evt.wParam == VK_RIGHT) {
-					if (selected_charindex < codeLines[selected_codeline].size()) {
-						selected_charindex += 1;
+					if (inCtrl) {
+						Xofffset += 5;
 					}
 					else {
-						if (selected_codeline < codeLines.size()) {
-							shp::vec2i lim = GetExpendLimit(selected_codeline);
-							if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
-								selected_codeline = lim.x;
-								selected_charindex = lim.y + 1;
-								if (selected_charindex >= codeLines[selected_codeline].size()) {
+						if (selected_charindex < codeLines[selected_codeline].size()) {
+							selected_charindex += 1;
+						}
+						else {
+							if (selected_codeline < codeLines.size()) {
+								shp::vec2i lim = GetExpendLimit(selected_codeline);
+								if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
+									selected_codeline = lim.x;
+									selected_charindex = lim.y + 1;
+									if (selected_charindex >= codeLines[selected_codeline].size()) {
+										selected_codeline += 1;
+										selected_charindex = 0;
+									}
+								}
+								else {
 									selected_codeline += 1;
 									selected_charindex = 0;
 								}
-							}
-							else {
-								selected_codeline += 1;
-								selected_charindex = 0;
 							}
 						}
 					}
@@ -1238,7 +1305,9 @@ public:
 					codeLines[selected_codeline].c_str();
 					selected_charindex += 2;
 				}
-
+				else if (key == 17) {
+					inCtrl = true;
+				}
 
 				if (selected_codeline > maxx) {
 					SliderRate += slideDelta;
@@ -1251,6 +1320,9 @@ public:
 			else if (evt.message == WM_KEYUP) {
 				if (evt.wParam == VK_SHIFT) {
 					BeShift = false;
+				}
+				else if (evt.wParam == 17) {
+					inCtrl = false;
 				}
 			}
 
@@ -1302,6 +1374,8 @@ public:
 	}
 };
 
+fmvecarr<ICB_Editor*> icbe_pool;
+
 //control
 bool ctrl_3d = true;
 //shp::vec2f DX_UI::mousePos = shp::vec2f(0, 0);
@@ -1319,7 +1393,7 @@ void Render();
 extern FM_System0* fm;
 bool FinishInit = false;
 
-ICB_Editor icbE;
+//ICB_Editor icbE;
 
 void basicbtn_init(DXBtn* btn)
 {
@@ -2199,6 +2273,10 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 					//dbg << "s0" << endl;
 					icmap.insert(ICMAP::value_type((char*)filename.c_str(), icb));
 					//dbg << "s0" << endl;
+
+					ICB_Editor* icbe = (ICB_Editor*)fm->_New(sizeof(ICB_Editor), true);
+					icbe->Init(shp::rect4f(-200, -100, 200, 100), icb);
+					icbe_pool.push_back(icbe);
 				}
 				else
 				{
@@ -2990,7 +3068,7 @@ void main_render(Page* p)
 
 void main_update(Page* p, float delta)
 {
-	icbE.Update(delta);
+	//icbE.Update(delta);
 	float* stacktime = (float*)&p->pfm.Data[(int)mainpm::stacktime];
 	*stacktime += delta;
 	DXBtn* behavetop = (DXBtn*)&p->pfm.Data[(int)mainpm::behavetop];
@@ -3353,7 +3431,6 @@ void main_event(Page* p, DX_Event evt)
 			}
 		}
 	}
-
 	
 	//이거 왜 실행 안됨??
 	if (evt.message == WM_KEYDOWN && evt.wParam == 'S') {
@@ -4446,6 +4523,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     error = TTFFontParser::parse_file(subfont_path, sub_font_data[0], &font_parsed, &condition_variable);
 
 	layerManager.Init();
+	icbe_pool.NULLState();
+	icbe_pool.Init(8, false, true);
 
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
@@ -4481,6 +4560,10 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				float delta = codetime.count();
 				// dbgcount(0, dbg << "update : " << toppage - 1 << endl);
 				presentPage->update_func(presentPage, delta);
+
+				for (int i = 0; i < icbe_pool.size(); ++i) {
+					icbe_pool[i]->Update(delta);
+				}
 
 				ft = chrono::high_resolution_clock::now();
 
@@ -5025,7 +5108,7 @@ HRESULT InitDevice()
 
 	FinishInit = true;
 
-	icbE.Init(shp::rect4f(0, 0, 700, 500), nullptr);
+	//icbE.Init(shp::rect4f(0, 0, 700, 500), nullptr);
 
     return S_OK;
 }
@@ -5100,7 +5183,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 		presentPage->event_func(presentPage, evt);
 	}
 
-	icbE.Event(evt);
+	for (int i = 0; i < icbe_pool.size(); ++i) {
+		icbe_pool[i]->Event(evt);
+	}
+	//icbE.Event(evt);
 
     return DefWindowProc(hWnd, message, wParam, lParam);;
 }
@@ -5245,7 +5331,10 @@ void Render()
 		pagestack[i]->render_func(pagestack[i]);
 	}
 
-	icbE.Render();
+	for (int i = 0; i < icbe_pool.size(); ++i) {
+		icbe_pool[i]->Render();
+	}
+	//icbE.Render();
 
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();

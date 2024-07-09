@@ -498,7 +498,7 @@ namespace freemem
 
 		byte8* _New(unsigned int size)
 		{
-			return _savenew(size);
+			return _fastnew(size);
 		}
 
 		byte8* _fastnew(unsigned int size)

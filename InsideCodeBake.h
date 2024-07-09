@@ -1000,6 +1000,7 @@ public:
 	fmvecarr<ICB_Extension*> extension; // 확장코드
 
 	void UpdateErrMsg(int errorcode, const char* message, char* param) {
+		_CrtDbgBreak();
 		curErrMsg.up = 0;
 		curErrMsg.at(0) = 0;
 
