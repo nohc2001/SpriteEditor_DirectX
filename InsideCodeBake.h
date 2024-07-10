@@ -997,10 +997,12 @@ public:
 	fmlcstr curErrMsg;
 	unsigned int currentCodeLine = 0;
 
+	bool able_to_execute = false;
+
 	fmvecarr<ICB_Extension*> extension; // 확장코드
 
 	void UpdateErrMsg(int errorcode, const char* message, char* param) {
-		_CrtDbgBreak();
+		//_CrtDbgBreak();
 		curErrMsg.up = 0;
 		curErrMsg.at(0) = 0;
 
@@ -1033,7 +1035,7 @@ public:
 		}
 	}
 
-	fmlcstr* GetCodeTXT(const char* filename, FM_System0* fm)
+	fmlcstr* GetCodeTXT(const char* filename)
 	{
 		codeLineVec.push_back(0);
 		char comment_mod = '/';
@@ -1121,6 +1123,76 @@ public:
 			UpdateErrMsg(0, "<%s> file is not exist.", (char*)filename);
 			//printf("[ERROR] : %s file is not exist.", filename);
 			return nullptr;
+		}
+	}
+
+	fmlcstr* GetCode_Lines(fmvecarr<fmlwstr>* lines) {
+		codeLineVec.push_back(0);
+		char comment_mod = '/';
+		int stack = 0;
+		bool iscomment = false;
+		if (lines != nullptr)
+		{
+			fmlcstr* codetxt = (fmlcstr*)fm->_New(sizeof(fmlcstr), true);
+			codetxt->NULLState();
+			codetxt->Init(10, false);
+			for(int i=0;i<lines->size();++i)
+			{
+				if (i == 0) {
+					codeLineVec.push_back(0);
+				}
+				else {
+					codeLineVec.push_back(codeLineVec.last());
+				}
+				
+				char savec = 0;
+				for (int k = 0; k < lines->at(i).size(); ++k) {
+					char c;
+					c = (char)lines->at(i)[k];
+					if (iscomment) {
+						if (savec == '*' && c == '/') {
+							iscomment = false;
+							comment_mod = '/';
+						}
+						savec = c;
+					}
+
+					if (c == '/')
+					{
+						stack += 1;
+					}
+					else if (stack == 1 && c == '*') {
+						stack += 1;
+						comment_mod = '*';
+					}
+					else
+					{
+						stack = 0;
+					}
+
+					if (stack == 2)
+					{
+						if (comment_mod == '/') {
+							codetxt->pop_back();
+							int mm = 0;
+							while (lines->at(i).size() > k)
+							{
+								mm += 1;
+								++k;
+							}
+							continue;
+						}
+						else if (comment_mod == '*') {
+							codetxt->pop_back();
+							iscomment = true;
+							continue;
+						}
+					}
+					codetxt->push_back(c);
+					k++;
+				}
+			}
+			return codetxt;
 		}
 	}
 
@@ -7452,6 +7524,320 @@ public:
 		return;
 	}
 
+	void read_codes(const char* filename) {
+		curErrMsg[0] = 0;
+		icl << "ICB[" << this << "] ReadCode start. filename : [" << filename << "]" << endl;
+
+		icl << "ICB[" << this << "] ReadCode_GetCodeFromText...";
+		fmlcstr* allcodeptr = GetCodeTXT(filename);
+		icl << "finish" << endl;
+
+		ICB_ERR_CHECK(ERR_READCODE_GETCODETXT);
+		{
+			fmlcstr& allcode = *allcodeptr;
+			icl << "ICB[" << this << "] ReadCode_AddTextBlocks...";
+			AddTextBlocks(allcode);
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+			icl << "finish" << endl;
+		}
+
+	ERR_READCODE_GETCODETXT:
+		if (allcodeptr != nullptr) {
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+		}
+		return;
+	}
+
+	void read_codeLines(fmvecarr<fmlwstr>* codeLines) {
+		curErrMsg[0] = 0;
+		icl << "ICB[" << this << "] ReadCode start. filename : custom codelines" << endl;
+
+		icl << "ICB[" << this << "] ReadCode_GetCodeFromText...";
+		fmlcstr* allcodeptr = GetCode_Lines(codeLines);
+		icl << "finish" << endl;
+
+		ICB_ERR_CHECK(ERR_READCODE_GETCODETXT);
+		{
+			fmlcstr& allcode = *allcodeptr;
+			icl << "ICB[" << this << "] ReadCode_AddTextBlocks...";
+			AddTextBlocks(allcode);
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+			icl << "finish" << endl;
+		}
+
+	ERR_READCODE_GETCODETXT:
+		if (allcodeptr != nullptr) {
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+		}
+		return;
+	}
+
+	void create_codedata() {
+		bool astdetail = GetICLFlag(ICL_FLAG::BakeCode_AddStructTypes);
+		bool gmidetail = GetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit);
+		fmvecarr<code_sen*>* senptr = nullptr;
+		fmvecarr<code_sen*>* senstptr = nullptr;
+		int gs = 0;
+
+		icl << "ICB[" << this << "] ReadCode_ScanStructTypes...";
+		senstptr = AddCodeFromBlockData(allcode_sen, "struct");
+		icl << "finish" << endl;
+
+		icl << "ICB[" << this << "] ReadCode_AddStructTypes...";
+
+		if (astdetail) icl << "start" << endl;
+		for (int i = 0; i < senstptr->size(); ++i)
+		{
+			if (astdetail) icl << "ReadCode_AddStructTypes interpret" << endl;
+			code_sen* cs = senstptr->at(i);
+			dbg_codesen(cs, false); icl << endl;
+			if (astdetail) icl << "...start" << endl;
+			interpret_AddStruct(cs);
+
+			if (astdetail) icl << "ReadCode_AddStructTypes interpret finish" << endl;
+		}
+		if (astdetail) icl << "ReadCode_AddStructTypes...";
+		icl << "finish" << endl;
+
+		icl << "ICB[" << this << "] ReadCode_ScanCodes...";
+		senptr = AddCodeFromBlockData(allcode_sen, "none", 0);
+		icl << "finish" << endl;
+		senptr->islocal = false;
+		csarr = senptr;
+
+		cout << endl;
+
+		icl << "ICB[" << this << "] ReadCode_GlobalMemoryInit...";
+
+		init_datamem.NULLState();
+		init_datamem.Init(8, false);
+
+		if (gmidetail) icl << "start" << endl;
+		for (int i = 0; i < senptr->size(); ++i)
+		{
+			code_sen* cs = senptr->at(i);
+			if (cs->ck == codeKind::ck_addVariable || cs->ck == codeKind::ck_addsetVariable)
+			{
+				if (gmidetail) icl << "ReadCode_GlobalMemoryInit Scan Global Memory Code (in datamem[" << gs << "]) : ";
+				if (gmidetail) { dbg_codesen(cs, false); icl << endl; }
+				// global var count
+				if (gmidetail) icl << "ReadCode_GlobalMemoryInit Find Type Size : ...";
+				int siz = get_typesiz_with_addVariableCs(cs);
+				if (gmidetail) icl << siz << endl;
+				for (int k = 0; k < siz; ++k)
+				{
+					init_datamem.push_back(0);
+				}
+				byte8* bptr = &init_datamem.at(gs);
+				gs += siz;
+
+				if (cs->ck == codeKind::ck_addsetVariable)
+				{
+					if (gmidetail) icl << "ReadCode_GlobalMemoryInit addsetvar set initial value : ...";
+					sen* code = get_sen_from_codesen(cs);
+					int loc = wbss.search_word_first(0, code, "=");
+
+					fmlcstr str;
+					str.NULLState();
+					str.Init(2, false);
+					str = code->at(loc + 1).data.str;
+					TBT t = DecodeTextBlock(str);
+					switch (t)
+					{
+					case TBT::_value_bool:
+					{
+						bool b = true;
+						if (strcmp(str.c_str(), "true") == 0)
+							b = true;
+						else
+							b = false;
+						*reinterpret_cast<bool*>(bptr) = b;
+						if (gmidetail) icl << "(bool)" << b << endl;
+					}
+					break;
+					case TBT::_value_integer:
+					{
+						int a = 0;
+						a = atoi(str.c_str());
+						*reinterpret_cast<int*>(bptr) = a;
+						if (gmidetail) icl << "(int)" << a << endl;
+					}
+					break;
+					case TBT::_value_float:
+					{
+						float a = 0;
+						a = stof(str.c_str());
+						*reinterpret_cast<float*>(bptr) = a;
+						if (gmidetail) icl << "(float)" << a << endl;
+					}
+					break;
+					case TBT::_value_char:
+					{
+						char c = 0;
+						if (str[1] != '\\')
+						{
+							c = str[1];
+						}
+						else
+						{
+							switch (str[2])
+							{
+							case 'n':
+								c = '\n';
+								break;
+							case '0':
+								c = 0;
+								break;
+							case 't':
+								c = '\t';
+								break;
+							case '\\':
+								c = '\\';
+								break;
+							case '\'':
+								c = '\'';
+								break;
+							case '\"':
+								c = '\"';
+								break;
+							default:
+								c = 0;
+								break;
+							}
+						}
+						*reinterpret_cast<char*>(bptr) = c;
+						if (gmidetail) icl << "(char)" << c << endl;
+					}
+					break;
+					case TBT::_value_str:
+					{
+						char* initbptr = (char*)bptr;
+						int max = strlen(str.c_str()) - 1;
+						max = max > siz ? siz : max;
+						int stack = 1;
+						int sup = 0;
+						for (int k = 1; k < max; ++k)
+						{
+							if (str[k] == '\\')
+							{
+								stack += 1;
+								k += 1;
+								switch (str[k])
+								{
+								case 'n':
+									*(char*)bptr = '\n';
+									++bptr;
+									break;
+								case '0':
+									*(char*)bptr = 0;
+									++bptr;
+									break;
+								case 't':
+									*(char*)bptr = '\t';
+									++bptr;
+									break;
+								case '\\':
+									*(char*)bptr = '\\';
+									++bptr;
+									break;
+								case '\'':
+									*(char*)bptr = '\'';
+									++bptr;
+									break;
+								case '\"':
+									*(char*)bptr = '\"';
+									++bptr;
+									break;
+								default:
+									*(char*)bptr = 0;
+									++bptr;
+									break;
+								}
+								continue;
+							}
+							*(char*)bptr = str[k];
+							++bptr;
+						}
+						for (int k = 0; k < stack; ++k)
+						{
+							*(char*)bptr = 0;
+							++bptr;
+						}
+
+						if (gmidetail) icl << "(char*)" << initbptr << endl;
+					}
+					break;
+					default:
+						if (gmidetail) icl << "ERROR : Invailabe Value : " << bptr << endl;
+						break;
+					}
+					// tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
+					str.islocal = true;
+
+					code->release();
+					fm->_Delete((byte8*)code, sizeof(sen));
+				}
+			}
+		}
+		datamem_up = gs;
+		if (gmidetail) icl << "ReadCode_GlobalMemoryInit...";
+		icl << "finish" << endl;
+
+		senstptr->release();
+		senstptr->NULLState();
+		fm->_Delete((byte8*)senstptr, sizeof(fmvecarr<code_sen*>));
+		return;
+	}
+
+	void compile_codes() {
+		able_to_execute = false;
+		bool ccdetail = GetICLFlag(ICL_FLAG::BakeCode_CompileCodes);
+
+		writeup = 0;
+		mem[writeup++] = (byte8)insttype::IT_FUNC; // func
+		mem[writeup++] = (byte8)insttype::IT_FUNCJMP; // jmp
+		writeup += 4;		  // start function address
+
+		icl << "ICB[" << this << "] BakeCode_CompileCodes...";
+
+		if (ccdetail) icl << "start" << endl;
+		for (int i = 0; i < csarr->size(); ++i)
+		{
+			// fm->dbg_fm1_lifecheck();
+			code_sen* cs = csarr->at(i);
+			//dbg_codesen(cs);
+			compile_code(cs);
+			ICB_ERR_CHECK(ERR_BAKECODE_PROBLEM);
+		}
+		if (ccdetail) icl << "BakeCode_CompileCodes...";
+		icl << "finish" << endl;
+
+		cout << endl;
+
+		mem[writeup++] = (byte8)insttype::IT_EXIT;
+
+		//dbg_bakecode(csarr, 0);
+
+		icl << "ICB[" << this << "] BakeCode finish." << endl;
+
+		able_to_execute = true;
+		return;
+
+	ERR_BAKECODE_PROBLEM:
+		writeup = 0;
+		mem[writeup++] = (byte8)insttype::IT_EXIT;
+		//Release(false);
+		return;
+	}
+
 	void bake_code(const char* filename, fmlcstr* PtrErrorCode = nullptr)
 	{
 		curErrMsg[0] = 0;
@@ -7465,7 +7851,7 @@ public:
 		icl << "ICB[" << this << "] BakeCode start. filename : [" << filename << "]" << endl;
 
 		icl << "ICB[" << this << "] BakeCode_GetCodeFromText...";
-		fmlcstr* allcodeptr = GetCodeTXT(filename, fm);
+		fmlcstr* allcodeptr = GetCodeTXT(filename);
 		icl << "finish" << endl;
 
 		ICB_ERR_CHECK(ERR_BAKECODE_GETCODETXT);
@@ -7684,6 +8070,7 @@ public:
 		if (gmidetail) icl << "BakeCode_GlobalMemoryInit...";
 		icl << "finish" << endl;
 
+		able_to_execute = false;
 		writeup = 0;
 		mem[writeup++] = (byte8)insttype::IT_FUNC; // func
 		mem[writeup++] = (byte8)insttype::IT_FUNCJMP; // jmp
@@ -7706,6 +8093,8 @@ public:
 		cout << endl;
 
 		mem[writeup++] = (byte8)insttype::IT_EXIT;
+
+		able_to_execute = true;
 
 		senstptr->release();
 		senstptr->NULLState();
@@ -8220,8 +8609,15 @@ CONTEXT_SWITCH:
 		}
 	}
 	exed_num = 0;
+	while (icbarr[n]->icb->able_to_execute == false) {
+		++n;
+		if (n >= icbarr.size()) {
+			n = 0;
+			goto PROGRAMQUIT;
+			break;
+		}
+	}
 	icb = icbarr[n];
-
 	_la = icb->_la;
 	_as = icb->_as;
 	_bs = icb->_bs;

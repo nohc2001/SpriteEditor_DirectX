@@ -813,15 +813,19 @@ public:
 		wchar_t tempstr0[16] = L"var";
 		wchar_t tempstr1[16] = L"func";
 		wchar_t tempstr2[16] = L"import";
+		wchar_t tempstr3[16] = L"compile";
 		shp::rect4f varbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly -10);
 		shp::rect4f funcbtnLoc = shp::rect4f(additionalTabLoc.fx + 9*atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 15 * atmargin, additionalTabLoc.ly - 10);
 		shp::rect4f importbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 40);
+		shp::rect4f compilebtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy + 50, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 90);
 		drawline(shp::vec2f(varbtnLoc.fx, varbtnLoc.getCenter().y), shp::vec2f(varbtnLoc.lx, varbtnLoc.getCenter().y), varbtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
 		draw_string(tempstr0, 3, atmargin*0.5f, varbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 		drawline(shp::vec2f(funcbtnLoc.fx, funcbtnLoc.getCenter().y), shp::vec2f(funcbtnLoc.lx, funcbtnLoc.getCenter().y), funcbtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
 		draw_string(tempstr1, 4, atmargin * 0.5f, funcbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 		drawline(shp::vec2f(importbtnLoc.fx, importbtnLoc.getCenter().y), shp::vec2f(importbtnLoc.lx, importbtnLoc.getCenter().y), importbtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
 		draw_string(tempstr2, 6, atmargin * 0.5f, importbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+		drawline(shp::vec2f(compilebtnLoc.fx, compilebtnLoc.getCenter().y), shp::vec2f(compilebtnLoc.lx, compilebtnLoc.getCenter().y), compilebtnLoc.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
+		draw_string(tempstr3, 7, atmargin * 0.5f, compilebtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 	}
 
 	void Event(DX_Event evt) {
@@ -865,6 +869,7 @@ public:
 				shp::rect4f varbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
 				shp::rect4f funcbtnLoc = shp::rect4f(additionalTabLoc.fx + 9 * atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 15 * atmargin, additionalTabLoc.ly - 10);
 				shp::rect4f importbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 40);
+				shp::rect4f compilebtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy + 50, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 90);
 
 				if (shp::bPointInRectRange(mpos, varbtnLoc)) {
 					showVarmod = true;
@@ -887,7 +892,9 @@ public:
 								SelectedICB->extension.push_back(basic_ext[i]);
 							}
 							//dbg << "bake" << endl;
-							SelectedICB->bake_code((char*)filename.c_str());
+							SelectedICB->read_codes((char*)filename.c_str());
+							SelectedICB->create_codedata();
+							//SelectedICB->bake_code((char*)filename.c_str());
 
 							bool success = false;
 							if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
@@ -918,7 +925,6 @@ public:
 						{
 							SelectedICB = icmap[(char*)filename.c_str()];
 						}
-
 
 						if (SelectedICB == nullptr) {
 							for (int i = 0; i < codeLines.size(); ++i) {
@@ -1006,6 +1012,42 @@ public:
 						}
 					}
 
+				}
+				
+				if (shp::bPointInRectRange(mpos, compilebtnLoc)) {
+					if (SelectedICB != nullptr) {
+						SelectedICB->read_codeLines(&codeLines);
+						SelectedICB->create_codedata();
+						SelectedICB->compile_codes();
+					}
+					else {
+						SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+						SelectedICB->init(40960);
+						for (int i = 0; i < basic_ext.size(); ++i)
+						{
+							SelectedICB->extension.push_back(basic_ext[i]);
+						}
+
+						SelectedICB->read_codeLines(&codeLines);
+						SelectedICB->create_codedata();
+						SelectedICB->compile_codes();
+					}
+
+					bool success = false;
+					if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
+						currentErrorMsg.up = 0;
+						currentErrorMsg.Arr[0] = 0;
+						for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
+							currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
+						}
+					}
+					else {
+						currentErrorMsg.up = 0;
+						currentErrorMsg.Arr[0] = 0;
+						success = true;
+					}
+
+					//SelectedICB->curErrMsg.release();
 				}
 			}
 		}
@@ -2269,10 +2311,12 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 						icb->extension.push_back(basic_ext[i]);
 					}
 					//dbg << "bake" << endl;
-					icb->bake_code((char*)filename.c_str());
-					//dbg << "s0" << endl;
+					//icb->bake_code((char*)filename.c_str());
+					icb->read_codes((char*)filename.c_str());
+					icb->create_codedata();
+					icb->compile_codes();
+
 					icmap.insert(ICMAP::value_type((char*)filename.c_str(), icb));
-					//dbg << "s0" << endl;
 
 					ICB_Editor* icbe = (ICB_Editor*)fm->_New(sizeof(ICB_Editor), true);
 					icbe->Init(shp::rect4f(-200, -100, 200, 100), icb);
@@ -2322,8 +2366,8 @@ void mainpagebtn_render(DXBtn* btn)
 	loc.fx += loc.getw() / 4.0f;
 	loc.fy += loc.geth() / 4.0f;
 
-	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 	rb->render(cb);
+	draw_string(btn->text, wcslen(btn->text), 15.0f * expendrate, loc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), layer_uitext);
 }
 
 void mainpageslider_render(DXSlider* slider)
@@ -2787,9 +2831,9 @@ void main_render(Page* p)
 					(*paramselect_id == i) ? DX11Color(0.2f, 0.7f, 0.8f, 0.8f) : DX11Color(0.2f, 0.3f,
 						0.3f, 0.8f);
 				int len = wcslen(nstr[i]);
-				draw_string(nstr[i], len, 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 				drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
 					shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col, layer_ui);
+				draw_string(nstr[i], len, 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 				objrt.fy -= 50;
 				objrt.ly -= 50;
 			}
@@ -2803,9 +2847,9 @@ void main_render(Page* p)
 					col = (*paramselect_id == i+5) ? DX11Color(0.2f, 0.7f, 0.8f, 0.8f) : DX11Color(0.2f, 0.3f, 0.3f, 0.8f);
 					
 					wstring wstr = utf8_to_wstr(nd.name);
-					draw_string((wchar_t*)wstr.c_str(), wstr.size(), 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 					drawline(shp::vec2f(objrt.getCenter().x, objrt.fy),
 						shp::vec2f(objrt.getCenter().x, objrt.ly), objrt.getw(), col, layer_ui);
+					draw_string((wchar_t*)wstr.c_str(), wstr.size(), 15, objrt, DX11Color(1, 1, 1, 1), layer_uitext);
 					objrt.fy -= 50;
 					objrt.ly -= 50;
 				}
