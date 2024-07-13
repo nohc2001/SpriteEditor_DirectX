@@ -948,16 +948,6 @@ private:
 	bool current_if_is_multiple = false;
 
 public:
-	static constexpr uint32_t max_instruction = 256;
-	void* inst[max_instruction] = {};
-
-	static constexpr int max_casting_type = 20;
-	void* cast[max_casting_type] = {};
-
-	static constexpr int max_dbgtype = 9;
-	void* dbgt[max_dbgtype] = {};
-	void* inpt[max_dbgtype] = {};
-
 	// compile var
 	fmvecarr<char*> allcode_sen;
 	static word_base_sen_sys wbss;
@@ -1147,8 +1137,8 @@ public:
 				
 				char savec = 0;
 				for (int k = 0; k < lines->at(i).size(); ++k) {
-					char c;
-					c = (char)lines->at(i)[k];
+					wchar_t cc = lines->at(i)[k];
+					char c = (char)cc;
 					if (iscomment) {
 						if (savec == '*' && c == '/') {
 							iscomment = false;
@@ -1189,7 +1179,7 @@ public:
 						}
 					}
 					codetxt->push_back(c);
-					k++;
+					//k++;
 				}
 			}
 			return codetxt;
@@ -7834,7 +7824,7 @@ public:
 	ERR_BAKECODE_PROBLEM:
 		writeup = 0;
 		mem[writeup++] = (byte8)insttype::IT_EXIT;
-		//Release(false);
+		Release(false);
 		return;
 	}
 
@@ -8262,6 +8252,7 @@ void ICB_Extension::Release()
 
 class ICB_Context{
     public:
+	bool ExeState = false;
     InsideCode_Bake* icb;
 	byte8* codemem = nullptr;
 
@@ -8269,7 +8260,8 @@ class ICB_Context{
 	uint32_t max_mem_byte = 40960; // 40KB
 	byte8 *mem = nullptr;
 	fmvecarr<byte8> datamem;
-	int dataptr = max_mem_byte;
+	int inherit_limit = 0;
+	//int dataptr = max_mem_byte;
 
 	static constexpr unsigned int percent16 = 15;
 	int apivot = 0;
@@ -8280,14 +8272,6 @@ class ICB_Context{
 	byte8 *pc = 0; // program counter
 	byte8 *sp = 0; // stack pointer
 
-	byte8 **pcb = nullptr;
-	ushort **pcs = nullptr;
-	uint **pci = nullptr;
-
-	byte8 **spb = nullptr;
-	ushort **sps = nullptr;
-	uint **spi = nullptr;
-
 	fmvecarr<byte8 *> fsp;
 	fmvecarr<byte8 *> call_stack;
 
@@ -8295,18 +8279,6 @@ class ICB_Context{
 	byte8 *lfsp = 0; // last function stack pos
 	fmvecarr<byte8*> saveSP; // function save stack pos
 
-	byte8 **rfspb = nullptr;
-	ushort **rfsps = nullptr;
-	uint **rfspi = nullptr;
-
-	byte8 **lfspb = nullptr;
-	ushort **lfsps = nullptr;
-	uint **lfspi = nullptr;
-
-	uint64_t _a = 0;
-	uint64_t _b = 0;
-	uint64_t _x = 0;
-	uint64_t _y = 0;
 	uint64_t _la = 0; // left address
 
     ICB_Context(){}
@@ -8362,11 +8334,22 @@ class ICB_Context{
 			_as[i] = 0;
 			_bs[i] = 0;
 		}
+		apivot = 0;
+		bpivot = 0;
+		inherit_limit = 0;
 
 		icl << "finish.";
     }
 
+	void Push_InheritData(unsigned int size, byte8* dataptr) {
+		for (int i = 0; i < size; ++i) {
+			datamem[inherit_limit + i] = dataptr[i];
+		}
+		inherit_limit += size;
+	}
+
 	void Release() {
+		ExeState = false;
 		icb = nullptr;
 		codemem = nullptr;
 		fm->_Delete((byte8*)mem, max_mem_byte);
@@ -8471,7 +8454,7 @@ int icbindex_cxt = 0;
 
 bool isBreaking = false;
 int stopnum = 0;
-bool isDbg = false;
+bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {
@@ -8494,7 +8477,7 @@ int code_control(fmvecarr<ICB_Context *> *icbarr)
 	stack++;
 	if (stack >= 1)
 	{
-		scanf_s("%c", &c);
+		//scanf_s("%c", &c);
 		stack = 0;
 	}
 	switch (c)
@@ -8609,7 +8592,9 @@ CONTEXT_SWITCH:
 		}
 	}
 	exed_num = 0;
+
 	while (icbarr[n]->icb->able_to_execute == false) {
+		icbarr[n]->ExeState = false;
 		++n;
 		if (n >= icbarr.size()) {
 			n = 0;
@@ -8617,6 +8602,20 @@ CONTEXT_SWITCH:
 			break;
 		}
 	}
+	if (icbarr[n]->ExeState == false) {
+		int maxmembyte = icbarr[n]->max_mem_byte;
+		InsideCode_Bake* tempicb = icbarr[n]->icb;
+		int inheritlimit = icbarr[n]->inherit_limit;
+		byte8* inherit_data = fm->_New(icbarr[n]->inherit_limit, true);
+		for (int i = 0; i < icbarr[n]->inherit_limit; ++i) {
+			inherit_data[i] = icbarr[n]->datamem[i];
+		}
+		icbarr[n]->Release();
+		icbarr[n]->SetICB(tempicb, maxmembyte);
+		icbarr[n]->Push_InheritData(inheritlimit, inherit_data);
+		icbarr[n]->ExeState = true;
+	}
+
 	icb = icbarr[n];
 	_la = icb->_la;
 	_as = icb->_as;
@@ -8626,9 +8625,6 @@ CONTEXT_SWITCH:
 
 	mem = icb->mem;
 	codemem = icb->codemem;
-	inst = icb->icb->inst;
-	dbgt = icb->icb->dbgt;
-	inpt = icb->icb->inpt;
 
 	pc = &icb->pc; // program counter
 	sp = &icb->sp; // stack pointer

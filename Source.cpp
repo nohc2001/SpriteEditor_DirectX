@@ -298,6 +298,20 @@ public:
 
 	int blockstack = 0;
 
+	void CodeLinesClear() {
+		for (int i = 0; i < codeLines.size(); ++i) {
+			codeLines[i].release();
+			codeLines[i].NULLState();
+		}
+		codeLines.up = 0;
+	}
+
+	void PushNewCodeLine() {
+		codeLines.push_back(fmlwstr());
+		codeLines.last().NULLState();
+		codeLines.last().Init(8, false);
+	}
+
 	void AddExpend(unsigned int index) {
 		int low = 0;
 		int high = codeLine_expend.size() - 1;
@@ -529,9 +543,7 @@ public:
 	}
 
 	void ImportBlockToCodeLine(code_sen* cs) {
-		codeLines.push_back(fmlwstr());
-		codeLines.last().NULLState();
-		codeLines.last().Init(8, false);
+		PushNewCodeLine();
 		for (int k = 0; k < blockstack; ++k) {
 			codeLines.last().push_back(L' ');
 			codeLines.last().push_back(L' ');
@@ -545,9 +557,7 @@ public:
 		for (int i = 0; i < cs->codeblocks->size(); ++i) {
 			code_sen* scs = reinterpret_cast<code_sen*>(cs->codeblocks->at(i));
 			if (scs->ck != codeKind::ck_blocks) {
-				codeLines.push_back(fmlwstr());
-				codeLines.last().NULLState();
-				codeLines.last().Init(8, false);
+				PushNewCodeLine();
 				//codeLine_expend.push_back(false);
 
 				for (int k = 0; k < blockstack; ++k) {
@@ -577,14 +587,64 @@ public:
 
 		blockstack -= 1;
 
-		codeLines.push_back(fmlwstr());
-		codeLines.last().NULLState();
-		codeLines.last().Init(8, false);
+		PushNewCodeLine();
 		for (int k = 0; k < blockstack; ++k) {
 			codeLines.last().push_back(L' ');
 			codeLines.last().push_back(L' ');
 		}
 		codeLines.last().push_back(L'}');
+		codeLines.last().c_str();
+	}
+
+	void ReadCodelines_FromFile(const char* filename) {
+		CodeLinesClear();
+
+		FILE* fp;
+		fopen_s(&fp, filename, "rt");
+		if (fp)
+		{
+			//fmlcstr* codetxt = (fmlcstr*)fm->_New(sizeof(fmlcstr), true);
+			//codetxt->NULLState();
+			//codetxt->Init(10, false);
+
+			int max = 0;
+			fseek(fp, 0, SEEK_END);
+			max = ftell(fp);
+			fclose(fp);
+
+			int stack = 0;
+			fopen_s(&fp, filename, "rt");
+			int k = 0;
+			PushNewCodeLine();
+			while (k < max)
+			{
+				wchar_t c;
+				char cc = (char)fgetc(fp);
+				if (cc == EOF) {
+					break;
+				}
+				c = cc;
+
+				if (c == L'\n') {
+					codeLines.last().c_str();
+					PushNewCodeLine();
+					continue;
+				}
+				else if (c == L'{') {
+					AddExpend(codeLines.up - 1);
+				}
+				else if (cc == '\t') {
+					codeLines.last().push_back(L' ');
+					codeLines.last().push_back(L' ');
+					k++;
+					continue;
+				}
+
+				codeLines.last().push_back(c);
+				k++;
+			}
+		}
+
 		codeLines.last().c_str();
 	}
 
@@ -627,7 +687,7 @@ public:
 
 		currentErrorMsg.NULLState();
 		currentErrorMsg.Init(8, false);
-
+		
 		focus = false;
 		isExpend = false;
 		movOffset = shp::rect4f(0, 0, 0, 0);
@@ -638,6 +698,14 @@ public:
 		}
 
 		if (SelectedICB != nullptr) {
+			if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
+				currentErrorMsg.up = 0;
+				currentErrorMsg.Arr[0] = 0;
+				for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
+					currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
+				}
+			}
+
 			//update datas
 			for (int i = 0; i < codeLines.size(); ++i) {
 				codeLines[i].release();
@@ -647,35 +715,36 @@ public:
 
 			codeLine_expend.up = 0;
 
-			for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
-				code_sen* cs = SelectedICB->csarr->at(i);
-				if (cs->ck != codeKind::ck_blocks) {
-					codeLines.push_back(fmlwstr());
-					codeLines.last().NULLState();
-					codeLines.last().Init(8, false);
-					//codeLine_expend.push_back(false);
-					for (int k = 0; k < cs->maxlen; ++k) {
-						char* word = cs->sen[k];
-						int wlen = strlen(word);
-						for (int u = 0; u < wlen; ++u) {
-							codeLines.last().push_back((wchar_t)word[u]);
+			if (SelectedICB->curErrMsg[0] == 0) {
+				for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
+					code_sen* cs = SelectedICB->csarr->at(i);
+					if (cs->ck != codeKind::ck_blocks) {
+						PushNewCodeLine();
+						//codeLine_expend.push_back(false);
+						for (int k = 0; k < cs->maxlen; ++k) {
+							char* word = cs->sen[k];
+							int wlen = strlen(word);
+							for (int u = 0; u < wlen; ++u) {
+								codeLines.last().push_back((wchar_t)word[u]);
+								//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+							}
+							codeLines.last().push_back(L' ');
 							//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
 						}
-						codeLines.last().push_back(L' ');
-						//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
-					}
 
-					if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
-						codeLines.last().push_back(L';');
-						//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
-					}
+						if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
+							codeLines.last().push_back(L';');
+							//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+						}
 
-					codeLines.last().c_str();
-				}
-				else {
-					ImportBlockToCodeLine(cs);
+						codeLines.last().c_str();
+					}
+					else {
+						ImportBlockToCodeLine(cs);
+					}
 				}
 			}
+
 		}
 	}
 
@@ -927,15 +996,9 @@ public:
 						}
 
 						if (SelectedICB == nullptr) {
-							for (int i = 0; i < codeLines.size(); ++i) {
-								codeLines[i].release();
-								codeLines[i].NULLState();
-							}
-							codeLines.up = 0;
+							CodeLinesClear();
 
-							codeLines.push_back(fmlwstr());
-							codeLines[0].NULLState();
-							codeLines[0].Init(8, false);
+							PushNewCodeLine();
 							int ss = 0;
 
 							FILE* fp;
@@ -973,11 +1036,7 @@ public:
 						}
 
 						//update datas
-						for (int i = 0; i < codeLines.size(); ++i) {
-							codeLines[i].release();
-							codeLines[i].NULLState();
-						}
-						codeLines.up = 0;
+						CodeLinesClear();
 
 						codeLine_expend.up = 0;
 
@@ -1016,6 +1075,19 @@ public:
 				
 				if (shp::bPointInRectRange(mpos, compilebtnLoc)) {
 					if (SelectedICB != nullptr) {
+						bool b = SelectedICB->curErrMsg[0] == 0;
+						SelectedICB->curErrMsg.up = 0;
+						SelectedICB->curErrMsg[0] = 0;
+						if (b) {
+							SelectedICB->Release();
+						}
+
+						SelectedICB->init(40960);
+
+						for (int i = 0; i < basic_ext.size(); ++i) {
+							SelectedICB->extension.push_back(basic_ext[i]);
+						}
+
 						SelectedICB->read_codeLines(&codeLines);
 						SelectedICB->create_codedata();
 						SelectedICB->compile_codes();
@@ -2267,7 +2339,7 @@ void addicbtn_event(DXBtn* btn, DX_Event evt)
 				ICB_Context* ctx = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
 				ctx->SetICB(icb, 4096);	// 40KB
 				Object* o = (Object*)mainSprite->data.objs->at(objselect_id);
-				*reinterpret_cast <Object**>(&ctx->datamem[0]) = o;
+				ctx->Push_InheritData(8, (byte8*)o);
 				if (o->ecs != nullptr)
 				{
 					// todo : disable origin ecs
@@ -2320,6 +2392,9 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 
 					ICB_Editor* icbe = (ICB_Editor*)fm->_New(sizeof(ICB_Editor), true);
 					icbe->Init(shp::rect4f(-200, -100, 200, 100), icb);
+					if (icb->curErrMsg[0] != 0) {
+						icbe->ReadCodelines_FromFile((char*)filename.c_str());
+					}
 					icbe_pool.push_back(icbe);
 				}
 				else
@@ -2332,7 +2407,8 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 				ICB_Context* ctx = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
 				ctx->SetICB(icb, 4096);	// 40KB
 				Object* o = (Object*)mainSprite->data.objs->at(objselect_id);
-				*reinterpret_cast <Object**>(&ctx->datamem[0]) = o;
+				*reinterpret_cast<Object**>(&ctx->datamem[0]) = o;
+				//ctx->Push_InheritData(8, (byte8*)&o);
 				if (o->ecs != nullptr)
 				{
 					// todo : disable origin ecs
@@ -4615,7 +4691,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				{
 					// performance pi is 2/10(exerate)
 					//dbgcount(0, dbg << "execute" << endl);
-					execute_switch(ecss, 100, code_control, exerate, icbindex_cxt);
+					execute_switch(ecss, 1, code_control, exerate, icbindex_cxt);
 					//dbgcount(0, dbg << "executeend" << endl);
 				}
 

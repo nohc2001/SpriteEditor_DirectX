@@ -107,6 +107,7 @@ void exGraphics_create_ecs(int *pcontext)
 
 	ICB_Context *ecs = (ICB_Context *) fm->_New(sizeof(ICB_Context), true);
 	ecs->SetICB(icb, memsiz);
+	//ctx->Push_InheritData(8, (byte8*)o);
 
 	icc->sp -= sizeof(ICB_Context *);
 	*reinterpret_cast < ICB_Context ** >(icc->sp) = ecs;
