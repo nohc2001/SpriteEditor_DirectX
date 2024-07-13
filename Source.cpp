@@ -2377,6 +2377,7 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 				if (icmap.find((char*)filename.c_str()) == icmap.end())
 				{
 					icb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+					icb->HashInit();
 					icb->init(40960);
 					for (int i = 0; i < basic_ext.size(); ++i)
 					{
@@ -2405,10 +2406,9 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 				//dbg << "sec0" << endl;
 
 				ICB_Context* ctx = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
-				ctx->SetICB(icb, 4096);	// 40KB
+				ctx->SetICB(icb, 40960);	// 40KB
 				Object* o = (Object*)mainSprite->data.objs->at(objselect_id);
-				*reinterpret_cast<Object**>(&ctx->datamem[0]) = o;
-				//ctx->Push_InheritData(8, (byte8*)&o);
+				ctx->Push_InheritData(8, (byte8*)&o);
 				if (o->ecs != nullptr)
 				{
 					// todo : disable origin ecs

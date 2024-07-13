@@ -988,6 +988,7 @@ public:
 	unsigned int currentCodeLine = 0;
 
 	bool able_to_execute = false;
+	int changeHash = 0;
 
 	fmvecarr<ICB_Extension*> extension; // 확장코드
 
@@ -2253,6 +2254,10 @@ public:
 		codeLineVec_Word.Init(32, false, true);
 
 		icl << "finish" << endl;
+	}
+
+	void HashInit() {
+		changeHash = 0;
 	}
 
 	void push_word(char* sptr)
@@ -7818,6 +7823,7 @@ public:
 
 		icl << "ICB[" << this << "] BakeCode finish." << endl;
 
+		changeHash += 1;
 		able_to_execute = true;
 		return;
 
@@ -8280,6 +8286,7 @@ class ICB_Context{
 	fmvecarr<byte8*> saveSP; // function save stack pos
 
 	uint64_t _la = 0; // left address
+	int changeHash = 0;
 
     ICB_Context(){}
     ~ICB_Context(){}
@@ -8337,6 +8344,7 @@ class ICB_Context{
 		apivot = 0;
 		bpivot = 0;
 		inherit_limit = 0;
+		changeHash = icb->changeHash;
 
 		icl << "finish.";
     }
@@ -8454,7 +8462,7 @@ int icbindex_cxt = 0;
 
 bool isBreaking = false;
 int stopnum = 0;
-bool isDbg = true;
+bool isDbg = false;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {
@@ -8594,7 +8602,7 @@ CONTEXT_SWITCH:
 	exed_num = 0;
 
 	while (icbarr[n]->icb->able_to_execute == false) {
-		icbarr[n]->ExeState = false;
+		//icbarr[n]->ExeState = false;
 		++n;
 		if (n >= icbarr.size()) {
 			n = 0;
@@ -8602,7 +8610,7 @@ CONTEXT_SWITCH:
 			break;
 		}
 	}
-	if (icbarr[n]->ExeState == false) {
+	if (icbarr[n]->changeHash != icbarr[n]->icb->changeHash) {
 		int maxmembyte = icbarr[n]->max_mem_byte;
 		InsideCode_Bake* tempicb = icbarr[n]->icb;
 		int inheritlimit = icbarr[n]->inherit_limit;
@@ -8613,7 +8621,7 @@ CONTEXT_SWITCH:
 		icbarr[n]->Release();
 		icbarr[n]->SetICB(tempicb, maxmembyte);
 		icbarr[n]->Push_InheritData(inheritlimit, inherit_data);
-		icbarr[n]->ExeState = true;
+		//icbarr[n]->ExeState = true;
 	}
 
 	icb = icbarr[n];
