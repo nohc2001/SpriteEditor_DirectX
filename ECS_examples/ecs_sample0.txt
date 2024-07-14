@@ -1,6 +1,6 @@
 //Parameters
 pObject this;
-bool bechanged = false;
+uchar bechanged = 0;
 
 int main(){
 	//Init
@@ -30,9 +30,9 @@ int main(){
 		
 		//Finish Change
 		Release(0);
-		bechanged = false;
-		while(bechanged == false){ 
-			
+		bechanged = 0;
+		while(bechanged == 0){
+			int nocode = 0;
 		}
 	}
 	

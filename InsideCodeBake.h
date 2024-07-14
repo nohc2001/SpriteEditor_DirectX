@@ -3844,7 +3844,7 @@ public:
 						*/
 					}
 
-					if (fd->param_data[paramid].td->typesiz <= 8)
+					if (fd->param_data[paramid].td->typetype != 's')
 					{
 						switch (fd->param_data[paramid].td->typesiz)
 						{
@@ -3923,7 +3923,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramid].td->typesiz <= 8)
+				if (fd->param_data[paramid].td->typetype != 's')
 				{
 					switch (fd->param_data[paramid].td->typesiz)
 					{
@@ -4074,7 +4074,7 @@ public:
 						*/
 					}
 
-					if (fd->param_data[paramCount].td->typesiz <= 8)
+					if (fd->param_data[paramCount].td->typetype != 's')
 					{
 						switch (fd->param_data[paramCount].td->typesiz)
 						{
@@ -4149,7 +4149,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramCount].td->typesiz <= 8)
+				if (fd->param_data[paramCount].td->typetype != 's')
 				{
 					switch (fd->param_data[paramCount].td->typesiz)
 					{
@@ -6937,7 +6937,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramid].td->typesiz <= 8)
+				if (fd->param_data[paramid].td->typetype != 's')
 				{
 					switch (fd->param_data[paramid].td->typesiz)
 					{
@@ -7014,7 +7014,7 @@ public:
 				*/
 			}
 
-			if (fd->param_data[paramid].td->typesiz <= 8)
+			if (fd->param_data[paramid].td->typetype != 's')
 			{
 				switch (fd->param_data[paramid].td->typesiz)
 				{
@@ -7138,7 +7138,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramCount].td->typesiz <= 8)
+				if (fd->param_data[paramCount].td->typetype != 's')
 				{
 					switch (fd->param_data[paramCount].td->typesiz)
 					{
@@ -7213,7 +7213,7 @@ public:
 				*/
 			}
 
-			if (fd->param_data[paramCount].td->typesiz <= 8)
+			if (fd->param_data[paramCount].td->typetype != 's')
 			{
 				switch (fd->param_data[paramCount].td->typesiz)
 				{
@@ -8500,7 +8500,7 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = 91;
+int stopnum = 0;
 bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
@@ -9818,11 +9818,11 @@ INST_SWITCH:
 		castv = (casttype) * ++ * pc;
 		goto CAST_SWITCH;
 	case insttype::IT_PUSH_A_FROM_VALUE_OF_A:
-		registerA0 = *reinterpret_cast<uint*>(mem + (uint64_t)registerA0);
+		registerA0 = *reinterpret_cast<uint64_t*>(mem + (uint64_t)registerA0);
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_PUSH_B_FROM_VALUE_OF_B:
-		registerB0 = *reinterpret_cast<uint*>(mem + (uint64_t)registerB0);
+		registerB0 = *reinterpret_cast<uint64_t*>(mem + (uint64_t)registerB0);
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_DBG_A:
@@ -9877,8 +9877,8 @@ INST_SWITCH:
 		paramSiz = *reinterpret_cast<uint*>(*pci);
 		*sp -= paramSiz;
 		++*pci;
-		for (int i = 0; i < paramSiz; ++i) {
-			*(*sp + i) = *(mem + (int)registerA0 + i);
+		for (int i = paramSiz-1; i >= 0; --i) {
+			*(*sp + i) = *(mem + (uint64_t)registerA0 + i);
 		}
 		goto INST_SWITCH;
 	case insttype::PUSH_A_GLOBAL_VARIABLE_ADDRESS:

@@ -590,23 +590,24 @@ void exGraphics_get_deltatime(int* pcontext){
     icc->Amove_pivot(-1);
 }
 
-//void Graphics_Init();
+//void Graphics_Init(int** ptr);
 void exGraphics_Graphics_Init(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	int** t0 = reinterpret_cast <int**>(icc->rfsp - 8);
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 8);
+	int** dest = (int**)&icc->mem[logicAddr];
 	fmvecarr<gHeapCheck>* heapBuffer;
 	heapBuffer = (fmvecarr<gHeapCheck>*)fm->_New(sizeof(fmvecarr<gHeapCheck>), true);
 	heapBuffer->NULLState();
 	heapBuffer->Init(8, false);
-	*t0 = (int*)heapBuffer;
+	*dest = (int*)heapBuffer;
 }
 
 //void Release(int layer);
 void exGraphics_Release(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 9];
 	int t0 = *reinterpret_cast <int*>(icc->rfsp - 4);
 
 	if (t0 != -1) {
