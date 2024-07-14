@@ -67,6 +67,12 @@ typedef Sprite *pSprite;
 
 typedef Object *pObject;
 
+struct gHeapCheck {
+	void* ptr = nullptr; // 힙 메모리 주소
+	int shouldRelease = -1; // -1이면 유지, n이면 n번째 레이어가 해제될때 헤제됨.
+	void (*ReleaseFunc)(void*); // 해제때 쓰이는 함수.
+};
+
 // pICB get_icb(char *filename);
 void exGraphics_get_icb(int* pcontext)
 {
@@ -584,6 +590,172 @@ void exGraphics_get_deltatime(int* pcontext){
     icc->Amove_pivot(-1);
 }
 
+//void Graphics_Init();
+void exGraphics_Graphics_Init(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	int** t0 = reinterpret_cast <int**>(icc->rfsp - 8);
+	fmvecarr<gHeapCheck>* heapBuffer;
+	heapBuffer = (fmvecarr<gHeapCheck>*)fm->_New(sizeof(fmvecarr<gHeapCheck>), true);
+	heapBuffer->NULLState();
+	heapBuffer->Init(8, false);
+	*t0 = (int*)heapBuffer;
+}
+
+//void Release(int layer);
+void exGraphics_Release(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	int t0 = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if (t0 != -1) {
+		for (int i = 0; i < heapBuffer->size(); ++i) {
+			if (heapBuffer->at(i).shouldRelease == t0) {
+				//fm->_Delete((byte8*)heapBuffer->at(i).ptr, heapBuffer->at(i).size);
+				heapBuffer->at(i).ReleaseFunc(heapBuffer->at(i).ptr);
+				heapBuffer->erase(i);
+			}
+		}
+	}
+	else {
+		// all release
+		for (int i = 0; i < heapBuffer->size(); ++i) {
+			heapBuffer->at(i).ReleaseFunc(heapBuffer->at(i).ptr);
+		}
+		heapBuffer->release();
+	}
+}
+
+void ICBRelease(void* ptr) {
+	InsideCode_Bake* icb = (InsideCode_Bake*)ptr;
+	icb->Release(true);
+	fm->_Delete((byte8*)icb, sizeof(InsideCode_Bake));
+}
+
+void ECSRelease(void* ptr) {
+	ICB_Context* cxt = (ICB_Context*)ptr;
+	cxt->Release();
+	fm->_Delete((byte8*)cxt, sizeof(ICB_Context));
+}
+
+void rbufferRelease(void* ptr) {
+	rbuffer* rb = (rbuffer*)ptr;
+	rb->Release();
+	fm->_Delete((byte8*)rb, sizeof(rbuffer));
+}
+
+void SprRelease(void* ptr) {
+	Sprite* spr = (Sprite*)ptr;
+	spr->Release();
+	fm->_Delete((byte8*)spr, sizeof(Sprite));
+}
+
+void ObjRelease(void* ptr) {
+	Object* obj = (Object*)ptr;
+	fm->_Delete((byte8*)obj, sizeof(Object));
+}
+
+//void ChangeICB(pICB* dest, pICB newv, int layer);
+void exGraphics_ChangeICB(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
+	pICB* dest = (pICB*)&icc->mem[logicAddr];
+	pICB newv = *reinterpret_cast <pICB*>(icc->rfsp - 12);
+	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if (*dest != nullptr) {
+		pICB oldv = *dest;
+		gHeapCheck hc;
+		hc.ptr = oldv;
+		hc.shouldRelease = layer;
+		hc.ReleaseFunc = ICBRelease;
+	}
+	*dest = newv;
+}
+
+//void ChangeECS(pECS* dest, pECS newv, int layer);
+void exGraphics_ChangeECS(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
+	pECS* dest = (pECS*)&icc->mem[logicAddr];
+	pECS newv = *reinterpret_cast <pECS*>(icc->rfsp - 12);
+	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if (*dest != nullptr) {
+		pECS oldv = *dest;
+		gHeapCheck hc;
+		hc.ptr = oldv;
+		hc.shouldRelease = layer;
+		hc.ReleaseFunc = ECSRelease;
+	}
+	*dest = newv;
+}
+
+//void ChangeRBuf(prbuffer* dest, prbuffer newv, int layer);
+void exGraphics_ChangeRBuf(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
+	prbuffer* dest = (prbuffer*)&icc->mem[logicAddr];
+	prbuffer newv = *reinterpret_cast <prbuffer*>(icc->rfsp - 12);
+	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if ((*dest).data != nullptr) {
+		prbuffer oldv = *dest;
+		gHeapCheck hc;
+		hc.ptr = (void*)oldv.data;
+		hc.shouldRelease = layer;
+		hc.ReleaseFunc = rbufferRelease;
+	}
+	*dest = newv;
+}
+
+//void ChangeSpr(pSprite* dest, pSprite newv, int layer);
+void exGraphics_ChangeSpr(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
+	pSprite* dest = (pSprite*) &icc->mem[logicAddr];
+	pSprite newv = *reinterpret_cast <pSprite*>(icc->rfsp - 12);
+	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if (*dest != nullptr) {
+		pSprite oldv = *dest;
+		gHeapCheck hc;
+		hc.ptr = oldv;
+		hc.shouldRelease = layer;
+		hc.ReleaseFunc = SprRelease;
+	}
+	*dest = newv;
+}
+
+//void ChangeObj(pObject* dest, pObject newv, int layer);
+void exGraphics_ChangeObj(int* pcontext) {
+	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+
+	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
+	pObject* dest = (pObject*)&icc->mem[logicAddr];
+	pObject newv = *reinterpret_cast <pObject*>(icc->rfsp - 12);
+	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
+
+	if (*dest != nullptr) {
+		pObject oldv = *dest;
+		gHeapCheck hc;
+		hc.ptr = oldv;
+		hc.shouldRelease = layer;
+		hc.ReleaseFunc = ObjRelease;
+	}
+	*dest = newv;
+}
+
 ICB_Extension *Init_exGraphics()
 {
 	// 확장을 입력.
@@ -636,6 +808,13 @@ ICB_Extension *Init_exGraphics()
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_obj_setecs);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_rdtsc);
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_get_deltatime);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_Graphics_Init);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_Release);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ChangeICB);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ChangeECS);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ChangeRBuf);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ChangeSpr);
+	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_ChangeObj);
 	return ext;
 }
 

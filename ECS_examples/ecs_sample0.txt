@@ -1,0 +1,42 @@
+//Parameters
+pObject this;
+bool bechanged = false;
+
+int main(){
+	//Init
+	int* HeapBuffer;
+	Graphics_Init(&HeapBuffer);
+	float PI = 3.141592;
+
+	//ChangeLoop
+	while(true){
+		// Write Code Here
+		pSprite basicspr = 0;
+		ChangeSpr(&basicspr, _pSprite(0), 0);
+
+		prbuffer basicBuff = 0;
+		ChangeRBuf(&basicBuff, _prbuffer(false), 0);
+		gcolor basic_color = _gcolor(255, 255, 255, 255);
+
+		begin(basicBuff, false);
+		av(basicBuff, _gpos(-200, -100, 0), basic_color);
+		av(basicBuff, _gpos(100, -100, 0), basic_color);
+		av(basicBuff, _gpos(100, 100, 0), basic_color);
+		av(basicBuff, _gpos(-100, 100, 0), basic_color);
+		end(basicBuff);
+		spr_push_rbuffer(basicspr, basicBuff);
+
+		obj_setsource(this, basicspr);
+		
+		//Finish Change
+		Release(0);
+		bechanged = false;
+		while(bechanged == false){ 
+			
+		}
+	}
+	
+	//All Heap Release
+	Release(-1);
+	return 0;
+}

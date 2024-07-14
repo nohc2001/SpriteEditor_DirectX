@@ -377,12 +377,15 @@
     <Text Include="DevInfo\memo.txt" />
     <Text Include="ECS_examples\ecs0.txt" />
     <Text Include="ECS_examples\ecs_face.txt" />
+    <Text Include="ECS_examples\ecs_sample0.txt" />
     <Text Include="ECS_examples\face_writeup.txt" />
     <Text Include="ECS_examples\tool_Compas.txt" />
+    <Text Include="exGraphics_Info.txt" />
     <Text Include="exTool.txt" />
     <Text Include="exGeometry.txt" />
     <Text Include="exGraphics.txt" />
     <Text Include="icb_dbg.txt" />
+    <Text Include="instruction_table.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

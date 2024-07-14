@@ -1,0 +1,24 @@
+pSprite, prbuffer, pObject등을 사용할때 
+힙 메모리를 사용하게 되는데, 
+이를 관리하기 위해 다음과 같은 방법을 쓸 것이다.
+
+ecs안에서
+처음 시작할때 Graphics_StaticInit() 함수를 통해서 
+fmvecarr<gHeapCheck*>* 타입의 포인터를 스택에 저장하고
+
+// 이렇게 생긴 것.
+struct gHeapCheck{
+	void* ptr = nullptr; // 힙 메모리 주소
+	unsigned int size = 0; // 할당 사이즈
+	int shouldRelease = -1; // -1이면 유지, n이면 n번째 레이어가 해제될때 헤제됨.
+};
+
+또한 heap으로 만든 그래픽 데이터를 어떤 변수에다 대입할때,
+추가적인 함수를 사용하여 대입하는데, 
+만약 기존의 데이터가 nullptr이 아니면, 그 데이터에 해당하는 gHeapCheck의 shoudRelease맴버를 
+함수의 인수인 n으로 저장.
+
+작업이 끝나고 ReleaseLayer(int n) 을 호출하면 레이어가 n인 힙이 헤제되고, 힙 버퍼에서 삭제됨.
+
+int n = PushHeapLayer(); 로 레이어를 만들 수 있고,
+ReleaseLayer(-1); 은 버퍼에 있는 모든 힙을 헤제하고, 버퍼를 비운다.

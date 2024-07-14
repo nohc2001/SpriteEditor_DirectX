@@ -142,3 +142,17 @@ void obj_setecs(pObject obj, pECS ecs);
 uint rdtsc();
 
 float get_deltatime(uint t0, uint t1);
+
+void Graphics_Init(int** buffer);
+
+void Release(int layer);
+
+void ChangeICB(pICB* dest, pICB newv, int layer);
+
+void ChangeECS(pECS* dest, pECS newv, int layer);
+
+void ChangeRBuf(prbuffer* dest, prbuffer newv, int layer);
+
+void ChangeSpr(pSprite* dest, pSprite newv, int layer);
+
+void ChangeObj(pObject* dest, pObject newv, int layer);

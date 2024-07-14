@@ -1,43 +1,48 @@
 Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
-Create_New_ICB[000001889DF64CC0] Initialization...finish
-ICB[000001889DF64CC0] ReadCode start. filename : [C:\Users\nohc2\Desktop\Dev\Resource\ecs_sample0.txt]
-ICB[000001889DF64CC0] ReadCode_GetCodeFromText...finish
-ICB[000001889DF64CC0] ReadCode_AddTextBlocks...finish
-ICB[000001889DF64CC0] ReadCode_ScanStructTypes...finish
-ICB[000001889DF64CC0] ReadCode_AddStructTypes...finish
-ICB[000001889DF64CC0] ReadCode_ScanCodes...start
+Create_New_ICB[000001F35169D0C0] Initialization...finish
+ICB[000001F35169D0C0] ReadCode start. filename : [C:\Users\nohc2\Desktop\Dev\SpriteEditor_DirectX\ECS_examples\ecs_sample0.txt]
+ICB[000001F35169D0C0] ReadCode_GetCodeFromText...finish
+ICB[000001F35169D0C0] ReadCode_AddTextBlocks...finish
+ICB[000001F35169D0C0] ReadCode_ScanStructTypes...finish
+ICB[000001F35169D0C0] ReadCode_AddStructTypes...finish
+ICB[000001F35169D0C0] ReadCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
-[3] ~ addfunction : addfunc : int main ( )  ~ [6]
-[7] ~ blocks : start
-[0] ~ add and set variable : adsetvar: float PI = 3.141592  ~ [4]
-[5] ~ add and set variable : adsetvar: pSprite basicspr = _pSprite ( 0 )  ~ [12]
-[13] ~ add variable : add_var : prbuffer basicBuff  ~ [15]
-[16] ~  ~ [16]
-[17] ~ set Variable : set_var : basicBuff = _prbuffer ( false )  ~ [22]
-[23] ~ add and set variable : adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 )  ~ [36]
-[37] ~ use Function : usefunc : begin ( basicBuff , false )  ~ [43]
-[44] ~ use Function : usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color )  ~ [59]
-[60] ~ use Function : usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color )  ~ [75]
-[76] ~ use Function : usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color )  ~ [91]
-[92] ~ use Function : usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color )  ~ [107]
-[108] ~ use Function : usefunc : end ( basicBuff )  ~ [112]
-[113] ~ use Function : usefunc : spr_push_rbuffer ( basicspr , basicBuff )  ~ [119]
-[120] ~ use Function : usefunc : obj_setsource ( this , basicspr )  ~ [126]
-[127] ~ while : while__ : while ( true )  ~ [130]
-[131] ~ blocks : start
-[0] ~ add and set variable : adsetvar: int aaa = 10  ~ [4]
+[3] ~ add and set variable : adsetvar: bool bechanged = false  ~ [7]
+[8] ~ addfunction : addfunc : int main ( )  ~ [11]
+[12] ~ blocks : start
+[0] ~ add variable : add_var : int * HeapBuffer  ~ [3]
+[4] ~ use Function : usefunc : Graphics_Init ( & HeapBuffer )  ~ [9]
+[10] ~ add and set variable : adsetvar: float PI = 3.141592  ~ [14]
+[15] ~ while : while__ : while ( true )  ~ [18]
+[19] ~ blocks : start
+[0] ~ add and set variable : adsetvar: pSprite basicspr = 0  ~ [4]
+[5] ~ use Function : usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 )  ~ [17]
+[18] ~ add and set variable : adsetvar: prbuffer basicBuff = 0  ~ [22]
+[23] ~ use Function : usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 )  ~ [35]
+[36] ~ add and set variable : adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 )  ~ [49]
+[50] ~ use Function : usefunc : begin ( basicBuff , false )  ~ [56]
+[57] ~ use Function : usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color )  ~ [72]
+[73] ~ use Function : usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color )  ~ [88]
+[89] ~ use Function : usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color )  ~ [104]
+[105] ~ use Function : usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color )  ~ [120]
+[121] ~ use Function : usefunc : end ( basicBuff )  ~ [125]
+[126] ~ use Function : usefunc : spr_push_rbuffer ( basicspr , basicBuff )  ~ [132]
+[133] ~ use Function : usefunc : obj_setsource ( this , basicspr )  ~ [139]
+[140] ~ use Function : usefunc : Release ( 0 )  ~ [144]
+[145] ~  ~ [145]
+[146] ~ set Variable : set_var : bechanged = false  ~ [148]
+[149] ~ while : while__ : while ( bechanged == false )  ~ [154]
+[155] ~ blocks : start
 BakeCode_ScanCodes...block__ : {
-adsetvar: int aaa = 10 
 closed_ : }
- ~ [137]
-[138] ~ return in Function : return_ : return 0  ~ [140]
+ ~ [156]
 BakeCode_ScanCodes...block__ : {
-adsetvar: float PI = 3.141592 
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-add_var : prbuffer basicBuff 
-set_var : basicBuff = _prbuffer ( false ) 
+adsetvar: pSprite basicspr = 0 
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+adsetvar: prbuffer basicBuff = 0 
+usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
 adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
 usefunc : begin ( basicBuff , false ) 
 usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
@@ -47,26 +52,70 @@ usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color )
 usefunc : end ( basicBuff ) 
 usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
 usefunc : obj_setsource ( this , basicspr ) 
-while__ : while ( true ) 
+usefunc : Release ( 0 ) 
+set_var : bechanged = false 
+while__ : while ( bechanged == false ) 
 block__ : {
-adsetvar: int aaa = 10 
 closed_ : }
 
+closed_ : }
+ ~ [177]
+[178] ~ use Function : usefunc : Release ( -1 )  ~ [182]
+[183] ~ return in Function : return_ : return 0  ~ [185]
+BakeCode_ScanCodes...block__ : {
+add_var : int * HeapBuffer 
+usefunc : Graphics_Init ( & HeapBuffer ) 
+adsetvar: float PI = 3.141592 
+while__ : while ( true ) 
+block__ : {
+adsetvar: pSprite basicspr = 0 
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+adsetvar: prbuffer basicBuff = 0 
+usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
+adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
+usefunc : begin ( basicBuff , false ) 
+usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
+usefunc : end ( basicBuff ) 
+usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
+usefunc : obj_setsource ( this , basicspr ) 
+usefunc : Release ( 0 ) 
+set_var : bechanged = false 
+while__ : while ( bechanged == false ) 
+block__ : {
+closed_ : }
+
+closed_ : }
+
+usefunc : Release ( -1 ) 
 return_ : return 0 
 closed_ : }
- ~ [149]
+ ~ [199]
 BakeCode_ScanCodes...finish
-ICB[000001889DF64CC0] ReadCode_GlobalMemoryInit...finish
-ICB[000001889DF64CC0] BakeCode_CompileCodes...start
+ICB[000001F35169D0C0] ReadCode_GlobalMemoryInit...finish
+ICB[000001F35169D0C0] BakeCode_CompileCodes...start
 add_var : pObject this 
 BakeCode_CompileCodes__add_var : pObject this 
+adsetvar: bool bechanged = false 
+BakeCode_CompileCodes__adsetvar: bool bechanged = false 
+6	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+11	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+16	:LA=A(161)
+17	:*LA=A_1(169)
 addfunc : int main ( ) 
 BakeCode_CompileCodes__addfunc : int main ( ) 
 block__ : {
+add_var : int * HeapBuffer 
+usefunc : Graphics_Init ( & HeapBuffer ) 
 adsetvar: float PI = 3.141592 
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-add_var : prbuffer basicBuff 
-set_var : basicBuff = _prbuffer ( false ) 
+while__ : while ( true ) 
+block__ : {
+adsetvar: pSprite basicspr = 0 
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+adsetvar: prbuffer basicBuff = 0 
+usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
 adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
 usefunc : begin ( basicBuff , false ) 
 usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
@@ -76,455 +125,304 @@ usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color )
 usefunc : end ( basicBuff ) 
 usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
 usefunc : obj_setsource ( this , basicspr ) 
-while__ : while ( true ) 
+usefunc : Release ( 0 ) 
+set_var : bechanged = false 
+while__ : while ( bechanged == false ) 
 block__ : {
-adsetvar: int aaa = 10 
 closed_ : }
 
+closed_ : }
+
+usefunc : Release ( -1 ) 
 return_ : return 0 
 closed_ : }
 
 BakeCode_CompileCodes Block Start {
+add_var : int * HeapBuffer 
+BakeCode_CompileCodes__add_var : int * HeapBuffer 
+18	:ADD_STACK_VARIABLE(0) > 8(8, 0, 0, 0)
+usefunc : Graphics_Init ( & HeapBuffer ) 
+BakeCode_CompileCodes__usefunc : Graphics_Init ( & HeapBuffer ) 
+23	:FUNC(153)
+24	:A=&VID(159) > 8(8, 0, 0, 0)
+29	:PARAM_8=185(185)
+30	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 40(40, 0, 0, 0)
 adsetvar: float PI = 3.141592 
 BakeCode_CompileCodes__adsetvar: float PI = 3.141592 
-6	:ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
-11	:PUSH_A_CONST_4(6) > 1078530008(216, 15, 73, 64)
-16	:A=&VID(159) > 4(4, 0, 0, 0)
-21	:LA=A(161)
-22	:*LA=A_4(171)
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-BakeCode_CompileCodes__adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-23	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
-28	:FUNC(153)
-29	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-34	:PARAM_4(156)
-35	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
-44	:A=&VID(159) > 12(12, 0, 0, 0)
-49	:LA=A(161)
-50	:*LA=*A_N(182) > 8(8, 0, 0, 0)
-add_var : prbuffer basicBuff 
-BakeCode_CompileCodes__add_var : prbuffer basicBuff 
-55	:ADD_STACK_VARIABLE(0) > 20(20, 0, 0, 0)
-set_var : basicBuff = _prbuffer ( false ) 
-BakeCode_CompileCodes__set_var : basicBuff = _prbuffer ( false ) 
-60	:FUNC(153)
-61	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-66	:PARAM_1(154)
-67	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+39	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
+44	:PUSH_A_CONST_4(6) > 1078530008(216, 15, 73, 64)
+49	:A=&VID(159) > 12(12, 0, 0, 0)
+54	:LA=A(161)
+55	:*LA=A_4(171)
+while__ : while ( true ) 
+BakeCode_CompileCodes__while__ : while ( true ) 
+56	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
+61	:IF(151) > -16843010(254, 254, 254, 254)
+block__ : {
+adsetvar: pSprite basicspr = 0 
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+adsetvar: prbuffer basicBuff = 0 
+usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
+adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
+usefunc : begin ( basicBuff , false ) 
+usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
+usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
+usefunc : end ( basicBuff ) 
+usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
+usefunc : obj_setsource ( this , basicspr ) 
+usefunc : Release ( 0 ) 
+set_var : bechanged = false 
+while__ : while ( bechanged == false ) 
+block__ : {
+closed_ : }
+
+closed_ : }
+
+BakeCode_CompileCodes Block Start {
+adsetvar: pSprite basicspr = 0 
+BakeCode_CompileCodes__adsetvar: pSprite basicspr = 0 
+66	:ADD_STACK_VARIABLE(0) > 20(20, 0, 0, 0)
+71	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
 76	:A=&VID(159) > 20(20, 0, 0, 0)
 81	:LA=A(161)
-82	:*LA=*A_N(182) > 8(8, 0, 0, 0)
+82	:*LA=A_8=186(186)
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+BakeCode_CompileCodes__usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+83	:FUNC(153)
+84	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+89	:PARAM_4(156)
+90	:FUNC(153)
+91	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+96	:PARAM_4(156)
+97	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
+106	:PARAM_8=185(185)
+107	:A=&VID(159) > 20(20, 0, 0, 0)
+112	:PARAM_8=185(185)
+113	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 45(45, 0, 0, 0)
+adsetvar: prbuffer basicBuff = 0 
+BakeCode_CompileCodes__adsetvar: prbuffer basicBuff = 0 
+122	:ADD_STACK_VARIABLE(0) > 28(28, 0, 0, 0)
+127	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+132	:A=&VID(159) > 28(28, 0, 0, 0)
+137	:LA=A(161)
+138	:*LA=A_8=186(186)
+usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
+BakeCode_CompileCodes__usefunc : ChangeRBuf ( & basicBuff , _prbuffer ( false ) , 0 ) 
+139	:FUNC(153)
+140	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+145	:PARAM_4(156)
+146	:FUNC(153)
+147	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+152	:PARAM_1(154)
+153	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
+162	:PARAM_8=185(185)
+163	:A=&VID(159) > 28(28, 0, 0, 0)
+168	:PARAM_8=185(185)
+169	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 44(44, 0, 0, 0)
 adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
 BakeCode_CompileCodes__adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
-87	:ADD_STACK_VARIABLE(0) > 36(36, 0, 0, 0)
-92	:FUNC(153)
-93	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-98	:PARAM_1(154)
-99	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-104	:PARAM_1(154)
-105	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-110	:PARAM_1(154)
-111	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-116	:PARAM_1(154)
-117	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
-126	:A=&VID(159) > 36(36, 0, 0, 0)
-131	:LA=A(161)
-132	:*LA=*A_N(182) > 16(16, 0, 0, 0)
+178	:ADD_STACK_VARIABLE(0) > 44(44, 0, 0, 0)
+183	:FUNC(153)
+184	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+189	:PARAM_1(154)
+190	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+195	:PARAM_1(154)
+196	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+201	:PARAM_1(154)
+202	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+207	:PARAM_1(154)
+208	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
+217	:A=&VID(159) > 44(44, 0, 0, 0)
+222	:LA=A(161)
+223	:*LA=*A_N(182) > 16(16, 0, 0, 0)
 usefunc : begin ( basicBuff , false ) 
 BakeCode_CompileCodes__usefunc : begin ( basicBuff , false ) 
-137	:FUNC(153)
-138	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-143	:PARAM_1(154)
-144	:A=&VID(159) > 20(20, 0, 0, 0)
-149	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-154	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
+228	:FUNC(153)
+229	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+234	:PARAM_1(154)
+235	:A=&VID(159) > 28(28, 0, 0, 0)
+240	:PARAM_8=185(185)
+241	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
 usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
 BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
-163	:FUNC(153)
-164	:A=&VID(159) > 36(36, 0, 0, 0)
-169	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-174	:FUNC(153)
-175	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-180	:CASTING_A(163) > 12
-182	:PARAM_4(156)
-183	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-188	:CASTING_A(163) > 12
-190	:PARAM_4(156)
-191	:PUSH_A_CONST_4(6) > -200(56, 255, 255, 255)
-196	:CASTING_A(163) > 12
-198	:PARAM_4(156)
-199	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-208	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-213	:A=&VID(159) > 20(20, 0, 0, 0)
-218	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-223	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+250	:FUNC(153)
+251	:A=&VID(159) > 44(44, 0, 0, 0)
+256	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+261	:FUNC(153)
+262	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+267	:CASTING_A(163) > 12
+269	:PARAM_4(156)
+270	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
+275	:CASTING_A(163) > 12
+277	:PARAM_4(156)
+278	:PUSH_A_CONST_4(6) > -200(56, 255, 255, 255)
+283	:CASTING_A(163) > 12
+285	:PARAM_4(156)
+286	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+295	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+300	:A=&VID(159) > 28(28, 0, 0, 0)
+305	:PARAM_8=185(185)
+306	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color ) 
 BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( 100 , -100 , 0 ) , basic_color ) 
-232	:FUNC(153)
-233	:A=&VID(159) > 36(36, 0, 0, 0)
-238	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-243	:FUNC(153)
-244	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-249	:CASTING_A(163) > 12
-251	:PARAM_4(156)
-252	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-257	:CASTING_A(163) > 12
-259	:PARAM_4(156)
-260	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-265	:CASTING_A(163) > 12
-267	:PARAM_4(156)
-268	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-277	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-282	:A=&VID(159) > 20(20, 0, 0, 0)
-287	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-292	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+315	:FUNC(153)
+316	:A=&VID(159) > 44(44, 0, 0, 0)
+321	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+326	:FUNC(153)
+327	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+332	:CASTING_A(163) > 12
+334	:PARAM_4(156)
+335	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
+340	:CASTING_A(163) > 12
+342	:PARAM_4(156)
+343	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+348	:CASTING_A(163) > 12
+350	:PARAM_4(156)
+351	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+360	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+365	:A=&VID(159) > 28(28, 0, 0, 0)
+370	:PARAM_8=185(185)
+371	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
 BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
-301	:FUNC(153)
-302	:A=&VID(159) > 36(36, 0, 0, 0)
-307	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-312	:FUNC(153)
-313	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-318	:CASTING_A(163) > 12
-320	:PARAM_4(156)
-321	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-326	:CASTING_A(163) > 12
-328	:PARAM_4(156)
-329	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-334	:CASTING_A(163) > 12
-336	:PARAM_4(156)
-337	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-346	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-351	:A=&VID(159) > 20(20, 0, 0, 0)
-356	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-361	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+380	:FUNC(153)
+381	:A=&VID(159) > 44(44, 0, 0, 0)
+386	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+391	:FUNC(153)
+392	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+397	:CASTING_A(163) > 12
+399	:PARAM_4(156)
+400	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+405	:CASTING_A(163) > 12
+407	:PARAM_4(156)
+408	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+413	:CASTING_A(163) > 12
+415	:PARAM_4(156)
+416	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+425	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+430	:A=&VID(159) > 28(28, 0, 0, 0)
+435	:PARAM_8=185(185)
+436	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
 BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
-370	:FUNC(153)
-371	:A=&VID(159) > 36(36, 0, 0, 0)
-376	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-381	:FUNC(153)
-382	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-387	:CASTING_A(163) > 12
-389	:PARAM_4(156)
-390	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-395	:CASTING_A(163) > 12
-397	:PARAM_4(156)
-398	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-403	:CASTING_A(163) > 12
-405	:PARAM_4(156)
-406	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-415	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-420	:A=&VID(159) > 20(20, 0, 0, 0)
-425	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-430	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
+445	:FUNC(153)
+446	:A=&VID(159) > 44(44, 0, 0, 0)
+451	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+456	:FUNC(153)
+457	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+462	:CASTING_A(163) > 12
+464	:PARAM_4(156)
+465	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+470	:CASTING_A(163) > 12
+472	:PARAM_4(156)
+473	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
+478	:CASTING_A(163) > 12
+480	:PARAM_4(156)
+481	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
+490	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
+495	:A=&VID(159) > 28(28, 0, 0, 0)
+500	:PARAM_8=185(185)
+501	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
 usefunc : end ( basicBuff ) 
 BakeCode_CompileCodes__usefunc : end ( basicBuff ) 
-439	:FUNC(153)
-440	:A=&VID(159) > 20(20, 0, 0, 0)
-445	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-450	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
+510	:FUNC(153)
+511	:A=&VID(159) > 28(28, 0, 0, 0)
+516	:PARAM_8=185(185)
+517	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
 usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
 BakeCode_CompileCodes__usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
-459	:FUNC(153)
-460	:A=&VID(159) > 20(20, 0, 0, 0)
-465	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-470	:A=&VID(159) > 12(12, 0, 0, 0)
-475	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-480	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
+526	:FUNC(153)
+527	:A=&VID(159) > 28(28, 0, 0, 0)
+532	:PARAM_8=185(185)
+533	:A=&VID(159) > 20(20, 0, 0, 0)
+538	:PARAM_8=185(185)
+539	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
 usefunc : obj_setsource ( this , basicspr ) 
 BakeCode_CompileCodes__usefunc : obj_setsource ( this , basicspr ) 
-489	:FUNC(153)
-490	:A=&VID(159) > 12(12, 0, 0, 0)
-495	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-500	:A=&Global_VID(178) > 0(0, 0, 0, 0)
-505	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-510	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
-while__ : while ( true ) 
-BakeCode_CompileCodes__while__ : while ( true ) 
-519	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-524	:IF(151) > -16843010(254, 254, 254, 254)
+548	:FUNC(153)
+549	:A=&VID(159) > 20(20, 0, 0, 0)
+554	:PARAM_8=185(185)
+555	:A=&Global_VID(178) > 0(0, 0, 0, 0)
+560	:PARAM_8=185(185)
+561	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
+usefunc : Release ( 0 ) 
+BakeCode_CompileCodes__usefunc : Release ( 0 ) 
+570	:FUNC(153)
+571	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+576	:PARAM_4(156)
+577	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 41(41, 0, 0, 0)
+set_var : bechanged = false 
+BakeCode_CompileCodes__set_var : bechanged = false 
+586	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+591	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+596	:LA=A(161)
+597	:*LA=A_1(169)
+while__ : while ( bechanged == false ) 
+BakeCode_CompileCodes__while__ : while ( bechanged == false ) 
+598	:A=&Global_VID(178) > 8(8, 0, 0, 0)
+603	:A=*A_nopush(165)
+604	:PUSH_B_CONST_4(12) > 0(0, 0, 0, 0)
+609	:CM_BOOL_SAME_A(91)
+610	:POP_B(175)
+611	:IF(151) > -16843010(254, 254, 254, 254)
 block__ : {
-adsetvar: int aaa = 10 
 closed_ : }
 
 BakeCode_CompileCodes Block Start {
-adsetvar: int aaa = 10 
-BakeCode_CompileCodes__adsetvar: int aaa = 10 
-529	:ADD_STACK_VARIABLE(0) > 40(40, 0, 0, 0)
-534	:PUSH_A_CONST_4(6) > 10(10, 0, 0, 0)
-539	:A=&VID(159) > 40(40, 0, 0, 0)
-544	:LA=A(161)
-545	:*LA=A_4(171)
 }; BakeCode_CompileCodes Block Finish
+}; BakeCode_CompileCodes Block Finish
+usefunc : Release ( -1 ) 
+BakeCode_CompileCodes__usefunc : Release ( -1 ) 
+626	:FUNC(153)
+627	:PUSH_A_CONST_4(6) > -1(255, 255, 255, 255)
+632	:PARAM_4(156)
+633	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 41(41, 0, 0, 0)
 return_ : return 0 
 BakeCode_CompileCodes__return_ : return 0 
-551	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-556	:RETURN(157)
+642	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+647	:RETURN(157)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes...finish
-ICB[000001889DF64CC0] BakeCode finish.
-Create_New_ICB_Context From ICB[000001889DF64CC0], with 40960 size memory...finish.Create_New_ICB[000001889DF64CC0] Initialization...finish
-ICB[000001889DF64CC0] ReadCode start. filename : custom codelines
-ICB[000001889DF64CC0] ReadCode_GetCodeFromText...finish
-ICB[000001889DF64CC0] ReadCode_AddTextBlocks...finish
-ICB[000001889DF64CC0] ReadCode_ScanStructTypes...finish
-ICB[000001889DF64CC0] ReadCode_AddStructTypes...finish
-ICB[000001889DF64CC0] ReadCode_ScanCodes...start
-[0] ~ add variable : add_var : pObject this  ~ [2]
-[3] ~ addfunction : addfunc : int main ( )  ~ [6]
-[7] ~ blocks : start
-[0] ~ add and set variable : adsetvar: float PI = 3.141592  ~ [4]
-[5] ~ add and set variable : adsetvar: pSprite basicspr = _pSprite ( 0 )  ~ [12]
-[13] ~ add variable : add_var : prbuffer basicBuff  ~ [15]
-[16] ~  ~ [16]
-[17] ~ set Variable : set_var : basicBuff = _prbuffer ( false )  ~ [22]
-[23] ~ add and set variable : adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 )  ~ [36]
-[37] ~ use Function : usefunc : begin ( basicBuff , false )  ~ [43]
-[44] ~ use Function : usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color )  ~ [59]
-[60] ~ use Function : usefunc : av ( basicBuff , _gpos ( 200 , -100 , 0 ) , basic_color )  ~ [75]
-[76] ~ use Function : usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color )  ~ [91]
-[92] ~ use Function : usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color )  ~ [107]
-[108] ~ use Function : usefunc : end ( basicBuff )  ~ [112]
-[113] ~ use Function : usefunc : spr_push_rbuffer ( basicspr , basicBuff )  ~ [119]
-[120] ~ use Function : usefunc : obj_setsource ( this , basicspr )  ~ [126]
-[127] ~ while : while__ : while ( true )  ~ [130]
-[131] ~ blocks : start
-[0] ~ add and set variable : adsetvar: int aaa = 10  ~ [4]
-BakeCode_ScanCodes...block__ : {
-adsetvar: int aaa = 10 
-closed_ : }
- ~ [137]
-[138] ~ return in Function : return_ : return 0  ~ [140]
-BakeCode_ScanCodes...block__ : {
-adsetvar: float PI = 3.141592 
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-add_var : prbuffer basicBuff 
-set_var : basicBuff = _prbuffer ( false ) 
-adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
-usefunc : begin ( basicBuff , false ) 
-usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( 200 , -100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
-usefunc : end ( basicBuff ) 
-usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
-usefunc : obj_setsource ( this , basicspr ) 
-while__ : while ( true ) 
-block__ : {
-adsetvar: int aaa = 10 
-closed_ : }
-
-return_ : return 0 
-closed_ : }
- ~ [149]
-BakeCode_ScanCodes...finish
-ICB[000001889DF64CC0] ReadCode_GlobalMemoryInit...finish
-ICB[000001889DF64CC0] BakeCode_CompileCodes...start
-add_var : pObject this 
-BakeCode_CompileCodes__add_var : pObject this 
-addfunc : int main ( ) 
-BakeCode_CompileCodes__addfunc : int main ( ) 
-block__ : {
-adsetvar: float PI = 3.141592 
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-add_var : prbuffer basicBuff 
-set_var : basicBuff = _prbuffer ( false ) 
-adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
-usefunc : begin ( basicBuff , false ) 
-usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( 200 , -100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
-usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
-usefunc : end ( basicBuff ) 
-usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
-usefunc : obj_setsource ( this , basicspr ) 
-while__ : while ( true ) 
-block__ : {
-adsetvar: int aaa = 10 
-closed_ : }
-
-return_ : return 0 
-closed_ : }
-
-BakeCode_CompileCodes Block Start {
-adsetvar: float PI = 3.141592 
-BakeCode_CompileCodes__adsetvar: float PI = 3.141592 
-6	:ADD_STACK_VARIABLE(0) > 4(4, 0, 0, 0)
-11	:PUSH_A_CONST_4(6) > 1078530008(216, 15, 73, 64)
-16	:A=&VID(159) > 4(4, 0, 0, 0)
-21	:LA=A(161)
-22	:*LA=A_4(171)
-adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-BakeCode_CompileCodes__adsetvar: pSprite basicspr = _pSprite ( 0 ) 
-23	:ADD_STACK_VARIABLE(0) > 12(12, 0, 0, 0)
-28	:FUNC(153)
-29	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-34	:PARAM_4(156)
-35	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 23(23, 0, 0, 0)
-44	:A=&VID(159) > 12(12, 0, 0, 0)
-49	:LA=A(161)
-50	:*LA=*A_N(182) > 8(8, 0, 0, 0)
-add_var : prbuffer basicBuff 
-BakeCode_CompileCodes__add_var : prbuffer basicBuff 
-55	:ADD_STACK_VARIABLE(0) > 20(20, 0, 0, 0)
-set_var : basicBuff = _prbuffer ( false ) 
-BakeCode_CompileCodes__set_var : basicBuff = _prbuffer ( false ) 
-60	:FUNC(153)
-61	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-66	:PARAM_1(154)
-67	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 11(11, 0, 0, 0)
-76	:A=&VID(159) > 20(20, 0, 0, 0)
-81	:LA=A(161)
-82	:*LA=*A_N(182) > 8(8, 0, 0, 0)
-adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
-BakeCode_CompileCodes__adsetvar: gcolor basic_color = _gcolor ( 255 , 255 , 255 , 255 ) 
-87	:ADD_STACK_VARIABLE(0) > 36(36, 0, 0, 0)
-92	:FUNC(153)
-93	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-98	:PARAM_1(154)
-99	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-104	:PARAM_1(154)
-105	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-110	:PARAM_1(154)
-111	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
-116	:PARAM_1(154)
-117	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
-126	:A=&VID(159) > 36(36, 0, 0, 0)
-131	:LA=A(161)
-132	:*LA=*A_N(182) > 16(16, 0, 0, 0)
-usefunc : begin ( basicBuff , false ) 
-BakeCode_CompileCodes__usefunc : begin ( basicBuff , false ) 
-137	:FUNC(153)
-138	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-143	:PARAM_1(154)
-144	:A=&VID(159) > 20(20, 0, 0, 0)
-149	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-154	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 12(12, 0, 0, 0)
-usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
-BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( -200 , -100 , 0 ) , basic_color ) 
-163	:FUNC(153)
-164	:A=&VID(159) > 36(36, 0, 0, 0)
-169	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-174	:FUNC(153)
-175	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-180	:CASTING_A(163) > 12
-182	:PARAM_4(156)
-183	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-188	:CASTING_A(163) > 12
-190	:PARAM_4(156)
-191	:PUSH_A_CONST_4(6) > -200(56, 255, 255, 255)
-196	:CASTING_A(163) > 12
-198	:PARAM_4(156)
-199	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-208	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-213	:A=&VID(159) > 20(20, 0, 0, 0)
-218	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-223	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
-usefunc : av ( basicBuff , _gpos ( 200 , -100 , 0 ) , basic_color ) 
-BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( 200 , -100 , 0 ) , basic_color ) 
-232	:FUNC(153)
-233	:A=&VID(159) > 36(36, 0, 0, 0)
-238	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-243	:FUNC(153)
-244	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-249	:CASTING_A(163) > 12
-251	:PARAM_4(156)
-252	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-257	:CASTING_A(163) > 12
-259	:PARAM_4(156)
-260	:PUSH_A_CONST_4(6) > 200(200, 0, 0, 0)
-265	:CASTING_A(163) > 12
-267	:PARAM_4(156)
-268	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-277	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-282	:A=&VID(159) > 20(20, 0, 0, 0)
-287	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-292	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
-usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
-BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( 100 , 100 , 0 ) , basic_color ) 
-301	:FUNC(153)
-302	:A=&VID(159) > 36(36, 0, 0, 0)
-307	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-312	:FUNC(153)
-313	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-318	:CASTING_A(163) > 12
-320	:PARAM_4(156)
-321	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-326	:CASTING_A(163) > 12
-328	:PARAM_4(156)
-329	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-334	:CASTING_A(163) > 12
-336	:PARAM_4(156)
-337	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-346	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-351	:A=&VID(159) > 20(20, 0, 0, 0)
-356	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-361	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
-usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
-BakeCode_CompileCodes__usefunc : av ( basicBuff , _gpos ( -100 , 100 , 0 ) , basic_color ) 
-370	:FUNC(153)
-371	:A=&VID(159) > 36(36, 0, 0, 0)
-376	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-381	:FUNC(153)
-382	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-387	:CASTING_A(163) > 12
-389	:PARAM_4(156)
-390	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-395	:CASTING_A(163) > 12
-397	:PARAM_4(156)
-398	:PUSH_A_CONST_4(6) > -100(156, 255, 255, 255)
-403	:CASTING_A(163) > 12
-405	:PARAM_4(156)
-406	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 3(3, 0, 0, 0)
-415	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
-420	:A=&VID(159) > 20(20, 0, 0, 0)
-425	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-430	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 14(14, 0, 0, 0)
-usefunc : end ( basicBuff ) 
-BakeCode_CompileCodes__usefunc : end ( basicBuff ) 
-439	:FUNC(153)
-440	:A=&VID(159) > 20(20, 0, 0, 0)
-445	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-450	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 13(13, 0, 0, 0)
-usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
-BakeCode_CompileCodes__usefunc : spr_push_rbuffer ( basicspr , basicBuff ) 
-459	:FUNC(153)
-460	:A=&VID(159) > 20(20, 0, 0, 0)
-465	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-470	:A=&VID(159) > 12(12, 0, 0, 0)
-475	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-480	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 21(21, 0, 0, 0)
-usefunc : obj_setsource ( this , basicspr ) 
-BakeCode_CompileCodes__usefunc : obj_setsource ( this , basicspr ) 
-489	:FUNC(153)
-490	:A=&VID(159) > 12(12, 0, 0, 0)
-495	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-500	:A=&Global_VID(178) > 0(0, 0, 0, 0)
-505	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-510	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 36(36, 0, 0, 0)
-while__ : while ( true ) 
-BakeCode_CompileCodes__while__ : while ( true ) 
-519	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-524	:IF(151) > -16843010(254, 254, 254, 254)
-block__ : {
-adsetvar: int aaa = 10 
-closed_ : }
-
-BakeCode_CompileCodes Block Start {
-adsetvar: int aaa = 10 
-BakeCode_CompileCodes__adsetvar: int aaa = 10 
-529	:ADD_STACK_VARIABLE(0) > 40(40, 0, 0, 0)
-534	:PUSH_A_CONST_4(6) > 10(10, 0, 0, 0)
-539	:A=&VID(159) > 40(40, 0, 0, 0)
-544	:LA=A(161)
-545	:*LA=A_4(171)
-}; BakeCode_CompileCodes Block Finish
-return_ : return 0 
-BakeCode_CompileCodes__return_ : return 0 
-551	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-556	:RETURN(157)
-}; BakeCode_CompileCodes Block Finish
-BakeCode_CompileCodes...finish
-ICB[000001889DF64CC0] BakeCode finish.
-Create_New_ICB_Context From ICB[000001889DF64CC0], with 40960 size memory...finish.
+ICB[000001F35169D0C0] BakeCode finish.
+Create_New_ICB_Context From ICB[000001F35169D0C0], with 40960 size memory...finish.usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+96 : PARAM_4(156)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 216 15 73 64 205 205 205 205 205 205 205 205 
+data mem
+40 1 51 81 243 1 0 0 0 
+a : 0	( | 0 | 0 | 1
+b : 0	( | 0 | 0 | 0
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+97 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 216 15 73 64 205 205 205 205 205 205 205 205 
+data mem
+40 1 51 81 243 1 0 0 0 
+a : 0	( | 0 | 0 | 1
+b : 0	( | 0 | 0 | 0
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+107 : A=&VID(159) > 20(20, 0, 0, 0)
+stack mem
+219 159 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 216 15 73 64 205 205 205 205 205 205 205 205 
+data mem
+40 1 51 81 243 1 0 0 0 
+a : 40923	( | 0 | 0 | 1
+b : 0	( | 0 | 0 | 0
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+112 : PARAM_8=185(185)
+stack mem
+219 159 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 216 15 73 64 205 205 205 205 205 205 205 205 
+data mem
+40 1 51 81 243 1 0 0 0 
+a : 40939	( | 40923 | 0 | 0
+b : 0	( | 0 | 0 | 0
+usefunc : ChangeSpr ( & basicspr , _pSprite ( 0 ) , 0 ) 
+113 : Extend_Instruction(255) > 1(1, 0, 0, 0) > 1(1, 0, 0, 0)
+stack mem
+235 159 0 0 0 0 0 0 219 159 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 216 15 73 64 205 205 205 205 205 205 205 205 
+data mem
+40 1 51 81 243 1 0 0 0 
+a : 40939	( | 40923 | 0 | 0
+b : 0	( | 0 | 0 | 0

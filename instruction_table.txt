@@ -183,8 +183,8 @@
 :*LA=*A_N+4;
 :A<=&VID[Const]+4+4;
 :B<=&VID[Const]+4+4;
-:Unallocated;
-:Unallocated;
+:PARAM_8;
+:*LA=A_8;
 :Unallocated;
 :Unallocated;
 :Unallocated;

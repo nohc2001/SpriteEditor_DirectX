@@ -201,7 +201,8 @@ enum class insttype {
 	SET_ADDRESS_LA_FROM_ADRESS_A_N = 182,
 	IT_PUSH_A_CONST_INDEX_ADDR = 183,
 	IT_PUSH_B_CONST_INDEX_ADDR = 184,
-	//...
+	PARAM_8 = 185,
+	IT_PUSH_TO_VALUE_OF_LA_FROM_A_8 = 186,
 	EXTENSION_INST = 255
 };
 
@@ -3843,7 +3844,7 @@ public:
 						*/
 					}
 
-					if (fd->param_data[paramid].td->typetype != 's')
+					if (fd->param_data[paramid].td->typesiz <= 8)
 					{
 						switch (fd->param_data[paramid].td->typesiz)
 						{
@@ -3855,6 +3856,9 @@ public:
 							break;
 						case 4:
 							tm->mem.push_back((byte8)insttype::IT_PARAM_4); // param
+							break;
+						case 8:
+							tm->mem.push_back((byte8)insttype::PARAM_8);
 							break;
 						}
 					}
@@ -3919,7 +3923,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramid].td->typetype != 's')
+				if (fd->param_data[paramid].td->typesiz <= 8)
 				{
 					switch (fd->param_data[paramid].td->typesiz)
 					{
@@ -3931,6 +3935,9 @@ public:
 						break;
 					case 4:
 						tm->mem.push_back((byte8)insttype::IT_PARAM_4); // param
+						break;
+					case 8:
+						tm->mem.push_back((byte8)insttype::PARAM_8);
 						break;
 					}
 				}
@@ -4067,7 +4074,7 @@ public:
 						*/
 					}
 
-					if (fd->param_data[paramCount].td->typetype != 's')
+					if (fd->param_data[paramCount].td->typesiz <= 8)
 					{
 						switch (fd->param_data[paramCount].td->typesiz)
 						{
@@ -4079,6 +4086,9 @@ public:
 							break;
 						case 4:
 							tm->mem.push_back((byte8)insttype::IT_PARAM_4); // param
+							break;
+						case 8:
+							tm->mem.push_back((byte8)insttype::PARAM_8);
 							break;
 						}
 					}
@@ -4139,7 +4149,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramCount].td->typetype != 's')
+				if (fd->param_data[paramCount].td->typesiz <= 8)
 				{
 					switch (fd->param_data[paramCount].td->typesiz)
 					{
@@ -4151,6 +4161,9 @@ public:
 						break;
 					case 4:
 						tm->mem.push_back((byte8)insttype::IT_PARAM_4); // param
+						break;
+					case 8:
+						tm->mem.push_back((byte8)insttype::PARAM_8);
 						break;
 					}
 				}
@@ -6037,8 +6050,19 @@ public:
 			case 4:
 				mem[writeup++] = (byte8)insttype::IT_PUSH_TO_VALUE_OF_LA_FROM_A_4;
 				break;
+			case 8:
+				mem[writeup++] = (byte8)insttype::IT_PUSH_TO_VALUE_OF_LA_FROM_A_8;
+				break;
 			default:
-				cout << "typesiz is more than 4." << endl;
+				cout << "typesiz is more than 8." << endl;
+				{
+					mem[writeup++] = (byte8)insttype::SET_ADDRESS_LA_FROM_ADRESS_A_N;
+					byte8 cc[4];
+					*reinterpret_cast<uint*>(&cc[0]) = (uint)lstd->typesiz;
+					for (int i = 0; i < 4; ++i) {
+						mem[writeup++] = cc[i];
+					}
+				}
 				break;
 			}
 
@@ -6113,8 +6137,11 @@ public:
 			case 4:
 				mem[writeup++] = (byte8)insttype::IT_PUSH_TO_VALUE_OF_LA_FROM_A_4;
 				break;
+			case 8:
+				mem[writeup++] = (byte8)insttype::IT_PUSH_TO_VALUE_OF_LA_FROM_A_8;
+				break;
 			default:
-				cout << "typesiz is more than 4." << endl;
+				cout << "typesiz is more than 8." << endl;
 				{
 					mem[writeup++] = (byte8)insttype::SET_ADDRESS_LA_FROM_ADRESS_A_N;
 					byte8 cc[4];
@@ -6910,7 +6937,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramid].td->typetype != 's')
+				if (fd->param_data[paramid].td->typesiz <= 8)
 				{
 					switch (fd->param_data[paramid].td->typesiz)
 					{
@@ -6922,6 +6949,9 @@ public:
 						break;
 					case 4:
 						mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
+						break;
+					case 8:
+						mem[writeup++] = (byte8)insttype::PARAM_8; // param
 						break;
 					}
 				}
@@ -6984,7 +7014,7 @@ public:
 				*/
 			}
 
-			if (fd->param_data[paramid].td->typetype != 's')
+			if (fd->param_data[paramid].td->typesiz <= 8)
 			{
 				switch (fd->param_data[paramid].td->typesiz)
 				{
@@ -6996,6 +7026,9 @@ public:
 					break;
 				case 4:
 					mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
+					break;
+				case 8:
+					mem[writeup++] = (byte8)insttype::PARAM_8; // param
 					break;
 				}
 			}
@@ -7105,7 +7138,7 @@ public:
 					*/
 				}
 
-				if (fd->param_data[paramCount].td->typetype != 's')
+				if (fd->param_data[paramCount].td->typesiz <= 8)
 				{
 					switch (fd->param_data[paramCount].td->typesiz)
 					{
@@ -7117,6 +7150,9 @@ public:
 						break;
 					case 4:
 						mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
+						break;
+					case 8:
+						mem[writeup++] = (byte8)insttype::PARAM_8; // param
 						break;
 					}
 				}
@@ -7177,7 +7213,7 @@ public:
 				*/
 			}
 
-			if (fd->param_data[paramCount].td->typetype != 's')
+			if (fd->param_data[paramCount].td->typesiz <= 8)
 			{
 				switch (fd->param_data[paramCount].td->typesiz)
 				{
@@ -7189,6 +7225,9 @@ public:
 					break;
 				case 4:
 					mem[writeup++] = (byte8)insttype::IT_PARAM_4; // param
+					break;
+				case 8:
+					mem[writeup++] = (byte8)insttype::PARAM_8; // param
 					break;
 				}
 			}
@@ -8461,8 +8500,8 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = 0;
-bool isDbg = false;
+int stopnum = 91;
+bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {
@@ -9741,13 +9780,13 @@ INST_SWITCH:
 	case insttype::IT_PUSH_TO_A_FROM_ADDRESS_OF_VARIABLE_ID:
 		++*pc;
 		shiftA0(-1);
-		registerA0 = (*rfsp - **pci) - mem;
+		registerA0 = (uint64_t)((*rfsp - **pci) - mem);
 		++*pci;
 		goto INST_SWITCH;
 	case insttype::IT_PUSH_TO_B_FROM_ADDRESS_OF_VARIABLE_ID:
 		++*pc;
 		shiftB0(-1);
-		registerB0 = (*rfsp - **pci) - mem;
+		registerB0 = (uint64_t)((*rfsp - **pci) - mem);
 		++*pci;
 		goto INST_SWITCH;
 	case insttype::IT_PUSH_TO_LA_FROM_A:
@@ -9896,6 +9935,15 @@ INST_SWITCH:
 		++*pci;
 	}
 	goto INST_SWITCH;
+	case insttype::PARAM_8:
+		*sp -= 8;
+		*reinterpret_cast<uint64_t*>(*sp) = registerA0;
+		++*pc;
+		goto INST_SWITCH;
+	case insttype::IT_PUSH_TO_VALUE_OF_LA_FROM_A_8:
+		*reinterpret_cast<uint64_t*>(mem + (uint64_t)_la) = registerA0;
+		++*pc;
+		goto INST_SWITCH;
 	case insttype::EXTENSION_INST:
 		icb->_la = _la;
 		icb->apivot = apivot;

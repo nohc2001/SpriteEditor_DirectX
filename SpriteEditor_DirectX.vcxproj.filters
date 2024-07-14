@@ -91,6 +91,13 @@
     <Text Include="exTool.txt">
       <Filter>Extension</Filter>
     </Text>
+    <Text Include="exGraphics_Info.txt">
+      <Filter>DevInfo</Filter>
+    </Text>
+    <Text Include="ECS_examples\ecs_sample0.txt">
+      <Filter>ECS</Filter>
+    </Text>
+    <Text Include="instruction_table.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">
