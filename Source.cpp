@@ -1855,7 +1855,7 @@ void freepolybtn_event(DXBtn* btn, DX_Event evt)
 						mainSprite->data.objs =
 							(fmvecarr < int*>*)fm->_New(sizeof(fmvecarr < int*>), true);
 						mainSprite->data.objs->NULLState();
-						mainSprite->data.objs->Init(8, false);
+						mainSprite->data.objs->Init(8, false, true);
 					}
 					Object* newobj = (Object*)fm->_New(sizeof(Object), true);
 					newobj->source = basicSprite;
@@ -5150,10 +5150,10 @@ HRESULT InitDevice()
 	InsideCode_Bake::StaticInit();
 
 	ecss.NULLState();
-	ecss.Init(8, false);
+	ecss.Init(8, false, true);
 
 	basic_ext.NULLState();
-	basic_ext.Init(8, false);
+	basic_ext.Init(8, false, true);
 	ICB_Extension* ext = Init_exGeometry();
 	basic_ext.push_back(ext);
 	//dbg << "init graphics" << endl;

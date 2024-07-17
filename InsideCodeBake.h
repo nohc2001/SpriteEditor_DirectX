@@ -7652,7 +7652,7 @@ public:
 		icl << "ICB[" << this << "] ReadCode_GlobalMemoryInit...";
 
 		init_datamem.NULLState();
-		init_datamem.Init(8, false);
+		init_datamem.Init(8, false, true);
 
 		if (gmidetail) icl << "start" << endl;
 		for (int i = 0; i < senptr->size(); ++i)
@@ -8639,6 +8639,10 @@ CONTEXT_SWITCH:
 		}
 	}
 	exed_num = 0;
+
+	if (icbarr[0] == nullptr) {
+		goto PROGRAMQUIT;
+	}
 
 	while (icbarr[n]->icb->able_to_execute == false) {
 		//icbarr[n]->ExeState = false;
