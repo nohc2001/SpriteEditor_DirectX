@@ -8640,10 +8640,6 @@ CONTEXT_SWITCH:
 	}
 	exed_num = 0;
 
-	if (icbarr[0] == nullptr) {
-		goto PROGRAMQUIT;
-	}
-
 	while (icbarr[n]->icb->able_to_execute == false) {
 		//icbarr[n]->ExeState = false;
 		++n;
