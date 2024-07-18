@@ -2416,6 +2416,10 @@ namespace freemem
 
 freemem::FM_System0* fm;
 
+typedef unsigned int ui32;
+typedef unsigned short ui16;
+
+
 namespace freemem {
 	template < typename T > class fmvecarr
 	{
@@ -3037,6 +3041,106 @@ namespace freemem {
 		}
 	};
 
+	template <typename T>
+	class fmCirculArr
+	{
+	public:
+		T* arr = nullptr; // 8byte
+		ui32 pivot = 0; // 4byte = 32bit - 12bit 20bit -> 100000capacity
+		ui16 maxsiz_pow2 = 4; // array maxsiz = 1 << maxsiz_pow2; // pow(w, maxsiz_pow2);
+		bool mbDbg = true;
+		static constexpr unsigned int filter[33] = {
+			0, 			// 0b 0000 0000 0000 0000 0000 0000 0000 0000
+			1, 			// 0b 0000 0000 0000 0000 0000 0000 0000 0001
+			3, 			// 0b 0000 0000 0000 0000 0000 0000 0000 0011
+			7, 			// 0b 0000 0000 0000 0000 0000 0000 0000 0111
+			15, 		// 0b 0000 0000 0000 0000 0000 0000 0000 1111
+			31, 		// 0b 0000 0000 0000 0000 0000 0000 0001 1111
+			63, 		// 0b 0000 0000 0000 0000 0000 0000 0011 1111
+			127, 		// 0b 0000 0000 0000 0000 0000 0000 0111 1111
+			255, 		// 0b 0000 0000 0000 0000 0000 0000 1111 1111
+			511, 		// 0b 0000 0000 0000 0000 0000 0001 1111 1111
+			1023, 		// 0b 0000 0000 0000 0000 0000 0011 1111 1111
+			2047, 		// 0b 0000 0000 0000 0000 0000 0111 1111 1111
+			4095, 		// 0b 0000 0000 0000 0000 0000 1111 1111 1111
+			8191, 		// 0b 0000 0000 0000 0000 0001 1111 1111 1111
+			16383, 		// 0b 0000 0000 0000 0000 0011 1111 1111 1111
+			32767, 		// 0b 0000 0000 0000 0000 0111 1111 1111 1111
+			65535, 		// 0b 0000 0000 0000 0000 1111 1111 1111 1111
+			131071, 	// 0b 0000 0000 0000 0001 1111 1111 1111 1111
+			262143, 	// 0b 0000 0000 0000 0011 1111 1111 1111 1111
+			524287, 	// 0b 0000 0000 0000 0111 1111 1111 1111 1111
+			1048575, 	// 0b 0000 0000 0000 1111 1111 1111 1111 1111
+			2097151, 	// 0b 0000 0000 0001 1111 1111 1111 1111 1111
+			4194303, 	// 0b 0000 0000 0011 1111 1111 1111 1111 1111
+			8388607, 	// 0b 0000 0000 0111 1111 1111 1111 1111 1111
+			16777215, 	// 0b 0000 0000 1111 1111 1111 1111 1111 1111
+			33554431, 	// 0b 0000 0001 1111 1111 1111 1111 1111 1111
+			67108863, 	// 0b 0000 0011 1111 1111 1111 1111 1111 1111
+			134217727, 	// 0b 0000 0111 1111 1111 1111 1111 1111 1111
+			268435455, 	// 0b 0000 1111 1111 1111 1111 1111 1111 1111
+			536870911, 	// 0b 0001 1111 1111 1111 1111 1111 1111 1111
+			1073741823, // 0b 0011 1111 1111 1111 1111 1111 1111 1111
+			2147483647, // 0b 0111 1111 1111 1111 1111 1111 1111 1111
+			4294967295, // 0b 1111 1111 1111 1111 1111 1111 1111 1111
+		};
+		static constexpr unsigned int uintMax = 4294967295;
+		//freemem::FM_System0 *fm;
+
+		fmCirculArr()
+		{
+		}
+
+		~fmCirculArr()
+		{
+		}
+
+
+		fmCirculArr(const fmCirculArr<T>& ref)
+		{
+			pivot = ref.pivot;
+			maxsiz_pow2 = ref.maxsiz_pow2;
+			arr = ref.arr;
+			mbDbg = ref.mbDbg;
+		}
+
+		void Init(int maxsiz_pow, bool isdbg, int fmlayer = -1)
+		{
+			maxsiz_pow2 = maxsiz_pow;
+			mbDbg = isdbg;
+			arr = (T*)fm->_New(sizeof(T) * (1 << maxsiz_pow2), mbDbg, fmlayer);
+			pivot = 0;
+		}
+
+		void Release()
+		{
+			if (mbDbg) {
+				fm->_Delete((byte8*)arr, sizeof(T) * (1 << maxsiz_pow2));
+			}
+			arr = nullptr;
+		}
+
+		inline void move_pivot(int dist)
+		{
+			pivot = ((1 << maxsiz_pow2) + pivot + dist) & (~(uintMax << (maxsiz_pow2)));
+		}
+
+		inline T& operator[](int index)
+		{
+			int realindex = (index + pivot) & (~(uintMax << (maxsiz_pow2)));
+			return arr[realindex];
+		}
+
+		void dbg()
+		{
+			ui32 max = (1 << maxsiz_pow2);
+			for (int i = 0; i < max; ++i)
+			{
+				cout << this->operator[](i) << " ";
+			}
+			cout << endl;
+		}
+	};
 
 	typedef struct VP
 	{

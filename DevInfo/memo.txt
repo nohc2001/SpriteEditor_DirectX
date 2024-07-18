@@ -98,3 +98,5 @@ exGraphic
 exGeometry
 1. sin, cos, tan ...
 EuclideMachine -> IC 넣어지면 파라미터가 자동으로 인식되고, 타입에 따라 조정할 수 있게 하기.
+
+exGraphics 코드 실행에서 영구히 탈주할때 헤제되지 않은 힙 관리 필요.

@@ -673,6 +673,7 @@ void exGraphics_ChangeICB(int* pcontext) {
 		hc.ptr = oldv;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = ICBRelease;
+		heapBuffer->push_back(hc);
 	}
 	*dest = newv;
 }
@@ -693,6 +694,7 @@ void exGraphics_ChangeECS(int* pcontext) {
 		hc.ptr = oldv;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = ECSRelease;
+		heapBuffer->push_back(hc);
 	}
 	*dest = newv;
 }
@@ -713,6 +715,7 @@ void exGraphics_ChangeRBuf(int* pcontext) {
 		hc.ptr = (void*)oldv.data;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = rbufferRelease;
+		heapBuffer->push_back(hc);
 	}
 	*dest = newv;
 }
@@ -733,6 +736,7 @@ void exGraphics_ChangeSpr(int* pcontext) {
 		hc.ptr = oldv;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = SprRelease;
+		heapBuffer->push_back(hc);
 	}
 	*dest = newv;
 }
@@ -753,6 +757,7 @@ void exGraphics_ChangeObj(int* pcontext) {
 		hc.ptr = oldv;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = ObjRelease;
+		heapBuffer->push_back(hc);
 	}
 	*dest = newv;
 }
