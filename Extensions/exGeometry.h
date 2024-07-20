@@ -457,7 +457,7 @@ ICB_Extension* Init_exGeometry() {
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension...";
-    bake_Extension("exGeometry.txt", ext);
+    bake_Extension("Extensions/exGeometry.txt", ext);
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init Set_Function_Pointers start" << endl;

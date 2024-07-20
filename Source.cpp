@@ -16,8 +16,9 @@
 #include "hancom.h"
 #include "InsideCodeBake.h"
 #include "ICB_Extension.h"
-#include "exGeometry.h"
-#include "exGraphics.h"
+#include "Extensions\exGeometry.h"
+#include "Extensions\exGraphics.h"
+#include "Extensions\exTool.h"
 //#include "DX11_UI.h"
 
 
@@ -87,8 +88,6 @@ LayerManager layerManager;
 fmvecarr < ICB_Extension* >basic_ext;
 fmvecarr < ICB_Context* >ecss;
 float exerate = 0.01f;
-
-const char BlankICB_Code[128] = "pObject this;\nint main(){\n\nreturn 0;\n}";
 
 wchar_t* GetFileNameFromDlg_open() {
 	OPENFILENAME OFN;
@@ -272,6 +271,15 @@ shp::vec3f GetObjectPos(shp::vec2f screenPos) {
 	return shp::vec3f(v.m128_f32[0], v.m128_f32[1], 0.0f);
 }
 
+ICB_Extension* ICB_exTool;
+
+struct ICBE_ToolData {
+	char* name;
+	unsigned int len;
+	bool isEnable = false;
+	ICB_Context* ecs;
+};
+
 class ICB_Editor {
 public:
 	ICB_Editor() {
@@ -312,6 +320,7 @@ public:
 	//fold propertys
 	shp::vec2f object_position;
 	bool befold = false;
+	fmvecarr<ICBE_ToolData> tools;
 
 	static constexpr float lifeconst[10] = { 2.0f, 3.0f, 5.0f, 7.0f, 11.0f, 13.0f, 17.0f, 19.0f, 23.0f, 29.0f };
 	
@@ -716,6 +725,37 @@ public:
 		object_position = shp::vec2f(0, 0);
 		befold = false;
 
+		tools.NULLState();
+		tools.Init(8, false);
+		ICBE_ToolData icbt;
+		icbt.name = (char*)fm->_New(8, true);
+		strcpy_s(icbt.name, 8, "compass");
+		icbt.len = 8;
+		icbt.isEnable = false;
+		icbt.ecs = nullptr;
+		
+		InsideCode_Bake* compassicb;
+		if (icmap.find("\ECS_examples\tool_Compass.txt") == icmap.end()) {
+			compassicb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+			compassicb->HashInit();
+			compassicb->init(40960);
+			compassicb->extension.push_back(basic_ext[0]);
+			compassicb->extension.push_back(basic_ext[1]);
+			compassicb->extension.push_back(ICB_exTool);
+			compassicb->bake_code("\ECS_examples\tool_Compass.txt");
+
+			if (compassicb->curErrMsg[0] != 0) {
+				return;
+			}
+		}
+		else {
+			compassicb = icmap["\ECS_examples\tool_Compass.txt"];
+		}
+		
+		icbt.ecs = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
+		icbt.ecs->SetICB(compassicb, 40960);
+		tools.push_back(icbt);
+
 		for (int i = 0; i < 10; ++i) {
 			life[i] = 0;
 		}
@@ -923,6 +963,17 @@ public:
 			float tipf = 2 * tipmov * life[3];
 			shp::rect4f foldbtnLoc = shp::rect4f(loc.fx + tipf, loc.ly - 2 * codeline_height + tipf, loc.fx - tipf + 2 * codeline_height, loc.ly - tipf);
 			drawline(shp::vec2f(foldbtnLoc.fx, foldbtnLoc.getCenter().y), shp::vec2f(foldbtnLoc.lx, foldbtnLoc.getCenter().y), foldbtnLoc.geth(), DX11Color(1.0f, 1.0f, 0.5f, 1.0f), 0.05f);
+
+			wchar_t tempstr4[16] = L"compass";
+			shp::rect4f CompasbtnLoc;
+			if (tools[0].isEnable) {
+				CompasbtnLoc = shp::rect4f(additionalTabLoc.lx + life[5] * 4 * codeline_height, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
+			}
+			else {
+				CompasbtnLoc = shp::rect4f(additionalTabLoc.lx, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
+			}
+			drawline(shp::vec2f(CompasbtnLoc.fx, CompasbtnLoc.getCenter().y), shp::vec2f(CompasbtnLoc.lx, CompasbtnLoc.getCenter().y), CompasbtnLoc.geth(), DX11Color(0.1f, 0.5f, 0.5f, 1.0f), 0.2f);
+			draw_string(tempstr4, 7, codeline_height * 0.25f, CompasbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 		}
 		else {
 			float tipf = 2 * tipmov * life[3];
@@ -962,6 +1013,17 @@ public:
 
 				shp::rect4f sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
 
+				shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
+				shp::rect4f CompasbtnLoc = shp::rect4f(additionalTabLoc.lx, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
+				if (shp::bPointInRectRange(mpos, CompasbtnLoc)) {
+					if (tools[0].isEnable) {
+						tools[0].isEnable = false;
+					}
+					else {
+						tools[0].isEnable = true;
+					}
+				}
+
 				if (focus) {
 					if (shp::bPointInRectRange(mpos, sliderLoc)) {
 						float x = sliderLoc.ly - mpos.y;
@@ -969,7 +1031,7 @@ public:
 						SliderRate = x;
 					}
 
-					shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
+					
 					float atmargin = additionalTabLoc.getw() / 16.0f;
 					shp::rect4f varbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
 					shp::rect4f funcbtnLoc = shp::rect4f(additionalTabLoc.fx + 9 * atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 15 * atmargin, additionalTabLoc.ly - 10);
@@ -5228,6 +5290,8 @@ HRESULT InitDevice()
 	ext = Init_exGraphics();
 	//dbg << "init graphics end" << endl;
 	basic_ext.push_back(ext);
+
+	ICB_exTool = Init_exTool();
 
 	mainpage = (Page*)fm->_New(sizeof(Page), true);
 	mainpage->init_func = main_init;

@@ -771,7 +771,7 @@ ICB_Extension *Init_exGraphics()
 	ext->exstructArr.NULLState();
 	ext->exstructArr.Init(32, false);
 	//dbg << "bake" << endl;
-	bake_Extension("exGraphics.txt", ext);
+	bake_Extension("Extensions/exGraphics.txt", ext);
 	int i = -1;
 	//dbg << "pc input" << endl;
 	ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exGraphics_get_icb);

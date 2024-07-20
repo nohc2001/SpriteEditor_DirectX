@@ -5,6 +5,8 @@
 
 using namespace freemem;
 
+unordered_map<char*, ICB_Extension*> extmap;
+
 //basic functions for extension operation
 void push_word(char* sptr, fmvecarr<char*>* codesen)
 {
@@ -806,7 +808,7 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
     allcodeptr->release();
     allcodeptr->NULLState();
     fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
-
+    
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__ScanStructTypes...";

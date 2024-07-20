@@ -416,7 +416,7 @@ void exTool_ChangeRenderData(int* pcontext)
 }
 
 //void ReleaseRenderData(int layer);
-void exTool_ChangeRenderData(int* pcontext)
+void exTool_ReleaseRenderData(int* pcontext)
 {
     ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
     int layer = *reinterpret_cast<int*>(icc->rfsp - 4);
@@ -427,7 +427,7 @@ void exTool_ChangeRenderData(int* pcontext)
     prmanager->ReleaseLayer(layer);
 }
 
-ICB_Extension* Init_exEvent() {
+ICB_Extension* Init_exTool() {
     //확장을 입력.
     ofstream& icl = InsideCode_Bake::icl;
     icl << "Create_New_ICB_Extension_Init : exEvent Initialization...";
@@ -444,7 +444,7 @@ ICB_Extension* Init_exEvent() {
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension...";
-    bake_Extension("exEvent.txt", ext);
+    bake_Extension("Extensions/exTool.txt", ext);
     if (icldetail) icl << "finish" << endl;
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init Set_Function_Pointers start" << endl;

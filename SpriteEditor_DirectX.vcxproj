@@ -379,11 +379,11 @@
     <Text Include="ECS_examples\ecs_face.txt" />
     <Text Include="ECS_examples\ecs_sample0.txt" />
     <Text Include="ECS_examples\face_writeup.txt" />
-    <Text Include="ECS_examples\tool_Compas.txt" />
+    <Text Include="ECS_examples\tool_Compass.txt" />
     <Text Include="exGraphics_Info.txt" />
-    <Text Include="exTool.txt" />
-    <Text Include="exGeometry.txt" />
-    <Text Include="exGraphics.txt" />
+    <Text Include="Extensions\exGeometry.txt" />
+    <Text Include="Extensions\exGraphics.txt" />
+    <Text Include="Extensions\exTool.txt" />
     <Text Include="icb_dbg.txt" />
     <Text Include="instruction_table.txt" />
   </ItemGroup>
@@ -400,9 +400,9 @@
     <ClInclude Include="DX11_UI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="exTool.h" />
-    <ClInclude Include="exGeometry.h" />
-    <ClInclude Include="exGraphics.h" />
+    <ClInclude Include="Extensions\exGeometry.h" />
+    <ClInclude Include="Extensions\exGraphics.h" />
+    <ClInclude Include="Extensions\exTool.h" />
     <ClInclude Include="hancom.h" />
     <ClInclude Include="ICB_Extension.h" />
     <ClInclude Include="InsideCodeBake.h" />

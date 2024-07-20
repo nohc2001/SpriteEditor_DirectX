@@ -18,7 +18,7 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{6b0931b4-9b8c-4bb4-ab48-196292bd7130}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Extension">
+    <Filter Include="Extensions">
       <UniqueIdentifier>{18bff66d-a85c-4ce4-b155-e9fe850c7619}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -38,14 +38,14 @@
     <ClInclude Include="InsideCodeBake.h" />
     <ClInclude Include="multifor.h" />
     <ClInclude Include="sen_tr.h" />
-    <ClInclude Include="exGeometry.h">
-      <Filter>Extension</Filter>
+    <ClInclude Include="Extensions\exGeometry.h">
+      <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="exGraphics.h">
-      <Filter>Extension</Filter>
+    <ClInclude Include="Extensions\exGraphics.h">
+      <Filter>Extensions</Filter>
     </ClInclude>
-    <ClInclude Include="exTool.h">
-      <Filter>Extension</Filter>
+    <ClInclude Include="Extensions\exTool.h">
+      <Filter>Extensions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +70,7 @@
     <Text Include="DevInfo\memo.txt">
       <Filter>DevInfo</Filter>
     </Text>
-    <Text Include="ECS_examples\tool_Compas.txt">
+    <Text Include="ECS_examples\tool_Compass.txt">
       <Filter>ECS</Filter>
     </Text>
     <Text Include="ECS_examples\ecs_face.txt">
@@ -82,15 +82,6 @@
     <Text Include="ECS_examples\face_writeup.txt">
       <Filter>ECS</Filter>
     </Text>
-    <Text Include="exGeometry.txt">
-      <Filter>Extension</Filter>
-    </Text>
-    <Text Include="exGraphics.txt">
-      <Filter>Extension</Filter>
-    </Text>
-    <Text Include="exTool.txt">
-      <Filter>Extension</Filter>
-    </Text>
     <Text Include="exGraphics_Info.txt">
       <Filter>DevInfo</Filter>
     </Text>
@@ -98,6 +89,15 @@
       <Filter>ECS</Filter>
     </Text>
     <Text Include="instruction_table.txt" />
+    <Text Include="Extensions\exGeometry.txt">
+      <Filter>Extensions</Filter>
+    </Text>
+    <Text Include="Extensions\exGraphics.txt">
+      <Filter>Extensions</Filter>
+    </Text>
+    <Text Include="Extensions\exTool.txt">
+      <Filter>Extensions</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

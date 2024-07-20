@@ -11,9 +11,9 @@ struct pICBEditor {
 };
 
 struct EventData{
-	unsigned int message;
-	unsigned int wP;
-	unsigned int lP;
+	uint message;
+	uint wP;
+	uint lP;
 };
 
 struct pRenderData{
@@ -29,7 +29,7 @@ bool RBtnUp(EventData evt);
 bool KeyDown(EventData evt);
 bool KeyUp(EventData evt);
 
-unsigned int getEventKey(EventData evt);
+uint getEventKey(EventData evt);
 
 pRenderData _rdLine(float fx, float fy, float lx, float ly, gcolor color);
 pRenderData _rdFillRect(float fx, float fy, float lx, float ly, gcolor color);
