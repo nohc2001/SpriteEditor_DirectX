@@ -2470,6 +2470,7 @@ public:
 					set_word(i - 1, insstr.c_str());
 					if (icldetail) icl << i << " : \"" << allcode_sen[i] << "\" => \"" << insstr.c_str() << "\"" << endl;
 					allcode_sen.erase(i);
+					i -= 1;
 
 					for (int k = 0; k < codeLineVec_Word.size(); ++k) {
 						if (codeLineVec_Word.at(k) >= i) {
@@ -3642,7 +3643,24 @@ public:
 		tm->mem.Init(2, false, true);
 		tm->valuetype_detail = nullptr;
 
-		if (ten->size() > 1 && strcmp(ten->at(1).data.str, "(") == 0)
+		//expr in only one function check.
+		bool is_only_function = false;
+		int stack = 0;
+		int i;
+		for (i = 0; i < ten->size(); ++i) {
+			if (strcmp(ten->at(i).data.str, "(") == 0) {
+				stack += 1;
+			}
+			else if (strcmp(ten->at(i).data.str, ")") == 0) {
+				stack -= 1;
+				if (stack == 0) break;
+			}
+		}
+		if (i == ten->size() - 1) {
+			is_only_function = true;
+		}
+
+		if ((ten->size() > 1 && strcmp(ten->at(1).data.str, "(") == 0) && is_only_function)
 		{
 			// function
 			// use compile_useFunction()
@@ -4520,19 +4538,67 @@ public:
 		vtemp = (sen*)fm->_New(sizeof(sen), true);
 		vtemp->NULLState();
 		vtemp->Init(2, false, true);
+		bool function_seg = false;
 
 		for (int i = 0; i < ten->size(); ++i)
 		{
 			char c = ten->at(i).data.str[0];
+			/*if (c == '\'') {
+				temp = (sen*)fm->_New(sizeof(sen), true);
+				temp->NULLState();
+				temp->Init(1, false);
+				temp->push_back(ten->at(i));
+
+				for (int k = i+1; k < ten->size(); ++k) {
+					temp->push_back(ten->at(k));
+					char cc = ten->at(k).data.str[0];
+					if (cc == '\'') {
+						break;
+					}
+				}
+				segs.push_back(temp);
+				i += temp->size() - 1;
+			}
+			else if(c == '\"') {
+				temp = (sen*)fm->_New(sizeof(sen), true);
+				temp->NULLState();
+				temp->Init(1, false);
+				temp->push_back(ten->at(i));
+				for (int k = i + 1; k < ten->size(); ++k) {
+					temp->push_back(ten->at(k));
+					char cc = ten->at(k).data.str[0];
+					if (cc == '\"') {
+						break;
+					}
+				}
+				segs.push_back(temp);
+				i += temp->size() - 1;
+			}
+			else */
 			if (c == '(')
 			{
-				temp = wbss.oc_search(ten, i, "(", ")");
-				temp->erase(0);
-				temp->pop_back();
-				//wbss.dbg_sen(temp);
-				i += temp->size() + 1;
-				//wbss.dbg_sen(segs.at(i));
-				segs.push_back(temp);
+				if (function_seg == false) {
+					temp = wbss.oc_search(ten, i, "(", ")");
+					temp->erase(0);
+					temp->pop_back();
+					//wbss.dbg_sen(temp);
+					i += temp->size() + 1;
+					//wbss.dbg_sen(segs.at(i));
+					segs.push_back(temp);
+				}
+				else {
+					// create 'a' asm type segment
+					temp = wbss.oc_search(ten, i, "(", ")");
+					for (int k = 0; k < temp->size(); ++k) {
+						vtemp->push_back(temp->at(k));
+					}
+					i += temp->size() - 1;
+					function_seg = false;
+					segs.push_back(vtemp);
+					vtemp = (sen*)fm->_New(sizeof(sen), true);
+					vtemp->NULLState();
+					vtemp->Init(2, false, true);
+				}
 			}
 			else if (c == '[')
 			{
@@ -4562,6 +4628,12 @@ public:
 			}
 			else if ((('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) || (c == '_' || ('0' <= c && c <= '9')))
 			{
+				vtemp->push_back(ten->at(i));
+				if ((('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) || (c == '_')) {
+					function_seg = true;
+				}
+			}
+			else if (c == '\'' || c == '\"') {
 				vtemp->push_back(ten->at(i));
 			}
 			else
@@ -6172,7 +6244,7 @@ public:
 	void compile_if(code_sen* cs)
 	{
 		sen* code = get_sen_from_codesen(cs);
-		//wbss.dbg_sen(code);
+		wbss.dbg_sen(code, InsideCode_Bake::icl);
 		int loc = wbss.search_word_first(0, code, "if");
 		if (loc == -1) {
 			//else
@@ -6183,9 +6255,9 @@ public:
 		}
 
 		sen* inner_expr = wbss.oc_search(code, loc, "(", ")");
-		// wbss.dbg_sen(inner_expr);
 		inner_expr->pop_back();
 		inner_expr->erase(0);
+		wbss.dbg_sen(inner_expr, InsideCode_Bake::icl);
 		temp_mem* inner_tm = get_asm_from_sen(inner_expr, true, true);
 		ICB_ERR_CHECK(ERR_COMPILEIF_PROBLEM);
 		for (int i = 0; i < inner_tm->mem.size(); ++i)
@@ -8648,7 +8720,7 @@ CONTEXT_SWITCH:
 	}
 	exed_num = 0;
 
-	while (icbarr[n]->icb->able_to_execute == false) {
+	while (icbarr[n]->icb->able_to_execute == false || icbarr[n]->ExeState == false) {
 		//icbarr[n]->ExeState = false;
 		++n;
 		if (n >= icbarr.size()) {

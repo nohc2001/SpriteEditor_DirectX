@@ -396,7 +396,7 @@ public:
 					isin = true;
 				++stack;
 			}
-
+			
 			if (strcmp(arr->at(i).data.str, close) == 0)
 			{
 				--stack;

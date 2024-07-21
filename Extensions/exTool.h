@@ -449,6 +449,20 @@ ICB_Extension* Init_exTool() {
 
     if (icldetail) icl << "Create_New_ICB_Extension_Init Set_Function_Pointers start" << endl;
     int i = -1;
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_PopEvent);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_LBtnDown);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_LBtnUp);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_RBtnDown);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_RBtnUp);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_KeyDown);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_KeyUp);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_getEventKey);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdLine);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdFillRect);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdCircle);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdText);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ChangeRenderData);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ReleaseRenderData);
     icl << "finish" << endl;
     return ext;
 }

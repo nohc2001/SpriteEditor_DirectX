@@ -276,7 +276,6 @@ ICB_Extension* ICB_exTool;
 struct ICBE_ToolData {
 	char* name;
 	unsigned int len;
-	bool isEnable = false;
 	ICB_Context* ecs;
 };
 
@@ -731,7 +730,6 @@ public:
 		icbt.name = (char*)fm->_New(8, true);
 		strcpy_s(icbt.name, 8, "compass");
 		icbt.len = 8;
-		icbt.isEnable = false;
 		icbt.ecs = nullptr;
 
 		InsideCode_Bake* compassicb;
@@ -759,6 +757,8 @@ public:
 		icbt.ecs = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
 		icbt.ecs->SetICB(compassicb, 40960);
 		tools.push_back(icbt);
+		icbt.ecs->ExeState = false;
+		ecss.push_back(icbt.ecs);
 
 		for (int i = 0; i < 10; ++i) {
 			life[i] = 0;
@@ -970,7 +970,7 @@ public:
 
 			wchar_t tempstr4[16] = L"compass";
 			shp::rect4f CompasbtnLoc;
-			if (tools[0].isEnable) {
+			if (tools[0].ecs->ExeState) {
 				CompasbtnLoc = shp::rect4f(additionalTabLoc.lx + life[5] * 4 * codeline_height, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
 			}
 			else {
@@ -1020,11 +1020,11 @@ public:
 				shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
 				shp::rect4f CompasbtnLoc = shp::rect4f(additionalTabLoc.lx, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
 				if (shp::bPointInRectRange(mpos, CompasbtnLoc)) {
-					if (tools[0].isEnable) {
-						tools[0].isEnable = false;
+					if (tools[0].ecs->ExeState) {
+						tools[0].ecs->ExeState = false;
 					}
 					else {
-						tools[0].isEnable = true;
+						tools[0].ecs->ExeState = true;
 					}
 				}
 
@@ -5259,7 +5259,7 @@ HRESULT InitDevice()
 			false);
 	}
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, false);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, true);
 
 	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanStructTypes, false);
 
