@@ -5,7 +5,20 @@
 
 using namespace freemem;
 
-unordered_map<char*, ICB_Extension*> extmap;
+struct EXT_PAIR {
+    char* key;
+    ICB_Extension* ext;
+};
+
+fmvecarr<EXT_PAIR> extmap;
+ICB_Extension* GetExtension(char* key) {
+    for (int i = 0; i < extmap.size(); ++i) {
+        if (extmap[i].key == key) {
+            return extmap[i].ext;
+        }
+    }
+    return nullptr;
+}
 
 //basic functions for extension operation
 void push_word(char* sptr, fmvecarr<char*>* codesen)
@@ -299,6 +312,15 @@ bool IsTypeString(const char *str, ICB_Extension* ext)
         if (strcmp(str, ext->exstructArr.at(i)->name.c_str()) == 0)
             return true;
     }
+
+    for (int i = 0; i < extmap.size(); ++i) {
+        for (int k = 0; k < extmap[i].ext->exstructArr.size(); ++k) {
+            char* strptr = extmap[i].ext->exstructArr[k]->name.c_str();
+            if (strcmp(str, strptr) == 0) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -573,6 +595,17 @@ type_data *get_type_with_namesen(sen *tname, ICB_Extension* ext)
             }
         }
     }
+    if (td == nullptr) {
+        for (int i = 0; i < extmap.size(); ++i) {
+            for (int k = 0; k < extmap[i].ext->exstructArr.size(); ++k) {
+                char* strptr = extmap[i].ext->exstructArr[k]->name.c_str();
+                if (strcmp(bt, strptr) == 0) {
+                    td = extmap[i].ext->exstructArr[k];
+                    break;
+                }
+            }
+        }
+    }
 
     for (int i = 1; i < tname->size(); ++i)
     {
@@ -795,7 +828,10 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
     bool icldetail = InsideCode_Bake::GetICLFlag(ICL_FLAG::Create_New_ICB_Extension_Init__Bake_Extension);
     if (icldetail) icl << "start" << endl;
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension__GetCodeFromText...";
+    char temp[256] = {};
+    GetCurrentDirectoryA(256, temp);
     fmlcstr *allcodeptr = GetCodeTXT(filename, fm);
+    SetCurrentDirectoryA(temp);
     if (icldetail) icl << "finish" << endl;
 	fmlcstr &allcode = *allcodeptr;
     fmvecarr<char*> codesen;
@@ -865,6 +901,15 @@ void bake_Extension(const char* filename, ICB_Extension* ext){
 
     if (icldetail) icl << "finish" << endl;
     if (icldetail) icl << "Create_New_ICB_Extension_Init__Bake_Extension ";
+
+    if (GetExtension((char*)filename) == nullptr) {
+        EXT_PAIR extp;
+        int capacity = strlen(filename) + 1;
+        extp.key = (char*)fm->_New(capacity, true);
+        strcpy_s(extp.key, capacity, filename);
+        extp.ext = ext;
+        extmap.push_back(extp);
+    }
 }
 
 #endif

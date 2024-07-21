@@ -733,19 +733,23 @@ public:
 		icbt.len = 8;
 		icbt.isEnable = false;
 		icbt.ecs = nullptr;
-		
+
 		InsideCode_Bake* compassicb;
-		if (icmap.find("\ECS_examples\tool_Compass.txt") == icmap.end()) {
+		if (icmap.find("ECS_examples/tool_Compas.txt") == icmap.end()) {
 			compassicb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
 			compassicb->HashInit();
 			compassicb->init(40960);
 			compassicb->extension.push_back(basic_ext[0]);
+
 			compassicb->extension.push_back(basic_ext[1]);
 			compassicb->extension.push_back(ICB_exTool);
-			compassicb->bake_code("\ECS_examples\tool_Compass.txt");
+			compassicb->bake_code("ECS_examples/tool_Compas.txt");
 
 			if (compassicb->curErrMsg[0] != 0) {
-				return;
+				currentErrorMsg.up = 0;
+				for (int i = 0; i < compassicb->curErrMsg.size(); ++i) {
+					currentErrorMsg.push_back((wchar_t)compassicb->curErrMsg[i]);
+				}
 			}
 		}
 		else {
@@ -2497,7 +2501,10 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 			press_ef = false;
 			flow->x = 0;
 			// operate
+			char temp[256] = {};
+			GetCurrentDirectoryA(256, temp);
 			wchar_t* loadfiledir = GetFileNameFromDlg_open();
+			SetCurrentDirectoryA(temp);
 			int objselect_id = mainpage->pfm.Data[(int)mainpm::objselect_id];
 			if (loadfiledir != nullptr) {
 				// load ic
@@ -2515,6 +2522,7 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 					}
 					//dbg << "bake" << endl;
 					//icb->bake_code((char*)filename.c_str());
+
 					icb->read_codes((char*)filename.c_str());
 					icb->create_codedata();
 					icb->compile_codes();
@@ -2549,6 +2557,8 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 				//dbg << "icend" << endl;
 				//counting[0] = 1000;
 			}
+
+			
 		}
 	}
 }
@@ -5586,6 +5596,12 @@ void Render()
 	for (int i = 0; i < icbe_pool.size(); ++i) {
 		icbe_pool[i]->Render();
 	}
+
+	//// current directory debug
+	//wchar_t temp[256] = {};
+	//GetCurrentDirectory(256, temp);
+	//draw_string(temp, wcslen(temp), 5, shp::rect4f(100, 100, 200, 200), DX11Color(1, 1, 1, 1), 0.01f);
+	
 	//icbE.Render();
 
     g_pSwapChain->Present( 0, 0 );

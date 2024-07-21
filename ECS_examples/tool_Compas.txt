@@ -6,7 +6,7 @@ int main(){
 	EventData evt;
 	while(true){
 		//event loop
-		if(KeyDown(evt) && getEventKey(evt) == 'A'){
+		if(KeyDown(evt) && (getEventKey(evt) == 'A')){
 			pRenderData rd0; 
 			ChangeRenderData(&rd0, _rdCircle(0, 0, 100, _gcolor(1, 1, 1, 1)), 0);
 			ReleaseRenderData(0);

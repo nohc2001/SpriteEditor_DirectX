@@ -379,7 +379,7 @@
     <Text Include="ECS_examples\ecs_face.txt" />
     <Text Include="ECS_examples\ecs_sample0.txt" />
     <Text Include="ECS_examples\face_writeup.txt" />
-    <Text Include="ECS_examples\tool_Compass.txt" />
+    <Text Include="ECS_examples\tool_Compas.txt" />
     <Text Include="exGraphics_Info.txt" />
     <Text Include="Extensions\exGeometry.txt" />
     <Text Include="Extensions\exGraphics.txt" />

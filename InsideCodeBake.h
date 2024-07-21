@@ -7563,7 +7563,10 @@ public:
 		icl << "ICB[" << this << "] ReadCode start. filename : [" << filename << "]" << endl;
 
 		icl << "ICB[" << this << "] ReadCode_GetCodeFromText...";
+		char temp[256] = {};
+		GetCurrentDirectoryA(256, temp);
 		fmlcstr* allcodeptr = GetCodeTXT(filename);
+		SetCurrentDirectoryA(temp);
 		icl << "finish" << endl;
 
 		ICB_ERR_CHECK(ERR_READCODE_GETCODETXT);
@@ -7886,7 +7889,10 @@ public:
 		icl << "ICB[" << this << "] BakeCode start. filename : [" << filename << "]" << endl;
 
 		icl << "ICB[" << this << "] BakeCode_GetCodeFromText...";
+		char temp[256] = {};
+		GetCurrentDirectoryA(256, temp);
 		fmlcstr* allcodeptr = GetCodeTXT(filename);
+		SetCurrentDirectoryA(temp);
 		icl << "finish" << endl;
 
 		ICB_ERR_CHECK(ERR_BAKECODE_GETCODETXT);
@@ -8142,9 +8148,11 @@ public:
 		return;
 
 	ERR_BAKECODE_GETCODETXT:
-		allcodeptr->release();
-		fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
-		allcodeptr = nullptr;
+		if (allcodeptr != nullptr) {
+			allcodeptr->release();
+			fm->_Delete((byte8*)allcodeptr, sizeof(fmlcstr));
+			allcodeptr = nullptr;
+		}
 		return;
 
 	ERR_BAKECODE_PROBLEM:
