@@ -36,7 +36,7 @@ uint getEventKey(EventData evt);
 pRenderData _rdLine(float fx, float fy, float lx, float ly, gcolor color);
 pRenderData _rdFillRect(float fx, float fy, float lx, float ly, gcolor color);
 pRenderData _rdCircle(float cx, float cy, float raidus, gcolor color);
-pRenderData _rdText(float fx, float fy, float lx, float ly, char* string, gcolor color);
+pRenderData _rdText(float fx, float fy, float lx, float ly, char* string, gcolor color, float fontsiz);
 
 void ChangeRenderData(pRenderData* rdptr, pRenderData new_rd, int layer);
 void ReleaseRenderData(int layer);

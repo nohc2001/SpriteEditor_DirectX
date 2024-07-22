@@ -29,6 +29,7 @@ public:
 
     void Init() {
         pool.Init(8, true);
+        objCount = 0;
     }
 
     void PushEvent(DX_Event evt) {
@@ -77,6 +78,9 @@ public:
         heapBuffer = (fmvecarr<gHeapCheck>*)fm->_New(sizeof(fmvecarr<gHeapCheck>), true);
         heapBuffer->NULLState();
         heapBuffer->Init(8, false, true);
+
+        renderData.NULLState();
+        renderData.Init(8, false, true);
     }
 
     void ReleaseLayer(int n) {
@@ -123,6 +127,8 @@ public:
             renderData.push_back(origin);
         }
     }
+
+    void Render();
 };
 
 struct exTool_pPostRenderTarget {
@@ -143,21 +149,26 @@ enum class exTool_PostRenderDataType {
 struct exTool_RenderData_Line {
     exTool_PostRenderDataType type;
     shp::rect4f loc;
+    DX11Color color;
 };
 struct exTool_RenderData_Circle {
     exTool_PostRenderDataType type;
     shp::vec2f center;
     float radius;
+    DX11Color color;
 };
 struct exTool_RenderData_FillRect {
     exTool_PostRenderDataType type;
     shp::rect4f loc;
+    DX11Color color;
 };
 struct exTool_RenderData_Text {
     exTool_PostRenderDataType type;
     shp::rect4f loc;
     char* strptr;
     unsigned int capacity;
+    DX11Color color;
+    float fontsiz;
 };
 
 void exTool_ReleaseLine(void* ptr) {
@@ -186,8 +197,8 @@ void exTool_PopEvent(int* pcontext)
 {
     ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
     exTool_pEventSystem pevtsys = *reinterpret_cast <exTool_pEventSystem*>(icc->rfsp - 8);
-    exTool_EventSystem evtsys = *reinterpret_cast<exTool_EventSystem*>(pevtsys.data);
-    exTool_EventData evt = evtsys.PopEvent();
+    exTool_EventSystem* evtsys = reinterpret_cast<exTool_EventSystem*>(pevtsys.data);
+    exTool_EventData evt = evtsys->PopEvent();
 
     icc->sp -= sizeof(exTool_EventData);
     *reinterpret_cast <exTool_EventData*>(icc->sp) = evt;
@@ -307,6 +318,7 @@ void exTool__rdLine(int* pcontext)
     exTool_RenderData_Line* rd = (exTool_RenderData_Line*)fm->_New(sizeof(exTool_RenderData_Line), true);
     rd->type = exTool_PostRenderDataType::prdt_Line;
     rd->loc = loc;
+    rd->color = DX11Color(color.r, color.g, color.b, color.a);
 
     exTool_pRenderData rdptr;
     rdptr.data = reinterpret_cast<int*>(rd);
@@ -327,6 +339,7 @@ void exTool__rdFillRect(int* pcontext)
     exTool_RenderData_FillRect* rd = (exTool_RenderData_FillRect*)fm->_New(sizeof(exTool_RenderData_FillRect), true);
     rd->type = exTool_PostRenderDataType::prdt_FillRect;
     rd->loc = loc;
+    rd->color = DX11Color(color.r, color.g, color.b, color.a);
 
     exTool_pRenderData rdptr;
     rdptr.data = reinterpret_cast<int*>(rd);
@@ -349,6 +362,7 @@ void exTool__rdCircle(int* pcontext)
     rd->type = exTool_PostRenderDataType::prdt_Circle;
     rd->center = cen;
     rd->radius = rad;
+    rd->color = DX11Color(color.r, color.g, color.b, color.a);
 
     exTool_pRenderData rdptr;
     rdptr.data = reinterpret_cast<int*>(rd);
@@ -359,13 +373,14 @@ void exTool__rdCircle(int* pcontext)
     icc->Amove_pivot(-1);
 }
 
-//pRenderData _rdText(float fx, float fy, float lx, float ly, char* string, gcolor color);
+//pRenderData _rdText(float fx, float fy, float lx, float ly, char* string, gcolor color, float fontsiz);
 void exTool__rdText(int* pcontext)
 {
     ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
-    shp::rect4f loc = *reinterpret_cast <shp::rect4f*>(icc->rfsp - 40);
-    char* strptr = *reinterpret_cast <char**>(icc->rfsp - 24);
-    gcolor color = *reinterpret_cast <gcolor*>(icc->rfsp - 16);
+    shp::rect4f loc = *reinterpret_cast <shp::rect4f*>(icc->rfsp - 44);
+    char* strptr = *reinterpret_cast <char**>(icc->rfsp - 28);
+    gcolor color = *reinterpret_cast <gcolor*>(icc->rfsp - 20);
+    float fontsiz = *reinterpret_cast <float*>(icc->rfsp - 4);
 
     exTool_RenderData_Text* rd = (exTool_RenderData_Text*)fm->_New(sizeof(exTool_RenderData_Text), true);
     rd->type = exTool_PostRenderDataType::prdt_Text;
@@ -374,6 +389,8 @@ void exTool__rdText(int* pcontext)
     rd->strptr = (char*)fm->_New(n, true);
     strcpy_s(rd->strptr, n, strptr);
     rd->capacity = n;
+    rd->color = DX11Color(color.r, color.g, color.b, color.a);
+    rd->fontsiz = fontsiz;
 
     exTool_pRenderData rdptr;
     rdptr.data = reinterpret_cast<int*>(rd);

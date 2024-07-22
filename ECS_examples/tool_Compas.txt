@@ -5,19 +5,19 @@ pICBEditor selectedICBE;
 int main(){
 	EventData evt;
 	while(true){
+		while(true){
+			evt = PopEvent(evtsys);
+			if(evt.message != 0){
+				break;
+			}
+		}
+
 		//event loop
 		if(KeyDown(evt)){
 			if(getEventKey(evt) == 'A'){
 				pRenderData rd0; 
 				ChangeRenderData(&rd0, _rdCircle(0, 0, 100, _gcolor(1, 1, 1, 1)), 0);
 				ReleaseRenderData(0);
-			}
-		}
-
-		while(true){
-			evt = PopEvent(evtsys);
-			if(evt.message != 0){
-				break;
 			}
 		}
 	}

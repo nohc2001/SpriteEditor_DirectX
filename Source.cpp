@@ -70,6 +70,7 @@ Page* texteditpage = nullptr;
 Page* filepage = nullptr;
 
 rbuffer* linedrt;
+rbuffer* basic_circleRT;
 bool press_ef = false;
 float zoomrate;
 shp::vec2f scwh;
@@ -270,6 +271,51 @@ shp::vec3f GetObjectPos(shp::vec2f screenPos) {
 	v = XMVector4Transform(v, mat);
 	return shp::vec3f(v.m128_f32[0], v.m128_f32[1], 0.0f);
 }
+
+void exTool_PostRenderManager::Render() {
+	for (int i = 0; i < renderData.size(); ++i) {
+		exTool_pRenderData* prd = renderData[i];
+		exTool_PostRenderDataType t = *reinterpret_cast<exTool_PostRenderDataType*>(prd->data);
+		switch (t) {
+		case exTool_PostRenderDataType::prdt_Line:
+		{
+			exTool_RenderData_Line* rdl = reinterpret_cast<exTool_RenderData_Line*>(prd->data);
+			drawline(shp::vec2f(rdl->loc.fx, rdl->loc.fy), shp::vec2f(rdl->loc.lx, rdl->loc.ly), 3, rdl->color, 0.0f);
+		}
+		break;
+		case exTool_PostRenderDataType::prdt_FillRect:
+		{
+			exTool_RenderData_FillRect* rdl = reinterpret_cast<exTool_RenderData_FillRect*>(prd->data);
+			drawline(shp::vec2f(rdl->loc.fx, rdl->loc.getCenter().y), shp::vec2f(rdl->loc.lx, rdl->loc.getCenter().y), rdl->loc.geth(), rdl->color, 0.0f);
+		}
+		break;
+		case exTool_PostRenderDataType::prdt_Circle:
+		{
+			exTool_RenderData_Circle* rdl = reinterpret_cast<exTool_RenderData_Circle*>(prd->data);
+			ConstantBuffer cb = GetBasicModelCB(shp::vec3f(rdl->center.x, rdl->center.y, 0), shp::vec3f(0, 0, 0), shp::vec3f(rdl->radius, rdl->radius, 1), rdl->color);
+			basic_circleRT->render(cb);
+		}
+		break;
+		case exTool_PostRenderDataType::prdt_Text:
+		{
+			exTool_RenderData_Text* rd = reinterpret_cast<exTool_RenderData_Text*>(prd->data);
+			fmlwstr temp;
+			temp.NULLState();
+			temp.Init(rd->capacity, false);
+			int capacity = rd->capacity;
+			for (int i = 0; i < capacity; ++i) {
+				temp.push_back((wchar_t)rd->strptr[i]);
+			}
+			draw_string(temp.c_str(), capacity - 1, rd->fontsiz, rd->loc, rd->color, 0.0f);
+		}
+		break;
+		}
+	}
+}
+
+exTool_PostRenderManager* ToolPostRender = nullptr;
+exTool_EventSystem* ToolEventSystem = nullptr;
+bool using_tool;
 
 ICB_Extension* ICB_exTool;
 
@@ -758,7 +804,11 @@ public:
 		icbt.ecs->SetICB(compassicb, 40960);
 		tools.push_back(icbt);
 		icbt.ecs->ExeState = false;
+		*reinterpret_cast<exTool_EventSystem**>(&icbt.ecs->datamem[0]) = ToolEventSystem;
+		*reinterpret_cast<exTool_PostRenderManager**>(&icbt.ecs->datamem[8]) = ToolPostRender;
+		*reinterpret_cast<ICB_Editor**>(&icbt.ecs->datamem[16]) = this;
 		ecss.push_back(icbt.ecs);
+		using_tool = false;
 
 		for (int i = 0; i < 10; ++i) {
 			life[i] = 0;
@@ -1022,9 +1072,11 @@ public:
 				if (shp::bPointInRectRange(mpos, CompasbtnLoc)) {
 					if (tools[0].ecs->ExeState) {
 						tools[0].ecs->ExeState = false;
+						using_tool = false;
 					}
 					else {
 						tools[0].ecs->ExeState = true;
+						using_tool = true;
 					}
 				}
 
@@ -1640,7 +1692,6 @@ void Render();
 
 extern FM_System0* fm;
 bool FinishInit = false;
-
 //ICB_Editor icbE;
 
 void basicbtn_init(DXBtn* btn)
@@ -4831,7 +4882,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 				{
 					// performance pi is 2/10(exerate)
 					//dbgcount(0, dbg << "execute" << endl);
-					execute_switch(ecss, 1, code_control, exerate, icbindex_cxt);
+					execute_switch(ecss, 100, code_control, exerate, icbindex_cxt);
 					//dbgcount(0, dbg << "executeend" << endl);
 				}
 
@@ -4875,7 +4926,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 
     // Create window
     g_hInst = hInstance;
-    RECT rc = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+    RECT rc = { 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)-70};
 	width = GetSystemMetrics(SM_CXSCREEN);
 	height = GetSystemMetrics(SM_CYSCREEN);
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
@@ -5368,6 +5419,26 @@ HRESULT InitDevice()
     linedrt->av(SimpleVertex(shp::vec3f(-0.5f, 0.5f, 0), color));
     linedrt->end();
 
+	basic_circleRT = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+	basic_circleRT->Init(false);
+	basic_circleRT->begin();
+	float tempangle = 0;
+	constexpr float delta_tempangle = 3.141592f / 16.0f;
+	shp::vec3f tempvertex = shp::vec3f(1, 0, 0);
+	for (int i = 0; i < 32; ++i) {
+		basic_circleRT->av(SimpleVertex(tempvertex, color));
+		tempangle += delta_tempangle;
+		tempvertex.x = cosf(tempangle);
+		tempvertex.x = sinf(tempangle);
+	}
+	basic_circleRT->end();
+
+	ToolPostRender = (exTool_PostRenderManager*)fm->_New(sizeof(exTool_PostRenderManager), true);
+	ToolPostRender->Init();
+
+	ToolEventSystem = (exTool_EventSystem*)fm->_New(sizeof(exTool_EventSystem), true);
+	ToolEventSystem->Init();
+
 	FinishInit = true;
 
 	//icbE.Init(shp::rect4f(0, 0, 700, 500), nullptr);
@@ -5447,6 +5518,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
 	for (int i = 0; i < icbe_pool.size(); ++i) {
 		icbe_pool[i]->Event(evt);
+	}
+
+	if (ToolEventSystem != nullptr && using_tool) {
+		bool b = evt.message == WM_LBUTTONDOWN;
+		b = b || evt.message == WM_KEYDOWN;
+		if (b) {
+			ToolEventSystem->PushEvent(evt);
+		}
 	}
 	//icbE.Event(evt);
 
@@ -5603,6 +5682,10 @@ void Render()
 	//draw_string(temp, wcslen(temp), 5, shp::rect4f(100, 100, 200, 200), DX11Color(1, 1, 1, 1), 0.01f);
 	
 	//icbE.Render();
+
+	if (ToolPostRender != nullptr && using_tool) {
+		ToolPostRender->Render();
+	}
 
     g_pSwapChain->Present( 0, 0 );
     fm->_tempPopLayer();
