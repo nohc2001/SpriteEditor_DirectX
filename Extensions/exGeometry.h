@@ -73,12 +73,12 @@ struct angle3d {
 //gvec2f _gvec2f(float x, float y);
 void exGeometry__gvec2f(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    gvec2f v;
+    shp::vec2f v;
     v.x = *reinterpret_cast<float*>(icc->rfsp - 8);
     v.y = *reinterpret_cast<float*>(icc->rfsp - 4);
 
-    icc->sp -= sizeof(gvec2f);
-    *reinterpret_cast<gvec2f*>(icc->sp) = v;
+    icc->sp -= sizeof(shp::vec2f);
+    *reinterpret_cast<shp::vec2f*>(icc->sp) = v;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
@@ -86,10 +86,10 @@ void exGeometry__gvec2f(int* pcontext) {
 //circle _circle(gvec2f cen, float rad);
 void exGeometry__circle(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    circle c = *reinterpret_cast<circle*>(icc->rfsp - 12);
+    shp::circle c = *reinterpret_cast<shp::circle*>(icc->rfsp - 12);
 
-    icc->sp -= sizeof(circle);
-    *reinterpret_cast<circle*>(icc->sp) = c;
+    icc->sp -= sizeof(shp::circle);
+    *reinterpret_cast<shp::circle*>(icc->sp) = c;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
@@ -166,6 +166,59 @@ void exGeometry__angle2d(int* pcontext) {
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
+
+//rect4f _rect4f(float fx, float fy, float lx, float ly);
+void exGeometry__rect4f(int* pcontext) {
+    ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
+    shp::rect4f rt;
+    rt.fx = *reinterpret_cast<float*>(icc->rfsp - 16);
+    rt.fy = *reinterpret_cast<float*>(icc->rfsp - 12);
+    rt.lx = *reinterpret_cast<float*>(icc->rfsp - 8);
+    rt.ly = *reinterpret_cast<float*>(icc->rfsp - 4);
+
+    icc->sp -= sizeof(shp::rect4f);
+    *reinterpret_cast<shp::rect4f*>(icc->sp) = rt;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//vec3f _vec3f(float x, float y, float z);
+void exGeometry__vec3f(int* pcontext) {
+    ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
+    shp::vec3f v;
+    v = *reinterpret_cast<shp::vec3f*>(icc->rfsp - 12);
+
+    icc->sp -= sizeof(shp::vec3f);
+    *reinterpret_cast<shp::vec3f*>(icc->sp) = v;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//sphere _sphere(vec3f center, float radius);
+void exGeometry__sphere(int* pcontext) {
+    ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
+    shp::sphere v;
+    v = *reinterpret_cast<shp::sphere*>(icc->rfsp - 16);
+
+    icc->sp -= sizeof(shp::sphere);
+    *reinterpret_cast<shp::sphere*>(icc->sp) = v;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//line3d _line3d(vec3f fp, vec3f lp);
+void exGeometry__line3d(int* pcontext) {
+    ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
+    shp::sphere v;
+    v = *reinterpret_cast<shp::sphere*>(icc->rfsp - 16);
+
+    icc->sp -= sizeof(shp::sphere);
+    *reinterpret_cast<shp::sphere*>(icc->sp) = v;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//cubef6 _cubef6(vec3f fp, vec3f lp);
 
 //gvec2f[2] get_cross_CircleAndLine(circle c, line2d l);
 void exGeometry_get_cross_CircleAndLine(int* pcontext) {

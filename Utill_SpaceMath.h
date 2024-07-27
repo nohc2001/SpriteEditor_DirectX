@@ -83,45 +83,22 @@ namespace shp {
 		}
 	};
 
-	class vec3f {
+	class circle {
 	public:
-		float x;
-		float y;
-		float z;
+		shp::vec2f center;
+		float radius;
 
-		vec3f() { x = 0; y = 0; }
-		vec3f(const vec3f& ref) { x = ref.x; y = ref.y; z = ref.z; }
-		vec3f(float ix, float iy, float iz) { x = ix; y = iy; z = iz; }
-
-		vec3f operator+(const vec3f& v2) const { return vec3f(x + v2.x, y + v2.y, z + v2.z); }
-		vec3f operator-(const vec3f& v2) const  { return vec3f(x - v2.x, y - v2.y, z - v2.z); }
-		vec3f operator/(const float& div) const { return vec3f(x / div, y / div, z / div); }
-		vec3f operator*(const float& div) const { return vec3f(x * div, y * div, z * div); }
-		bool operator==(const vec3f& v2) const  {
-			if ((x == v2.x && y == v2.y) && z == v2.z) return true;
-			else return false;
-		}
-		bool operator!=(const vec3f& v2) const {
-			if ((x != v2.x || y != v2.y) || z != v2.z) return true;
-			else return false;
-		}
-
-		vec3f Inverse() const { return vec3f(-x, -y, -z); }
+		circle() { center = shp::vec2f(0, 0); radius = 0; }
+		circle(const circle& ref) { center = ref.center; radius = ref.radius; }
+		circle(shp::vec2f cen, float rad) { center = cen; radius = rad; }
+		circle(float cx, float cy, float rad) { center = shp::vec2f(cx, cy); radius = rad; }
 
 		bool isActive() const {
-			if (((isnan<float>(static_cast<float>(x)) == false
-				&& isinf<float>(static_cast<float>(x)) == false)
-				&& (isnan<float>(static_cast<float>(y)) == false
-				&& isinf<float>(static_cast<float>(y)) == false)) 
-				&& (isnan<float>(static_cast<float>(z)) == false
-				&& isinf<float>(static_cast<float>(z)) == false)) {
+			if (isnan<float>(static_cast<float>(radius)) == false &&
+				center.isActive()) {
 				return true;
 			}
 			else return false;
-		}
-		
-		inline vec2f getv2(){
-			return shp::vec2f(x, y);
 		}
 	};
 
@@ -149,6 +126,48 @@ namespace shp {
 			float d = xrate;
 			xrate = yrate;
 			yrate = -d;
+		}
+	};
+
+	class vec3f {
+	public:
+		float x;
+		float y;
+		float z;
+
+		vec3f() { x = 0; y = 0; z = 0; }
+		vec3f(const vec3f& ref) { x = ref.x; y = ref.y; z = ref.z; }
+		vec3f(float ix, float iy, float iz) { x = ix; y = iy; z = iz; }
+
+		vec3f operator+(const vec3f& v2) const { return vec3f(x + v2.x, y + v2.y, z + v2.z); }
+		vec3f operator-(const vec3f& v2) const { return vec3f(x - v2.x, y - v2.y, z - v2.z); }
+		vec3f operator/(const float& div) const { return vec3f(x / div, y / div, z / div); }
+		vec3f operator*(const float& div) const { return vec3f(x * div, y * div, z * div); }
+		bool operator==(const vec3f& v2) const {
+			if ((x == v2.x && y == v2.y) && z == v2.z) return true;
+			else return false;
+		}
+		bool operator!=(const vec3f& v2) const {
+			if ((x != v2.x || y != v2.y) || z != v2.z) return true;
+			else return false;
+		}
+
+		vec3f Inverse() const { return vec3f(-x, -y, -z); }
+
+		bool isActive() const {
+			if (((isnan<float>(static_cast<float>(x)) == false
+				&& isinf<float>(static_cast<float>(x)) == false)
+				&& (isnan<float>(static_cast<float>(y)) == false
+					&& isinf<float>(static_cast<float>(y)) == false))
+				&& (isnan<float>(static_cast<float>(z)) == false
+					&& isinf<float>(static_cast<float>(z)) == false)) {
+				return true;
+			}
+			else return false;
+		}
+
+		inline vec2f getv2() {
+			return shp::vec2f(x, y);
 		}
 	};
 
@@ -219,6 +238,25 @@ namespace shp {
 			else if (name.at(0) == 'c') {
 				moveValue_tool1(name.at(1), value, 0.5f, 1);
 			}
+		}
+	};
+
+	class sphere {
+	public:
+		shp::vec3f center;
+		float radius;
+
+		sphere() { center = shp::vec3f(0, 0, 0); radius = 0; }
+		sphere(const sphere& ref) { center = ref.center; radius = ref.radius; }
+		sphere(shp::vec3f cen, float rad) { center = cen; radius = rad; }
+		sphere(float cx, float cy, float cz, float rad) { center = shp::vec3f(cx, cy, cz); radius = rad; }
+
+		bool isActive() const {
+			if (isnan<float>(static_cast<float>(radius)) == false &&
+				center.isActive()) {
+				return true;
+			}
+			else return false;
 		}
 	};
 

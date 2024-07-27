@@ -100,6 +100,21 @@ exGraphic
 exGeometry
 1. sin, cos, tan ...
 EuclideMachine -> IC 넣어지면 파라미터가 자동으로 인식되고, 타입에 따라 조정할 수 있게 하기.
+exGeometry
+-> SpaceMath에 모두 적용시키고, SpaceMath 업그레이드 필요
+	1. StraightLine2d, SegmentLine2d, StraightLine3d, SegmentLine3d
+	2. 다양한 3d 연산
+		떠오르는 걸 적어봄
+		1. 한 직선과 한 점의 거리
+		2. 직선 -> 선분 / 선분 -> 직선
+		3. 한 평면과 한 선분의 교점 / 평면과 평면의 교선 / 평면과 입체의 교평면
+		4. Face(한정평면) / Plain(무한 평면) | Face->Plain / Plain->Face
+		5. 구 Sphere 구와 평면의 교곡선 / 구와 선의 교점
+		6. 삼각형을 모아 입체 만들기
+		7. 입체에서 입체 빼기
+	3. 2d 연산
+		1. 다각형에서 다각형 빼기
+		
 
 exGraphics 코드 실행에서 영구히 탈주할때 헤제되지 않은 힙 관리 필요.
 
