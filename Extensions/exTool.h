@@ -118,13 +118,15 @@ public:
 
         if (isexist) {
             gHeapCheck hc;
-            hc.ptr = newv.data;
+            hc.ptr = origin->data;
             hc.ReleaseFunc = ReleaseFunc;
             hc.shouldRelease = layer;
             heapBuffer->push_back(hc);
+            origin->data = *reinterpret_cast<int**>(&newv);
         }
         else {
             renderData.push_back(origin);
+            origin->data = *reinterpret_cast<int**>(&newv);
         }
     }
 
@@ -216,8 +218,7 @@ void exTool_LBtnDown(int* pcontext)
     b = evt.message == WM_LBUTTONDOWN;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
 
@@ -231,8 +232,7 @@ void exTool_LBtnUp(int* pcontext)
     b = evt.message == WM_LBUTTONUP;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
 
@@ -246,8 +246,7 @@ void exTool_RBtnDown(int* pcontext)
     b = evt.message == WM_RBUTTONDOWN;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
 
@@ -261,8 +260,7 @@ void exTool_RBtnUp(int* pcontext)
     b = evt.message == WM_LBUTTONUP;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
 
@@ -276,9 +274,11 @@ void exTool_KeyDown(int* pcontext)
     b = evt.message == WM_KEYDOWN;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
+    /**reinterpret_cast <bool*>(icc->sp) = b;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);*/
 }
 
 //bool KeyUp(EventData evt);
@@ -291,8 +291,7 @@ void exTool_KeyUp(int* pcontext)
     b = evt.message == WM_KEYUP;
 
     icc->sp -= sizeof(bool);
-    *reinterpret_cast <bool*>(icc->sp) = b;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
 
@@ -303,9 +302,12 @@ void exTool_getEventKey(int* pcontext)
     exTool_EventData evt = *reinterpret_cast <exTool_EventData*>(icc->rfsp - 12);
 
     icc->sp -= sizeof(unsigned int);
-    *reinterpret_cast <unsigned int*>(icc->sp) = evt.wP;
-    icc->getA(0) = icc->sp - icc->mem;
+    *reinterpret_cast<unsigned*>(&icc->getA(0)) = evt.wP;
     icc->Amove_pivot(-1);
+
+    //*reinterpret_cast <unsigned int*>(icc->sp) = evt.wP;
+    //icc->getA(0) = icc->sp - icc->mem;
+    //icc->Amove_pivot(-1);
 }
 
 //pRenderData _rdLine(float fx, float fy, float lx, float ly, gcolor color);
@@ -410,26 +412,36 @@ void exTool_ChangeRenderData(int* pcontext)
     exTool_pRenderData newrd = *reinterpret_cast <exTool_pRenderData*>(icc->rfsp - 12);
     int layer = *reinterpret_cast<int*>(icc->rfsp - 4);
 
-    void (*ReleaseFunc)(void*) = nullptr;;
-    switch (*(exTool_PostRenderDataType*)prd->data) {
-    case exTool_PostRenderDataType::prdt_Line:
-        ReleaseFunc = exTool_ReleaseLine;
-        break;
-    case exTool_PostRenderDataType::prdt_FillRect:
-        ReleaseFunc = exTool_ReleaseFillRect;
-        break;
-    case exTool_PostRenderDataType::prdt_Circle:
-        ReleaseFunc = exTool_ReleaseCircle;
-        break;
-    case exTool_PostRenderDataType::prdt_Text:
-        ReleaseFunc = exTool_ReleaseText;
-        break;
-    }
+    void (*ReleaseFunc)(void*) = nullptr;
+    //prd 에 아무것도 적용되지 않았을때 접근하는 것이 오류임.
 
-    exTool_pPostRenderTarget prtarget;
-    prtarget.data = *(int**)&icc->datamem[8];
-    exTool_PostRenderManager* prmanager = (exTool_PostRenderManager*)prtarget.data;
-    prmanager->ChangeRenderData(prd, newrd, layer, ReleaseFunc);
+    if (prd->data != nullptr) {
+        switch (*(exTool_PostRenderDataType*)prd->data) {
+        case exTool_PostRenderDataType::prdt_Line:
+            ReleaseFunc = exTool_ReleaseLine;
+            break;
+        case exTool_PostRenderDataType::prdt_FillRect:
+            ReleaseFunc = exTool_ReleaseFillRect;
+            break;
+        case exTool_PostRenderDataType::prdt_Circle:
+            ReleaseFunc = exTool_ReleaseCircle;
+            break;
+        case exTool_PostRenderDataType::prdt_Text:
+            ReleaseFunc = exTool_ReleaseText;
+            break;
+        }
+
+        exTool_pPostRenderTarget prtarget;
+        prtarget.data = *(int**)&icc->datamem[8];
+        exTool_PostRenderManager* prmanager = (exTool_PostRenderManager*)prtarget.data;
+        prmanager->ChangeRenderData(prd, newrd, layer, ReleaseFunc);
+    }
+    else {
+        exTool_pPostRenderTarget prtarget;
+        prtarget.data = *(int**)&icc->datamem[8];
+        exTool_PostRenderManager* prmanager = (exTool_PostRenderManager*)prtarget.data;
+        prmanager->ChangeRenderData(prd, newrd, layer, ReleaseFunc);
+    }
 }
 
 //void ReleaseRenderData(int layer);

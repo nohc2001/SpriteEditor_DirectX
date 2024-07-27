@@ -2069,8 +2069,14 @@ public:
 		}
 	}
 
-	void dbg_bakecode(fmvecarr<code_sen*>* csa, int sav)
+	void dbg_bakecode(fmvecarr<code_sen*>* csa, int sav, bool coutstream = true)
 	{
+		ofstream* ptr = nullptr;
+		if (coutstream) ptr = (ofstream*)&cout;
+		else {
+			ptr = &InsideCode_Bake::icl;
+		}
+		ofstream& ofs = *ptr;
 		// cout << "all asm :" << endl;
 		int save = sav;
 		for (int i = 0; i < csa->size(); ++i)
@@ -2078,28 +2084,28 @@ public:
 			code_sen* cs = csa->at(i);
 			if (cs->start_line > save)
 			{
-				cout << "\033[0;36m";
-				cout << "<nocode>" << endl;
-				cout << "\033[0;37m";
-				print_asm(save, cs->start_line - 1);
+				ofs << "\033[0;36m";
+				ofs << "<nocode>" << endl;
+				ofs << "\033[0;37m";
+				print_asm(save, cs->start_line - 1, coutstream);
 				save = cs->start_line;
-				cout << endl;
+				ofs << endl;
 			}
 			if (cs->ck == codeKind::ck_blocks)
 			{
 				fmvecarr<code_sen*>* css =
 					reinterpret_cast<fmvecarr<code_sen*> *>(cs->codeblocks);
-				dbg_bakecode(css, save);
+				dbg_bakecode(css, save, coutstream);
 				save = css->last()->end_line + 1;
 			}
 			else
 			{
-				cout << "\033[0;36m";
-				dbg_codesen(cs);
-				cout << "\033[0;37m" << endl;
-				print_asm(cs->start_line, cs->end_line);
+				ofs << "\033[0;36m";
+				dbg_codesen(cs, false);
+				ofs << "\033[0;37m" << endl;
+				print_asm(cs->start_line, cs->end_line, coutstream);
 				save = cs->end_line + 1;
-				cout << endl;
+				ofs << endl;
 			}
 		}
 	}
@@ -6414,9 +6420,9 @@ public:
 			if (bd->bs == blockstate::bs_while)
 			{
 				bd->breakpoints = nextbd.breakpoints;
-				nextbd.breakpoints = nullptr;
+				//nextbd.breakpoints = nullptr;
 				bd->continuepoints = nextbd.continuepoints;
-				nextbd.continuepoints = nullptr;
+				//nextbd.continuepoints = nullptr;
 			}
 			else
 			{
@@ -8213,7 +8219,7 @@ public:
 		senstptr->NULLState();
 		fm->_Delete((byte8*)senstptr, sizeof(fmvecarr<code_sen*>));
 
-		dbg_bakecode(csarr, 0);
+		dbg_bakecode(csarr, 0, false);
 
 		icl << "ICB[" << this << "] BakeCode finish." << endl;
 
@@ -9810,12 +9816,15 @@ INST_SWITCH:
 		++*pc;
 		goto INST_SWITCH;
 	case insttype::IT_IF:
+	{
 		++*pc;
 		tmptr_i = *pci;
 		++*pci;
-		if (!(bool)registerA0)
+		unsigned char a = registerA0;
+		if (!(bool)a)
 			*pc = &codemem[*tmptr_i];
 		goto INST_SWITCH;
+	}
 	case insttype::IT_JMP:
 		++*pc;
 		tmptr_i = *pci;
