@@ -5429,7 +5429,7 @@ HRESULT InitDevice()
 		basic_circleRT->av(SimpleVertex(tempvertex, color));
 		tempangle += delta_tempangle;
 		tempvertex.x = cosf(tempangle);
-		tempvertex.x = sinf(tempangle);
+		tempvertex.y = sinf(tempangle);
 	}
 	basic_circleRT->end();
 

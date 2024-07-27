@@ -2,10 +2,10 @@ Inside Code Bake System Start
 ICB_StaticInit...finish
 Create_New_ICB_Extension_Init : exGeometry Initialization...finish
 Create_New_ICB_Extension_Init : exEvent Initialization...finish
-Create_New_ICB[000001C2078EC8E0] Initialization...finish
-ICB[000001C2078EC8E0] ReadCode start. filename : [C:\Users\nohc2\Desktop\Dev\SpriteEditor_DirectX\ECS_examples\ecs_sample0.txt]
-ICB[000001C2078EC8E0] ReadCode_GetCodeFromText...finish
-ICB[000001C2078EC8E0] ReadCode_AddTextBlocks...-----------------------------------------
+Create_New_ICB[0000012F955A7E00] Initialization...finish
+ICB[0000012F955A7E00] ReadCode start. filename : [C:\Users\nohc2\Desktop\Dev\SpriteEditor_DirectX\ECS_examples\ecs_sample0.txt]
+ICB[0000012F955A7E00] ReadCode_GetCodeFromText...finish
+ICB[0000012F955A7E00] ReadCode_AddTextBlocks...-----------------------------------------
 
  full text : 
 pObject this;
@@ -106,9 +106,9 @@ combine block : 144 : "-" + 145 : "100" => -100
 combine block : 185 : "=" + 186 : "=" => "=="
 combine block : 198 : "-" + 199 : "1" => -1
 finish
-ICB[000001C2078EC8E0] ReadCode_ScanStructTypes...finish
-ICB[000001C2078EC8E0] ReadCode_AddStructTypes...finish
-ICB[000001C2078EC8E0] ReadCode_ScanCodes...start
+ICB[0000012F955A7E00] ReadCode_ScanStructTypes...finish
+ICB[0000012F955A7E00] ReadCode_AddStructTypes...finish
+ICB[0000012F955A7E00] ReadCode_ScanCodes...start
 [0] ~ add variable : add_var : pObject this  ~ [2]
 [3] ~ add and set variable : adsetvar: uchar bechanged = 0  ~ [7]
 [8] ~ addfunction : addfunc : int main ( )  ~ [11]
@@ -199,8 +199,8 @@ return_ : return 0
 closed_ : }
  ~ [204]
 BakeCode_ScanCodes...finish
-ICB[000001C2078EC8E0] ReadCode_GlobalMemoryInit...finish
-ICB[000001C2078EC8E0] BakeCode_CompileCodes...start
+ICB[0000012F955A7E00] ReadCode_GlobalMemoryInit...finish
+ICB[0000012F955A7E00] BakeCode_CompileCodes...start
 add_var : pObject this 
 BakeCode_CompileCodes__add_var : pObject this 
 adsetvar: uchar bechanged = 0 
@@ -500,11 +500,11 @@ BakeCode_CompileCodes__return_ : return 0
 712	:RETURN(157)
 }; BakeCode_CompileCodes Block Finish
 BakeCode_CompileCodes...finish
-ICB[000001C2078EC8E0] BakeCode finish.
-Create_New_ICB[000001C2078EBE60] Initialization...finish
-ICB[000001C2078EBE60] BakeCode start. filename : [ECS_examples/tool_Compas.txt]
-ICB[000001C2078EBE60] BakeCode_GetCodeFromText...finish
-ICB[000001C2078EBE60] BakeCode_AddTextBlocks...-----------------------------------------
+ICB[0000012F955A7E00] BakeCode finish.
+Create_New_ICB[0000012F955A85E0] Initialization...finish
+ICB[0000012F955A85E0] BakeCode start. filename : [ECS_examples/tool_Compas.txt]
+ICB[0000012F955A85E0] BakeCode_GetCodeFromText...finish
+ICB[0000012F955A85E0] BakeCode_AddTextBlocks...-----------------------------------------
 
  full text : 
 pEventSystem evtsys;
@@ -525,7 +525,7 @@ int main(){
 
 				if(KeyDown(evt)){
 			if(getEventKey(evt) == 'A'){
-				ChangeRenderData(&rd0, _rdCircle(0, 0, 100, _gcolor(1, 1, 1, 1)), 0);
+				ChangeRenderData(&rd0, _rdCircle(100, 0, 100, _gcolor(255, 255, 0, 255)), 0.1);
 				ReleaseRenderData(0);
 			}
 		}
@@ -552,20 +552,22 @@ int main(){
 271"'"	272"A"	273"'"	274")"
 275"{"	296"ChangeRenderData"	297"("	298"&"
 301"rd0"	302","	312"_rdCircle"	313"("
-314"0"	315","	317"0"	318","
-322"100"	323","	331"_gcolor"	332"("
-333"1"	334","	336"1"	337","
-339"1"	340","	342"1"	343")"
-344")"	345","	347"0"	348")"
-349";"	371"ReleaseRenderData"	372"("	373"0"
-374")"	375";"	380"}"	384"}"
-387"}"	389"}"	combine block : 44 : "!" + 45 : "=" => "!="
+316"100"	317","	319"0"	320","
+324"100"	325","	333"_gcolor"	334"("
+337"255"	338","	342"255"	343","
+345"0"	346","	350"255"	351")"
+352")"	353","	355"0"	356"."
+357"1"	358")"	359";"	381"ReleaseRenderData"
+382"("	383"0"	384")"	385";"
+390"}"	394"}"	397"}"	399"}"
+combine block : 44 : "!" + 45 : "=" => "!="
 combine block : 66 : "=" + 67 : "=" => "=="
 combine block : 67 ~ 69"'A'"
+combine block : 95 : "0" + "." + 97 : "1" => "0.1"
 finish
-ICB[000001C2078EBE60] BakeCode_ScanStructTypes...finish
-ICB[000001C2078EBE60] BakeCode_AddStructTypes...finish
-ICB[000001C2078EBE60] BakeCode_ScanCodes...start
+ICB[0000012F955A85E0] BakeCode_ScanStructTypes...finish
+ICB[0000012F955A85E0] BakeCode_AddStructTypes...finish
+ICB[0000012F955A85E0] BakeCode_ScanCodes...start
 [0] ~ add variable : add_var : pEventSystem evtsys  ~ [2]
 [3] ~ add variable : add_var : pPostRenderTarget prt  ~ [5]
 [6] ~ add variable : add_var : pICBEditor selectedICBE  ~ [8]
@@ -599,17 +601,17 @@ closed_ : }
 [32] ~ blocks : start
 [0] ~ IF : if__sen : if ( getEventKey ( evt ) == 'A' )  ~ [8]
 [9] ~ blocks : start
-[0] ~ use Function : usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 )  ~ [27]
+[0] ~ use Function : usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 )  ~ [27]
 [28] ~ use Function : usefunc : ReleaseRenderData ( 0 )  ~ [32]
 BakeCode_ScanCodes...block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
  ~ [43]
 BakeCode_ScanCodes...block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -630,7 +632,7 @@ if__sen : if ( KeyDown ( evt ) )
 block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -657,7 +659,7 @@ if__sen : if ( KeyDown ( evt ) )
 block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -668,8 +670,8 @@ closed_ : }
 closed_ : }
  ~ [106]
 BakeCode_ScanCodes...finish
-ICB[000001C2078EBE60] BakeCode_GlobalMemoryInit...finish
-ICB[000001C2078EBE60] BakeCode_CompileCodes...start
+ICB[0000012F955A85E0] BakeCode_GlobalMemoryInit...finish
+ICB[0000012F955A85E0] BakeCode_CompileCodes...start
 add_var : pEventSystem evtsys 
 BakeCode_CompileCodes__add_var : pEventSystem evtsys 
 add_var : pPostRenderTarget prt 
@@ -697,7 +699,7 @@ if__sen : if ( KeyDown ( evt ) )
 block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -737,7 +739,7 @@ if__sen : if ( KeyDown ( evt ) )
 block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -801,7 +803,7 @@ KeyDown ( evt )
 block__ : {
 if__sen : if ( getEventKey ( evt ) == 'A' ) 
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
@@ -822,48 +824,49 @@ getEventKey ( evt ) == 'A'
 161	:POP_B(175)
 162	:IF(151) > -16843010(254, 254, 254, 254)
 block__ : {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 usefunc : ReleaseRenderData ( 0 ) 
 closed_ : }
 
 BakeCode_CompileCodes Block Start {
-usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
-BakeCode_CompileCodes__usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) 
+usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
+BakeCode_CompileCodes__usefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) 
 167	:FUNC(153)
-168	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-173	:PARAM_4(156)
-174	:FUNC(153)
-175	:FUNC(153)
-176	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-181	:PARAM_1(154)
-182	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-187	:PARAM_1(154)
-188	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-193	:PARAM_1(154)
-194	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-199	:PARAM_1(154)
-200	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
-209	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-214	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-219	:CASTING_A(163) > 12
-221	:PARAM_4(156)
-222	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-227	:CASTING_A(163) > 12
-229	:PARAM_4(156)
-230	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-235	:CASTING_A(163) > 12
-237	:PARAM_4(156)
-238	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 10(10, 0, 0, 0)
-247	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-252	:A=&VID(159) > 20(20, 0, 0, 0)
-257	:PARAM_8(185)
-258	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 12(12, 0, 0, 0)
+168	:PUSH_A_CONST_4(6) > 1036831949(205, 204, 204, 61)
+173	:CASTING_A(163) > 18
+175	:PARAM_4(156)
+176	:FUNC(153)
+177	:FUNC(153)
+178	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+183	:PARAM_1(154)
+184	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+189	:PARAM_1(154)
+190	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+195	:PARAM_1(154)
+196	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+201	:PARAM_1(154)
+202	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
+211	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+216	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+221	:CASTING_A(163) > 12
+223	:PARAM_4(156)
+224	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+229	:CASTING_A(163) > 12
+231	:PARAM_4(156)
+232	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+237	:CASTING_A(163) > 12
+239	:PARAM_4(156)
+240	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 10(10, 0, 0, 0)
+249	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+254	:A=&VID(159) > 20(20, 0, 0, 0)
+259	:PARAM_8(185)
+260	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 12(12, 0, 0, 0)
 usefunc : ReleaseRenderData ( 0 ) 
 BakeCode_CompileCodes__usefunc : ReleaseRenderData ( 0 ) 
-267	:FUNC(153)
-268	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-273	:PARAM_4(156)
-274	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 13(13, 0, 0, 0)
+269	:FUNC(153)
+270	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+275	:PARAM_4(156)
+276	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 13(13, 0, 0, 0)
 }; BakeCode_CompileCodes Block Finish
 }; BakeCode_CompileCodes Block Finish
 }; BakeCode_CompileCodes Block Finish
@@ -893,7 +896,7 @@ BakeCode_CompileCodes...finish
 
 [0;36mwhile__ : while ( true ) [0;37m
 28	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-33	:IF(151) > 288(32, 1, 0, 0)
+33	:IF(151) > 290(34, 1, 0, 0)
 
 [0;36mwhile__ : while ( true ) [0;37m
 38	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
@@ -927,7 +930,7 @@ BakeCode_CompileCodes...finish
 112	:A=&VID(159) > 12(12, 0, 0, 0)
 117	:PARAM_N_COPY_BY_ADDRESS(177) > 12(12, 0, 0, 0)
 122	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 5(5, 0, 0, 0)
-131	:IF(151) > 283(27, 1, 0, 0)
+131	:IF(151) > 285(29, 1, 0, 0)
 
 [0;36mif__sen : if ( getEventKey ( evt ) == 'A' ) [0;37m
 136	:FUNC(153)
@@ -938,43 +941,45 @@ BakeCode_CompileCodes...finish
 158	:CASTING_B(164) > 2
 160	:CM_BOOL_SAME_A(91)
 161	:POP_B(175)
-162	:IF(151) > 283(27, 1, 0, 0)
+162	:IF(151) > 285(29, 1, 0, 0)
 
-[0;36musefunc : ChangeRenderData ( & rd0 , _rdCircle ( 0 , 0 , 100 , _gcolor ( 1 , 1 , 1 , 1 ) ) , 0 ) [0;37m
+[0;36musefunc : ChangeRenderData ( & rd0 , _rdCircle ( 100 , 0 , 100 , _gcolor ( 255 , 255 , 0 , 255 ) ) , 0.1 ) [0;37m
 167	:FUNC(153)
-168	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-173	:PARAM_4(156)
-174	:FUNC(153)
-175	:FUNC(153)
-176	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-181	:PARAM_1(154)
-182	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-187	:PARAM_1(154)
-188	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-193	:PARAM_1(154)
-194	:PUSH_A_CONST_4(6) > 1(1, 0, 0, 0)
-199	:PARAM_1(154)
-200	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
-209	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
-214	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
-219	:CASTING_A(163) > 12
-221	:PARAM_4(156)
-222	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-227	:CASTING_A(163) > 12
-229	:PARAM_4(156)
-230	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-235	:CASTING_A(163) > 12
-237	:PARAM_4(156)
-238	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 10(10, 0, 0, 0)
-247	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
-252	:A=&VID(159) > 20(20, 0, 0, 0)
-257	:PARAM_8(185)
-258	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 12(12, 0, 0, 0)
+168	:PUSH_A_CONST_4(6) > 1036831949(205, 204, 204, 61)
+173	:CASTING_A(163) > 18
+175	:PARAM_4(156)
+176	:FUNC(153)
+177	:FUNC(153)
+178	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+183	:PARAM_1(154)
+184	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+189	:PARAM_1(154)
+190	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+195	:PARAM_1(154)
+196	:PUSH_A_CONST_4(6) > 255(255, 0, 0, 0)
+201	:PARAM_1(154)
+202	:Extend_Instruction(255) > 1(1, 0, 0, 0) > 5(5, 0, 0, 0)
+211	:PARAM_N_COPY_BY_ADDRESS(177) > 16(16, 0, 0, 0)
+216	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+221	:CASTING_A(163) > 12
+223	:PARAM_4(156)
+224	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+229	:CASTING_A(163) > 12
+231	:PARAM_4(156)
+232	:PUSH_A_CONST_4(6) > 100(100, 0, 0, 0)
+237	:CASTING_A(163) > 12
+239	:PARAM_4(156)
+240	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 10(10, 0, 0, 0)
+249	:PARAM_N_COPY_BY_ADDRESS(177) > 8(8, 0, 0, 0)
+254	:A=&VID(159) > 20(20, 0, 0, 0)
+259	:PARAM_8(185)
+260	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 12(12, 0, 0, 0)
 
 [0;36musefunc : ReleaseRenderData ( 0 ) [0;37m
-267	:FUNC(153)
-268	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
-273	:PARAM_4(156)
-274	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 13(13, 0, 0, 0)
+269	:FUNC(153)
+270	:PUSH_A_CONST_4(6) > 0(0, 0, 0, 0)
+275	:PARAM_4(156)
+276	:Extend_Instruction(255) > 2(2, 0, 0, 0) > 13(13, 0, 0, 0)
 
-ICB[000001C2078EBE60] BakeCode finish.
+ICB[0000012F955A85E0] BakeCode finish.
+Create_New_ICB_Context From ICB[0000012F955A85E0], with 40960 size memory...finish.Create_New_ICB_Context From ICB[0000012F955A7E00], with 40960 size memory...finish.

@@ -384,6 +384,7 @@
     <Text Include="Extensions\exGeometry.txt" />
     <Text Include="Extensions\exGraphics.txt" />
     <Text Include="Extensions\exTool.txt" />
+    <Text Include="exTool_Compas_info.txt" />
     <Text Include="icb_dbg.txt" />
     <Text Include="instruction_table.txt" />
   </ItemGroup>

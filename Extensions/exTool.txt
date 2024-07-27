@@ -30,6 +30,10 @@ bool RBtnUp(EventData evt);
 
 bool KeyDown(EventData evt);
 bool KeyUp(EventData evt);
+vec2f GetMousePos_Screen(EventData evt);
+vec2f GetMousePos_Object(EventData evt);
+vec2f Convert_ScreenPosToObjectPos(vec2f screenPos);
+vec2f Convert_ObjectPosToScreenPos(vec2f objectPos);
 
 uint getEventKey(EventData evt);
 

@@ -84,7 +84,7 @@ public:
     }
 
     void ReleaseLayer(int n) {
-        if (n > 0) {
+        if (n >= 0) {
             for (int i = 0; i < heapBuffer->size(); ++i) {
                 gHeapCheck hc = heapBuffer->at(i);
                 if (hc.shouldRelease == n) {
@@ -292,6 +292,65 @@ void exTool_KeyUp(int* pcontext)
 
     icc->sp -= sizeof(bool);
     *reinterpret_cast<bool*>(&icc->getA(0)) = b;
+    icc->Amove_pivot(-1);
+}
+
+//vec2f GetMousePos_Screen(EventData evt);
+void exTool_GetMousePos_Screen(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_EventData evt = *reinterpret_cast <exTool_EventData*>(icc->rfsp - 12);
+
+    shp::vec2f screenpos = GetMousePos(evt.lP);
+
+    icc->sp -= sizeof(vec2f);
+    *reinterpret_cast <vec2f*>(icc->sp) = screenpos;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//vec2f GetMousePos_Object(EventData evt);
+void exTool_GetMousePos_Object(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_EventData evt = *reinterpret_cast <exTool_EventData*>(icc->rfsp - 12);
+
+    shp::vec2f cpos = GetMousePos(evt.lP);
+    shp::vec3f campos = GetObjectPos(cpos);
+    cpos = campos.getv2();
+
+    icc->sp -= sizeof(vec2f);
+    *reinterpret_cast <vec2f*>(icc->sp) = cpos;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//vec2f Convert_ScreenPosToObjectPos(vec2f screenPos);
+void exTool_Convert_ScreenPosToObjectPos(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    shp::vec2f scpos = *reinterpret_cast <shp::vec2f*>(icc->rfsp - 8);
+
+    shp::vec3f campos = GetObjectPos(scpos);
+    scpos = campos.getv2();
+
+    icc->sp -= sizeof(vec2f);
+    *reinterpret_cast <vec2f*>(icc->sp) = scpos;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
+//vec2f Convert_ObjectPosToScreenPos(vec2f objectPos);
+void exTool_Convert_ScreenPosToObjectPos(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    shp::vec2f objpos = *reinterpret_cast <shp::vec2f*>(icc->rfsp - 8);
+
+    shp::vec2f campos = GetScreenPos(shp::vec3f(objpos.x, objpos.y, 0));
+
+    icc->sp -= sizeof(vec2f);
+    *reinterpret_cast <vec2f*>(icc->sp) = campos;
+    icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
 

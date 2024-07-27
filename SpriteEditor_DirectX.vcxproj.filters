@@ -98,6 +98,7 @@
     <Text Include="Extensions\exTool.txt">
       <Filter>Extensions</Filter>
     </Text>
+    <Text Include="exTool_Compas_info.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

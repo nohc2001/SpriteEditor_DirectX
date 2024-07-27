@@ -75,25 +75,26 @@ PARAM_N_... 명령에서 역순으로 복사하는 것으로 해결되었지만.
 3. 알파블랜딩이 불안하게 된다. 누구는 되고 누구는 안된다. (알아보기) > (해결)
 4. 프리폴리곤 구성하는 알고리즘에 문제가 생겼는지, 점을 옮기다 보면 가끔씩 크래시난다. (도형들이 곂칠때 이런 현상이 나타남. >> 거의 모든 경우에 고침
 5. 오른쪽 클릭이 인식이 안되나? > 컴퓨터 문제??
-//////////////////////
-6. icb editor를 오브젝트 공간에서 접기.
-7. icb editor에 new tool 버튼 으로 tool icb를 편집하는 새로운 icb만들기
-8. Euclid Drawing Tool 만들기 (기본제공)
-
--> 부족한거
-InsideCode 
+6. icb editor를 오브젝트 공간에서 접기. (해결)
+InsideCode 문제 해결 로그
 -> 수식 괄호 인식이 불안정 (고침)
 -> 변수에 값을 대입할때, 
 	값이면 8미만이면 무조건 A = *A 처리. -> 근데 이걸 LA에 넣을 방법이 있음? (연산을 하나 더 만들어라..)
 	값이 8 이상이면 무조건 그냥 나뒀다가 -> *LA=*A_N 처리
 	PARAM_8 만들자. *LA=*A_8 만들자.
--> 주석처리 ()
--> i += const 명령 만들기
--> extened_Instruction -> 오직 상수 파라미터만 받을때의 명령
-exGraphic
+-> 주석처리 (고침)
 -> 디버깅용 선 그리기 / 텍스트 출력
 	-> gdbg(pos) -> pos 표시.... 이건 그냥 내부구조상 내장 함수가 있어야 할듯?
-	-> 기본 parameter로 isGraphic_DBG 있어야 작동?
+	-> 기본 parameter로 isGraphic_DBG 있어야 작동? (해결)
+//////////////////////
+7. icb editor에 new tool 버튼 으로 tool icb를 편집하는 새로운 icb만들기
+8. Euclid Drawing Tool 만들기 (기본제공)
+-> 부족한거
+InsideCode 
+-> i += const 명령 만들기 
+-> extened_Instruction -> 오직 상수 파라미터만 받을때의 명령
+-> while(true){} 이러면 무한반복이 안됨. 블럭안에 코드가 없으면 인식을 안하는듯.
+exGraphic
 -> 원과 선의 교차점을 찾는 함수가 가끔 오류남 nan nan
 -> KeyDown(evt) && getEventKey(evt) == 'A' 이거 해석 오류 -> 고침
 exGeometry
