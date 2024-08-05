@@ -1,93 +1,145 @@
 pEventSystem evtsys;
 pPostRenderTarget prt;
 pICBEditor selectedICBE;
+#param end
+
+EventData evt;
+
+//stateText data
+gcolor state_text_color = _gcolor(255, 255, 255, 255);
+rect4f stloc = _rect4f(-1000, 0, 0, 50);
+
+char* state_text_stringptr = "blank state";
+
+//StateFlags
+bool AddFlag = false;
+bool Add_VariableFlag = false;
+bool Add_FunctionFlag = false;
+bool Add_Variable_VertexFlag = false;
+bool Add_Variable_LineFlag = false;
+bool Add_Variable_CircleFlag = false;
+
+//renderdata;
+pRenderData RenderText_AddState = 0;
+int state_text_layer = 0;
+
+pRenderData RenderCoordx = 0;
+pRenderData RenderCoordy = 0;
+int coord_layer = 1;
+
+//functions
+EventData GetMessage(){
+	while(true){
+		evt = PopEvent(evtsys);
+		if(evt.message != 0){
+			return evt;
+		}
+	}
+}
+
+void AddVariableVertexStateWork(){
+	if(MouseMove(evt)){
+		vec2f scpos = GetMousePos_Screen(evt);
+		ChangeRenderData(&RenderCoordx, _rdLine(-1000, scpos.y, 1000, scpos.y, _gcolor(255,	255, 255, 255))), coord_layer);
+		ChangeRenderData(&RenderCoordy, _rdLine(scpos.x, -1000, scpos.x, 1000,  _gcolor(255, 255, 255, 255))), coord_layer);
+		ReleaseRenderData(coord_layer);
+	}
+	else if(LBtnDown(evt)){
+		vec2f objpos = GetMousePos_Object(evt);
+		int cline = ICBE_GetCurrentLine(selectedICBE);
+		void ICBE_InsertLine(selectedICBE, cline);
+		void ICBE_SelectLine(selectedICBE, cline);
+		ICBE_AddString(selectedICBE, "vec2f  = _vec2f(");
+		char[32] Xstr = FloatToString(objpos.x, 32);
+		char[32] Ystr = FloatToString(objpos.y, 32);
+		ICBE_AddString(selectedICBE, Xstr);
+		ICBE_AddString(selectedICBE, ", ");
+		ICBE_AddString(selectedICBE, Ystr);
+		ICBE_AddString(selectedICBE, ");");
+		ICBE_SelectCharIndex(6);
+	}
+}
+
+void AddVariableLineStateWork(){
+}
+
+void AddVariableCircleStateWork(){
+}
+
+void AddVariableStateWork(){
+	bool inb = true;
+	inb = inb || Add_Variable_VertexFlag;
+	inb = inb || Add_Variable_LineFlag;
+	inb = inb || Add_Variable_CircleFlag;
+	if(inb == false){
+		if(KeyDown(evt) && getEventKey(evt) == 'V'){
+			Add_Variable_VertexFlag = true;
+			state_text_stringptr = "Command : Add_Variable_Vertex";
+		}
+		if(KeyDown(evt) && getEventKey(evt) == 'L'){
+			Add_Variable_LineFlag = true;
+			state_text_stringptr = "Command : Add_Variable_Line";
+		}
+		if(KeyDown(evt) && getEventKey(evt) == 'C'){
+			Add_Variable_CircleFlag = true;
+			state_text_stringptr = "Command : Add_Variable_Circle";
+		}
+	}
+	else{
+		if(Add_Variable_VertexFlag){
+			AddVariableVertexStateWork();
+		}
+		else if(Add_Variable_LineFlag){
+			AddVariableLineStateWork();
+		}
+		else if(Add_Variable_CircleFlag){
+			AddVariableCircleStateWork();
+		}
+	}
+}
+
+void AddStateWork(){
+	if(Add_VariableFlag == false && Add_FunctionFlag == false){
+		if(KeyDown(evt) && getEventKey(evt) == 'V'){
+			Add_VariableFlag = true;
+			state_text_stringptr = "Command : Add_Variable";
+		}
+		if(KeyDown(evt) && getEventKey(evt) == 'F'){
+			Add_FunctionFlag = true;
+			state_text_stringptr = "Command : Add_Function";
+		}
+	}
+	else if(Add_VariableFlag){
+		AddVariableStateWork();
+	}
+	else if(Add_FunctionFlag){
+	}
+}
+
+void NoStateWork(){
+	if(KeyDown(evt) && getEventKey(evt) == 'A'){
+		AddFlag = true;
+		state_text_stringptr = "Command : Add";
+	}
+}
+
+void StateWork(){
+	if(AddFlag == false){
+		NoStateWork();
+	}
+	else{
+		AddStateWork();
+	}
+}
 
 int main(){
-	EventData evt;
-	
-	//stateText data
-	gcolor state_text_color = _gcolor(255, 255, 255, 255);
-	rect4f stloc = _rect4f(-1000, 0, 0, 50);
-	int state_text_layer = 0;
-	char* state_text_stringptr = "blank state";
-
-	//StateFlags
-	bool AddFlag = false;
-	pRenderData RenderText_AddState = 0;
-	bool Add_VariableFlag = false;
-	bool Add_FunctionFlag = false;
-	bool Add_Variable_VertexFlag = false;
-	bool Add_Variable_LineFlag = false;
-	bool Add_Variable_CircleFlag = false;
-
 	while(true){
-		while(true){
-			evt = PopEvent(evtsys);
-			if(evt.message != 0){
-				break;
-			}
-		}
+		evt = GetMessage();
 
-		if(AddFlag == false){
-			if(KeyDown(evt) && getEventKey(evt) == 'A'){
-				AddFlag = true;
-				state_text_stringptr = "Command : Add";
-			}
-		}
-		else{
-			if(Add_VariableFlag == false && Add_FunctionFlag == false){
-				if(KeyDown(evt) && getEventKey(evt) == 'V'){
-					Add_VariableFlag = true;
-					state_text_stringptr = "Command : Add_Variable";
-				}
-				if(KeyDown(evt) && getEventKey(evt) == 'F'){
-					Add_FunctionFlag = true;
-					state_text_stringptr = "Command : Add_Function";
-				}
-			}
-			else if(Add_VariableFlag){
-				bool inb = true;
-				inb = inb || Add_Variable_VertexFlag;
-				inb = inb || Add_Variable_LineFlag;
-				inb = inb || Add_Variable_CircleFlag;
-				if(inb == false){
-					if(KeyDown(evt) && getEventKey(evt) == 'V'){
-						Add_Variable_VertexFlag = true;
-						state_text_stringptr = "Command : Add_Variable_Vertex";
-					}
-					if(KeyDown(evt) && getEventKey(evt) == 'L'){
-						Add_Variable_LineFlag = true;
-						state_text_stringptr = "Command : Add_Variable_Line";
-					}
-					if(KeyDown(evt) && getEventKey(evt) == 'C'){
-						Add_Variable_CircleFlag = true;
-						state_text_stringptr = "Command : Add_Variable_Circle";
-					}
-				}
-				else{
-					if(Add_Variable_VertexFlag){
-						if(KeyDown(evt)){
-						}
-					}
-					else if(Add_Variable_LineFlag){
-					}
-					else if(Add_Variable_CircleFlag){
-					}
-				}
-			}
-			else if(Add_FunctionFlag){
-			}
-		}
+		StateWork();
 
+		//render state text
 		ChangeRenderData(&RenderText_AddState, _rdText(stloc.fp.x, stloc.fp.y, stloc.lp.x, stloc.lp.y, state_text_stringptr, state_text_color, 20)), state_text_layer);
 		ReleaseRenderData(state_text_layer);
-
-		//event loop
-		if(KeyDown(evt)){
-			if(getEventKey(evt) == 'A'){
-				ChangeRenderData(&rd0, _rdText(-1000, 0, 0, 50, "Command : Add", _gcolor(255, 255, 255, 255), 20)), 0);
-				ReleaseRenderData(0);
-			}
-		}
 	}
 }

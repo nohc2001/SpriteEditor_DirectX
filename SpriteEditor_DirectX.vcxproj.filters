@@ -47,6 +47,7 @@
     <ClInclude Include="Extensions\exTool.h">
       <Filter>Extensions</Filter>
     </ClInclude>
+    <ClInclude Include="ICB_Editor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

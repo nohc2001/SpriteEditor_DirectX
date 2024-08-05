@@ -1,6 +1,8 @@
 //Parameters
 pObject this;
 uchar bechanged = 0;
+uchar beDbg = 0;
+#param end
 
 int main(){
 	//Init

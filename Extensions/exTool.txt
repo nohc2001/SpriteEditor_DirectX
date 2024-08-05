@@ -1,3 +1,4 @@
+//include exGeometry
 //include exGraphics
 
 struct pEventSystem {
@@ -27,9 +28,11 @@ bool LBtnDown(EventData evt);
 bool LBtnUp(EventData evt);
 bool RBtnDown(EventData evt);
 bool RBtnUp(EventData evt);
+bool MouseMove(EventData evt);
 
 bool KeyDown(EventData evt);
 bool KeyUp(EventData evt);
+
 vec2f GetMousePos_Screen(EventData evt);
 vec2f GetMousePos_Object(EventData evt);
 vec2f Convert_ScreenPosToObjectPos(vec2f screenPos);
@@ -44,3 +47,12 @@ pRenderData _rdText(float fx, float fy, float lx, float ly, char* string, gcolor
 
 void ChangeRenderData(pRenderData* rdptr, pRenderData new_rd, int layer);
 void ReleaseRenderData(int layer);
+
+void ICBE_SetFocus(pICBEditor icbe, bool enable);
+void ICBE_SelectLine(pICBEditor icbe, int line);
+void ICBE_SelectCharIndex(pICBEditor icbe, int cindex);
+void ICBE_InsertLine(pICBEditor icbe, int line);
+void ICBE_AddString(pICBEditor icbe, char* str);
+int ICBE_GetCurrentLine(pICBEditor icbe);
+
+char* FloatToString(float f, int siz);

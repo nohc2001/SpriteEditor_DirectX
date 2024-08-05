@@ -9,68 +9,27 @@
 
 constexpr float gPI = 3.141592f;
 
-struct gvec2f {
-    float x;
-    float y;
-
-    gvec2f() {
-        x = 0;
-        y = 0;
-    }
-
-    gvec2f(float X, float Y) {
-        x = X;
-        y = Y;
-    }
-};
-
-struct circle {
-    gvec2f center;
-    float radius;
-};
-
 struct line2d {
-    gvec2f fp;
-    gvec2f lp;
+    shp::vec2f fp;
+    shp::vec2f lp;
 };
 
 struct angle2d {
-    gvec2f delta;
+    shp::vec2f delta;
     float radian;
 };
 
-struct grect4f {
-    gvec2f fp;
-    gvec2f lp;
-};
-
-struct gvec3f {
-    float x;
-    float y;
-    float z;
-};
-
-struct sphere {
-    gvec3f center;
-    float radius;
-};
-
 struct line3d {
-    gvec3f fp;
-    gvec3f lp;
-};
-
-struct cubef6 {
-    gvec3f fp;
-    gvec3f lp;
+    shp::vec3f fp;
+    shp::vec3f lp;
 };
 
 struct angle3d {
-    gvec3f delta;
-    gvec2f radian;
+    shp::vec3f delta;
+    shp::vec2f radian;
 };
 
-//gvec2f _gvec2f(float x, float y);
+//gvec2f _vec2f(float x, float y);
 void exGeometry__gvec2f(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     shp::vec2f v;
@@ -223,10 +182,10 @@ void exGeometry__line3d(int* pcontext) {
 //gvec2f[2] get_cross_CircleAndLine(circle c, line2d l);
 void exGeometry_get_cross_CircleAndLine(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    circle cir = *reinterpret_cast<circle*>(icc->rfsp - (sizeof(circle) + sizeof(line2d)));
+    shp::circle cir = *reinterpret_cast<circle*>(icc->rfsp - (sizeof(circle) + sizeof(line2d)));
     line2d l = *reinterpret_cast<line2d*>(icc->rfsp - sizeof(line2d));
 
-    gvec2f p1, p2;
+    shp::vec2f p1, p2;
 
     float xr = l.lp.x - l.fp.x;
     float yr = l.lp.y - l.fp.y;
@@ -238,40 +197,40 @@ void exGeometry_get_cross_CircleAndLine(int* pcontext) {
         float C = cir.center.x * cir.center.x + ycy * ycy - cir.radius * cir.radius;
         float inSqrt = B * B - 4.0f * A * C;
         if (inSqrt < 0) {
-            p1 = gvec2f(NAN, NAN);
-            p2 = gvec2f(NAN, NAN);
+            p1 = shp::vec2f(NAN, NAN);
+            p2 = shp::vec2f(NAN, NAN);
         }
         else if (inSqrt == 0) {
             float rx1 = -B * (2.0f * A);
             float ry1 = yrDxr * (rx1 - l.fp.x) + l.fp.y;
             if (__isin(l.fp.x, rx1, l.lp.x) && __isin(l.fp.y, ry1, l.lp.y)) {
-                p1 = gvec2f(rx1, ry1);
-                p2 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(rx1, ry1);
+                p2 = shp::vec2f(NAN, NAN);
             }
             else {
-                p1 = gvec2f(NAN, NAN);
-                p2 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(NAN, NAN);
+                p2 = shp::vec2f(NAN, NAN);
             }
         }
         else {
             float sqrtv = sqrtf(inSqrt);
-            gvec2f rp1 = gvec2f((-B + sqrtv) / (2 * A), 0);
+            shp::vec2f rp1 = shp::vec2f((-B + sqrtv) / (2 * A), 0);
             rp1.y = yrDxr * (rp1.x - l.fp.x) + l.fp.y;
-            gvec2f rp2 = gvec2f((-B - sqrtv) / (2 * A), 0);
+            shp::vec2f rp2 = shp::vec2f((-B - sqrtv) / (2 * A), 0);
             rp2.y = yrDxr * (rp2.x - l.fp.x) + l.fp.y;
 
             if (__isin(l.fp.x, rp1.x, l.lp.x) && __isin(l.fp.y, rp1.y, l.lp.y)) {
                 p1 = rp1;
             }
             else {
-                p1 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(NAN, NAN);
             }
 
             if (__isin(l.fp.x, rp2.x, l.lp.x) && __isin(l.fp.y, rp2.y, l.lp.y)) {
                 p2 = rp1;
             }
             else {
-                p2 = gvec2f(NAN, NAN);
+                p2 = shp::vec2f(NAN, NAN);
             }
         }
     }
@@ -283,48 +242,48 @@ void exGeometry_get_cross_CircleAndLine(int* pcontext) {
         float C = cir.center.y * cir.center.y + xcx * xcx - cir.radius * cir.radius;
         float inSqrt = B * B - 4.0f * A * C;
         if (inSqrt < 0) {
-            p1 = gvec2f(NAN, NAN);
-            p2 = gvec2f(NAN, NAN);
+            p1 = shp::vec2f(NAN, NAN);
+            p2 = shp::vec2f(NAN, NAN);
         }
         else if (inSqrt == 0) {
             float ry1 = -B * (2.0f * A);
             float rx1 = xrDyr * (ry1 - l.fp.y) + l.fp.x;
             if (__isin(l.fp.x, rx1, l.lp.x) && __isin(l.fp.y, ry1, l.lp.y)) {
-                p1 = gvec2f(rx1, ry1);
-                p2 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(rx1, ry1);
+                p2 = shp::vec2f(NAN, NAN);
             }
             else {
-                p1 = gvec2f(NAN, NAN);
-                p2 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(NAN, NAN);
+                p2 = shp::vec2f(NAN, NAN);
             }
         }
         else {
             float sqrtv = sqrtf(inSqrt);
-            gvec2f rp1 = gvec2f(0, (-B + sqrtv) / (2 * A));
+            shp::vec2f rp1 = shp::vec2f(0, (-B + sqrtv) / (2 * A));
             rp1.x = xrDyr * (rp1.y - l.fp.y) + l.fp.x;
-            gvec2f rp2 = gvec2f(0, (-B - sqrtv) / (2 * A));
+            shp::vec2f rp2 = shp::vec2f(0, (-B - sqrtv) / (2 * A));
             rp2.x = xrDyr * (rp2.y - l.fp.y) + l.fp.x;
 
             if (__isin(l.fp.x, rp1.x, l.lp.x) && __isin(l.fp.y, rp1.y, l.lp.y)) {
                 p1 = rp1;
             }
             else {
-                p1 = gvec2f(NAN, NAN);
+                p1 = shp::vec2f(NAN, NAN);
             }
 
             if (__isin(l.fp.x, rp2.x, l.lp.x) && __isin(l.fp.y, rp2.y, l.lp.y)) {
                 p2 = rp1;
             }
             else {
-                p2 = gvec2f(NAN, NAN);
+                p2 = shp::vec2f(NAN, NAN);
             }
         }
     }
 
-    icc->sp -= sizeof(gvec2f);
-    *reinterpret_cast<gvec2f*>(icc->sp) = p2;
-    icc->sp -= sizeof(gvec2f);
-    *reinterpret_cast<gvec2f*>(icc->sp) = p1;
+    icc->sp -= sizeof(shp::vec2f);
+    *reinterpret_cast<shp::vec2f*>(icc->sp) = p2;
+    icc->sp -= sizeof(shp::vec2f);
+    *reinterpret_cast<shp::vec2f*>(icc->sp) = p1;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
@@ -338,12 +297,12 @@ void exGeometry_get_pos_in_LineAndRatioAB(int* pcontext) {
     float invtotal = 1 / (A + B);
     A = A * invtotal;
     B = B * invtotal;
-    gvec2f rp;
+    shp::vec2f rp;
     rp.x = B * L.fp.x + A * L.lp.x;
     rp.y = B * L.fp.y + A * L.lp.y;
 
-    icc->sp -= sizeof(gvec2f);
-    *reinterpret_cast<gvec2f*>(icc->sp) = rp;
+    icc->sp -= sizeof(shp::vec2f);
+    *reinterpret_cast<shp::vec2f*>(icc->sp) = rp;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }
@@ -351,17 +310,17 @@ void exGeometry_get_pos_in_LineAndRatioAB(int* pcontext) {
 //gvec2f* get_poses_in_Bezier1F(gvec2f p0, gvec2f p1, gvec2f factor, uint sizeOfVertex);
 void exGeometry_get_poses_in_Bezier1F(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    gvec2f s = *reinterpret_cast<gvec2f*>(icc->rfsp - 28);
-    gvec2f e = *reinterpret_cast<gvec2f*>(icc->rfsp - 20);
-    gvec2f factor = *reinterpret_cast<gvec2f*>(icc->rfsp - 12);
+    shp::vec2f s = *reinterpret_cast<shp::vec2f*>(icc->rfsp - 28);
+    shp::vec2f e = *reinterpret_cast<shp::vec2f*>(icc->rfsp - 20);
+    shp::vec2f factor = *reinterpret_cast<shp::vec2f*>(icc->rfsp - 12);
     uint Siz = *reinterpret_cast<uint*>(icc->rfsp - 4);
-    gvec2f sf, ef;
+    shp::vec2f sf, ef;
     sf = s;
     ef = factor;
     float t = 0;
     float delta = 1.0f / (float)Siz;
-    icc->sp -= sizeof(gvec2f) * Siz;
-    gvec2f* out = (gvec2f*)icc->sp;
+    icc->sp -= sizeof(shp::vec2f) * Siz;
+    shp::vec2f* out = (shp::vec2f*)icc->sp;
     for (int i = 0; i < Siz; ++i) {
         sf.x = (1.0f - t) * s.x + t * factor.x;
         sf.y = (1.0f - t) * s.y + t * factor.y;
@@ -390,10 +349,10 @@ void exGeometry_get_distance2d(int* pcontext) {
 //bool isPosInRect2d(gvec2f pos, rect4f rt);
 void exGeometry_isPosInRect2d(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
-    gvec2f pos = *reinterpret_cast<gvec2f*>(icc->rfsp - 24);
-    grect4f rt = *reinterpret_cast<grect4f*>(icc->rfsp - 16);
-    bool b = rt.fp.x < pos.x && pos.x < rt.lp.x;
-    b = b || (rt.fp.y < pos.y && pos.y < rt.lp.y);
+    shp::vec2f pos = *reinterpret_cast<shp::vec2f*>(icc->rfsp - 24);
+    shp::rect4f rt = *reinterpret_cast<shp::rect4f*>(icc->rfsp - 16);
+    bool b = rt.fx < pos.x && pos.x < rt.lx;
+    b = b || (rt.fy < pos.y && pos.y < rt.ly);
     *reinterpret_cast<bool*>(&icc->getA(0)) = b;
     icc->Amove_pivot(-1);
 }
@@ -415,19 +374,19 @@ void exGeometry_addAngle2d(int* pcontext) {
     icc->Amove_pivot(-1);
 }
 
-//gvec2f get_cross_line(line2d A, line2d B);
+//shp::vec2f get_cross_line(line2d A, line2d B);
 void exGeometry_get_cross_line(int* pcontext) {
     ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
     line2d sl1 = *reinterpret_cast<line2d*>(icc->rfsp - 32);
     line2d sl2 = *reinterpret_cast<line2d*>(icc->rfsp - 16);
 
-    gvec2f sl1Rate, sl2Rate;
+    shp::vec2f sl1Rate, sl2Rate;
     sl1Rate.x = sl1.lp.x - sl1.fp.x;
     sl1Rate.y = sl1.lp.y - sl1.fp.y;
     sl2Rate.x = sl2.lp.x - sl2.fp.x;
     sl2Rate.y = sl2.lp.y - sl2.fp.y;
 
-    gvec2f cross;
+    shp::vec2f cross;
     if (sl1Rate.x * sl2Rate.x != 0 || sl1Rate.y * sl2Rate.y != 0) {
         cross.x = (sl1.fp.x * sl1Rate.y / sl1Rate.x - sl1.fp.y - sl2.fp.x * sl2Rate.y / sl2Rate.x + sl2.fp.y) / (sl1Rate.y / sl1Rate.x - sl2Rate.y / sl2Rate.x);
         cross.y = (sl1Rate.y / sl1Rate.x) * (cross.x - sl1.fp.x) + sl1.fp.y;
@@ -450,7 +409,7 @@ void exGeometry_get_cross_line(int* pcontext) {
     //return cross;
 
     bool b = true;
-    gvec2f temp_mm;
+    shp::vec2f temp_mm;
     temp_mm.x = (sl1.fp.x < sl1.lp.x) ? sl1.fp.x : sl1.lp.x;
     temp_mm.y = (sl1.fp.x < sl1.lp.x) ? sl1.lp.x : sl1.fp.x;
     b = b && (temp_mm.x <= cross.x && cross.x <= temp_mm.y);
@@ -472,8 +431,8 @@ void exGeometry_get_cross_line(int* pcontext) {
         cross.y = NAN;
     }
 
-    icc->sp -= sizeof(gvec2f);
-    *reinterpret_cast<gvec2f*>(icc->sp) = cross;
+    icc->sp -= sizeof(shp::vec2f);
+    *reinterpret_cast<shp::vec2f*>(icc->sp) = cross;
     icc->getA(0) = icc->sp - icc->mem;
     icc->Amove_pivot(-1);
 }

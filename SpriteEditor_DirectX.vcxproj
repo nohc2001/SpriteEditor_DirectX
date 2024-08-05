@@ -405,6 +405,7 @@
     <ClInclude Include="Extensions\exGraphics.h" />
     <ClInclude Include="Extensions\exTool.h" />
     <ClInclude Include="hancom.h" />
+    <ClInclude Include="ICB_Editor.h" />
     <ClInclude Include="ICB_Extension.h" />
     <ClInclude Include="InsideCodeBake.h" />
     <ClInclude Include="multifor.h" />

@@ -6,6 +6,35 @@
 float scw;
 float sch;
 
+shp::vec2f GetMousePos(LPARAM lParam) {
+	int x = LOWORD(lParam);
+	int y = HIWORD(lParam);
+	return shp::vec2f((float)x - (float)scw / 2.0f, -1.0f * (float)y + (float)sch / 2.0f);
+}
+
+shp::vec2f GetMousePos_notcenter(LPARAM lParam) {
+	int x = LOWORD(lParam);
+	int y = HIWORD(lParam);
+	return shp::vec2f((float)x, (float)y);
+}
+
+shp::vec2f GetScreenPos(shp::vec3f objpos) {
+	shp::vec3f r = objpos;
+	XMMATRIX mat = XMMatrixMultiply(CamView, CamProj);
+	XMVECTOR v = XMVectorSet(objpos.x, objpos.y, objpos.z, 1.0f);
+	v = XMVector4Transform(v, mat);
+	return shp::vec2f(scw * v.m128_f32[0] / 2, sch * v.m128_f32[1] / 2);
+}
+
+shp::vec3f GetObjectPos(shp::vec2f screenPos) {
+	XMMATRIX mat = XMMatrixMultiply(CamView, CamProj);
+	XMVECTOR d;
+	mat = XMMatrixInverse(&d, mat);
+	XMVECTOR v = XMVectorSet(2 * screenPos.x / scw, 2 * screenPos.y / sch, 0.0f, 1.0f);
+	v = XMVector4Transform(v, mat);
+	return shp::vec3f(v.m128_f32[0], v.m128_f32[1], 0.0f);
+}
+
 std::string wstr_to_utf8(wchar_t* wstr)
 {
 	std::wstring_convert < std::codecvt_utf8 < wchar_t >> converter;

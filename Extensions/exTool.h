@@ -7,6 +7,7 @@
 #include "Utill_SpaceMath.h"
 #include "DX11_UI.h"
 #include "exGraphics.h"
+#include "ICB_Editor.h"
 
 struct exTool_EventData {
     unsigned int message;
@@ -264,6 +265,20 @@ void exTool_RBtnUp(int* pcontext)
     icc->Amove_pivot(-1);
 }
 
+//bool MouseMove(EventData evt);
+void exTool_MouseMove(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_EventData evt = *reinterpret_cast <exTool_EventData*>(icc->rfsp - 12);
+
+    bool b = false;
+    b = evt.message == WM_MOUSEMOVE;
+
+    icc->sp -= sizeof(bool);
+    *reinterpret_cast<bool*>(&icc->getA(0)) = b;
+    icc->Amove_pivot(-1);
+}
+
 //bool KeyDown(EventData evt);
 void exTool_KeyDown(int* pcontext)
 {
@@ -341,7 +356,7 @@ void exTool_Convert_ScreenPosToObjectPos(int* pcontext)
 }
 
 //vec2f Convert_ObjectPosToScreenPos(vec2f objectPos);
-void exTool_Convert_ScreenPosToObjectPos(int* pcontext)
+void exTool_Convert_ObjectPosToScreenPos(int* pcontext)
 {
     ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
     shp::vec2f objpos = *reinterpret_cast <shp::vec2f*>(icc->rfsp - 8);
@@ -515,6 +530,91 @@ void exTool_ReleaseRenderData(int* pcontext)
     prmanager->ReleaseLayer(layer);
 }
 
+//void ICBE_SetFocus(pICBEditor icbe, bool enable);
+void exTool_ICBE_SetFocus(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 9);
+    bool b = *reinterpret_cast<bool*>(icc->rfsp - 1);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+    editor->focus = b;
+}
+
+//void ICBE_SelectLine(pICBEditor icbe, int line);
+void exTool_ICBE_SelectLine(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 12);
+    int line = *reinterpret_cast<int*>(icc->rfsp - 4);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+    editor->selected_codeline = line;
+}
+
+//void ICBE_SelectCharIndex(pICBEditor icbe, int cindex);
+void exTool_ICBE_SelectCharIndex(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 12);
+    int line = *reinterpret_cast<int*>(icc->rfsp - 4);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+    editor->selected_charindex = line;
+}
+
+//void ICBE_InsertLine(pICBEditor icbe, int line);
+void exTool_ICBE_InsertLine(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 12);
+    int line = *reinterpret_cast<int*>(icc->rfsp - 4);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+    editor->codeLines.insert(line, fmlwstr());
+    editor->codeLines.at(line).NULLState();
+    editor->codeLines.at(line).Init(8, false);
+}
+
+//void ICBE_AddString(pICBEditor icbe, char* str);
+void exTool_ICBE_AddString(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 16);
+    char* str = *reinterpret_cast<char**>(icc->rfsp - 8);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+    
+    int len = strlen(str);
+    for (int i = 0; i < len; ++i) {
+        editor->WhenCharInsert(editor->selected_codeline, editor->selected_charindex, (wchar_t)str[i]);
+    }
+}
+
+//int ICBE_GetCurrentLine(pICBEditor icbe);
+void exTool_ICBE_GetCurrentLine(int* pcontext)
+{
+    ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
+    exTool_pICBEditor icbe = *reinterpret_cast<exTool_pICBEditor*>(icc->rfsp - 8);
+    ICB_Editor* editor = (ICB_Editor*)icbe.data;
+
+    icc->sp -= sizeof(int);
+    *reinterpret_cast<int*>(&icc->getA(0)) = editor->selected_codeline;
+    icc->Amove_pivot(-1);
+}
+
+//char* FloatToString(float f, int siz);
+void exTool_FloatToString(int* pcontext) {
+    ICB_Context* icc = reinterpret_cast<ICB_Context*>(pcontext);
+    float f = *reinterpret_cast<float*>(icc->rfsp - 8);
+    string str = to_string(f);
+    unsigned int capacity = *reinterpret_cast<unsigned int*>(icc->rfsp - 4);
+    unsigned int Siz = str.size()+1;
+    icc->sp -= Siz;
+    char* out = (char*)icc->sp;
+    for (int i = 0; i < Siz; ++i) {
+        out[i] = str[i];
+    }
+    out[str.size()] = 0;
+    icc->getA(0) = icc->sp - icc->mem;
+    icc->Amove_pivot(-1);
+}
+
 ICB_Extension* Init_exTool() {
     //확장을 입력.
     ofstream& icl = InsideCode_Bake::icl;
@@ -526,7 +626,7 @@ ICB_Extension* Init_exTool() {
     if (icldetail) icl << "Create_New_ICB_Extension_Init Allocate Extension Data Memory...";
     ICB_Extension* ext = (ICB_Extension*)fm->_New(sizeof(ICB_Extension), true);
     ext->exfuncArr.NULLState();
-    ext->exfuncArr.Init(32, false);
+    ext->exfuncArr.Init(64, false);
     ext->exstructArr.NULLState();
     ext->exstructArr.Init(32, false);
     if (icldetail) icl << "finish" << endl;
@@ -542,8 +642,13 @@ ICB_Extension* Init_exTool() {
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_LBtnUp);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_RBtnDown);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_RBtnUp);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_MouseMove);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_KeyDown);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_KeyUp);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_GetMousePos_Screen);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_GetMousePos_Object);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_Convert_ScreenPosToObjectPos);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_Convert_ObjectPosToScreenPos);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_getEventKey);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdLine);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdFillRect);
@@ -551,6 +656,13 @@ ICB_Extension* Init_exTool() {
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool__rdText);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ChangeRenderData);
     ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ReleaseRenderData);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_SetFocus);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_SelectLine);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_SelectCharIndex);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_InsertLine);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_AddString);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_ICBE_GetCurrentLine);
+    ext->exfuncArr[++i]->start_pc = reinterpret_cast <byte8*>(exTool_FloatToString);
     icl << "finish" << endl;
     return ext;
 }
