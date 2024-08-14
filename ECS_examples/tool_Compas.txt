@@ -40,15 +40,15 @@ EventData GetMessage(){
 void AddVariableVertexStateWork(){
 	if(MouseMove(evt)){
 		vec2f scpos = GetMousePos_Screen(evt);
-		ChangeRenderData(&RenderCoordx, _rdLine(-1000, scpos.y, 1000, scpos.y, _gcolor(255,	255, 255, 255))), coord_layer);
-		ChangeRenderData(&RenderCoordy, _rdLine(scpos.x, -1000, scpos.x, 1000,  _gcolor(255, 255, 255, 255))), coord_layer);
+		ChangeRenderData(&RenderCoordx, _rdLine(-1000, scpos.y, 1000, scpos.y, _gcolor(255,	255, 255, 255)), coord_layer);
+		ChangeRenderData(&RenderCoordy, _rdLine(scpos.x, -1000, scpos.x, 1000,  _gcolor(255, 255, 255, 255)), coord_layer);
 		ReleaseRenderData(coord_layer);
 	}
 	else if(LBtnDown(evt)){
 		vec2f objpos = GetMousePos_Object(evt);
 		int cline = ICBE_GetCurrentLine(selectedICBE);
-		void ICBE_InsertLine(selectedICBE, cline);
-		void ICBE_SelectLine(selectedICBE, cline);
+		ICBE_InsertLine(selectedICBE, cline);
+		ICBE_SelectLine(selectedICBE, cline);
 		ICBE_AddString(selectedICBE, "vec2f  = _vec2f(");
 		char[32] Xstr = FloatToString(objpos.x, 32);
 		char[32] Ystr = FloatToString(objpos.y, 32);

@@ -2166,8 +2166,6 @@ void loadicbtn_event(DXBtn* btn, DX_Event evt)
 				//dbg << "icend" << endl;
 				//counting[0] = 1000;
 			}
-
-			
 		}
 	}
 }
@@ -4376,6 +4374,7 @@ void texteditpage_event(Page* p, DX_Event evt)
 //--------------------------------------------------------------------------------------
 int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
 {
+	locale::global(locale(".UTF-8"));
 	static chrono::steady_clock::time_point ft, et;
     dbg.open("dbg.txt", ios::ate);
 

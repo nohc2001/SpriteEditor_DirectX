@@ -3,8 +3,6 @@
 3. SpriteEditor
 4. InsideCode in MSVC 어느정도 완성이 필요.
 
-
-
 IC 연계 단축기 명령어
 A add and set
 

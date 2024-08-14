@@ -412,6 +412,12 @@ public:
 			}
 		}
 
+		if (stack != 0) {
+			rarr->release();
+			fm->_Delete((byte8*)rarr, sizeof(sen));
+			return nullptr;
+		}
+
 		return rarr;
 	}
 
@@ -423,7 +429,7 @@ public:
 		int stack = 0;
 		bool isin = false;
 		int start = 0;
-		for (int i = end; i >= 0; --i)
+		for (int i = end; i > 0; --i)
 		{
 			if (strcmp(arr->at(i).data.str, close) == 0)
 			{
@@ -445,6 +451,12 @@ public:
 					break;
 				}
 			}
+		}
+
+		if (stack != 0) {
+			rarr->release();
+			fm->_Delete((byte8*)rarr, sizeof(sen));
+			return nullptr;
 		}
 
 		for (int i = start; i < end + 1; ++i)

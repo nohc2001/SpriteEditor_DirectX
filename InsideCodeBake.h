@@ -3675,6 +3675,10 @@ public:
 			sen* code = ten;
 			int loc = code->size() - 1;
 			sen* inner_params = wbss.oc_search_inv(code, loc, "(", ")");
+			if (inner_params == nullptr) {
+				UpdateErrMsg(6, "Unpaired parentheses exist.", nullptr);
+				ICB_ERR_CHECK(ERR_GETASMFROMSEN_USEFUNCTION_RELEASE_TM);
+			}
 			// wbss.dbg_sen(code);
 			// wbss.dbg_sen(inner_params);
 			int nameloc = loc - inner_params->size();
@@ -4240,9 +4244,11 @@ public:
 				param_sen->release();
 				fm->_Delete((byte8*)param_sen, sizeof(sen));
 				release_tempmem(rtm);
-				release_tempmem(tm);
-				return nullptr;
 			}
+
+		ERR_GETASMFROMSEN_USEFUNCTION_RELEASE_TM:
+			release_tempmem(tm);
+			return nullptr;
 		}
 
 		if (ten->size() == 1)
@@ -6821,6 +6827,10 @@ public:
 		sen* code = get_sen_from_codesen(cs);
 		int loc = code->size() - 1;
 		sen* inner_params = wbss.oc_search_inv(code, loc, "(", ")");
+		if (inner_params == nullptr) {
+			UpdateErrMsg(6, "Unpaired parentheses exist.", nullptr);
+			return;
+		}
 		int nameloc = loc - inner_params->size();
 		char* funcname = code->at(nameloc).data.str;
 
@@ -7328,7 +7338,6 @@ public:
 
 		ERR_COMPILEUSEFUNCTION_EXT_TEMPMEM:
 
-
 			code->release();
 			fm->_Delete((byte8*)code, sizeof(sen));
 
@@ -7343,7 +7352,6 @@ public:
 
 			param_sen->release();
 			fm->_Delete((byte8*)param_sen, sizeof(sen));
-
 			release_tempmem(tm);
 		}
 	}
