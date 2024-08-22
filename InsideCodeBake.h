@@ -4279,7 +4279,7 @@ public:
 					}
 				}
 
-				if (isvalue)
+				if (isvalue && td->typetype != 's')
 				{
 					if (is_a)
 					{
@@ -4296,7 +4296,6 @@ public:
 				}
 				else
 				{
-
 					tm->valuetype = 8;
 					tm->valuetype_detail = get_addpointer_type(td);
 					return tm;
@@ -4330,7 +4329,7 @@ public:
 					}
 				}
 
-				if (isvalue)
+				if (isvalue && td->typetype != 's')
 				{
 					if (is_a)
 					{
@@ -4383,6 +4382,7 @@ public:
 					}
 					*reinterpret_cast<bool*>(&tm->mem[1]) = b;
 					tm->valuetype = 7;
+					tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				}
 				break;
 				case TBT::_value_integer:
@@ -4403,6 +4403,7 @@ public:
 					}
 					*reinterpret_cast<int*>(&tm->mem[1]) = a;
 					tm->valuetype = 4;
+					tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				}
 				break;
 				case TBT::_value_float:
@@ -4423,6 +4424,7 @@ public:
 					}
 					*reinterpret_cast<float*>(&tm->mem[1]) = a;
 					tm->valuetype = 6;
+					tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				}
 				break;
 				case TBT::_value_char:
@@ -4467,6 +4469,7 @@ public:
 						}
 					}
 					tm->valuetype = 0;
+					tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				}
 				break;
 				case TBT::_value_str:
@@ -4525,6 +4528,7 @@ public:
 						tm->mem.push_back(0);
 					}
 					tm->valuetype = 8;
+					tm->valuetype_detail = get_addpointer_type(&basictype[1]);
 				}
 				break;
 				default:
@@ -4536,7 +4540,6 @@ public:
 				}
 				break;
 				}
-				tm->valuetype_detail = get_basic_type_with_int(tm->valuetype);
 				str.islocal = true;
 				return tm;
 			}
@@ -8227,7 +8230,7 @@ public:
 		senstptr->NULLState();
 		fm->_Delete((byte8*)senstptr, sizeof(fmvecarr<code_sen*>));
 
-		dbg_bakecode(csarr, 0, false);
+		//dbg_bakecode(csarr, 0, false);
 
 		icl << "ICB[" << this << "] BakeCode finish." << endl;
 
@@ -8594,8 +8597,8 @@ fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
 bool isBreaking = false;
-int stopnum = 0;
-bool isDbg = false;
+int stopnum = 1985;
+bool isDbg = true;
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {

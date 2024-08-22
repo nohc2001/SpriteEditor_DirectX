@@ -29,7 +29,7 @@ int coord_layer = 1;
 
 //functions
 EventData GetMessage(){
-	while(true){
+	while(1){
 		evt = PopEvent(evtsys);
 		if(evt.message != 0){
 			return evt;
@@ -139,7 +139,7 @@ int main(){
 		StateWork();
 
 		//render state text
-		ChangeRenderData(&RenderText_AddState, _rdText(stloc.fp.x, stloc.fp.y, stloc.lp.x, stloc.lp.y, state_text_stringptr, state_text_color, 20)), state_text_layer);
+		ChangeRenderData(&RenderText_AddState, _rdText(stloc.fp.x, stloc.fp.y, stloc.lp.x, stloc.lp.y, state_text_stringptr, state_text_color, 20), state_text_layer);
 		ReleaseRenderData(state_text_layer);
 	}
 }

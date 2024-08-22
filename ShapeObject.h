@@ -567,7 +567,6 @@ public:
 
     void ready(unsigned int unicode, ID3D11VertexShader* vshader, ID3D11PixelShader* fshader)
     {
-        //func_in("CharBuffer::ready");
         Glyph g;
         int fontindex = -1;
         unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
@@ -584,7 +583,6 @@ public:
         frag.NULLState();
         frag.Init(g.path_list.size(), false, true);
 
-        // drt->begin(rendertype::color_nouv);
         Curve c;
         if (g.path_list.size() > 0 && g.path_list.at(0).geometry.size() > 0) {
             c = g.path_list.at(0).geometry.at(0);
@@ -598,29 +596,6 @@ public:
         range.lx = c.p0.x;
         range.fy = c.p0.y;
         range.ly = c.p0.y;
-
-        //Curve sc = g.path_list.at(0).geometry.at(0);
-        //for (int i = g.path_list.size() - 1; i >= 0; --i)
-        //{
-        //    rbuffer* rbuff = (rbuffer*)fm->_New(sizeof(rbuffer), true);
-        //    rbuff->Init(false);
-        //    rbuff->begin();
-        //    for (int k = g.path_list.at(i).geometry.size() - 1; k >= 0; --k)
-        //    {
-        //        c = g.path_list.at(i).geometry.at(k);
-        //        //rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
-        //        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
-
-        //        if (range.fx > c.p0.x) range.fx = c.p0.x;
-        //        if (range.lx < c.p0.x) range.lx = c.p0.x;
-        //        if (range.fy > c.p0.y) range.fy = c.p0.y;
-        //        if (range.ly < c.p0.y) range.ly = c.p0.y;
-        //        sc = c;
-        //    }
-        //    rbuff->end();
-        //    frag.push_back(rbuff);
-        //}
-        //func_out;
 
         fmvecarr<shp::vec3f> prevpoly;
         prevpoly.NULLState();
@@ -642,10 +617,6 @@ public:
                     float fd = 0.125;
                     float t = fd;
                     float it = 1.0f - fd;
-                    /*if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
-                        rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
-                        lastpos = shp::vec2f(c.p0.x, c.p0.y);
-                    }*/
                     
                     for (int u = 1; u < 7; ++u) {
                         shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
@@ -667,13 +638,8 @@ public:
                         t += fd;
                         it -= fd;
                     }
-                    /*if (lastpos != shp::vec2f(c.p1.x, c.p1.y)) {
-                        rbuff->av(SimpleVertex(c.p1.x, c.p1.y, 0, 255, 255, 255, 255));
-                        lastpos = shp::vec2f(c.p1.x, c.p1.y);
-                    }*/
                 }
                 else {
-                    //rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
                     if (lastpos != shp::vec2f(c.p0.x, c.p0.y)) {
                         poly.push_back(shp::vec3f(c.p0.x, c.p0.y, 0));
                         float alpha = 1.0f;
@@ -713,7 +679,6 @@ public:
                 prevpoly.push_back(poly[p]);
             }
             poly.up = 0;
-            //rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
         }
 
         range = shp::rect4f(0, 0, 1200, 1000);
