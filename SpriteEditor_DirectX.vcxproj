@@ -373,6 +373,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="dbg.txt" />
+    <Text Include="DevInfo\IDEAL IDE features.txt" />
     <Text Include="DevInfo\Layer.txt" />
     <Text Include="DevInfo\memo.txt" />
     <Text Include="ECS_examples\ecs0.txt" />

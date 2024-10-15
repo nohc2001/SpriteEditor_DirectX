@@ -48,6 +48,10 @@ struct DX11Color {
     }
 };
 
+DX11Color MergeColor_MulMode(DX11Color c1, DX11Color c2) {
+    return DX11Color(c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.b);
+}
+
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
@@ -196,18 +200,26 @@ public:
     void Release() {
         if (buffer[0] != nullptr) {
             buffer[0]->release();
+            buffer[0]->NULLState();
+            buffer[0] = nullptr;
         }
         
         if (buffer[1] != nullptr) {
             buffer[1]->release();
+            buffer[1]->NULLState();
+            buffer[1] = nullptr;
         }
         
         if (index_buf[0] != nullptr) {
             index_buf[0]->release();
+            index_buf[0]->NULLState();
+            index_buf[0] = nullptr;
         }
         
         if (index_buf[1] != nullptr) {
             index_buf[1]->release();
+            index_buf[1]->NULLState();
+            index_buf[1] = nullptr;
         }
        
         if (m_pVertexBuffer[0] != nullptr) {

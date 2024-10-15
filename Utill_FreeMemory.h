@@ -7,7 +7,12 @@
 #include "arr_expend.h"
 #include <map>
 using namespace std;
+
 typedef unsigned char byte8;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef signed long long si64;
+typedef unsigned long long ui64;
 
 namespace freemem
 {
@@ -2814,7 +2819,7 @@ namespace freemem {
 
 		void erase(size_t i)
 		{
-			for (int k = i; k < up; ++k)
+			for (int k = i; k < (int)up; ++k)
 			{
 				Arr[k] = Arr[k + 1];
 			}

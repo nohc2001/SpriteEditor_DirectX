@@ -103,6 +103,9 @@
     <Text Include="error_message.txt">
       <Filter>DevInfo</Filter>
     </Text>
+    <Text Include="DevInfo\IDEAL IDE features.txt">
+      <Filter>DevInfo</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

@@ -16,10 +16,7 @@ typedef InsideCode_Bake *pICB;
 
 typedef ICB_Context *pECS;
 
-struct prbuffer
-{
-	int *data;
-};
+typedef rbuffer* prbuffer;
 
 struct gcolor
 {
@@ -661,7 +658,7 @@ void ObjRelease(void* ptr) {
 void exGraphics_ChangeICB(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 8];
 	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
 	pICB* dest = (pICB*)&icc->mem[logicAddr];
 	pICB newv = *reinterpret_cast <pICB*>(icc->rfsp - 12);
@@ -682,7 +679,7 @@ void exGraphics_ChangeICB(int* pcontext) {
 void exGraphics_ChangeECS(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 9];
 	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
 	pECS* dest = (pECS*)&icc->mem[logicAddr];
 	pECS newv = *reinterpret_cast <pECS*>(icc->rfsp - 12);
@@ -703,16 +700,16 @@ void exGraphics_ChangeECS(int* pcontext) {
 void exGraphics_ChangeRBuf(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 9];
 	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
 	prbuffer* dest = (prbuffer*)&icc->mem[logicAddr];
 	prbuffer newv = *reinterpret_cast <prbuffer*>(icc->rfsp - 12);
 	int layer = *reinterpret_cast <int*>(icc->rfsp - 4);
 
-	if ((*dest).data != nullptr) {
+	if (*dest != nullptr) {
 		prbuffer oldv = *dest;
 		gHeapCheck hc;
-		hc.ptr = (void*)oldv.data;
+		hc.ptr = (void*)oldv;
 		hc.shouldRelease = layer;
 		hc.ReleaseFunc = rbufferRelease;
 		heapBuffer->push_back(hc);
@@ -724,7 +721,7 @@ void exGraphics_ChangeRBuf(int* pcontext) {
 void exGraphics_ChangeSpr(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 9];
 	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
 	pSprite* dest = (pSprite*) &icc->mem[logicAddr];
 	pSprite newv = *reinterpret_cast <pSprite*>(icc->rfsp - 12);
@@ -745,7 +742,7 @@ void exGraphics_ChangeSpr(int* pcontext) {
 void exGraphics_ChangeObj(int* pcontext) {
 	ICB_Context* icc = reinterpret_cast <ICB_Context*>(pcontext);
 
-	fmvecarr<gHeapCheck>* heapBuffer = (fmvecarr<gHeapCheck>*) & icc->mem[icc->max_mem_byte - 8];
+	fmvecarr<gHeapCheck>* heapBuffer = *(fmvecarr<gHeapCheck>**) & icc->mem[icc->max_mem_byte - 9];
 	uint64_t logicAddr = *reinterpret_cast <uint64_t*>(icc->rfsp - 20);
 	pObject* dest = (pObject*)&icc->mem[logicAddr];
 	pObject newv = *reinterpret_cast <pObject*>(icc->rfsp - 12);

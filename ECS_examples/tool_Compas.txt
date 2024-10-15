@@ -139,7 +139,8 @@ int main(){
 		StateWork();
 
 		//render state text
-		ChangeRenderData(&RenderText_AddState, _rdText(stloc.fp.x, stloc.fp.y, stloc.lp.x, stloc.lp.y, state_text_stringptr, state_text_color, 20), state_text_layer);
+		pRenderData textrd = _rdText(stloc.fp.x, stloc.fp.y, stloc.lp.x, stloc.lp.y, state_text_stringptr, state_text_color, 20);
+		ChangeRenderData(&RenderText_AddState, textrd, state_text_layer);
 		ReleaseRenderData(state_text_layer);
 	}
 }

@@ -110,12 +110,19 @@ struct str_equal_to : public std::binary_function<_Tp, _Tp, bool>
 typedef std::unordered_map<char*, InsideCode_Bake*, std::hash<char*>, str_equal_to<char*> > ICMAP;
 ICMAP icmap;
 
+fmvecarr<XMMATRIX> worldMatrixStack;
+
 class Sprite
 {
 public:
 	sprite_type st;
 	sprdata data;
 	//InsideCode* spr_ic;
+
+	static void StaticInit() {
+		worldMatrixStack.NULLState();
+		worldMatrixStack.Init(8, false, true);
+	}
 
 	void null()
 	{
@@ -172,12 +179,19 @@ void Sprite::render(const ConstantBuffer& uniform)
 	{
 		if (data.objs != nullptr)
 		{
+			worldMatrixStack.push_back(uniform.mWorld);
 			for (int i = data.objs->size()-1; i >= 0; --i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
-				ConstantBuffer cb = GetCamModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
+				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
+				cb.mWorld = XMMatrixMultiply(uniform.mWorld, cb.mWorld);
+				cb.StaticColor = MergeColor_MulMode(uniform.StaticColor, cb.StaticColor);
+				/*for (int i = worldMatrixStack.size() ; i >= 0; --i) {
+					cb.mWorld = XMMatrixMultiply(worldMatrixStack[i], cb.mWorld);
+				}*/
 				obj->source->render(cb);
 			}
+			worldMatrixStack.pop_back();
 		}
 	}
 }
@@ -389,6 +403,7 @@ void Sprite::load(wchar_t* filename)
 				file.read(reinterpret_cast<char*>(&optr), 4);
 				sd.oad.objs.push_back(optr);
 			}
+			ss.data.push_back(sd);
 		}
 		else if (type == 3) {
 			sd.oad.type = type;
@@ -398,6 +413,7 @@ void Sprite::load(wchar_t* filename)
 			for (int i = 0; i < strsiz; ++i) {
 				file.read(reinterpret_cast<char*>(&sd.sdd.wstr[i]), 4);
 			}
+			ss.data.push_back(sd);
 		}
 		else {
 			char t = 0;
@@ -412,7 +428,8 @@ void Sprite::load(wchar_t* filename)
 	Sprite* sprarr = (Sprite*)fm->_New(sizeof(Sprite) * sprsiz, true);
 	Object* objarr = (Object*)fm->_New(sizeof(Object) * objsiz, true);
 	for (int i = 0; i < sprsiz; ++i) {
-		s_data sd = ss.data[ss.spr[i].dataptr];
+		int n = ss.spr[i].dataptr;
+		s_data sd = ss.data[n];
 		sprarr[i].st = (sprite_type)sd.fd.type;
 		if (sprarr[i].st == sprite_type::st_freepolygon) {
 			sprarr[i].data.freepoly = (rbuffer*)fm->_New(sizeof(rbuffer), true);
@@ -568,10 +585,8 @@ bool Sprite::isExistSpr(int* objptr) {
 
 void Sprite::Release() {
 	if (st == sprite_type::st_freepolygon) {
-		if (data.freepoly != nullptr) {
-			data.freepoly->Release();
-			fm->_Delete((byte8*)data.freepoly, sizeof(rbuffer));
-		}
+		//data.freeploy release seperated way.
+		data.freepoly = nullptr;
 	}
 	else if (st == sprite_type::st_objects) {
 		if (data.objs != nullptr) {

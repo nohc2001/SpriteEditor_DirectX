@@ -11,10 +11,6 @@
 using namespace std;
 using namespace freemem;
 
-typedef unsigned char byte8;
-typedef unsigned short ushort;
-//typedef unsigned int uint;
-
 enum class insttype {
 	IT_ADD_STACK_VARIABLE = 0,
 	IT_SET_STACK_VARIABLE_CONST_1 = 1, // var = const
@@ -1119,7 +1115,6 @@ public:
 	}
 
 	fmlcstr* GetCode_Lines(fmvecarr<fmlwstr>* lines) {
-		codeLineVec.push_back(0);
 		char comment_mod = '/';
 		int stack = 0;
 		bool iscomment = false;
@@ -1128,64 +1123,79 @@ public:
 			fmlcstr* codetxt = (fmlcstr*)fm->_New(sizeof(fmlcstr), true);
 			codetxt->NULLState();
 			codetxt->Init(10, false);
-			for(int i=0;i<lines->size();++i)
+			for (int i = 0; i < lines->size(); ++i)
 			{
-				if (i == 0) {
-					codeLineVec.push_back(0);
-				}
-				else {
-					codeLineVec.push_back(codeLineVec.last());
-				}
-				
-				char savec = 0;
 				for (int k = 0; k < lines->at(i).size(); ++k) {
 					wchar_t cc = lines->at(i)[k];
 					char c = (char)cc;
-					if (iscomment) {
-						if (savec == '*' && c == '/') {
-							iscomment = false;
-							comment_mod = '/';
-						}
-						savec = c;
-					}
-
-					if (c == '/')
-					{
-						stack += 1;
-					}
-					else if (stack == 1 && c == '*') {
-						stack += 1;
-						comment_mod = '*';
-					}
-					else
-					{
-						stack = 0;
-					}
-
-					if (stack == 2)
-					{
-						if (comment_mod == '/') {
-							codetxt->pop_back();
-							int mm = 0;
-							while (lines->at(i).size() > k)
-							{
-								mm += 1;
-								++k;
-							}
-							continue;
-						}
-						else if (comment_mod == '*') {
-							codetxt->pop_back();
-							iscomment = true;
-							continue;
-						}
-					}
 					codetxt->push_back(c);
-					//k++;
+				}
+				codetxt->push_back('\n');
+			}
+
+			for (int k = 0; k < codetxt->size(); ++k)
+			{
+				char c = codetxt->at(k);
+				//line check
+				if (c == '\n') {
+					codeLineVec.push_back(k + 1);
+				}
+
+				if (c == '/')
+				{
+					stack += 1;
+				}
+				else if (stack == 1 && c == '*') {
+					stack += 1;
+					comment_mod = '*';
+				}
+				else
+				{
+					stack = 0;
+				}
+
+				if (stack == 2)
+				{
+					if (comment_mod == '/') {
+						codetxt->erase(k-1);
+						while (c != '\n' && k - 1 < codetxt->size())
+						{
+							c = codetxt->at(k - 1);
+							codetxt->erase(k - 1);
+							//c = fgetc(fp);
+							//line check
+							if (c == '\n') {
+								codeLineVec.push_back(codeLineVec.last());
+							}
+						}
+						k -= 2;
+						//max -= mm + 1;
+						continue;
+					}
+					else if (comment_mod == '*') {
+						codetxt->erase(k - 1);
+						char saveC = 0;
+						while ((saveC != '*' || c != '/') && k - 1 < codetxt->size())
+						{
+							saveC = c;
+							c = codetxt->at(k - 1);
+							codetxt->erase(k - 1);
+							//line check
+							if (c == '\n') {
+								codeLineVec.push_back(codeLineVec.last());
+							}
+						}
+						comment_mod = '/';
+						k -= 2;
+						continue;
+					}
 				}
 			}
+
 			return codetxt;
 		}
+
+		return nullptr;
 	}
 
 	static void ReleaseCodeSen(code_sen* cs) {
@@ -8254,6 +8264,91 @@ public:
 		Release(false);
 		return;
 	}
+
+	fmvecarr<NamingData> GetLocalVariableListInBlock(code_sen* blockcs, int stack) {
+		fmvecarr<NamingData> ndarr;
+		ndarr.NULLState();
+		ndarr.Init(8, false, true);
+		int addvarstack = stack;
+		for (int i = 0; i < blockcs->codeblocks->size(); ++i) {
+			code_sen* cs = (code_sen*)blockcs->codeblocks->at(i);
+			if (cs->ck == codeKind::ck_addVariable){
+				sen* code = get_sen_from_codesen(cs);
+				//wbss.dbg_sen(code);
+				int loc = code->up - 1;
+				char* variable_name = code->at(loc).data.str;
+				sen* type_name = wbss.sen_cut(code, 0, loc - 1);
+				NamingData nd;
+				nd.name = variable_name;
+				nd.add_address = addvarstack;
+				nd.td = get_type_with_namesen(type_name);
+				addvarstack += nd.td->typesiz;
+				ndarr.push_back(nd);
+				code->release();
+				type_name->release();
+			}
+			else if(cs->ck == codeKind::ck_addsetVariable) {
+				sen* code = get_sen_from_codesen(cs);
+				//wbss.dbg_sen(code);
+				int loc = wbss.search_word_first(0, code, "=");
+				sen* code_0 = wbss.sen_cut(code, 0, loc - 1);
+				loc = code_0->up - 1;
+				char* variable_name = code_0->at(loc).data.str;
+				sen* type_name = wbss.sen_cut(code_0, 0, loc - 1);
+				NamingData nd;
+				nd.name = variable_name;
+				nd.add_address = addvarstack;
+				nd.td = get_type_with_namesen(type_name);
+				addvarstack += nd.td->typesiz;
+				ndarr.push_back(nd);
+				code->release();
+				code_0->release();
+				type_name->release();
+			}
+			else if (cs->ck == codeKind::ck_blocks) {
+				fmvecarr<NamingData> sndarr = GetLocalVariableListInBlock(cs, addvarstack);
+				for (int k = 0; k < sndarr.size(); ++k) {
+					ndarr.push_back(sndarr.at(k));
+				}
+				sndarr.release();
+			}
+		}
+
+		return ndarr;
+	}
+
+	fmvecarr<NamingData> GetLocalVariableListInFunction(func_data* fd) {
+		fmvecarr<NamingData> ndarr;
+		ndarr.NULLState();
+		ndarr.Init(8, false, true);
+
+		code_sen* blocksen = nullptr;
+		for (int i = 0; i < csarr->size(); ++i) {
+			code_sen* cs = csarr->at(i);
+			if (csarr->at(i)->ck == codeKind::ck_addFunction) {
+				sen* code = get_sen_from_codesen(cs);
+				int loc = code->size() - 1;
+				sen* inner_params = wbss.oc_search_inv(code, loc, "(", ")");
+				int nameloc = loc - inner_params->size();
+				inner_params->release();
+				if (fd->name == code->at(nameloc).data.str) {
+					blocksen = csarr->at(i + 1);
+					break;
+				}
+				code->release();
+			}
+		}
+
+		if (blocksen != nullptr) {
+			fmvecarr<NamingData> sndarr = GetLocalVariableListInBlock(blocksen, 0);
+			for (int k = 0; k < sndarr.size(); ++k) {
+				ndarr.push_back(sndarr.at(k));
+			}
+			sndarr.release();
+		}
+
+		return ndarr;
+	}
 };
 
 
@@ -8424,6 +8519,12 @@ class ICB_Context{
 	uint64_t _la = 0; // left address
 	int changeHash = 0;
 
+	//debug member variables
+	bool isBreaking = false;
+	int stopnum = -1;
+	int stop_callstack = -1;
+	bool isDbg = false;
+
     ICB_Context(){}
     ~ICB_Context(){}
 
@@ -8481,6 +8582,10 @@ class ICB_Context{
 		bpivot = 0;
 		inherit_limit = 0;
 		changeHash = icb->changeHash;
+
+		isBreaking = false;
+		stopnum = -1;
+		isDbg = false;
 
 		icl << "finish.";
     }
@@ -8596,17 +8701,17 @@ class ICB_Context{
 fmvecarr<ICB_Context *> icbarr;
 int icbindex_cxt = 0;
 
-bool isBreaking = false;
-int stopnum = 1985;
-bool isDbg = true;
+//bool isBreaking = false; //cxt.isBreaking
+//int stopnum = 1985; // cxt.stopnum
+//bool isDbg = true; // icb.isDbg
 
 int code_control(fmvecarr<ICB_Context *> *icbarr)
 {
 	static int stack = 0;
 
-	if(isBreaking == false){
+	/*if(isBreaking == false){
 		return 1;
-	}
+	}*/
 
 	for (int i = 0; i < icbarr->size(); ++i)
 	{
@@ -8757,10 +8862,12 @@ CONTEXT_SWITCH:
 		icbarr[n]->Release();
 		icbarr[n]->SetICB(tempicb, maxmembyte);
 		icbarr[n]->Push_InheritData(inheritlimit, inherit_data);
+		fm->_Delete(inherit_data, icbarr[n]->inherit_limit);
 		//icbarr[n]->ExeState = true;
 	}
 
 	icb = icbarr[n];
+
 	_la = icb->_la;
 	_as = icb->_as;
 	_bs = icb->_bs;
@@ -8796,10 +8903,6 @@ CONTEXT_SWITCH:
 	lfsps = reinterpret_cast<ushort**>(lfsp);
 	lfspi = reinterpret_cast<uint**>(lfsp);
 
-	if ((int)(icb->pc - codemem) == stopnum) {
-		isBreaking = isDbg;
-		cout << "Debug BreakPoint Check!" << endl;
-	}
 	goto INST_SWITCH;
 
 PROGRAMQUIT:
@@ -9040,19 +9143,23 @@ INST_SWITCH:
 	}
 	*/
 
-	if (exed_num >= execodenum)
+	if (exed_num >= execodenum || icb->isBreaking)
 	{
 		icb->_la = _la;
 		icb->apivot = apivot;
 		icb->bpivot = bpivot;
-
 		++n;
 		goto CONTEXT_SWITCH;
 	}
 
-	if ((int)(icb->pc - codemem) == stopnum) {
-		isBreaking = isDbg;
-		cout << "Debug BreakPoint Check!" << endl;
+	if (icb->isDbg && ((int)(icb->pc - codemem) == icb->stopnum && (icb->call_stack.size() == icb->stop_callstack || icb->stop_callstack <= 0))) {
+		icb->isBreaking = true;
+		icb->_la = _la;
+		icb->apivot = apivot;
+		icb->bpivot = bpivot;
+		++n;
+		goto CONTEXT_SWITCH;
+		//cout << "Debug BreakPoint Check!" << endl;
 	}
 
 	++exed_num;

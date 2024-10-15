@@ -1,8 +1,6 @@
 //Parameters
 pObject this;
 uchar bechanged = 0;
-uchar beDbg = 0;
-#param end
 
 int main(){
 	//Init
@@ -11,12 +9,11 @@ int main(){
 	float PI = 3.141592;
 
 	//ChangeLoop
+	pSprite basicspr = 0;
+	prbuffer basicBuff = 0;
 	while(true){
 		// Write Code Here
-		pSprite basicspr = 0;
 		ChangeSpr(&basicspr, _pSprite(0), 0);
-
-		prbuffer basicBuff = 0;
 		ChangeRBuf(&basicBuff, _prbuffer(false), 0);
 		gcolor basic_color = _gcolor(255, 255, 255, 255);
 
@@ -32,10 +29,12 @@ int main(){
 		
 		//Finish Change
 		Release(0);
+		/*
 		bechanged = 0;
 		while(bechanged == 0){
 			int nocode = 0;
 		}
+		*/
 	}
 	
 	//All Heap Release
