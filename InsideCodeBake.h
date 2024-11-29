@@ -8716,10 +8716,10 @@ int code_control(fmvecarr<ICB_Context *> *icbarr)
 	for (int i = 0; i < icbarr->size(); ++i)
 	{
 		//cout << "thread[ " << i << " ] next instruction" << endl;
-		icbarr->at(i)->dbg_pc();
-		icbarr->at(i)->dbg_stack();
-		icbarr->at(i)->dbg_data();
-		icbarr->at(i)->dbg_registers();
+		//icbarr->at(i)->dbg_pc();
+		//icbarr->at(i)->dbg_stack();
+		//icbarr->at(i)->dbg_data();
+		//icbarr->at(i)->dbg_registers();
 	}
 
 	char c = 1;

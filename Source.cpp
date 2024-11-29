@@ -509,6 +509,14 @@ void ICB_Editor::Render() {
 
 				wchar_t funcstr[1024] = {};
 
+				for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
+					// render global Variables
+					NamingData* nd = ecs->icb->globalVariables.at(i);
+					byte8* vptr = &ecs->datamem.at(nd->add_address);
+					stackp = RenderVariableState(*nd, stackp, additionalTabLoc, vptr, -1);
+					stackp.y -= ymargin/2.0f;
+				}
+
 				for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
 					//select function of call_stack context.
 					si64 m = 1 << 30;
@@ -1049,6 +1057,14 @@ void ICB_Editor::Event(DX_Event evt) {
 						byte8* sps = ecs->mem + ecs->max_mem_byte - 1;
 
 						wchar_t funcstr[128] = {};
+
+						for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
+							// render global Variables
+							NamingData* nd = ecs->icb->globalVariables.at(i);
+							byte8* vptr = &ecs->datamem.at(nd->add_address);
+							stackp = EventVariableState(*nd, stackp, additionalTabLoc, vptr, -1, mpos);
+							stackp.y -= ymargin / 2.0f;
+						}
 
 						for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
 							//select function of call_stack context.
@@ -5640,33 +5656,33 @@ HRESULT InitDevice()
 			false);
 	}
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, true);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddTextBlocks, false);
 
 	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanStructTypes, false);
 
 	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_AddStructTypes, false);
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanCodes, true);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_ScanCodes, false);
 
 	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_GlobalMemoryInit, false);
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, true);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes, false);
 	{
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, true);
-		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, true);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__add_var, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__set_var, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__if__sen, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__while__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__block__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__addfunc, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__usefunc, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__return_, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__struct__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__break__, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__continue, false);
+		InsideCode_Bake::SetICLFlag(ICL_FLAG::BakeCode_CompileCodes__adsetvar, false);
 	}
 
-	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, true);
+	InsideCode_Bake::SetICLFlag(ICL_FLAG::Create_New_ICB_Context, false);
 
 	InsideCode_Bake::StaticInit();
 

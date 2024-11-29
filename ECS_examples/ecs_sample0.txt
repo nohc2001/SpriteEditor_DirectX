@@ -29,12 +29,11 @@ int main(){
 		
 		//Finish Change
 		Release(0);
-		/*
+
 		bechanged = 0;
 		while(bechanged == 0){
 			int nocode = 0;
 		}
-		*/
 	}
 	
 	//All Heap Release
