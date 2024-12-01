@@ -77,6 +77,17 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
 END
 
+IDD_TEXTDATA_DIALOG DIALOGEX 0, 0, 309, 218
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TextInputDialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "save",IDOK,199,197,50,14
+    PUSHBUTTON      "cancel",IDCANCEL,252,197,50,14
+    LTEXT           "Input Text : ",IDC_STATIC,17,17,42,8
+    EDITTEXT        IDC_EDIT1,17,30,275,120,ES_AUTOHSCROLL
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -103,6 +114,29 @@ BEGIN
     "\0"
 END
 
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+    END
+
+    IDD_TEXTDATA_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 211
+    END
+END
 #endif    // APSTUDIO_INVOKED
 
 

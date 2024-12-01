@@ -8,6 +8,7 @@
 #include <windows.h>
 //#include <xnamath.h>
 #include "resource.h"
+#include <tchar.h>
 //#include "ShapeObject.h"
 #include "dbg.h"
 #include "Sprite.h"
@@ -85,10 +86,6 @@ char sprloadmod = 'n';
 
 LayerManager layerManager;
 // n none, d : sprdir_start, l : loadfromfile_start, D : sprdir_end, L : loadfromfile_end
-
-fmvecarr < ICB_Extension* >basic_ext;
-fmvecarr < ICB_Context* >ecss;
-float exerate = 0.01f;
 
 wchar_t* GetFileNameFromDlg_open() {
 	OPENFILENAME OFN;
@@ -284,11 +281,9 @@ void exTool_PostRenderManager::Render() {
 	}
 }
 
-exTool_PostRenderManager* ToolPostRender = nullptr;
-exTool_EventSystem* ToolEventSystem = nullptr;
-bool using_tool;
-
-ICB_Extension* ICB_exTool;
+fmvecarr < ICB_Extension* >basic_ext;
+fmvecarr < ICB_Context* >ecss;
+float exerate = 0.01f;
 
 void ICB_Editor::StaticInit() {
 	PlayBtnSpr = (Sprite*)fm->_New(sizeof(Sprite), true);
@@ -320,164 +315,370 @@ how to : add ui
 1. write ui render code in render function.
 2. copy code that calculate ui rect data and paste to event code. and then add featrues.
 */
-void ICB_Editor::Render() {
-	if (befold == false) {
-		draw_string(currentErrorMsg.c_str(), currentErrorMsg.size(), codeline_height * 0.25f, shp::rect4f(loc.fx, loc.ly + 20, loc.lx, loc.ly + 100), DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
 
-		shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
-		shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
-		float fontsiz = codeline_height * 0.25f;
-		DX11Color col;
-		if (focus) {
-			col = DX11Color(0.0f, 0.0f, 0.0f, 1.0f);
+void ICB_Editor::RenderEditorWindow() {
+	draw_string(currentErrorMsg.c_str(), currentErrorMsg.size(), codeline_height * 0.25f, shp::rect4f(loc.fx, loc.ly + 20, loc.lx, loc.ly + 100), DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
+	DX11Color col;
+	if (focus) {
+		col = DX11Color(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	else {
+		col = DX11Color(0.0f, 0.0f, 0.0f, 0.5f);
+	}
+	drawline(shp::vec2f(loc.fx, loc.getCenter().y), shp::vec2f(loc.lx, loc.getCenter().y), loc.geth(), col, 0.3f);
+	drawline(shp::vec2f(loc.lx - 30.0f, loc.fy + 15.0f), shp::vec2f(loc.lx, loc.fy + 15.0f), 30, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+	drawline(shp::vec2f(additionalTabLoc.fx, additionalTabLoc.getCenter().y), shp::vec2f(additionalTabLoc.lx, additionalTabLoc.getCenter().y), additionalTabLoc.geth(), DX11Color(0.8f, 1.0f, 1.0f, 0.9f), 0.25f);
+	shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
+	drawline(shp::vec2f(headerRT.fx, headerRT.getCenter().y), shp::vec2f(headerRT.lx, headerRT.getCenter().y), headerRT.geth(), DX11Color(0.0f, 0.5f, 1.0f, 1.0f), 0.1f);
+
+	shp::rect4f sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
+	drawline(shp::vec2f(sliderLoc.fx, sliderLoc.ly - SliderRate * sliderLoc.geth()), shp::vec2f(sliderLoc.lx, 2 * tipmov * life[5] + sliderLoc.ly - SliderRate * sliderLoc.geth()), 20, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+}
+
+void ICB_Editor::RenderCodeLines() {
+	float fontsiz = codeline_height * 0.25f;
+	shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
+	shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
+	shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
+	lineloc.fy += codeline_height; lineloc.ly += codeline_height;
+	shp::rect4f linenumloc = lineloc;
+	lineloc.fx += codeline_height * linenumwid;
+
+	int max_express = loc.geth() / codeline_height;
+	int maxx = max_express + codeLines.size() * SliderRate;
+	if (maxx > codeLines.size()) maxx = codeLines.size();
+	int i = codeLines.size() * SliderRate;
+	int smax = max_express;
+	int subi = 0;
+	int maxX = (int)(1.5f * codeEditorLoc.getw() / codeline_height);
+
+	int exeline = 0;
+	if (SelectedCXT >= 0 && SelectedCXT < ecss.size()) {
+		ICB_Context* ecs = ecss.at(SelectedCXT);
+		int present_codeline = ecs->pc - ecs->codemem;
+		code_sen* exe_cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
+		if (exe_cs != nullptr) {
+			exeline = exe_cs->codeline;
 		}
-		else {
-			col = DX11Color(0.0f, 0.0f, 0.0f, 0.5f);
-		}
-		drawline(shp::vec2f(loc.fx, loc.getCenter().y), shp::vec2f(loc.lx, loc.getCenter().y), loc.geth(), col, 0.3f);
-		drawline(shp::vec2f(loc.lx - 30.0f, loc.fy + 15.0f), shp::vec2f(loc.lx, loc.fy + 15.0f), 30, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-		drawline(shp::vec2f(additionalTabLoc.fx, additionalTabLoc.getCenter().y), shp::vec2f(additionalTabLoc.lx, additionalTabLoc.getCenter().y), additionalTabLoc.geth(), DX11Color(0.8f, 1.0f, 1.0f, 0.9f), 0.25f);
-		shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
-		drawline(shp::vec2f(headerRT.fx, headerRT.getCenter().y), shp::vec2f(headerRT.lx, headerRT.getCenter().y), headerRT.geth(), DX11Color(0.0f, 0.5f, 1.0f, 1.0f), 0.1f);
+	}
 
-		shp::rect4f sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
-		drawline(shp::vec2f(sliderLoc.fx, sliderLoc.ly - SliderRate * sliderLoc.geth()), shp::vec2f(sliderLoc.lx, 2 * tipmov * life[5] + sliderLoc.ly - SliderRate * sliderLoc.geth()), 20, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+	for (int s = 0; s < smax; ++s) {
+		if (i >= codeLines.size()) break;
 
-		shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
-		lineloc.fy += codeline_height; lineloc.ly += codeline_height;
-		shp::rect4f linenumloc = lineloc;
-		lineloc.fx += codeline_height * linenumwid;
-
-		int max_express = loc.geth() / codeline_height;
-		int maxx = max_express + codeLines.size() * SliderRate;
-		if (maxx > codeLines.size()) maxx = codeLines.size();
-		int i = codeLines.size() * SliderRate;
-		int smax = max_express;
-		int subi = 0;
-		int maxX = (int)(1.5f * codeEditorLoc.getw() / codeline_height);
-
-		int exeline = 0;
-		if (SelectedCXT >= 0 && SelectedCXT < ecss.size()) {
-			ICB_Context* ecs = ecss.at(SelectedCXT);
-			int present_codeline = ecs->pc - ecs->codemem;
-			code_sen* exe_cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
-			if (exe_cs != nullptr) {
-				exeline = exe_cs->codeline;
+		// render breakpoint & present execution icon
+		shp::rect4f breakIrect = shp::rect4f(codeEditorLoc.fx, lineloc.fy, codeEditorLoc.fx + lineloc.geth(), lineloc.ly);
+		for (int i0 = 0; i0 < CodeLineBreakPoints.size(); ++i0) {
+			if (CodeLineBreakPoints.at(i0) == i) {
+				drawline(shp::vec2f(breakIrect.fx, breakIrect.getCenter().y), shp::vec2f(breakIrect.lx, breakIrect.getCenter().y), breakIrect.geth(), DX11Color(1.0f, 0.0f, 0.0f, 1.0f), 0.2f);
 			}
 		}
 
-		for (int s = 0; s < smax; ++s) {
-			if (i >= codeLines.size()) break;
+		if (exeline == i) {
+			PresentExecutionSpr->render(GetBasicModelCB(shp::vec3f(lineloc.fx - 20.0f, lineloc.getCenter().y, 0.09f), shp::vec3f(0, 0, 0), shp::vec3f(0.05f, 0.05f, 1.0f), DX11Color(1.0f, 1.0f, 1.0f, 1.0f)));
+		}
 
-			// render breakpoint & present execution icon
-			shp::rect4f breakIrect = shp::rect4f(codeEditorLoc.fx, lineloc.fy, codeEditorLoc.fx + lineloc.geth(), lineloc.ly);
-			for (int i0 = 0; i0 < CodeLineBreakPoints.size(); ++i0) {
-				if (CodeLineBreakPoints.at(i0) == i) {
-					drawline(shp::vec2f(breakIrect.fx, breakIrect.getCenter().y), shp::vec2f(breakIrect.lx, breakIrect.getCenter().y), breakIrect.geth(), DX11Color(1.0f, 0.0f, 0.0f, 1.0f), 0.2f);
-				}
-			}
+		wstring wstr;
+		wstr = to_wstring(i);
+		draw_string((wchar_t*)wstr.c_str(), wstr.size(), fontsiz, linenumloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+		shp::vec2i lim = GetExpendLimit(i);
+		bool hold = false;
+		if (lim.x >= 0) {
+			if (GetExpend(i) == 0) {
+				hold = true;
+				shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+				drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
+				shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+				drawline(shp::vec2f(minrect.fx + 1, minrect.getCenter().y), shp::vec2f(minrect.lx - 1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
+				shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
+				drawline(shp::vec2f(plsrect.fx + 1, plsrect.getCenter().y), shp::vec2f(plsrect.lx - 1, plsrect.getCenter().y), plsrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
 
-			if (exeline == i) {
-				PresentExecutionSpr->render(GetBasicModelCB(shp::vec3f(lineloc.fx - 20.0f, lineloc.getCenter().y, 0.09f), shp::vec3f(0, 0, 0), shp::vec3f(0.05f, 0.05f, 1.0f), DX11Color(1.0f, 1.0f, 1.0f, 1.0f)));
-			}
-
-			wstring wstr;
-			wstr = to_wstring(i);
-			draw_string((wchar_t*)wstr.c_str(), wstr.size(), fontsiz, linenumloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-			shp::vec2i lim = GetExpendLimit(i);
-			bool hold = false;
-			if (lim.x >= 0) {
-				if (GetExpend(i) == 0) {
-					hold = true;
-					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
-					drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
-					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
-					drawline(shp::vec2f(minrect.fx + 1, minrect.getCenter().y), shp::vec2f(minrect.lx - 1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
-					shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
-					drawline(shp::vec2f(plsrect.fx + 1, plsrect.getCenter().y), shp::vec2f(plsrect.lx - 1, plsrect.getCenter().y), plsrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
-
-					fmlwstr wfstr;
-					wfstr.NULLState();
-					wfstr.Init(codeLines[i].size(), false);
-					int stack = 0;
-					for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
-						if (codeLines[i][k] == L'{') {
-							stack += 1;
-							wfstr.push_back(L'{');
-							wfstr.push_back(L'.');
-							wfstr.push_back(L'.');
-							wfstr.push_back(L'.');
-							wfstr.push_back(L'}');
-						}
-						else if (codeLines[i][k] == L'}') {
-							stack -= 1;
-						}
-
-						if (stack == 0) {
-							wfstr.push_back(codeLines[i][k]);
-						}
-					}
-					if (wfstr.up > maxX) wfstr.up = maxX;
-
-					if (i != selected_codeline) {
-						drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
-						draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-					}
-					else {
-						drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
-						shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), fontsiz, lineloc, selected_charindex);
-						draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-						drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx + 3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
-					}
-
-					wfstr.release();
-
-					i = lim.x;
-					subi = lim.y + 1;
-					if (codeLines[i].size() <= subi) {
-						i += 1;
-						subi = 0;
-					}
-				}
-				else {
-					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
-					drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
-					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
-					drawline(shp::vec2f(minrect.fx + 1, minrect.getCenter().y), shp::vec2f(minrect.lx - 1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
-				}
-			}
-			if (hold == false) {
-				fm->_tempPushLayer();
 				fmlwstr wfstr;
 				wfstr.NULLState();
-				wfstr.Init(codeLines[i].size(), false, false);
+				wfstr.Init(codeLines[i].size(), false);
+				int stack = 0;
 				for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
-					wfstr.push_back(codeLines[i][k]);
+					if (codeLines[i][k] == L'{') {
+						stack += 1;
+						wfstr.push_back(L'{');
+						wfstr.push_back(L'.');
+						wfstr.push_back(L'.');
+						wfstr.push_back(L'.');
+						wfstr.push_back(L'}');
+					}
+					else if (codeLines[i][k] == L'}') {
+						stack -= 1;
+					}
+
+					if (stack == 0) {
+						wfstr.push_back(codeLines[i][k]);
+					}
 				}
 				if (wfstr.up > maxX) wfstr.up = maxX;
 
-				if (i != selected_codeline) {
-					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
-					draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-				}
-				else {
+				if (i == selected_codeline) {
 					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
 					shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), fontsiz, lineloc, selected_charindex);
 					draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 					drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx + 3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
+				
 				}
+				else {
+					drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+					draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				}
+				wfstr.release();
 
-				fm->_tempPopLayer();
-
-				++i;
-				subi = 0;
+				i = lim.x;
+				subi = lim.y + 1;
+				if (codeLines[i].size() <= subi) {
+					i += 1;
+					subi = 0;
+				}
 			}
-			lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
-			linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+			else {
+				shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+				drawline(shp::vec2f(expbtn.fx, expbtn.getCenter().y), shp::vec2f(expbtn.lx, expbtn.getCenter().y), expbtn.geth(), DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.05f);
+				shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+				drawline(shp::vec2f(minrect.fx + 1, minrect.getCenter().y), shp::vec2f(minrect.lx - 1, minrect.getCenter().y), minrect.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.02f);
+			}
+		}
+		if (hold == false) {
+			fm->_tempPushLayer();
+			fmlwstr wfstr;
+			wfstr.NULLState();
+			wfstr.Init(codeLines[i].size(), false, false);
+			for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
+				wfstr.push_back(codeLines[i][k]);
+			}
+			if (wfstr.up > maxX) wfstr.up = maxX;
+
+			if (i != selected_codeline) {
+				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.4f, 0.5f), 0.2f);
+				draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+			}
+			else {
+				drawline(shp::vec2f(lineloc.fx, lineloc.getCenter().y), shp::vec2f(lineloc.lx, lineloc.getCenter().y), codeline_height * 0.9f, DX11Color(0.2f, 0.2f, 0.7f, life[7]), 0.2f);
+				shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), fontsiz, lineloc, selected_charindex);
+				draw_string(wfstr.Arr, wfstr.size(), fontsiz, lineloc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+				drawline(shp::vec2f(textcursorLoc.fx, textcursorLoc.ly), shp::vec2f(textcursorLoc.fx + 3, textcursorLoc.ly), codeline_height, DX11Color(0.8f, 0.8f, 0.7f, life[8]), 0.05f);
+			}
+
+			fm->_tempPopLayer();
+
+			++i;
+			subi = 0;
+		}
+		lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
+		linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+	}
+}
+
+void ICB_Editor::RenderDbgToolBox() {
+	shp::rect4f dbgtoolbox_rt = shp::rect4f(codeEditorLoc.lx - 200, headerRT.fy - 50, codeEditorLoc.lx, headerRT.fy);
+	drawline(shp::vec2f(dbgtoolbox_rt.fx, dbgtoolbox_rt.getCenter().y), shp::vec2f(dbgtoolbox_rt.lx, dbgtoolbox_rt.getCenter().y), dbgtoolbox_rt.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
+
+	ICB_Context* ecs = ecss.at(SelectedCXT);
+	DX11Color BreakC;
+	DX11Color PlayC;
+	if (ecs->isBreaking) {
+		BreakC = DX11Color(1.0f, 1.0f, 1.0f, 1.0f);
+		PlayC = DX11Color(1.0f, 1.0f, 1.0f, 0.3f);
+	}
+	else {
+		BreakC = DX11Color(1.0f, 1.0f, 1.0f, 0.3f);
+		PlayC = DX11Color(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	PlayBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 20, dbgtoolbox_rt.ly - 20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
+	PauseBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 60, dbgtoolbox_rt.ly - 20, 0.1f), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), PlayC));
+	StopBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 100, dbgtoolbox_rt.ly - 20, 0.1f), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), PlayC));
+	StepBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 140, dbgtoolbox_rt.ly - 20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
+	StepInBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 180, dbgtoolbox_rt.ly - 20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
+}
+
+void ICB_Editor::RenderExtentionTools() {
+	float tipf = 2 * tipmov * life[3];
+	shp::rect4f foldbtnLoc = shp::rect4f(loc.fx + tipf, loc.ly - 2 * codeline_height + tipf, loc.fx - tipf + 2 * codeline_height, loc.ly - tipf);
+	drawline(shp::vec2f(foldbtnLoc.fx, foldbtnLoc.getCenter().y), shp::vec2f(foldbtnLoc.lx, foldbtnLoc.getCenter().y), foldbtnLoc.geth(), DX11Color(1.0f, 1.0f, 0.5f, 1.0f), 0.05f);
+
+	wchar_t tempstr4[16] = L"compass";
+	shp::rect4f CompasbtnLoc;
+	if (tools[0].ecs->ExeState) {
+		CompasbtnLoc = shp::rect4f(additionalTabLoc.lx + life[5] * 4 * codeline_height, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
+	}
+	else {
+		CompasbtnLoc = shp::rect4f(additionalTabLoc.lx, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
+	}
+	drawline(shp::vec2f(CompasbtnLoc.fx, CompasbtnLoc.getCenter().y), shp::vec2f(CompasbtnLoc.lx, CompasbtnLoc.getCenter().y), CompasbtnLoc.geth(), DX11Color(0.1f, 0.5f, 0.5f, 1.0f), 0.2f);
+	draw_string(tempstr4, 7, codeline_height * 0.25f, CompasbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+}
+
+void ICB_Editor::RenderContextList() {
+	// context page render
+	shp::rect4f varbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
+	fmvecarr<ui32> cxtindexes; // list context using this icb.
+	cxtindexes.NULLState();
+	cxtindexes.Init(8, false, false);
+	for (int i = 0; i < ecss.size(); ++i) {
+		if (ecss.at(i)->icb == SelectedICB) {
+			cxtindexes.push_back(i);
+		}
+	}
+
+	for (int i = 0; i < cxtindexes.size(); ++i) {
+		shp::rect4f cxtrt = shp::rect4f(additionalTabLoc.fx + atmargin, varbtnLoc.fy - atmargin - (i + 1) * 30, additionalTabLoc.lx - 2 * atmargin, varbtnLoc.fy - atmargin - i * 30);
+		DX11Color BackColor = DX11Color(0.0f, 0.0f, 0.5f, 1.0f);
+		if (SelectedCXT == cxtindexes.at(i)) {
+			BackColor = DX11Color(0.0f, 0.0f, 0.5f, 1.0f);
+		}
+		else {
+			BackColor = DX11Color(0.0f, 0.0f, 0.0f, 0.5f);
+		}
+		drawline(shp::vec2f(cxtrt.fx, cxtrt.getCenter().y), shp::vec2f(cxtrt.lx, cxtrt.getCenter().y), cxtrt.geth(), BackColor, 0.15f);
+		wstring wstr = to_wstring(i);
+		wstr.insert(wstr.begin(), L't');
+		wstr.insert(wstr.begin(), L'x');
+		wstr.insert(wstr.begin(), L'c');
+		draw_string((wchar_t*)wstr.c_str(), 9, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+
+		ICB_Context* cxt = ecss.at(cxtindexes.at(i));
+		if (cxt->isDbg) {
+			// debug mod
+			cxtrt.fx = cxtrt.lx - atmargin * 2;
+			draw_string(L"dbg", 3, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
+		}
+		else {
+			// execute mod
+			cxtrt.fx = cxtrt.lx - atmargin * 2;
+			draw_string(L"exe", 3, atmargin * 0.3f, cxtrt, DX11Color(0.25, 1.0f, 0.8f, 1.0f), 0.1f);
 		}
 
+		if (cxt->isBreaking) {
+			//stoping
+			cxtrt.fx = cxtrt.fx - atmargin * 6;
+			draw_string(L"breaking", 8, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
+		}
+		else {
+			//playing
+			float tipf = 2 * tipmov * life[4];
+			cxtrt.fx = cxtrt.fx - atmargin * 6;
+			cxtrt.fy += tipf;
+			draw_string(L"playing", 7, atmargin * 0.3f, cxtrt, DX11Color(0.25, 1.0f, 0.8f, 1.0f), 0.1f);
+		}
+	}
+
+	cxtindexes.release();
+}
+
+void ICB_Editor::RenderFuntionList() {
+	// function page render
+	shp::rect4f varbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
+	if (SelectedCXT >= 0) {
+		constexpr float ymargin = 30;
+		shp::vec2f stackp = shp::vec2f(additionalTabLoc.fx, varbtnLoc.fy);
+		shp::rect4f stackloc = shp::rect4f(additionalTabLoc.fx, varbtnLoc.fy - ymargin, additionalTabLoc.lx, varbtnLoc.fy);
+		float height = varbtnLoc.fy - additionalTabLoc.fy;
+
+		ICB_Context* ecs = ecss.at(SelectedCXT);
+
+		byte8* sps = ecs->mem + ecs->max_mem_byte - 1;
+
+		wchar_t funcstr[1024] = {};
+
+		for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
+			// render global Variables
+			NamingData* nd = ecs->icb->globalVariables.at(i);
+			byte8* vptr = &ecs->datamem.at(nd->add_address);
+			stackp = RenderVariableState(*nd, stackp, additionalTabLoc, vptr, -1);
+			stackp.y -= ymargin / 2.0f;
+		}
+
+		for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
+			//select function of call_stack context.
+			si64 m = 1 << 30;
+			func_data* fd = nullptr;
+
+			for (int k = 0; k < ecs->icb->functions.size(); ++k) {
+				si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->call_stack.at(k);
+				if (m > d) {
+					m = d;
+					fd = ecs->icb->functions.at(k);
+				}
+			}
+
+			int up = 0;
+			if (fd != nullptr) {
+				for (int k = 0; k < fd->name.size(); ++k) {
+					funcstr[k] = (wchar_t)fd->name[k];
+					up += 1;
+				}
+				funcstr[up] = L'('; up += 1;
+				for (int k = 0; k < fd->param_data.size(); ++k) {
+					for (int u = 0; u < fd->param_data[k].td->name.size(); ++u) {
+						funcstr[up] = (wchar_t)fd->param_data[k].td->name[u]; up += 1;
+					}
+					funcstr[up] = L' '; up += 1;
+					int fdp_len = strlen(fd->param_data[k].name);
+					for (int u = 0; u < fdp_len; ++u) {
+						funcstr[up] = (wchar_t)fd->param_data[k].name[u]; up += 1;
+					}
+					if (fd->param_data.size() - 1 > k) {
+						funcstr[up] = L','; up += 1;
+					}
+				}
+				funcstr[up] = L')'; up += 1;
+				funcstr[up] = 0;
+			}
+
+			draw_string(funcstr, up, fontsiz, shp::rect4f(stackp.x, stackp.y - ymargin, stackp.x, stackp.y), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.1f);
+			stackp.y -= ymargin;
+
+			if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
+				fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
+
+				for (int i = 0; i < ndarr.size(); ++i) {
+					//render variable table object
+					NamingData nd = ndarr.at(i);
+					byte8* vptr = sps - nd.add_address - nd.td->typesiz;
+					stackp = RenderVariableState(nd, stackp, additionalTabLoc, vptr, -1);
+					stackp.y -= ymargin;
+				}
+
+				ndarr.release();
+			}
+		}
+
+		si64 m = 1 << 30;
+		func_data* fd = nullptr;
+
+		for (int k = 0; k < ecs->icb->functions.size(); ++k) {
+			si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->pc;
+			if (m > d) {
+				m = d;
+				fd = ecs->icb->functions.at(k);
+			}
+		}
+
+		fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
+		//present context function stack render
+		for (int i = 0; i < fd->param_data.size(); ++i) {
+			//render variable table object
+			NamingData nd = ndarr.at(i);
+			byte8* vptr = sps - nd.add_address - nd.td->typesiz;
+			stackp = RenderVariableState(nd, stackp, additionalTabLoc, vptr, -1);
+			stackp.y -= ymargin;
+		}
+		ndarr.release();
+	}
+
+}
+
+void ICB_Editor::Render() {
+	RenderMetaDataUpdate();
+	if (befold == false) {
+		RenderEditorWindow();
+		RenderCodeLines();
+
 		//right info page render
-		float atmargin = additionalTabLoc.getw() / 16.0f;
 		wchar_t tempstr0[16] = L"function";
 		wchar_t tempstr1[16] = L"contexts";
 		wchar_t tempstr2[16] = L"import";
@@ -496,198 +697,18 @@ void ICB_Editor::Render() {
 		draw_string(tempstr3, 7, atmargin * 0.5f, compilebtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
 
 		if (showVarmod) {
-			// function page render
-			if (SelectedCXT >= 0) {
-				constexpr float ymargin = 30;
-				shp::vec2f stackp = shp::vec2f(additionalTabLoc.fx, varbtnLoc.fy);
-				shp::rect4f stackloc = shp::rect4f(additionalTabLoc.fx, varbtnLoc.fy - ymargin, additionalTabLoc.lx, varbtnLoc.fy);
-				float height = varbtnLoc.fy - additionalTabLoc.fy;
-
-				ICB_Context* ecs = ecss.at(SelectedCXT);
-
-				byte8* sps = ecs->mem + ecs->max_mem_byte-1;
-
-				wchar_t funcstr[1024] = {};
-
-				for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
-					// render global Variables
-					NamingData* nd = ecs->icb->globalVariables.at(i);
-					byte8* vptr = &ecs->datamem.at(nd->add_address);
-					stackp = RenderVariableState(*nd, stackp, additionalTabLoc, vptr, -1);
-					stackp.y -= ymargin/2.0f;
-				}
-
-				for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
-					//select function of call_stack context.
-					si64 m = 1 << 30;
-					func_data* fd = nullptr;
-
-					for (int k = 0; k < ecs->icb->functions.size(); ++k) {
-						si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->call_stack.at(k);
-						if (m > d) {
-							m = d;
-							fd = ecs->icb->functions.at(k);
-						}
-					}
-
-					int up = 0;
-					if (fd != nullptr) {
-						for (int k = 0; k < fd->name.size(); ++k) {
-							funcstr[k] = (wchar_t)fd->name[k];
-							up += 1;
-						}
-						funcstr[up] = L'('; up += 1;
-						for (int k = 0; k < fd->param_data.size(); ++k) {
-							for (int u = 0; u < fd->param_data[k].td->name.size(); ++u) {
-								funcstr[up] = (wchar_t)fd->param_data[k].td->name[u]; up += 1;
-							}
-							funcstr[up] = L' '; up += 1;
-							int fdp_len = strlen(fd->param_data[k].name);
-							for (int u = 0; u < fdp_len; ++u) {
-								funcstr[up] = (wchar_t)fd->param_data[k].name[u]; up += 1;
-							}
-							if (fd->param_data.size() - 1 > k) {
-								funcstr[up] = L','; up += 1;
-							}
-						}
-						funcstr[up] = L')'; up += 1;
-						funcstr[up] = 0;
-					}
-
-					draw_string(funcstr, up, fontsiz, shp::rect4f(stackp.x, stackp.y - ymargin, stackp.x, stackp.y), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.1f);
-					stackp.y -= ymargin;
-
-					if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
-						fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
-
-						for (int i = 0; i < ndarr.size(); ++i) {
-							//render variable table object
-							NamingData nd = ndarr.at(i);
-							byte8* vptr = sps - nd.add_address - nd.td->typesiz;
-							stackp = RenderVariableState(nd, stackp, additionalTabLoc, vptr, -1);
-							stackp.y -= ymargin;
-						}
-
-						ndarr.release();
-					}
-				}
-
-				si64 m = 1 << 30;
-				func_data* fd = nullptr;
-
-				for (int k = 0; k < ecs->icb->functions.size(); ++k) {
-					si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->pc;
-					if (m > d) {
-						m = d;
-						fd = ecs->icb->functions.at(k);
-					}
-				}
-
-				fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
-				//present context function stack render
-				for (int i = 0; i < fd->param_data.size(); ++i) {
-					//render variable table object
-					NamingData nd = ndarr.at(i);
-					byte8* vptr = sps - nd.add_address - nd.td->typesiz;
-					stackp = RenderVariableState(nd, stackp, additionalTabLoc, vptr, -1);
-					stackp.y -= ymargin;
-				}
-				ndarr.release();
-			}
+			RenderFuntionList();
 		}
 		else {
-			// context page render
-			fmvecarr<ui32> cxtindexes; // list context using this icb.
-			cxtindexes.NULLState();
-			cxtindexes.Init(8, false, false);
-			for (int i = 0; i < ecss.size(); ++i) {
-				if (ecss.at(i)->icb == SelectedICB) {
-					cxtindexes.push_back(i);
-				}
-			}
-
-			for (int i = 0; i < cxtindexes.size(); ++i) {
-				shp::rect4f cxtrt = shp::rect4f(additionalTabLoc.fx + atmargin, varbtnLoc.fy - atmargin - (i+1) * 30, additionalTabLoc.lx - 2 * atmargin, varbtnLoc.fy - atmargin - i * 30);
-				DX11Color BackColor = DX11Color(0.0f, 0.0f, 0.5f, 1.0f);
-				if (SelectedCXT == cxtindexes.at(i)) {
-					BackColor = DX11Color(0.0f, 0.0f, 0.5f, 1.0f);
-				}
-				else {
-					BackColor = DX11Color(0.0f, 0.0f, 0.0f, 0.5f);
-				}
-				drawline(shp::vec2f(cxtrt.fx, cxtrt.getCenter().y), shp::vec2f(cxtrt.lx, cxtrt.getCenter().y), cxtrt.geth(), BackColor, 0.15f);
-				wstring wstr = to_wstring(i);
-				wstr.insert(wstr.begin(), L't');
-				wstr.insert(wstr.begin(), L'x');
-				wstr.insert(wstr.begin(), L'c');
-				draw_string((wchar_t*)wstr.c_str(), 9, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
-
-				ICB_Context* cxt = ecss.at(cxtindexes.at(i));
-				if (cxt->isDbg) {
-					// debug mod
-					cxtrt.fx = cxtrt.lx - atmargin * 2;
-					draw_string(L"dbg", 3, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
-				}
-				else {
-					// execute mod
-					cxtrt.fx = cxtrt.lx - atmargin * 2;
-					draw_string(L"exe", 3, atmargin * 0.3f, cxtrt, DX11Color(0.25, 1.0f, 0.8f, 1.0f), 0.1f);
-				}
-
-				if (cxt->isBreaking) {
-					//stoping
-					cxtrt.fx = cxtrt.fx - atmargin * 6;
-					draw_string(L"breaking", 8, atmargin * 0.3f, cxtrt, DX11Color(1.0f, 0.5f, 0.5f, 1.0f), 0.1f);
-				}
-				else {
-					//playing
-					float tipf = 2 * tipmov * life[4];
-					cxtrt.fx = cxtrt.fx - atmargin * 6;
-					cxtrt.fy += tipf;
-					draw_string(L"playing", 7, atmargin * 0.3f, cxtrt, DX11Color(0.25, 1.0f, 0.8f, 1.0f), 0.1f);
-				}
-			}
-
-			cxtindexes.release();
+			RenderContextList();
 		}
 
 		//debuging tool box
 		if ((SelectedCXT >= 0 && ecss.size() > SelectedCXT) && ecss.at(SelectedCXT)->isDbg) {
-			shp::rect4f dbgtoolbox_rt = shp::rect4f(codeEditorLoc.lx - 200, headerRT.fy - 50, codeEditorLoc.lx, headerRT.fy);
-			drawline(shp::vec2f(dbgtoolbox_rt.fx, dbgtoolbox_rt.getCenter().y), shp::vec2f(dbgtoolbox_rt.lx, dbgtoolbox_rt.getCenter().y), dbgtoolbox_rt.geth(), DX11Color(0.0f, 0.0f, 0.0f, 1.0f), 0.15f);
-			
-			ICB_Context* ecs = ecss.at(SelectedCXT);
-			DX11Color BreakC;
-			DX11Color PlayC;
-			if (ecs->isBreaking) {
-				BreakC = DX11Color(1.0f, 1.0f, 1.0f, 1.0f);
-				PlayC = DX11Color(1.0f, 1.0f, 1.0f, 0.3f);
-			}
-			else {
-				BreakC = DX11Color(1.0f, 1.0f, 1.0f, 0.3f);
-				PlayC = DX11Color(1.0f, 1.0f, 1.0f, 1.0f);
-			}
-			PlayBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx+20, dbgtoolbox_rt.ly-20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
-			PauseBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 60, dbgtoolbox_rt.ly - 20, 0.1f), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), PlayC));
-			StopBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 100, dbgtoolbox_rt.ly - 20, 0.1f), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), PlayC));
-			StepBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 140, dbgtoolbox_rt.ly - 20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
-			StepInBtnSpr->render(GetBasicModelCB(shp::vec3f(dbgtoolbox_rt.fx + 180, dbgtoolbox_rt.ly - 20, 0), shp::vec3f(0, 0, 0), shp::vec3f(0.1f, 0.1f, 0.1f), BreakC));
+			RenderDbgToolBox();
 		}
 
-		float tipf = 2 * tipmov * life[3];
-		shp::rect4f foldbtnLoc = shp::rect4f(loc.fx + tipf, loc.ly - 2 * codeline_height + tipf, loc.fx - tipf + 2 * codeline_height, loc.ly - tipf);
-		drawline(shp::vec2f(foldbtnLoc.fx, foldbtnLoc.getCenter().y), shp::vec2f(foldbtnLoc.lx, foldbtnLoc.getCenter().y), foldbtnLoc.geth(), DX11Color(1.0f, 1.0f, 0.5f, 1.0f), 0.05f);
-
-		wchar_t tempstr4[16] = L"compass";
-		shp::rect4f CompasbtnLoc;
-		if (tools[0].ecs->ExeState) {
-			CompasbtnLoc = shp::rect4f(additionalTabLoc.lx + life[5] * 4 * codeline_height, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
-		}
-		else {
-			CompasbtnLoc = shp::rect4f(additionalTabLoc.lx, additionalTabLoc.ly - 2 * codeline_height, additionalTabLoc.lx + 4 * codeline_height, additionalTabLoc.ly);
-		}
-		drawline(shp::vec2f(CompasbtnLoc.fx, CompasbtnLoc.getCenter().y), shp::vec2f(CompasbtnLoc.lx, CompasbtnLoc.getCenter().y), CompasbtnLoc.geth(), DX11Color(0.1f, 0.5f, 0.5f, 1.0f), 0.2f);
-		draw_string(tempstr4, 7, codeline_height * 0.25f, CompasbtnLoc, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f);
+		RenderExtentionTools();
 	}
 	else {
 		float tipf = 2 * tipmov * life[3];
@@ -697,70 +718,12 @@ void ICB_Editor::Render() {
 	}
 }
 
-void ICB_Editor::Init(shp::rect4f _loc, InsideCode_Bake* sicb)
-{
-	visible = true;
-	loc = _loc;
-	SelectedICB = sicb;
-	codeLines.NULLState();
-	codeLines.Init(8, false, true);
-	for (int i = 0; i < 8; ++i) {
-		codeLines.push_back(fmlwstr());
-		codeLines[i].NULLState();
-		codeLines[i].Init(16, false);
-	}
-
-	codeLine_expend.NULLState();
-	codeLine_expend.Init(8, false, true);
-	for (int i = 0; i < 8; ++i) {
-		codeLine_expend[i] = false;
-	}
-	selected_codeline = 0;
-	selected_charindex = 0;
-	codeline_height = 17.0f;
-	linemargin = 1.2f;
-	linenumwid = 3.0f;
-
-	headerRate = 2.0f;
-	CodeEditorRate = 0.75f;
-	SliderWidRate = 1.0f;
-	stackT = 0;
-	tipmov = 5.0f;
-	BeShift = false;
-	CapsLock = false;
-	isMoving = false;
-	SliderRate = 0; // to 1.0f
-	showVarmod = true;
-	inCtrl = false;
-	Xofffset = 0;
-	blockstack = 0;
-
-	currentErrorMsg.NULLState();
-	currentErrorMsg.Init(8, false);
-
-	funcjmp_stack.NULLState();
-	funcjmp_stack.Init(8, false, true);
-
-	focus = false;
-	isExpend = false;
-	movOffset = shp::rect4f(0, 0, 0, 0);
-	showVarmod = true;
-	object_position = shp::vec2f(0, 0);
-	befold = false;
-
-	tools.NULLState();
-	tools.Init(8, false);
+void ICB_Editor::basicToolInit() {
 	ICBE_ToolData icbt;
 	icbt.name = (char*)fm->_New(8, true);
 	strcpy_s(icbt.name, 8, "compass");
 	icbt.len = 8;
 	icbt.ecs = nullptr;
-
-	CodeLineBreakPoints.NULLState();
-	CodeLineBreakPoints.Init(8, false, true);
-
-	expend_variabletableaddress.NULLState();
-	expend_variabletableaddress.Init(8, false, true);
 
 	InsideCode_Bake* compassicb;
 	if (icmap.find("ECS_examples/tool_Compas.txt") == icmap.end()) {
@@ -794,10 +757,9 @@ void ICB_Editor::Init(shp::rect4f _loc, InsideCode_Bake* sicb)
 	ecss.push_back(icbt.ecs);
 	using_tool = false;
 	SelectedCXT = -1;
-
-	for (int i = 0; i < 10; ++i) {
-		life[i] = 0;
-	}
+}
+void ICB_Editor::icb_Init(InsideCode_Bake* sicb) {
+	SelectedICB = sicb;
 
 	if (SelectedICB != nullptr) {
 		if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
@@ -849,108 +811,7 @@ void ICB_Editor::Init(shp::rect4f _loc, InsideCode_Bake* sicb)
 
 	}
 }
-
-void ICB_Editor::Init(shp::rect4f _loc, const char* filename) {
-	visible = true;
-	loc = _loc;
-	SelectedICB = nullptr;
-	codeLines.NULLState();
-	codeLines.Init(8, false, true);
-	for (int i = 0; i < 8; ++i) {
-		codeLines.push_back(fmlwstr());
-		codeLines[i].NULLState();
-		codeLines[i].Init(16, false);
-	}
-
-	codeLine_expend.NULLState();
-	codeLine_expend.Init(8, false, true);
-	for (int i = 0; i < 8; ++i) {
-		codeLine_expend[i] = false;
-	}
-	selected_codeline = 0;
-	selected_charindex = 0;
-	codeline_height = 17.0f;
-	linemargin = 1.2f;
-	linenumwid = 3.0f;
-
-	headerRate = 2.0f;
-	CodeEditorRate = 0.75f;
-	SliderWidRate = 1.0f;
-	stackT = 0;
-	tipmov = 5.0f;
-	BeShift = false;
-	CapsLock = false;
-	isMoving = false;
-	SliderRate = 0; // to 1.0f
-	showVarmod = true;
-	inCtrl = false;
-	Xofffset = 0;
-	blockstack = 0;
-
-	currentErrorMsg.NULLState();
-	currentErrorMsg.Init(8, false);
-
-	funcjmp_stack.NULLState();
-	funcjmp_stack.Init(8, false, true);
-
-	focus = false;
-	isExpend = false;
-	movOffset = shp::rect4f(0, 0, 0, 0);
-	showVarmod = true;
-	object_position = shp::vec2f(0, 0);
-	befold = false;
-
-	tools.NULLState();
-	tools.Init(8, false);
-	ICBE_ToolData icbt;
-	icbt.name = (char*)fm->_New(8, true);
-	strcpy_s(icbt.name, 8, "compass");
-	icbt.len = 8;
-	icbt.ecs = nullptr;
-
-	CodeLineBreakPoints.NULLState();
-	CodeLineBreakPoints.Init(8, false, true);
-
-	expend_variabletableaddress.NULLState();
-	expend_variabletableaddress.Init(8, false, true);
-
-	InsideCode_Bake* compassicb;
-	if (icmap.find("ECS_examples/tool_Compas.txt") == icmap.end()) {
-		compassicb = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-		compassicb->HashInit();
-		compassicb->init(40960);
-		compassicb->extension.push_back(basic_ext[0]);
-
-		compassicb->extension.push_back(basic_ext[1]);
-		compassicb->extension.push_back(ICB_exTool);
-		compassicb->bake_code("ECS_examples/tool_Compas.txt");
-
-		if (compassicb->curErrMsg[0] != 0) {
-			currentErrorMsg.up = 0;
-			for (int i = 0; i < compassicb->curErrMsg.size(); ++i) {
-				currentErrorMsg.push_back((wchar_t)compassicb->curErrMsg[i]);
-			}
-		}
-	}
-	else {
-		compassicb = icmap["\ECS_examples\tool_Compass.txt"];
-	}
-
-	icbt.ecs = (ICB_Context*)fm->_New(sizeof(ICB_Context), true);
-	icbt.ecs->SetICB(compassicb, 40960);
-	tools.push_back(icbt);
-	icbt.ecs->ExeState = false;
-	*reinterpret_cast<exTool_EventSystem**>(&icbt.ecs->datamem[0]) = ToolEventSystem;
-	*reinterpret_cast<exTool_PostRenderManager**>(&icbt.ecs->datamem[8]) = ToolPostRender;
-	*reinterpret_cast<ICB_Editor**>(&icbt.ecs->datamem[16]) = this;
-	ecss.push_back(icbt.ecs);
-	using_tool = false;
-	SelectedCXT = -1;
-
-	for (int i = 0; i < 10; ++i) {
-		life[i] = 0;
-	}
-
+void ICB_Editor::icb_Init(const char* filename) {
 	if (icmap.find((char*)filename) == icmap.end()) {
 		ReadCodelines_FromFile(filename);
 		SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
@@ -979,15 +840,958 @@ void ICB_Editor::Init(shp::rect4f _loc, const char* filename) {
 	}
 }
 
-void ICB_Editor::Event(DX_Event evt) {
-	if (befold == false) {
-		//normal work
-		float slideDelta = 1.2f / codeLines.size();
+void ICB_Editor::Init(shp::rect4f _loc, InsideCode_Bake* sicb)
+{
+	basicInit(_loc);
+	basicToolInit();
+	icb_Init(sicb);
+}
+
+void ICB_Editor::Init(shp::rect4f _loc, const char* filename) {
+	basicInit(_loc);
+	basicToolInit();
+	icb_Init(filename);
+}
+
+void ICB_Editor::CodelineEvent(DX_Event evt) {
+	float slideDelta = 1.2f / codeLines.size();
+	int max_express = loc.geth() / codeline_height;
+	int minx = codeLines.size() * SliderRate;
+	int maxx = max_express + codeLines.size() * SliderRate;
+	if (maxx > codeLines.size()) maxx = codeLines.size();
+	// input charactor in codeline event
+	if (evt.message == WM_KEYDOWN) {
+		wchar_t key = evt.wParam;
+		bool bcharinput = 41 <= key && key <= 126;
+		bool alphainput = 'A' <= key && key <= 'Z';
+		bool numinput = '0' <= key && key <= '9';
+		int casedelta = 'a' - 'A';
+		if (bcharinput) {
+			if (alphainput) {
+				if (BeShift == false && CapsLock == false) {
+					key += casedelta;
+				}
+				else if (CapsLock && BeShift) {
+					key += casedelta;
+				}
+			}
+			if (numinput && BeShift) {
+				switch (key) {
+				case L'0':
+					key = L')';
+					break;
+				case L'1':
+					key = L'!';
+					break;
+				case L'2':
+					key = L'@';
+					break;
+				case L'3':
+					key = L'#';
+					break;
+				case L'4':
+					key = L'$';
+					break;
+				case L'5':
+					key = L'%';
+					break;
+				case L'6':
+					key = L'^';
+					break;
+				case L'7':
+					key = L'&';
+					break;
+				case L'8':
+					key = L'*';
+					break;
+				case L'9':
+					key = L'(';
+					break;
+				}
+			}
+			codeLines[selected_codeline].insert(selected_charindex, key);
+			codeLines[selected_codeline].c_str();
+			++selected_charindex;
+		}
+		else if (((186 <= key && key <= 192) || key == 219) || (221 <= key && key <= 222)) {
+			if (BeShift) {
+				switch (key) {
+				case 186:
+					key = L':';
+					break;
+				case 187:
+					key = L'+';
+					break;
+				case 188:
+					key = L'<';
+					break;
+				case 189:
+					key = L'_';
+					break;
+				case 190:
+					key = L'>';
+					break;
+				case 191:
+					key = L'?';
+					break;
+				case 192:
+					key = L'~';
+					break;
+				case 219:
+					key = L'{';
+					break;
+				case 221:
+					key = L'}';
+					break;
+				case 222:
+					key = L'\"';
+					break;
+				}
+			}
+			else {
+				switch (key) {
+				case 186:
+					key = L';';
+					break;
+				case 187:
+					key = L'=';
+					break;
+				case 188:
+					key = L',';
+					break;
+				case 189:
+					key = L'-';
+					break;
+				case 190:
+					key = L'.';
+					break;
+				case 191:
+					key = L'/';
+					break;
+				case 192:
+					key = L'`';
+					break;
+				case 219:
+					key = L'[';
+					break;
+				case 221:
+					key = L']';
+					break;
+				case 222:
+					key = L'\'';
+					break;
+				}
+			}
+
+			codeLines[selected_codeline].insert(selected_charindex, key);
+			WhenCharInsert(selected_codeline, selected_charindex, key);
+			codeLines[selected_codeline].c_str();
+			++selected_charindex;
+		}
+		else if (evt.wParam == VK_BACK) {
+			if (codeLines[selected_codeline].size() >= selected_charindex - 1) {
+				--selected_charindex;
+				BeforeCharErase(selected_codeline, selected_charindex);
+				codeLines[selected_codeline].erase(selected_charindex);
+			}
+			else if (selected_charindex == 0 && selected_codeline != 0) {
+				fmlwstr temp;
+				temp.NULLState();
+				temp.Init(8, false);
+				temp = codeLines.at(selected_codeline);
+				codeLines.at(selected_codeline).release();
+				codeLines.erase(selected_codeline);
+				WhenLineErase(selected_codeline);
+				--selected_codeline;
+				selected_charindex = codeLines.at(selected_codeline).size();
+				for (int i = 0; i < temp.size(); ++i) {
+					codeLines.at(selected_codeline).push_back(temp[i]);
+				}
+				temp.release();
+			}
+		}
+		else if (evt.wParam == VK_SPACE) {
+			codeLines[selected_codeline].insert(selected_charindex, L' ');
+			codeLines[selected_codeline].c_str();
+			++selected_charindex;
+		}
+		else if (evt.wParam == VK_RETURN) {
+			//enter
+			codeLines.insert(selected_codeline + 1, fmlwstr());
+			WhenLineInsert(selected_codeline + 1);
+			selected_codeline += 1;
+			codeLines[selected_codeline].NULLState();
+			codeLines[selected_codeline].Init(8, false);
+			selected_charindex = 0;
+		}
+		else if (evt.wParam == VK_SHIFT) {
+			BeShift = true;
+		}
+		else if (evt.wParam == VK_CAPITAL) {
+			CapsLock != CapsLock;
+		}
+		else if (evt.wParam == VK_UP) {
+			if (selected_codeline != 0) {
+				shp::vec2i lim = GetExpendStart(selected_codeline - 1);
+				if (lim.x >= 0 && GetExpend(lim.x) == 0) {
+					selected_codeline = lim.x;
+					selected_charindex = lim.y - 1;
+					if (selected_charindex < 0) {
+						selected_charindex = 0;
+					}
+				}
+				else {
+					unsigned int prevCL = selected_codeline;
+					--selected_codeline;
+					selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[prevCL].size() + 1));
+				}
+			}
+		}
+		else if (evt.wParam == VK_DOWN) {
+			if (codeLines.size() > selected_codeline + 1) {
+				shp::vec2i lim = GetExpendLimit(selected_codeline);
+				if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
+					selected_codeline = lim.x;
+					selected_charindex = lim.y + 1;
+					if (selected_charindex >= codeLines[selected_codeline].size()) {
+						selected_codeline += 1;
+						selected_charindex = 0;
+					}
+				}
+				else {
+					++selected_codeline;
+					selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[selected_codeline - 1].size() + 1));
+				}
+			}
+		}
+		else if (evt.wParam == VK_LEFT) {
+			if (inCtrl) {
+				Xofffset -= 5;
+				if (Xofffset < 0) Xofffset = 0;
+			}
+			else {
+				if (selected_charindex != 0) {
+					selected_charindex -= 1;
+				}
+				else {
+					if (selected_codeline != 0) {
+						shp::vec2i lim = GetExpendStart(selected_codeline - 1);
+						if (lim.x >= 0 && GetExpend(lim.x) == 0) {
+							selected_codeline = lim.x;
+							selected_charindex = lim.y - 1;
+							if (selected_charindex < 0) {
+								selected_charindex = 0;
+							}
+						}
+						else {
+							selected_codeline -= 1;
+							selected_charindex = codeLines[selected_codeline].size();
+						}
+					}
+				}
+			}
+		}
+		else if (evt.wParam == VK_RIGHT) {
+			if (inCtrl) {
+				Xofffset += 5;
+			}
+			else {
+				if (selected_charindex < codeLines[selected_codeline].size()) {
+					selected_charindex += 1;
+				}
+				else {
+					if (selected_codeline < codeLines.size()) {
+						shp::vec2i lim = GetExpendLimit(selected_codeline);
+						if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
+							selected_codeline = lim.x;
+							selected_charindex = lim.y + 1;
+							if (selected_charindex >= codeLines[selected_codeline].size()) {
+								selected_codeline += 1;
+								selected_charindex = 0;
+							}
+						}
+						else {
+							selected_codeline += 1;
+							selected_charindex = 0;
+						}
+					}
+				}
+			}
+		}
+		else if (key == 9) {
+			//TAB
+			codeLines[selected_codeline].insert(selected_charindex, L' ');
+			codeLines[selected_codeline].insert(selected_charindex, L' ');
+			codeLines[selected_codeline].c_str();
+			selected_charindex += 2;
+		}
+		else if (key == 17) {
+			inCtrl = true;
+		}
+
+		if (selected_codeline > maxx) {
+			SliderRate += slideDelta;
+		}
+
+		if (selected_codeline < minx) {
+			SliderRate -= slideDelta;
+		}
+	}
+	else if (evt.message == WM_KEYUP) {
+		if (evt.wParam == VK_SHIFT) {
+			BeShift = false;
+		}
+		else if (evt.wParam == 17) {
+			inCtrl = false;
+		}
+	}
+
+	if (evt.message == WM_LBUTTONDOWN) {
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		//codeline slider event
+		shp::rect4f sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
+		if (shp::bPointInRectRange(mpos, sliderLoc)) {
+			float x = sliderLoc.ly - mpos.y;
+			x = x / sliderLoc.geth();
+			SliderRate = x;
+		}
+
+		//codelines breakpoint add / delete events
+		shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
+		float fontsiz = codeline_height * 0.25f;
+		shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
+		sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
+		shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
+		lineloc.fy += codeline_height; lineloc.ly += codeline_height;
+		shp::rect4f linenumloc = lineloc;
+		lineloc.fx += codeline_height * linenumwid;
+
 		int max_express = loc.geth() / codeline_height;
-		int minx = codeLines.size() * SliderRate;
 		int maxx = max_express + codeLines.size() * SliderRate;
 		if (maxx > codeLines.size()) maxx = codeLines.size();
+		int i = codeLines.size() * SliderRate;
+		int smax = max_express;
+		int subi = 0;
+		int maxX = (int)(1.5f * codeEditorLoc.getw() / codeline_height);
+		for (int s = 0; s < smax; ++s) {
+			if (i >= codeLines.size()) break;
 
+			shp::rect4f breakIrect = shp::rect4f(codeEditorLoc.fx, lineloc.fy, codeEditorLoc.fx + lineloc.geth(), lineloc.ly);
+			if (shp::bPointInRectRange(mpos, breakIrect)) {
+				bool bAdd = true;
+				for (int i0 = 0; i0 < CodeLineBreakPoints.size(); ++i0) {
+					if (CodeLineBreakPoints.at(i0) == i) {
+						CodeLineBreakPoints.erase(i0);
+						bAdd = false;
+						break;
+					}
+				}
+				if (bAdd) {
+					CodeLineBreakPoints.push_back(i);
+				}
+			}
+
+			wstring wstr;
+			wstr = to_wstring(i);
+			shp::vec2i lim = GetExpendLimit(i);
+			bool hold = false;
+			if (lim.x >= 0) {
+				if (GetExpend(i) == 0) {
+					hold = true;
+					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+					shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
+
+					i = lim.x;
+					subi = lim.y + 1;
+					if (codeLines[i].size() <= subi) {
+						i += 1;
+						subi = 0;
+					}
+				}
+				else {
+					shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+					shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
+				}
+			}
+			if (hold == false) {
+				fmlwstr wfstr;
+				wfstr.NULLState();
+				wfstr.Init(codeLines[i].size(), false);
+				for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
+					wfstr.push_back(codeLines[i][k]);
+				}
+				if (wfstr.up > maxX) wfstr.up = maxX;
+
+				if (i != selected_codeline) {
+				}
+				else {
+					shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), fontsiz, lineloc, selected_charindex);
+				}
+				wfstr.release();
+
+				++i;
+				subi = 0;
+			}
+			lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
+			linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+		}
+
+		//codeline expending event
+		lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
+		lineloc.fy += codeline_height; lineloc.ly += codeline_height;
+		linenumloc = lineloc;
+		lineloc.fx += codeline_height * linenumwid;
+		max_express = loc.geth() / codeline_height;
+		maxx = max_express + codeLines.size() * SliderRate;
+		if (maxx > codeLines.size()) maxx = codeLines.size();
+		i = codeLines.size() * SliderRate;
+		smax = max_express;
+		subi = 0;
+		for (int s = 0; s < smax; ++s) {
+			if (i >= codeLines.size()) break;
+			shp::vec2i lim = GetExpendLimit(i);
+			bool hold = false;
+			if (lim.x >= 0) {
+				shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
+				if (shp::bPointInRectRange(mpos, expbtn)) {
+					if (GetExpend(i) == 0) {
+						SetExpend(i, true);
+					}
+					else {
+						SetExpend(i, false);
+					}
+				}
+			}
+			if (hold == false) {
+				++i;
+			}
+			lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
+			linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+		}
+	}
+}
+void ICB_Editor::CompileBtnEvent(){
+	if (SelectedICB != nullptr) {
+		bool b = SelectedICB->curErrMsg[0] == 0;
+		SelectedICB->curErrMsg.up = 0;
+		SelectedICB->curErrMsg[0] = 0;
+		if (b) {
+			SelectedICB->Release();
+		}
+
+		SelectedICB->init(40960);
+
+		for (int i = 0; i < basic_ext.size(); ++i) {
+			SelectedICB->extension.push_back(basic_ext[i]);
+		}
+
+		SelectedICB->read_codeLines(&codeLines);
+		SelectedICB->create_codedata();
+		SelectedICB->compile_codes();
+	}
+	else {
+		SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+		SelectedICB->init(40960);
+		for (int i = 0; i < basic_ext.size(); ++i)
+		{
+			SelectedICB->extension.push_back(basic_ext[i]);
+		}
+
+		SelectedICB->read_codeLines(&codeLines);
+		SelectedICB->create_codedata();
+		SelectedICB->compile_codes();
+	}
+
+	bool success = false;
+	if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
+		currentErrorMsg.up = 0;
+		currentErrorMsg.Arr[0] = 0;
+		for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
+			currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
+		}
+	}
+	else {
+		currentErrorMsg.up = 0;
+		currentErrorMsg.Arr[0] = 0;
+		success = true;
+	}
+
+	//SelectedICB->curErrMsg.release();
+}
+void ICB_Editor::ImportBtnEvent(){
+	wchar_t* loadfiledir = GetFileNameFromDlg_open();
+	if (loadfiledir != nullptr) {
+		string filename = wstr_to_utf8(loadfiledir);
+		fm->_Delete((byte8*)loadfiledir, sizeof(wchar_t) * (wcslen(loadfiledir) + 1));
+		if (icmap.find((char*)filename.c_str()) == icmap.end())
+		{
+			SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
+			SelectedICB->init(40960);
+			for (int i = 0; i < basic_ext.size(); ++i)
+			{
+				SelectedICB->extension.push_back(basic_ext[i]);
+			}
+			//dbg << "bake" << endl;
+			SelectedICB->read_codes((char*)filename.c_str());
+			SelectedICB->create_codedata();
+			//SelectedICB->bake_code((char*)filename.c_str());
+
+			bool success = false;
+			if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
+				currentErrorMsg.up = 0;
+				currentErrorMsg.Arr[0] = 0;
+				for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
+					currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
+				}
+			}
+			else {
+				currentErrorMsg.up = 0;
+				currentErrorMsg.Arr[0] = 0;
+				success = true;
+			}
+
+			SelectedICB->curErrMsg.release();
+
+			//dbg << "s0" << endl;
+			if (success) {
+				icmap.insert(ICMAP::value_type((char*)filename.c_str(), SelectedICB));
+			}
+			else {
+				SelectedICB = nullptr;
+			}
+			//dbg << "s0" << endl;
+		}
+		else
+		{
+			SelectedICB = icmap[(char*)filename.c_str()];
+		}
+
+		if (SelectedICB == nullptr) {
+			CodeLinesClear();
+
+			PushNewCodeLine();
+			int ss = 0;
+
+			FILE* fp;
+			fopen_s(&fp, (char*)filename.c_str(), "rt");
+			if (fp)
+			{
+				int max = 0;
+				fseek(fp, 0, SEEK_END);
+				max = ftell(fp);
+				fclose(fp);
+
+				int stack = 0;
+				fopen_s(&fp, (char*)filename.c_str(), "rt");
+				int k = 0;
+				while (k < max)
+				{
+					char c;
+					c = fgetc(fp);
+					if (c == '\n') {
+						codeLines.push_back(fmlwstr());
+						ss += 1;
+						codeLines[ss].NULLState();
+						codeLines[ss].Init(8, false);
+						max -= 1;
+					}
+					else {
+						codeLines[ss].push_back((wchar_t)c);
+						WhenCharInsert(ss, codeLines.last().size() - 1, (wchar_t)c);
+					}
+					++k;
+				}
+			}
+
+			return;
+		}
+
+		//update datas
+		CodeLinesClear();
+
+		codeLine_expend.up = 0;
+
+		for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
+			code_sen* cs = SelectedICB->csarr->at(i);
+			if (cs->ck != codeKind::ck_blocks) {
+				codeLines.push_back(fmlwstr());
+				codeLines.last().NULLState();
+				codeLines.last().Init(8, false);
+				//codeLine_expend.push_back(false);
+				for (int k = 0; k < cs->maxlen; ++k) {
+					char* word = cs->sen[k];
+					int wlen = strlen(word);
+					for (int u = 0; u < wlen; ++u) {
+						codeLines.last().push_back((wchar_t)word[u]);
+						//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+					}
+					codeLines.last().push_back(L' ');
+					//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+				}
+
+				if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
+					codeLines.last().push_back(L';');
+					//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
+				}
+
+				codeLines.last().c_str();
+			}
+			else {
+				ImportBlockToCodeLine(cs);
+			}
+		}
+	}
+}
+void ICB_Editor::FunctionPageEvent(shp::rect4f funcbtnLoc, shp::vec2f mpos) {
+	// function page event
+	if (SelectedCXT >= 0) {
+		constexpr float ymargin = 30;
+		shp::vec2f stackp = shp::vec2f(additionalTabLoc.fx, funcbtnLoc.fy);
+		float height = funcbtnLoc.fy - additionalTabLoc.fy;
+
+		ICB_Context* ecs = ecss.at(SelectedCXT);
+
+		byte8* sps = ecs->mem + ecs->max_mem_byte - 1;
+
+		wchar_t funcstr[128] = {};
+
+		for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
+			// render global Variables
+			NamingData* nd = ecs->icb->globalVariables.at(i);
+			byte8* vptr = &ecs->datamem.at(nd->add_address);
+			stackp = EventVariableState(*nd, stackp, additionalTabLoc, vptr, -1, mpos);
+			stackp.y -= ymargin / 2.0f;
+		}
+
+		for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
+			//select function of call_stack context.
+			si64 m = 1 << 30;
+			func_data* fd = nullptr;
+
+			for (int k = 0; k < ecs->icb->functions.size(); ++k) {
+				si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->call_stack.at(k);
+				if (m > d) {
+					m = d;
+					fd = ecs->icb->functions.at(k);
+				}
+			}
+
+			shp::rect4f cloc = shp::rect4f(stackp.x, stackp.y - ymargin, additionalTabLoc.lx, stackp.y);
+			stackp.y -= ymargin;
+
+			if (shp::bPointInRectRange(mpos, cloc)) {
+				if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
+					ShrinkingVariableTable(ecs->call_stack.at(i));
+				}
+				else {
+					ExpendVariableTable(ecs->call_stack.at(i));
+				}
+			}
+
+			if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
+				fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
+
+				for (int i = 0; i < ndarr.size(); ++i) {
+					//render variable table object
+					NamingData nd = ndarr.at(i);
+					byte8* vptr = sps - nd.add_address - nd.td->typesiz;
+					stackp = EventVariableState(nd, stackp, additionalTabLoc, vptr, -1, mpos);
+					stackp.y -= ymargin;
+				}
+
+				ndarr.release();
+			}
+		}
+
+		si64 m = 1 << 30;
+		func_data* fd = nullptr;
+
+		for (int k = 0; k < ecs->icb->functions.size(); ++k) {
+			si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->pc;
+			if (m > d) {
+				m = d;
+				fd = ecs->icb->functions.at(k);
+			}
+		}
+
+		fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
+		//present context function stack render
+		for (int i = 0; i < fd->param_data.size(); ++i) {
+			//render variable table object
+			NamingData nd = ndarr.at(i);
+			byte8* vptr = sps - nd.add_address - nd.td->typesiz;
+			stackp = EventVariableState(nd, stackp, additionalTabLoc, vptr, -1, mpos);
+			stackp.y -= ymargin;
+		}
+		ndarr.release();
+	}
+}
+void ICB_Editor::ContextPageEvent(shp::rect4f funcbtnLoc, shp::vec2f mpos){
+	// context page event
+	fmvecarr<ui32> cxtindexes; // list context using this icb.
+	cxtindexes.NULLState();
+	cxtindexes.Init(8, false, false);
+	for (int i = 0; i < ecss.size(); ++i) {
+		if (ecss.at(i)->icb == SelectedICB) {
+			cxtindexes.push_back(i);
+		}
+	}
+
+	for (int i = 0; i < cxtindexes.size(); ++i) {
+		shp::rect4f cxtrt = shp::rect4f(additionalTabLoc.fx + atmargin, funcbtnLoc.fy - atmargin - (i + 1) * 30, additionalTabLoc.lx - 2 * atmargin, funcbtnLoc.fy - atmargin - i * 30);
+		if (shp::bPointInRectRange(mpos, cxtrt)) {
+			SelectedCXT = cxtindexes.at(i);
+		}
+
+		ICB_Context* cxt = ecss.at(cxtindexes.at(i));
+		cxtrt.fx = cxtrt.lx - atmargin * 2;
+		if (shp::bPointInRectRange(mpos, cxtrt)) {
+			if (cxt->isDbg) cxt->isDbg = false;
+			else cxt->isDbg = true;
+		}
+		cxtrt.lx = cxtrt.fx - 10;
+		cxtrt.fx = cxtrt.fx - atmargin * 6;
+		if (shp::bPointInRectRange(mpos, cxtrt)) {
+			if (cxt->isBreaking) {
+				cxt->isBreaking = false;
+				cxt->stop_callstack = -1;
+			}
+			else cxt->isBreaking = true;
+		}
+	}
+
+	cxtindexes.release();
+}
+void ICB_Editor::DbgToolBoxEvent(shp::vec2f mpos) {
+	shp::rect4f dbgtoolbox_rt = shp::rect4f(codeEditorLoc.lx - 200, headerRT.fy - 50, codeEditorLoc.lx, headerRT.fy);
+	float dbgtbw = dbgtoolbox_rt.getw() / 5;
+	shp::rect4f dbgtoolbox_playrt = shp::rect4f(dbgtoolbox_rt.fx, dbgtoolbox_rt.fy, dbgtoolbox_rt.fx + dbgtbw, dbgtoolbox_rt.ly);
+	shp::rect4f dbgtoolbox_pausert = shp::rect4f(dbgtoolbox_playrt.lx, dbgtoolbox_rt.fy, dbgtoolbox_playrt.lx + dbgtbw, dbgtoolbox_rt.ly);
+	shp::rect4f dbgtoolbox_Stoprt = shp::rect4f(dbgtoolbox_pausert.lx, dbgtoolbox_rt.fy, dbgtoolbox_pausert.lx + dbgtbw, dbgtoolbox_rt.ly);
+	shp::rect4f dbgtoolbox_steprt = shp::rect4f(dbgtoolbox_Stoprt.lx, dbgtoolbox_rt.fy, dbgtoolbox_Stoprt.lx + dbgtbw, dbgtoolbox_rt.ly);
+	shp::rect4f dbgtoolbox_stepinrt = shp::rect4f(dbgtoolbox_steprt.lx, dbgtoolbox_rt.fy, dbgtoolbox_steprt.lx + dbgtbw, dbgtoolbox_rt.ly);
+	ICB_Context* ecs = ecss.at(SelectedCXT);
+	DX11Color BreakC;
+	DX11Color PlayC;
+	if (ecs->isBreaking) {
+		if (shp::bPointInRectRange(mpos, dbgtoolbox_playrt)) {
+			//play btn
+			ecs->isBreaking = false;
+			ecs->stopnum = -1;
+			ecs->stop_callstack = -1;
+		}
+		else if (shp::bPointInRectRange(mpos, dbgtoolbox_steprt)) {
+			//step btn
+
+			int present_codeline = ecs->pc - ecs->codemem;
+			//find next code_sen
+			bool bejmp = false;
+			code_sen* cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
+			for (int i = present_codeline; i <= cs->end_line; ++i) {
+				//if
+				if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
+					int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
+					ecs->stopnum = nextstopnum;
+					ecs->stop_callstack = ecs->call_stack.size();
+					ecs->isBreaking = false;
+					bejmp = true;
+					break;
+				}
+				if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
+				{
+					return;
+				}
+				if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
+				{
+					uint strmax = 0;
+					instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+					for (int k = 0; k < id.param_num; ++k)
+					{
+						i += id.param_typesiz[k];
+					}
+					i += strmax + 1;
+				}
+				else {
+					instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+					for (int k = 0; k < id.param_num; ++k)
+					{
+						i += id.param_typesiz[k];
+					}
+				}
+			}
+			if (bejmp == false) {
+				int next_codeline = cs->end_line;
+			ICBE_EVENT_DBGTOOLBOX_STEP_GETNEXTCODELINE:
+				code_sen* ncs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, next_codeline);
+				if (ncs == cs || ncs == nullptr) {
+					next_codeline += 1;
+					goto ICBE_EVENT_DBGTOOLBOX_STEP_GETNEXTCODELINE;
+				}
+				else if (ncs != cs) {
+					for (int i = cs->end_line + 1; i <= ncs->end_line; ++i) {
+						//if
+						if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
+							int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
+							ecs->stopnum = nextstopnum;
+							ecs->stop_callstack = ecs->call_stack.size();
+							ecs->isBreaking = false;
+							bejmp = true;
+							break;
+						}
+						if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
+						{
+							return;
+						}
+						if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
+						{
+							uint strmax = 0;
+							instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+							for (int k = 0; k < id.param_num; ++k)
+							{
+								i += id.param_typesiz[k];
+							}
+							i += strmax + 1;
+						}
+						else {
+							instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+							for (int k = 0; k < id.param_num; ++k)
+							{
+								i += id.param_typesiz[k];
+							}
+						}
+					}
+				}
+				if (bejmp == false) {
+					ecs->stopnum = ncs->start_line;
+					ecs->stop_callstack = ecs->call_stack.size();
+					ecs->isBreaking = false;
+				}
+			}
+		}
+		else if (shp::bPointInRectRange(mpos, dbgtoolbox_stepinrt)) {
+
+			//step in btn
+			int present_codeline = ecs->pc - ecs->codemem;
+			//if present codesen is use function type, step in
+			code_sen* cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
+			bool bejmp = false;
+			// just find funcjmp inst in start ~ endline -> operand of funcjmp is stopnum
+			for (int i = present_codeline; i <= cs->end_line; ++i) {
+				//if
+				if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
+					int nextstopnum = *(unsigned int*)&ecs->mem[i + 1];
+					ecs->stopnum = nextstopnum;
+					ecs->stop_callstack = ecs->call_stack.size();
+					ecs->isBreaking = false;
+					bejmp = true;
+					break;
+				}
+				if (ecs->codemem[i] == (byte8)insttype::IT_FUNCJMP) {
+					int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
+					ecs->stopnum = nextstopnum;
+					ecs->stop_callstack = ecs->call_stack.size() + 1;
+					ecs->isBreaking = false;
+					bejmp = true;
+					break;
+				}
+				if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
+				{
+					return;
+				}
+				if (ecs->mem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
+				{
+					uint strmax = 0;
+					instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+					for (int k = 0; k < id.param_num; ++k)
+					{
+						i += id.param_typesiz[k];
+					}
+					i += strmax + 1;
+				}
+				else {
+					instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+					for (int k = 0; k < id.param_num; ++k)
+					{
+						i += id.param_typesiz[k];
+					}
+				}
+			}
+			//else step
+			//find next code_sen
+			if (bejmp == false) {
+				int next_codeline = cs->end_line;
+			ICBE_EVENT_DBGTOOLBOX_STEPIN_GETNEXTCODELINE:
+				code_sen* ncs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, next_codeline);
+				if (ncs == cs || ncs == nullptr) {
+					next_codeline += 1;
+					goto ICBE_EVENT_DBGTOOLBOX_STEPIN_GETNEXTCODELINE;
+				}
+				else if (ncs != cs) {
+					for (int i = cs->end_line + 1; i <= ncs->end_line; ++i) {
+						//if
+						if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
+							int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
+							ecs->stopnum = nextstopnum;
+							ecs->stop_callstack = ecs->call_stack.size();
+							ecs->isBreaking = false;
+							bejmp = true;
+							break;
+						}
+						if (ecs->codemem[i] == (byte8)insttype::IT_FUNCJMP) {
+							int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
+							ecs->stopnum = nextstopnum;
+							ecs->stop_callstack = ecs->call_stack.size() + 1;
+							ecs->isBreaking = false;
+							bejmp = true;
+							break;
+						}
+						if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
+						{
+							return;
+						}
+						if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
+						{
+							uint strmax = 0;
+							instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+							for (int k = 0; k < id.param_num; ++k)
+							{
+								i += id.param_typesiz[k];
+							}
+							i += strmax + 1;
+						}
+						else {
+							instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
+							for (int k = 0; k < id.param_num; ++k)
+							{
+								i += id.param_typesiz[k];
+							}
+						}
+					}
+				}
+				if (bejmp == false) {
+					ecs->stopnum = ncs->start_line;
+					ecs->stop_callstack = ecs->call_stack.size();
+					ecs->isBreaking = false;
+				}
+			}
+		}
+	}
+	else {
+		if (shp::bPointInRectRange(mpos, dbgtoolbox_pausert)) {
+			//pause btn
+			ecs->isBreaking = true;
+		}
+		else if (shp::bPointInRectRange(mpos, dbgtoolbox_Stoprt)) {
+			//stop btn
+			ecs->isBreaking = true;
+			ecs->isDbg = false;
+		}
+	}
+}
+
+void ICB_Editor::Event(DX_Event evt) {
+	if (befold == false) {
 		shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
 		if (evt.message == WM_LBUTTONDOWN) {
 			shp::vec2f mpos = GetMousePos(evt.lParam);
@@ -1024,641 +1828,7 @@ void ICB_Editor::Event(DX_Event evt) {
 			}
 
 			if (focus) {
-				if (shp::bPointInRectRange(mpos, sliderLoc)) {
-					float x = sliderLoc.ly - mpos.y;
-					x = x / sliderLoc.geth();
-					SliderRate = x;
-				}
-
-				float atmargin = additionalTabLoc.getw() / 16.0f;
-				shp::rect4f funcbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
-				shp::rect4f cxtbtnLoc = shp::rect4f(additionalTabLoc.fx + 9 * atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 15 * atmargin, additionalTabLoc.ly - 10);
-				shp::rect4f importbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 40);
-				shp::rect4f compilebtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy + 50, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 90);
-				shp::rect4f foldbtnLoc = shp::rect4f(loc.fx, loc.ly - 2 * codeline_height, loc.fx + 2 * codeline_height, loc.ly);
-
-				if (shp::bPointInRectRange(mpos, funcbtnLoc)) {
-					showVarmod = true;
-				}
-
-				if (shp::bPointInRectRange(mpos, cxtbtnLoc)) {
-					showVarmod = false;
-				}
-
-				if (showVarmod) {
-					// function page event
-					if (SelectedCXT >= 0) {
-						constexpr float ymargin = 30;
-						shp::vec2f stackp = shp::vec2f(additionalTabLoc.fx, funcbtnLoc.fy);
-						float height = funcbtnLoc.fy - additionalTabLoc.fy;
-
-						ICB_Context* ecs = ecss.at(SelectedCXT);
-
-						byte8* sps = ecs->mem + ecs->max_mem_byte - 1;
-
-						wchar_t funcstr[128] = {};
-
-						for (int i = 0; i < ecs->icb->globalVariables.size(); ++i) {
-							// render global Variables
-							NamingData* nd = ecs->icb->globalVariables.at(i);
-							byte8* vptr = &ecs->datamem.at(nd->add_address);
-							stackp = EventVariableState(*nd, stackp, additionalTabLoc, vptr, -1, mpos);
-							stackp.y -= ymargin / 2.0f;
-						}
-
-						for (int i = ecs->call_stack.size() - 1; i >= 0; --i) {
-							//select function of call_stack context.
-							si64 m = 1 << 30;
-							func_data* fd = nullptr;
-
-							for (int k = 0; k < ecs->icb->functions.size(); ++k) {
-								si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->call_stack.at(k);
-								if (m > d) {
-									m = d;
-									fd = ecs->icb->functions.at(k);
-								}
-							}
-
-							shp::rect4f cloc = shp::rect4f(stackp.x, stackp.y - ymargin, additionalTabLoc.lx, stackp.y);
-							stackp.y -= ymargin;
-							
-							if (shp::bPointInRectRange(mpos, cloc)) {
-								if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
-									ShrinkingVariableTable(ecs->call_stack.at(i));
-								}
-								else {
-									ExpendVariableTable(ecs->call_stack.at(i));
-								}
-							}
-
-							if (isVariableTableShowExpending(ecs->call_stack.at(i))) {
-								fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
-
-								for (int i = 0; i < ndarr.size(); ++i) {
-									//render variable table object
-									NamingData nd = ndarr.at(i);
-									byte8* vptr = sps - nd.add_address - nd.td->typesiz;
-									stackp = EventVariableState(nd, stackp, additionalTabLoc, vptr, -1, mpos);
-									stackp.y -= ymargin;
-								}
-
-								ndarr.release();
-							}
-						}
-
-						si64 m = 1 << 30;
-						func_data* fd = nullptr;
-
-						for (int k = 0; k < ecs->icb->functions.size(); ++k) {
-							si64 d = (si64)ecs->icb->functions.at(k)->start_pc - (si64)ecs->pc;
-							if (m > d) {
-								m = d;
-								fd = ecs->icb->functions.at(k);
-							}
-						}
-
-						fmvecarr<NamingData> ndarr = ecs->icb->GetLocalVariableListInFunction(fd);
-						//present context function stack render
-						for (int i = 0; i < fd->param_data.size(); ++i) {
-							//render variable table object
-							NamingData nd = ndarr.at(i);
-							byte8* vptr = sps - nd.add_address - nd.td->typesiz;
-							stackp = EventVariableState(nd, stackp, additionalTabLoc, vptr, -1, mpos);
-							stackp.y -= ymargin;
-						}
-						ndarr.release();
-					}
-				}
-				else {
-					// context page render
-					fmvecarr<ui32> cxtindexes; // list context using this icb.
-					cxtindexes.NULLState();
-					cxtindexes.Init(8, false, false);
-					for (int i = 0; i < ecss.size(); ++i) {
-						if (ecss.at(i)->icb == SelectedICB) {
-							cxtindexes.push_back(i);
-						}
-					}
-
-					for (int i = 0; i < cxtindexes.size(); ++i) {
-						shp::rect4f cxtrt = shp::rect4f(additionalTabLoc.fx + atmargin, funcbtnLoc.fy - atmargin - (i + 1) * 30, additionalTabLoc.lx - 2 * atmargin, funcbtnLoc.fy - atmargin - i * 30);
-						if (shp::bPointInRectRange(mpos, cxtrt)) {
-							SelectedCXT = cxtindexes.at(i);
-						}
-
-						ICB_Context* cxt = ecss.at(cxtindexes.at(i));
-						cxtrt.fx = cxtrt.lx - atmargin * 2;
-						if (shp::bPointInRectRange(mpos, cxtrt)) {
-							if (cxt->isDbg) cxt->isDbg = false;
-							else cxt->isDbg = true;
-						}
-						cxtrt.lx = cxtrt.fx - 10;
-						cxtrt.fx = cxtrt.fx - atmargin * 6;
-						if (shp::bPointInRectRange(mpos, cxtrt)) {
-							if (cxt->isBreaking) {
-								cxt->isBreaking = false;
-								cxt->stop_callstack = -1;
-							}
-							else cxt->isBreaking = true;
-						}
-					}
-
-					cxtindexes.release();
-				}
-
-				if (shp::bPointInRectRange(mpos, importbtnLoc)) {
-					wchar_t* loadfiledir = GetFileNameFromDlg_open();
-					if (loadfiledir != nullptr) {
-						string filename = wstr_to_utf8(loadfiledir);
-						fm->_Delete((byte8*)loadfiledir, sizeof(wchar_t) * (wcslen(loadfiledir) + 1));
-						if (icmap.find((char*)filename.c_str()) == icmap.end())
-						{
-							SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-							SelectedICB->init(40960);
-							for (int i = 0; i < basic_ext.size(); ++i)
-							{
-								SelectedICB->extension.push_back(basic_ext[i]);
-							}
-							//dbg << "bake" << endl;
-							SelectedICB->read_codes((char*)filename.c_str());
-							SelectedICB->create_codedata();
-							//SelectedICB->bake_code((char*)filename.c_str());
-
-							bool success = false;
-							if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
-								currentErrorMsg.up = 0;
-								currentErrorMsg.Arr[0] = 0;
-								for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
-									currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
-								}
-							}
-							else {
-								currentErrorMsg.up = 0;
-								currentErrorMsg.Arr[0] = 0;
-								success = true;
-							}
-
-							SelectedICB->curErrMsg.release();
-
-							//dbg << "s0" << endl;
-							if (success) {
-								icmap.insert(ICMAP::value_type((char*)filename.c_str(), SelectedICB));
-							}
-							else {
-								SelectedICB = nullptr;
-							}
-							//dbg << "s0" << endl;
-						}
-						else
-						{
-							SelectedICB = icmap[(char*)filename.c_str()];
-						}
-
-						if (SelectedICB == nullptr) {
-							CodeLinesClear();
-
-							PushNewCodeLine();
-							int ss = 0;
-
-							FILE* fp;
-							fopen_s(&fp, (char*)filename.c_str(), "rt");
-							if (fp)
-							{
-								int max = 0;
-								fseek(fp, 0, SEEK_END);
-								max = ftell(fp);
-								fclose(fp);
-
-								int stack = 0;
-								fopen_s(&fp, (char*)filename.c_str(), "rt");
-								int k = 0;
-								while (k < max)
-								{
-									char c;
-									c = fgetc(fp);
-									if (c == '\n') {
-										codeLines.push_back(fmlwstr());
-										ss += 1;
-										codeLines[ss].NULLState();
-										codeLines[ss].Init(8, false);
-										max -= 1;
-									}
-									else {
-										codeLines[ss].push_back((wchar_t)c);
-										WhenCharInsert(ss, codeLines.last().size() - 1, (wchar_t)c);
-									}
-									++k;
-								}
-							}
-
-							return;
-						}
-
-						//update datas
-						CodeLinesClear();
-
-						codeLine_expend.up = 0;
-
-						for (int i = 0; i < SelectedICB->csarr->size(); ++i) {
-							code_sen* cs = SelectedICB->csarr->at(i);
-							if (cs->ck != codeKind::ck_blocks) {
-								codeLines.push_back(fmlwstr());
-								codeLines.last().NULLState();
-								codeLines.last().Init(8, false);
-								//codeLine_expend.push_back(false);
-								for (int k = 0; k < cs->maxlen; ++k) {
-									char* word = cs->sen[k];
-									int wlen = strlen(word);
-									for (int u = 0; u < wlen; ++u) {
-										codeLines.last().push_back((wchar_t)word[u]);
-										//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
-									}
-									codeLines.last().push_back(L' ');
-									//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
-								}
-
-								if (cs->ck != codeKind::ck_addFunction && (cs->ck != codeKind::ck_while && cs->ck != codeKind::ck_if)) {
-									codeLines.last().push_back(L';');
-									//WhenCharInsert(codeLines.size() - 1, codeLines.last().size() - 1, word[u]);
-								}
-
-								codeLines.last().c_str();
-							}
-							else {
-								ImportBlockToCodeLine(cs);
-							}
-						}
-					}
-
-				}
-
-				if (shp::bPointInRectRange(mpos, compilebtnLoc)) {
-					if (SelectedICB != nullptr) {
-						bool b = SelectedICB->curErrMsg[0] == 0;
-						SelectedICB->curErrMsg.up = 0;
-						SelectedICB->curErrMsg[0] = 0;
-						if (b) {
-							SelectedICB->Release();
-						}
-
-						SelectedICB->init(40960);
-
-						for (int i = 0; i < basic_ext.size(); ++i) {
-							SelectedICB->extension.push_back(basic_ext[i]);
-						}
-
-						SelectedICB->read_codeLines(&codeLines);
-						SelectedICB->create_codedata();
-						SelectedICB->compile_codes();
-					}
-					else {
-						SelectedICB = (InsideCode_Bake*)fm->_New(sizeof(InsideCode_Bake), true);
-						SelectedICB->init(40960);
-						for (int i = 0; i < basic_ext.size(); ++i)
-						{
-							SelectedICB->extension.push_back(basic_ext[i]);
-						}
-
-						SelectedICB->read_codeLines(&codeLines);
-						SelectedICB->create_codedata();
-						SelectedICB->compile_codes();
-					}
-
-					bool success = false;
-					if (SelectedICB->curErrMsg.Arr != nullptr && SelectedICB->curErrMsg[0] != 0) {
-						currentErrorMsg.up = 0;
-						currentErrorMsg.Arr[0] = 0;
-						for (int i = 0; i < SelectedICB->curErrMsg.size(); ++i) {
-							currentErrorMsg.push_back((wchar_t)SelectedICB->curErrMsg[i]);
-						}
-					}
-					else {
-						currentErrorMsg.up = 0;
-						currentErrorMsg.Arr[0] = 0;
-						success = true;
-					}
-
-					//SelectedICB->curErrMsg.release();
-				}
-
-				if (shp::bPointInRectRange(mpos, foldbtnLoc)) {
-					//showVarmod = false;
-					//fold
-					befold = true;
-					shp::vec2f pc = *(shp::vec2f*)&mainpage->pfm.Data[(int)mainpm::present_center];
-					object_position = GetObjectPos(shp::vec2f(loc.fx, loc.ly)).getv2();
-				}
-
-				shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
-				//debuging tool box event
-				if ((SelectedCXT >= 0 && ecss.size() > SelectedCXT) && ecss.at(SelectedCXT)->isDbg) {
-					shp::rect4f dbgtoolbox_rt = shp::rect4f(codeEditorLoc.lx - 200, headerRT.fy - 50, codeEditorLoc.lx, headerRT.fy);
-					float dbgtbw = dbgtoolbox_rt.getw() / 5;
-					shp::rect4f dbgtoolbox_playrt = shp::rect4f(dbgtoolbox_rt.fx, dbgtoolbox_rt.fy, dbgtoolbox_rt.fx + dbgtbw, dbgtoolbox_rt.ly);
-					shp::rect4f dbgtoolbox_pausert = shp::rect4f(dbgtoolbox_playrt.lx, dbgtoolbox_rt.fy, dbgtoolbox_playrt.lx + dbgtbw, dbgtoolbox_rt.ly);
-					shp::rect4f dbgtoolbox_Stoprt = shp::rect4f(dbgtoolbox_pausert.lx, dbgtoolbox_rt.fy, dbgtoolbox_pausert.lx + dbgtbw, dbgtoolbox_rt.ly);
-					shp::rect4f dbgtoolbox_steprt = shp::rect4f(dbgtoolbox_Stoprt.lx, dbgtoolbox_rt.fy, dbgtoolbox_Stoprt.lx + dbgtbw, dbgtoolbox_rt.ly);
-					shp::rect4f dbgtoolbox_stepinrt = shp::rect4f(dbgtoolbox_steprt.lx, dbgtoolbox_rt.fy, dbgtoolbox_steprt.lx + dbgtbw, dbgtoolbox_rt.ly);
-					ICB_Context* ecs = ecss.at(SelectedCXT);
-					DX11Color BreakC;
-					DX11Color PlayC;
-					if (ecs->isBreaking) {
-						if (shp::bPointInRectRange(mpos, dbgtoolbox_playrt)) {
-							//play btn
-							ecs->isBreaking = false;
-							ecs->stopnum = -1;
-							ecs->stop_callstack = -1;
-						}
-						else if (shp::bPointInRectRange(mpos, dbgtoolbox_steprt)) {
-							//step btn
-
-							int present_codeline = ecs->pc - ecs->codemem;
-							//find next code_sen
-							bool bejmp = false;
-							code_sen* cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
-							for (int i = present_codeline; i <= cs->end_line; ++i) {
-								//if
-								if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
-									int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
-									ecs->stopnum = nextstopnum;
-									ecs->stop_callstack = ecs->call_stack.size();
-									ecs->isBreaking = false;
-									bejmp = true;
-									break;
-								}
-								if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
-								{
-									return;
-								}
-								if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
-								{
-									uint strmax = 0;
-									instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-									for (int k = 0; k < id.param_num; ++k)
-									{
-										i += id.param_typesiz[k];
-									}
-									i += strmax + 1;
-								}
-								else {
-									instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-									for (int k = 0; k < id.param_num; ++k)
-									{
-										i += id.param_typesiz[k];
-									}
-								}
-							}
-							if (bejmp == false) {
-								int next_codeline = cs->end_line;
-							ICBE_EVENT_DBGTOOLBOX_STEP_GETNEXTCODELINE:
-								code_sen* ncs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, next_codeline);
-								if (ncs == cs || ncs == nullptr) {
-									next_codeline += 1;
-									goto ICBE_EVENT_DBGTOOLBOX_STEP_GETNEXTCODELINE;
-								}
-								else if (ncs != cs) {
-									for (int i = cs->end_line+1; i <= ncs->end_line; ++i) {
-										//if
-										if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
-											int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
-											ecs->stopnum = nextstopnum;
-											ecs->stop_callstack = ecs->call_stack.size();
-											ecs->isBreaking = false;
-											bejmp = true;
-											break;
-										}
-										if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
-										{
-											return;
-										}
-										if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
-										{
-											uint strmax = 0;
-											instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-											for (int k = 0; k < id.param_num; ++k)
-											{
-												i += id.param_typesiz[k];
-											}
-											i += strmax + 1;
-										}
-										else {
-											instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-											for (int k = 0; k < id.param_num; ++k)
-											{
-												i += id.param_typesiz[k];
-											}
-										}
-									}
-								}
-								if (bejmp == false) {
-									ecs->stopnum = ncs->start_line;
-									ecs->stop_callstack = ecs->call_stack.size();
-									ecs->isBreaking = false;
-								}
-							}	
-						}
-						else if (shp::bPointInRectRange(mpos, dbgtoolbox_stepinrt)) {
-
-							//step in btn
-							int present_codeline = ecs->pc - ecs->codemem;
-							//if present codesen is use function type, step in
-							code_sen* cs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, present_codeline);
-							bool bejmp = false;
-							// just find funcjmp inst in start ~ endline -> operand of funcjmp is stopnum
-							for (int i = present_codeline; i <= cs->end_line; ++i) {
-								//if
-								if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
-									int nextstopnum = *(unsigned int*)&ecs->mem[i + 1];
-									ecs->stopnum = nextstopnum;
-									ecs->stop_callstack = ecs->call_stack.size();
-									ecs->isBreaking = false;
-									bejmp = true;
-									break;
-								}
-								if (ecs->codemem[i] == (byte8)insttype::IT_FUNCJMP) {
-									int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
-									ecs->stopnum = nextstopnum;
-									ecs->stop_callstack = ecs->call_stack.size() + 1;
-									ecs->isBreaking = false;
-									bejmp = true;
-									break;
-								}
-								if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
-								{
-									return;
-								}
-								if (ecs->mem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
-								{
-									uint strmax = 0;
-									instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-									for (int k = 0; k < id.param_num; ++k)
-									{
-										i += id.param_typesiz[k];
-									}
-									i += strmax + 1;
-								}
-								else {
-									instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-									for (int k = 0; k < id.param_num; ++k)
-									{
-										i += id.param_typesiz[k];
-									}
-								}
-							}
-							//else step
-							//find next code_sen
-							if (bejmp == false) {
-								int next_codeline = cs->end_line;
-							ICBE_EVENT_DBGTOOLBOX_STEPIN_GETNEXTCODELINE:
-								code_sen* ncs = ecs->icb->find_codesen_with_linenum(ecs->icb->csarr, next_codeline);
-								if (ncs == cs || ncs == nullptr) {
-									next_codeline += 1;
-									goto ICBE_EVENT_DBGTOOLBOX_STEPIN_GETNEXTCODELINE;
-								}
-								else if (ncs != cs) {
-									for (int i = cs->end_line + 1; i <= ncs->end_line; ++i) {
-										//if
-										if (ecs->codemem[i] == (byte8)insttype::IT_JMP) {
-											int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
-											ecs->stopnum = nextstopnum;
-											ecs->stop_callstack = ecs->call_stack.size();
-											ecs->isBreaking = false;
-											bejmp = true;
-											break;
-										}
-										if (ecs->codemem[i] == (byte8)insttype::IT_FUNCJMP) {
-											int nextstopnum = *(unsigned int*)&ecs->codemem[i + 1];
-											ecs->stopnum = nextstopnum;
-											ecs->stop_callstack = ecs->call_stack.size() + 1;
-											ecs->isBreaking = false;
-											bejmp = true;
-											break;
-										}
-										if (InsideCode_Bake::inst_meta[ecs->codemem[i]].param_num < 0)
-										{
-											return;
-										}
-										if (ecs->codemem[i] == (byte8)insttype::IT_SET_A_CONST_STRING || ecs->codemem[i] == (byte8)insttype::IT_SET_B_CONST_STRING)
-										{
-											uint strmax = 0;
-											instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-											for (int k = 0; k < id.param_num; ++k)
-											{
-												i += id.param_typesiz[k];
-											}
-											i += strmax + 1;
-										}
-										else {
-											instruct_data id = InsideCode_Bake::inst_meta[ecs->codemem[i]];
-											for (int k = 0; k < id.param_num; ++k)
-											{
-												i += id.param_typesiz[k];
-											}
-										}
-									}
-								}
-								if (bejmp == false) {
-									ecs->stopnum = ncs->start_line;
-									ecs->stop_callstack = ecs->call_stack.size();
-									ecs->isBreaking = false;
-								}
-							}
-						}
-					}
-					else {
-						if (shp::bPointInRectRange(mpos, dbgtoolbox_pausert)) {
-							//pause btn
-							ecs->isBreaking = true;
-						}
-						else if (shp::bPointInRectRange(mpos, dbgtoolbox_Stoprt)) {
-							//stop btn
-							ecs->isBreaking = true;
-							ecs->isDbg = false;
-						}
-					}
-				}
-
-				//codelines events
-				shp::rect4f additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
-				float fontsiz = codeline_height * 0.25f;
-				shp::rect4f headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
-				shp::rect4f sliderLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate, loc.fy, loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, headerRT.fy);
-				shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
-				lineloc.fy += codeline_height; lineloc.ly += codeline_height;
-				shp::rect4f linenumloc = lineloc;
-				lineloc.fx += codeline_height * linenumwid;
-
-				int max_express = loc.geth() / codeline_height;
-				int maxx = max_express + codeLines.size() * SliderRate;
-				if (maxx > codeLines.size()) maxx = codeLines.size();
-				int i = codeLines.size() * SliderRate;
-				int smax = max_express;
-				int subi = 0;
-				int maxX = (int)(1.5f * codeEditorLoc.getw() / codeline_height);
-				for (int s = 0; s < smax; ++s) {
-					if (i >= codeLines.size()) break;
-
-					// breakpoint add / delete
-					shp::rect4f breakIrect = shp::rect4f(codeEditorLoc.fx, lineloc.fy, codeEditorLoc.fx + lineloc.geth(), lineloc.ly);
-					if (shp::bPointInRectRange(mpos, breakIrect)) {
-						bool bAdd = true;
-						for (int i0 = 0; i0 < CodeLineBreakPoints.size(); ++i0) {
-							if (CodeLineBreakPoints.at(i0) == i) {
-								CodeLineBreakPoints.erase(i0);
-								bAdd = false;
-								break;
-							}
-						}
-						if (bAdd) {
-							CodeLineBreakPoints.push_back(i);
-						}
-					}
-
-					wstring wstr;
-					wstr = to_wstring(i);
-					shp::vec2i lim = GetExpendLimit(i);
-					bool hold = false;
-					if (lim.x >= 0) {
-						if (GetExpend(i) == 0) {
-							hold = true;
-							shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
-							shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
-							shp::rect4f plsrect = shp::rect4f(expbtn.getCenter().x - codeline_height * 0.2f, expbtn.fy, expbtn.getCenter().x + codeline_height * 0.2f, expbtn.ly);
-
-							i = lim.x;
-							subi = lim.y + 1;
-							if (codeLines[i].size() <= subi) {
-								i += 1;
-								subi = 0;
-							}
-						}
-						else {
-							shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
-							shp::rect4f minrect = shp::rect4f(expbtn.fx, expbtn.getCenter().y - codeline_height * 0.2f, expbtn.lx, expbtn.getCenter().y + codeline_height * 0.2f);
-						}
-					}
-					if (hold == false) {
-						fmlwstr wfstr;
-						wfstr.NULLState();
-						wfstr.Init(codeLines[i].size(), false);
-						for (int k = subi + Xofffset; k < codeLines[i].size(); ++k) {
-							wfstr.push_back(codeLines[i][k]);
-						}
-						if (wfstr.up > maxX) wfstr.up = maxX;
-
-						if (i != selected_codeline) {
-						}
-						else {
-							shp::rect4f textcursorLoc = GetLoc_stringIndex(wfstr.Arr, wfstr.size(), fontsiz, lineloc, selected_charindex);
-						}
-						wfstr.release();
-
-						++i;
-						subi = 0;
-					}
-					lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
-					linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
-				}
+				
 			}
 		}
 
@@ -1692,328 +1862,59 @@ void ICB_Editor::Event(DX_Event evt) {
 		}
 
 		if (focus) {
-			if (evt.message == WM_KEYDOWN) {
-				wchar_t key = evt.wParam;
-				bool bcharinput = 41 <= key && key <= 126;
-				bool alphainput = 'A' <= key && key <= 'Z';
-				bool numinput = '0' <= key && key <= '9';
-				int casedelta = 'a' - 'A';
-				if (bcharinput) {
-					if (alphainput) {
-						if (BeShift == false && CapsLock == false) {
-							key += casedelta;
-						}
-						else if (CapsLock && BeShift) {
-							key += casedelta;
-						}
-					}
-					if (numinput && BeShift) {
-						switch (key) {
-						case L'0':
-							key = L')';
-							break;
-						case L'1':
-							key = L'!';
-							break;
-						case L'2':
-							key = L'@';
-							break;
-						case L'3':
-							key = L'#';
-							break;
-						case L'4':
-							key = L'$';
-							break;
-						case L'5':
-							key = L'%';
-							break;
-						case L'6':
-							key = L'^';
-							break;
-						case L'7':
-							key = L'&';
-							break;
-						case L'8':
-							key = L'*';
-							break;
-						case L'9':
-							key = L'(';
-							break;
-						}
-					}
-					codeLines[selected_codeline].insert(selected_charindex, key);
-					codeLines[selected_codeline].c_str();
-					++selected_charindex;
-				}
-				else if (((186 <= key && key <= 192) || key == 219) || (221 <= key && key <= 222)) {
-					if (BeShift) {
-						switch (key) {
-						case 186:
-							key = L':';
-							break;
-						case 187:
-							key = L'+';
-							break;
-						case 188:
-							key = L'<';
-							break;
-						case 189:
-							key = L'_';
-							break;
-						case 190:
-							key = L'>';
-							break;
-						case 191:
-							key = L'?';
-							break;
-						case 192:
-							key = L'~';
-							break;
-						case 219:
-							key = L'{';
-							break;
-						case 221:
-							key = L'}';
-							break;
-						case 222:
-							key = L'\"';
-							break;
-						}
-					}
-					else {
-						switch (key) {
-						case 186:
-							key = L';';
-							break;
-						case 187:
-							key = L'=';
-							break;
-						case 188:
-							key = L',';
-							break;
-						case 189:
-							key = L'-';
-							break;
-						case 190:
-							key = L'.';
-							break;
-						case 191:
-							key = L'/';
-							break;
-						case 192:
-							key = L'`';
-							break;
-						case 219:
-							key = L'[';
-							break;
-						case 221:
-							key = L']';
-							break;
-						case 222:
-							key = L'\'';
-							break;
-						}
-					}
-
-					codeLines[selected_codeline].insert(selected_charindex, key);
-					WhenCharInsert(selected_codeline, selected_charindex, key);
-					codeLines[selected_codeline].c_str();
-					++selected_charindex;
-				}
-				else if (evt.wParam == VK_BACK) {
-					if (codeLines[selected_codeline].size() >= selected_charindex - 1) {
-						--selected_charindex;
-						BeforeCharErase(selected_codeline, selected_charindex);
-						codeLines[selected_codeline].erase(selected_charindex);
-					}
-					else if (selected_charindex == 0 && selected_codeline != 0) {
-						fmlwstr temp;
-						temp.NULLState();
-						temp.Init(8, false);
-						temp = codeLines.at(selected_codeline);
-						codeLines.at(selected_codeline).release();
-						codeLines.erase(selected_codeline);
-						WhenLineErase(selected_codeline);
-						--selected_codeline;
-						selected_charindex = codeLines.at(selected_codeline).size();
-						for (int i = 0; i < temp.size(); ++i) {
-							codeLines.at(selected_codeline).push_back(temp[i]);
-						}
-						temp.release();
-					}
-				}
-				else if (evt.wParam == VK_SPACE) {
-					codeLines[selected_codeline].insert(selected_charindex, L' ');
-					codeLines[selected_codeline].c_str();
-					++selected_charindex;
-				}
-				else if (evt.wParam == VK_RETURN) {
-					//enter
-					codeLines.insert(selected_codeline + 1, fmlwstr());
-					WhenLineInsert(selected_codeline + 1);
-					selected_codeline += 1;
-					codeLines[selected_codeline].NULLState();
-					codeLines[selected_codeline].Init(8, false);
-					selected_charindex = 0;
-				}
-				else if (evt.wParam == VK_SHIFT) {
-					BeShift = true;
-				}
-				else if (evt.wParam == VK_CAPITAL) {
-					CapsLock != CapsLock;
-				}
-				else if (evt.wParam == VK_UP) {
-					if (selected_codeline != 0) {
-						shp::vec2i lim = GetExpendStart(selected_codeline - 1);
-						if (lim.x >= 0 && GetExpend(lim.x) == 0) {
-							selected_codeline = lim.x;
-							selected_charindex = lim.y - 1;
-							if (selected_charindex < 0) {
-								selected_charindex = 0;
-							}
-						}
-						else {
-							unsigned int prevCL = selected_codeline;
-							--selected_codeline;
-							selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[prevCL].size() + 1));
-						}
-					}
-				}
-				else if (evt.wParam == VK_DOWN) {
-					if (codeLines.size() > selected_codeline + 1) {
-						shp::vec2i lim = GetExpendLimit(selected_codeline);
-						if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
-							selected_codeline = lim.x;
-							selected_charindex = lim.y + 1;
-							if (selected_charindex >= codeLines[selected_codeline].size()) {
-								selected_codeline += 1;
-								selected_charindex = 0;
-							}
-						}
-						else {
-							++selected_codeline;
-							selected_charindex = (unsigned int)(float)(codeLines[selected_codeline].size() + 1) * ((float)selected_charindex / (float)(codeLines[selected_codeline - 1].size() + 1));
-						}
-					}
-				}
-				else if (evt.wParam == VK_LEFT) {
-					if (inCtrl) {
-						Xofffset -= 5;
-						if (Xofffset < 0) Xofffset = 0;
-					}
-					else {
-						if (selected_charindex != 0) {
-							selected_charindex -= 1;
-						}
-						else {
-							if (selected_codeline != 0) {
-								shp::vec2i lim = GetExpendStart(selected_codeline - 1);
-								if (lim.x >= 0 && GetExpend(lim.x) == 0) {
-									selected_codeline = lim.x;
-									selected_charindex = lim.y - 1;
-									if (selected_charindex < 0) {
-										selected_charindex = 0;
-									}
-								}
-								else {
-									selected_codeline -= 1;
-									selected_charindex = codeLines[selected_codeline].size();
-								}
-							}
-						}
-					}
-				}
-				else if (evt.wParam == VK_RIGHT) {
-					if (inCtrl) {
-						Xofffset += 5;
-					}
-					else {
-						if (selected_charindex < codeLines[selected_codeline].size()) {
-							selected_charindex += 1;
-						}
-						else {
-							if (selected_codeline < codeLines.size()) {
-								shp::vec2i lim = GetExpendLimit(selected_codeline);
-								if (lim.x >= 0 && GetExpend(selected_codeline) == 0) {
-									selected_codeline = lim.x;
-									selected_charindex = lim.y + 1;
-									if (selected_charindex >= codeLines[selected_codeline].size()) {
-										selected_codeline += 1;
-										selected_charindex = 0;
-									}
-								}
-								else {
-									selected_codeline += 1;
-									selected_charindex = 0;
-								}
-							}
-						}
-					}
-				}
-				else if (key == 9) {
-					//TAB
-					codeLines[selected_codeline].insert(selected_charindex, L' ');
-					codeLines[selected_codeline].insert(selected_charindex, L' ');
-					codeLines[selected_codeline].c_str();
-					selected_charindex += 2;
-				}
-				else if (key == 17) {
-					inCtrl = true;
-				}
-
-				if (selected_codeline > maxx) {
-					SliderRate += slideDelta;
-				}
-
-				if (selected_codeline < minx) {
-					SliderRate -= slideDelta;
-				}
-			}
-			else if (evt.message == WM_KEYUP) {
-				if (evt.wParam == VK_SHIFT) {
-					BeShift = false;
-				}
-				else if (evt.wParam == 17) {
-					inCtrl = false;
-				}
-			}
-
-			//expending
+			CodelineEvent(evt);
+			
 			if (evt.message == WM_LBUTTONDOWN) {
 				shp::vec2f mpos = GetMousePos(evt.lParam);
-				shp::rect4f codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
-				shp::rect4f lineloc = shp::rect4f(codeEditorLoc.fx, headerRT.fy - 2 * codeline_height, codeEditorLoc.lx, headerRT.fy - codeline_height);
-				lineloc.fy += codeline_height; lineloc.ly += codeline_height;
-				shp::rect4f linenumloc = lineloc;
-				lineloc.fx += codeline_height * linenumwid;
-				int max_express = loc.geth() / codeline_height;
-				int maxx = max_express + codeLines.size() * SliderRate;
-				if (maxx > codeLines.size()) maxx = codeLines.size();
-				int i = codeLines.size() * SliderRate;
-				int smax = max_express;
-				int subi = 0;
-				for (int s = 0; s < smax; ++s) {
-					if (i >= codeLines.size()) break;
-					shp::vec2i lim = GetExpendLimit(i);
-					bool hold = false;
-					if (lim.x >= 0) {
-						shp::rect4f expbtn = shp::rect4f(lineloc.fx - codeline_height, lineloc.ly - codeline_height, lineloc.fx, lineloc.ly);
-						if (shp::bPointInRectRange(mpos, expbtn)) {
-							if (GetExpend(i) == 0) {
-								SetExpend(i, true);
-							}
-							else {
-								SetExpend(i, false);
-							}
-						}
-					}
-					if (hold == false) {
-						++i;
-					}
-					lineloc.fy -= codeline_height * linemargin; lineloc.ly -= codeline_height * linemargin;
-					linenumloc.fy -= codeline_height * linemargin; linenumloc.ly -= codeline_height * linemargin;
+
+				// side tab btns event
+				shp::rect4f funcbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 7 * atmargin, additionalTabLoc.ly - 10);
+				shp::rect4f cxtbtnLoc = shp::rect4f(additionalTabLoc.fx + 9 * atmargin, additionalTabLoc.ly - 70, additionalTabLoc.fx + 15 * atmargin, additionalTabLoc.ly - 10);
+				shp::rect4f importbtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 40);
+				shp::rect4f compilebtnLoc = shp::rect4f(additionalTabLoc.fx + atmargin, additionalTabLoc.fy + 50, additionalTabLoc.fx + 10 * atmargin, additionalTabLoc.fy + 90);
+				shp::rect4f foldbtnLoc = shp::rect4f(loc.fx, loc.ly - 2 * codeline_height, loc.fx + 2 * codeline_height, loc.ly);
+
+				if (shp::bPointInRectRange(mpos, funcbtnLoc)) {
+					showVarmod = true;
+				}
+
+				if (shp::bPointInRectRange(mpos, cxtbtnLoc)) {
+					showVarmod = false;
+				}
+
+				if (showVarmod) {
+					FunctionPageEvent(funcbtnLoc, mpos);
+				}
+				else {
+					ContextPageEvent(funcbtnLoc, mpos);
+				}
+
+				//import btn event
+				if (shp::bPointInRectRange(mpos, importbtnLoc)) {
+					ImportBtnEvent();
+				}
+
+				//compile btn event
+				if (shp::bPointInRectRange(mpos, compilebtnLoc)) {
+					CompileBtnEvent();
+				}
+
+				// window folding event
+				if (shp::bPointInRectRange(mpos, foldbtnLoc)) {
+					//showVarmod = false;
+					//fold
+					befold = true;
+					shp::vec2f pc = *(shp::vec2f*)&mainpage->pfm.Data[(int)mainpm::present_center];
+					object_position = GetObjectPos(shp::vec2f(loc.fx, loc.ly)).getv2();
+				}
+
+				//debuging tool box event
+				if ((SelectedCXT >= 0 && ecss.size() > SelectedCXT) && ecss.at(SelectedCXT)->isDbg) {
+					DbgToolBoxEvent(mpos);
 				}
 			}
+
+			
 		}
 	}
 	else {
@@ -2430,6 +2331,106 @@ void freepolybtn_event(DXBtn* btn, DX_Event evt)
 					sarr->clear();
 				}
 			}
+		}
+	}
+}
+
+wchar_t currentEditTextData[256];
+HWND EditTextHandle;
+bool EditTextForMakeObject = false;
+
+void CreateTextObjectToMainSprite() {
+	if (mainSprite->st != sprite_type::st_objects) {
+		return;
+	}
+
+	int len = wcslen(currentEditTextData);
+	Object* obj = (Object*)fm->_New(sizeof(Object), true);
+	obj->null();
+	Sprite* spr = (Sprite*)fm->_New(sizeof(Sprite), true);
+	spr->null();
+	spr->st = sprite_type::st_objects;
+	spr->data.objs = (fmvecarr<int*>*)fm->_New(sizeof(fmvecarr<int*>), true);
+	spr->data.objs->NULLState();
+
+	obj->source = spr;
+	//obj->sca = shp::vec3f(0.1f, 0.1f, 0.1f);
+	int cap = 0;
+	for (int i = 0; i < len; ++i) {
+		wchar_t c = currentEditTextData[i];
+		if (char_map.find((unsigned int)c) == char_map.end())
+		{
+			CharBuffer* cbuf = (CharBuffer*)fm->_New(sizeof(CharBuffer), true);
+			cbuf->ready((unsigned int)c, g_pVertexShader, g_pPixelShader);
+			char_map.insert(CharMap::value_type((unsigned int)c, cbuf));
+		}
+		CharBuffer* cBuff = char_map[c];
+		cap += cBuff->frag.size();
+	}
+	spr->data.objs->Init(cap, false, true);
+
+	shp::vec3f stackPos = shp::vec3f(0, 0, 0);
+	for (int i = 0; i < len; ++i) {
+		wchar_t c = currentEditTextData[i];
+		CharBuffer* cBuff = char_map[c];
+		for (int k = 0; k < cBuff->frag.size(); ++k) {
+			rbuffer* rb = cBuff->frag.at(k);
+			rbuffer* crb = rb->copy_new_rbuff();
+			Sprite* cspr = (Sprite*)fm->_New(sizeof(Sprite), true);
+			cspr->null();
+			cspr->st = sprite_type::st_freepolygon;
+			cspr->data.freepoly = crb;
+			Object* cobj = (Object*)fm->_New(sizeof(Object), true);
+			cobj->null();
+			cobj->pos = stackPos;
+			cobj->source = cspr;
+			spr->data.objs->push_back((int*)cobj);
+		}
+		stackPos.x += cBuff->range.getw();
+	}
+	
+	mainSprite->data.objs->push_back((int*)obj);
+}
+
+si64 CALLBACK TextDataDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
+	case WM_INITDIALOG:
+		EditTextHandle = GetDlgItem(hDlg, IDC_EDIT1);
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetWindowText(EditTextHandle, currentEditTextData, 256);
+			currentEditTextData[255] = 0;
+
+			if (EditTextForMakeObject) {
+				CreateTextObjectToMainSprite();
+			}
+
+			EndDialog(hDlg, TRUE);
+			break;
+		case IDCANCEL:
+			currentEditTextData[0] = 0;
+			EndDialog(hDlg, TRUE);
+			break;
+		}
+	}
+}
+
+void textobjbtn_event(DXBtn* btn, DX_Event evt) {
+	shp::vec2f* flow = (shp::vec2f*)btn->param[1];
+
+	if (evt.message == WM_LBUTTONDOWN)
+	{
+		shp::vec2f mpos = GetMousePos(evt.lParam);
+		// dbg << "mpos : " << x << ", " << y << endl;
+		if (shp::bPointInRectRange(shp::vec2f(mpos.x, mpos.y), btn->sup()->loc) && press_ef)
+		{
+			press_ef = false;
+			flow->x = 0;
+			// operate
+			EditTextForMakeObject = true;
+			DialogBox(g_hInst, MAKEINTRESOURCE(IDD_TEXTDATA_DIALOG), g_hWnd, TextDataDialogProc);
 		}
 	}
 }
@@ -3089,7 +3090,7 @@ void main_init(Page* p)
 	dbg << ", textoutline = " << p->pfm.Fup << endl;
 	DXBtn* textoutline = (DXBtn*)p->pfm._New(sizeof(DXBtn));
 	textoutline->init(L"Tex", freepolybtn_init, freepolybtn_render, basicbtn_update,
-		freepolybtn_event, shp::rect4f(-scw / 2.0f, sch / 2.0f - 340,
+		textobjbtn_event, shp::rect4f(-scw / 2.0f, sch / 2.0f - 340,
 			-scw / 2.0f + 100, sch / 2.0f - 240));
 	textoutline->param[3] = (int*)p;
 	textoutline->param[4] = &behaveid_arr[1];
@@ -5178,7 +5179,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     int8_t error = TTFFontParser::parse_file(font_path, &font_data, &font_parsed, &condition_variable);
 
     sub_font_data[0] = new TTFFontParser::FontData();
-    const char* subfont_path = "ARLRDBD.TTF";
+    const char* subfont_path = "malgun.ttf";
     error = TTFFontParser::parse_file(subfont_path, sub_font_data[0], &font_parsed, &condition_variable);
 
 	layerManager.Init();
@@ -5944,75 +5945,78 @@ void Render()
     // Present our back buffer to our front buffer
     //
 
-	//Glyph g;
-	//int fontindex = -1;
-	//uint32_t unicode = L'H';
-	//unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
-	//while (glyphmap->find(unicode) == glyphmap->end()) {
-	//	++fontindex;
-	//	glyphmap = &sub_font_data[fontindex]->glyphs;
-	//	if (fontindex >= max_sub_font) {
-	//		return;
-	//	}
-	//}
-	//g = glyphmap->at(unicode);
+	Glyph g;
+	int fontindex = -1;
+	uint32_t unicode = L'안';
+	unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
+	while (glyphmap->find(unicode) == glyphmap->end()) {
+		++fontindex;
+		glyphmap = &sub_font_data[fontindex]->glyphs;
+		if (fontindex >= max_sub_font) {
+			return;
+		}
+	}
+	g = glyphmap->at(unicode);
 
-	//float rate = 0.35f;
-	//float R = 0;
-	//
-	//Curve c;
-	//shp::vec2f v;
-	//shp::vec2f lastpos = shp::vec2f(0, 0);
-	//for (int i = 0; i < g.path_list.size(); ++i) {
-	//	R = 0;
-	//	c = g.path_list.at(i).geometry.at(0);
-	//	shp::vec2f lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
-	//	float dr = 1.0f / (float)g.path_list.at(i).geometry.size();
-	//	for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
-	//		R += dr;
-	//		c = g.path_list.at(i).geometry.at(k);
-	//		if (c.is_curve) {
-	//			float fd = 0.125;
-	//			float t = 0;
-	//			float it = 1.0f;
-	//			v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
-	//			lastpos = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-	//			for (int u = 0; u < 8; ++u) {
-	//				shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
-	//				shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
-	//				shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
-	//				
-	//				v = shp::vec2f(rate * rp.x, rate * rp.y);
-	//				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-	//				drawline(shp::vec2f(v.x - 7, v.y), shp::vec2f(v.x + 7, v.y), 10, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
-	//				lastpos = shp::vec2f(rate*rp.x, rate*rp.y);
+	float rate = 0.2f;
+	float R = 0;
+	
+	Curve c;
+	shp::vec2f v;
+	shp::vec2f lastpos = shp::vec2f(0, 0);
+	for (int i = 0; i < g.path_list.size(); ++i) {
+		R = 0;
+		c = g.path_list.at(i).geometry.at(0);
+		shp::vec2f lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
+		float dr = 1.0f / (float)g.path_list.at(i).geometry.size();
+		for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
+			R += dr;
+			c = g.path_list.at(i).geometry.at(k);
+			if (c.is_curve) {
+				float fd = 0.125;
+				float t = 0;
+				float it = 1.0f;
+				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
+				
+				v = shp::vec2f(rate * c.c.x, rate * c.c.y);
+				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.01f);
+				lastpos = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+				for (int u = 0; u < 8; ++u) {
+					shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
+					shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
+					shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
+					
+					v = shp::vec2f(rate * rp.x, rate * rp.y);
+					drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+					drawline(shp::vec2f(v.x - 7, v.y), shp::vec2f(v.x + 7, v.y), 5, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
+					lastpos = shp::vec2f(rate*rp.x, rate*rp.y);
 
-	//				t += fd;
-	//				it -= fd;
-	//			}
-	//			v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-	//			lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-	//		}
-	//		else {
-	//			//rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
-	//			v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-	//			drawline(shp::vec2f(v.x - 10, v.y), shp::vec2f(v.x + 5, v.y), 10, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
-	//			lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
+					t += fd;
+					it -= fd;
+				}
+				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+			}
+			else {
+				//rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
+				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
+				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+				drawline(shp::vec2f(v.x - 10, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
+				lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
 
-	//			v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-	//			drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-	//			drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 10, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-	//			lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
-	//		}
-	//	}
+				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
+				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 10, v.y), 5, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+			}
+		}
 
-	//	//rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
-	//}
+		//rbuff->av(SimpleVertex(sc.p0.x, sc.p0.x, 0, 255, 255, 255, 255));
+	}
 
 	for (int i = maxpage-1; i >= 0; --i)
 	{

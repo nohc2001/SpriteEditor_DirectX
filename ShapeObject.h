@@ -240,6 +240,60 @@ public:
         }
     }
 
+    // copyable when after call end() function.
+    rbuffer* copy_new_rbuff() {
+        rbuffer* rb = (rbuffer*)fm->_New(sizeof(rbuffer), true);
+        rb->set_local(get_local());
+        int choice = get_choice();
+        if (buffer[0] != nullptr) {
+            rb->buffer[0] = (fmvecarr<SimpleVertex>*)fm->_New(sizeof(fmvecarr<SimpleVertex>), true);
+            rb->index_buf[0] = (fmvecarr<SimpleIndex>*)fm->_New(sizeof(fmvecarr<SimpleIndex>), true);
+            rb->buffer[0]->NULLState();
+            rb->index_buf[0]->NULLState();
+            rb->buffer[0]->Init(buffer[choice]->size(), false, true);
+            rb->index_buf[0]->Init(index_buf[choice]->size(), false, true);
+            for (int i = 0; i < buffer[choice]->size(); ++i) {
+                rb->buffer[0]->push_back(buffer[choice]->at(i));
+            }
+            for (int i = 0; i < index_buf[choice]->size(); ++i) {
+                rb->index_buf[0]->push_back(index_buf[choice]->at(i));
+            }
+        }
+
+        rb->m_pVertexBuffer[0] = nullptr;
+        rb->m_pIndexBuffer[0] = nullptr;
+        rb->m_pVertexBuffer[1] = nullptr;
+        rb->m_pIndexBuffer[1] = nullptr;
+
+        D3D11_BUFFER_DESC bd;
+        ZeroMemory(&bd, sizeof(bd));
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(SimpleVertex) * rb->buffer[0]->up;
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.CPUAccessFlags = 0;
+        D3D11_SUBRESOURCE_DATA InitData;
+        ZeroMemory(&InitData, sizeof(InitData));
+        InitData.pSysMem = rb->buffer[0]->Arr;
+        HRESULT hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &(rb->m_pVertexBuffer[0]));
+        if (FAILED(hr))
+            return nullptr;
+
+        // Create index buffer
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(WORD) * 3 * rb->index_buf[0]->up;       // 36 vertices needed for 12 triangles in a triangle list
+        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        bd.CPUAccessFlags = 0;
+        InitData.pSysMem = rb->index_buf[0]->Arr;
+        hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &(rb->m_pIndexBuffer[0]));
+        if (FAILED(hr))
+            return nullptr;
+
+        rb->set_choice(0);
+        rb->set_inherit(get_inherit());
+
+        return rb;
+    }
+
     /*inline GLuint get_shader()
     {
         return basicshaders[(unsigned int)get_rt()];
@@ -693,7 +747,7 @@ public:
             poly.up = 0;
         }
 
-        range = shp::rect4f(0, 0, 1200, 1000);
+        //range = shp::rect4f(0, 0, 1200, 1000);
 
         poly.release();
         prevpoly.release();

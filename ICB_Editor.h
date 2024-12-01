@@ -5,6 +5,7 @@
 #include "Utill_SpaceMath.h"
 #include "Sprite.h"
 #include "DX11_UI.h"
+#include "Extensions/exTool.h"
 
 struct ICBE_ToolData {
 	char* name;
@@ -69,13 +70,144 @@ public:
 	// debug variable table data
 	fmvecarr<byte8*> expend_variabletableaddress;
 
-	static constexpr float lifeconst[10] = { 2.0f, 3.0f, 5.0f, 7.0f, 11.0f, 13.0f, 17.0f, 19.0f, 23.0f, 29.0f };
+	fmvecarr<ui32> disassmblyLineNumArr;
 
+	static constexpr float lifeconst[10] = { 2.0f, 3.0f, 5.0f, 7.0f, 11.0f, 13.0f, 17.0f, 19.0f, 23.0f, 29.0f };
 	float life[10] = {};
 
 	int blockstack = 0;
 
+	//render - event function metadata
+	float fontsiz;
+	shp::rect4f codeEditorLoc;
+	shp::rect4f headerRT;
+	shp::rect4f additionalTabLoc;
+	float atmargin;
+
 	static void StaticInit();
+
+	//inner Init function.
+	void basicInit(shp::rect4f _loc) {
+		visible = true;
+		loc = _loc;
+
+		codeLines.NULLState();
+		codeLines.Init(8, false, true);
+		for (int i = 0; i < 8; ++i) {
+			codeLines.push_back(fmlwstr());
+			codeLines[i].NULLState();
+			codeLines[i].Init(16, false);
+		}
+
+		codeLine_expend.NULLState();
+		codeLine_expend.Init(8, false, true);
+		for (int i = 0; i < 8; ++i) {
+			codeLine_expend[i] = false;
+		}
+		selected_codeline = 0;
+		selected_charindex = 0;
+		codeline_height = 17.0f;
+		linemargin = 1.2f;
+		linenumwid = 3.0f;
+
+		headerRate = 2.0f;
+		CodeEditorRate = 0.75f;
+		SliderWidRate = 1.0f;
+		stackT = 0;
+		tipmov = 5.0f;
+		BeShift = false;
+		CapsLock = false;
+		isMoving = false;
+		SliderRate = 0; // to 1.0f
+		showVarmod = true;
+		inCtrl = false;
+		Xofffset = 0;
+		blockstack = 0;
+
+		currentErrorMsg.NULLState();
+		currentErrorMsg.Init(8, false);
+
+		funcjmp_stack.NULLState();
+		funcjmp_stack.Init(8, false, true);
+
+		focus = false;
+		isExpend = false;
+		movOffset = shp::rect4f(0, 0, 0, 0);
+		showVarmod = true;
+		object_position = shp::vec2f(0, 0);
+		befold = false;
+
+		tools.NULLState();
+		tools.Init(8, false);
+
+		CodeLineBreakPoints.NULLState();
+		CodeLineBreakPoints.Init(8, false, true);
+
+		expend_variabletableaddress.NULLState();
+		expend_variabletableaddress.Init(8, false, true);
+
+		disassmblyLineNumArr.NULLState();
+		disassmblyLineNumArr.Init(8, false, true);
+
+		for (int i = 0; i < 10; ++i) {
+			life[i] = 0;
+		}
+
+		fontsiz = codeline_height * 0.25f;
+		codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
+		headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
+		additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
+		atmargin = additionalTabLoc.getw() / 16.0f;
+	}
+	void basicToolInit();
+	void ICB_Editor::icb_Init(InsideCode_Bake* sicb);
+	void ICB_Editor::icb_Init(const char* filename);
+	//void icb_Init(fmvecarr<fmlwstr>& cLines);
+	//void icb_Init(char* code_str);
+
+	//not using function (init with icb)
+	void Init(shp::rect4f _loc, InsideCode_Bake* sicb);
+	//with filename
+	void Init(shp::rect4f _loc, const char* filename);
+	//with codelines
+	//void Init(shp::rect4f _loc, fmvecarr<fmlwstr>& cLines);
+	//with text data
+	//void Init(shp::rect4f _loc, char* code_str);
+
+	void RenderMetaDataUpdate() {
+		fontsiz = codeline_height * 0.25f;
+		codeEditorLoc = shp::rect4f(loc.fx, loc.fy, loc.fx + loc.getw() * CodeEditorRate, loc.ly);
+		headerRT = shp::rect4f(loc.fx, loc.ly - headerRate * codeline_height, loc.lx, loc.ly);
+		additionalTabLoc = shp::rect4f(loc.fx + loc.getw() * CodeEditorRate + SliderWidRate * codeline_height, loc.fy, loc.lx, loc.ly);
+		atmargin = additionalTabLoc.getw() / 16.0f;
+	}
+	void RenderEditorWindow();
+	void RenderCodeLines();
+	void RenderDbgToolBox();
+	void RenderExtentionTools();
+	void RenderContextList();
+	void RenderFuntionList();
+
+	void Render();
+
+	void CodelineEvent(DX_Event evt);
+	void CompileBtnEvent();
+	void ImportBtnEvent();
+	void FunctionPageEvent(shp::rect4f funcbtnLoc, shp::vec2f mpos);
+	void ContextPageEvent(shp::rect4f funcbtnLoc, shp::vec2f mpos);
+	void DbgToolBoxEvent(shp::vec2f mpos);
+
+	void Event(DX_Event evt);
+
+	void Update(float delta) {
+		stackT += delta;
+		//cursorAlpha = fabsf(sinf(2.5f*stackT));
+		for (int i = 0; i < 10; ++i) {
+			//float f = stackT / lifeconst[i];
+			//life[i] = AnimClass::EaseOut(f - floorf(f), 3);
+			life[i] = (1.0f + sinf(lifeconst[i] / 3.0f * stackT)) / 2.0f;
+		}
+	}
 
 	bool isVariableTableShowExpending(byte8* ptr) {
 		for (int i = 0; i < expend_variabletableaddress.size(); ++i) {
@@ -662,27 +794,6 @@ public:
 		return shp::vec2f(startPos.x, stackY);
 	}
 
-	//not using function (init with icb)
-	void Init(shp::rect4f _loc, InsideCode_Bake* sicb);
-	//with filename
-	void Init(shp::rect4f _loc, const char* filename);
-	//with codelines
-	void Init(shp::rect4f _loc, fmvecarr<fmlwstr>& cLines);
-	//with text data
-	void Init(shp::rect4f _loc, char* code_str);
-
-	void Render();
-
-	void Event(DX_Event evt);
 	
-	void Update(float delta) {
-		stackT += delta;
-		//cursorAlpha = fabsf(sinf(2.5f*stackT));
-		for (int i = 0; i < 10; ++i) {
-			//float f = stackT / lifeconst[i];
-			//life[i] = AnimClass::EaseOut(f - floorf(f), 3);
-			life[i] = (1.0f + sinf(lifeconst[i] / 3.0f * stackT)) / 2.0f;
-		}
-	}
 };
 #endif

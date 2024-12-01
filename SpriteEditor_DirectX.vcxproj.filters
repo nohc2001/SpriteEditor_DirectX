@@ -106,6 +106,7 @@
     <Text Include="DevInfo\IDEAL IDE features.txt">
       <Filter>DevInfo</Filter>
     </Text>
+    <Text Include="WorkLoad.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpriteEditor_DirectX.rc">

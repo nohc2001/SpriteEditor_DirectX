@@ -174,6 +174,12 @@ struct exTool_RenderData_Text {
     float fontsiz;
 };
 
+exTool_PostRenderManager* ToolPostRender = nullptr;
+exTool_EventSystem* ToolEventSystem = nullptr;
+bool using_tool;
+
+ICB_Extension* ICB_exTool;
+
 void exTool_ReleaseLine(void* ptr) {
     exTool_RenderData_Line* vptr = (exTool_RenderData_Line*)ptr;
     fm->_Delete((byte8*)ptr, sizeof(exTool_RenderData_Line));

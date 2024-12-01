@@ -389,6 +389,7 @@
     <Text Include="exTool_Compas_info.txt" />
     <Text Include="icb_dbg.txt" />
     <Text Include="instruction_table.txt" />
+    <Text Include="WorkLoad.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

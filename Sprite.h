@@ -158,7 +158,7 @@ public:
 		source = nullptr;
 		pos = shp::vec3f(0, 0, 0);
 		rot = shp::vec3f(0, 0, 0);
-		sca = shp::vec3f(0, 0, 0);
+		sca = shp::vec3f(1, 1, 1);
 		ecs = nullptr;
 	}
 };
@@ -183,11 +183,11 @@ void Sprite::render(const ConstantBuffer& uniform)
 			for (int i = data.objs->size()-1; i >= 0; --i)
 			{
 				Object* obj = (Object*)data.objs->at(i);
-				ConstantBuffer cb = GetBasicModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
+				ConstantBuffer cb = GetCamModelCB(obj->pos, obj->rot, obj->sca, DX11Color(1, 1, 1, 1));
 				cb.mWorld = XMMatrixMultiply(uniform.mWorld, cb.mWorld);
 				cb.StaticColor = MergeColor_MulMode(uniform.StaticColor, cb.StaticColor);
 				/*for (int i = worldMatrixStack.size() ; i >= 0; --i) {
-					cb.mWorld = XMMatrixMultiply(worldMatrixStack[i], cb.mWorld);
+					cb.mWorld = XMMatrixMultiply(cb.mWorld, worldMatrixStack[i]);
 				}*/
 				obj->source->render(cb);
 			}

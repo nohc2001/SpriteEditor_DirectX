@@ -1,0 +1,10 @@
+workload
+
+while(bechanged == 0){ 
+	//blank
+ }
+// this is not work. 
+-> disasmbly make (icb_dbg.txt is not efficient)
+-> disasm icon make
+-> text to objects
+-> correct text output
