@@ -5947,7 +5947,7 @@ void Render()
 
 	Glyph g;
 	int fontindex = -1;
-	uint32_t unicode = L'안';
+	uint32_t unicode = L'ㄴ';
 	unordered_map<uint32_t, TTFFontParser::Glyph>* glyphmap = &font_data.glyphs;
 	while (glyphmap->find(unicode) == glyphmap->end()) {
 		++fontindex;
@@ -5965,53 +5965,50 @@ void Render()
 	shp::vec2f v;
 	shp::vec2f lastpos = shp::vec2f(0, 0);
 	for (int i = 0; i < g.path_list.size(); ++i) {
-		R = 0;
+		R = 1;
 		c = g.path_list.at(i).geometry.at(0);
 		shp::vec2f lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
 		float dr = 1.0f / (float)g.path_list.at(i).geometry.size();
 		for (int k = 0; k < g.path_list.at(i).geometry.size(); ++k) {
-			R += dr;
+			//R += dr;
 			c = g.path_list.at(i).geometry.at(k);
 			if (c.is_curve) {
-				float fd = 0.125;
-				float t = 0;
-				float it = 1.0f;
 				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
 				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
 				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
-				
-				v = shp::vec2f(rate * c.c.x, rate * c.c.y);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(1.0f, 1.0f, 1.0f, 1.0f), 0.01f);
 				lastpos = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
-				for (int u = 0; u < 8; ++u) {
-					shp::vec2f s0 = shp::vec2f(c.p0.x * it + c.c.x * t, c.p0.y * it + c.c.y * t);
-					shp::vec2f s1 = shp::vec2f(c.c.x * it + c.p1.x * t, c.c.y * it + c.p1.y * t);
-					shp::vec2f rp = shp::vec2f(s0.x * it + s1.x * t, s0.y * it + s1.y * t);
-					
+
+				float dt = 0.25f;
+				float lt = 1.0f - dt;
+				float t = dt;
+				for (int u = 1; u < 3; ++u) {
+					shp::vec2f sp = shp::vec2f(lt * c.p0.x + t * c.p1.x, lt * c.p0.y + t * c.p1.y);
+					shp::vec2f ep = shp::vec2f(lt * c.p1.x + t * c.c.x, lt * c.p1.y + t * c.c.y);
+					shp::vec2f rp = shp::vec2f(lt * sp.x + t * ep.x, lt * sp.y + t * ep.y);
 					v = shp::vec2f(rate * rp.x, rate * rp.y);
 					drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-					drawline(shp::vec2f(v.x - 7, v.y), shp::vec2f(v.x + 7, v.y), 5, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
-					lastpos = shp::vec2f(rate*rp.x, rate*rp.y);
-
-					t += fd;
-					it -= fd;
+					drawline(shp::vec2f(v.x - 2.5f, v.y), shp::vec2f(v.x + 2.5f, v.y), 5, DX11Color(0, 1.0f, 1.0f, 1.0f), 0.01f);
+					lastpos = v;
+					lt -= dt;
+					t += dt;
 				}
-				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				
+				/*v = shp::vec2f(rate * c.c.x, rate * c.c.y);
 				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				drawline(shp::vec2f(v.x - 2.5f, v.y), shp::vec2f(v.x + 2.5f, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+				lastpos = v;*/
 			}
 			else {
 				//rbuff->av(SimpleVertex(c.p0.x, c.p0.y, 0, 255, 255, 255, 255));
 				v = shp::vec2f(rate * c.p0.x, rate * c.p0.y);
 				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 10, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
+				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 5, v.y), 5, DX11Color(0, 1.0f, 0, 1.0f), 0.01f);
 				lastpos = shp::vec2f(rate*c.p0.x, rate*c.p0.y);
 
-				v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				/*v = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
 				drawline(v, lastpos, 2, DX11Color(R, 0, 0, 1.0f), 0.01f);
-				drawline(shp::vec2f(v.x - 5, v.y), shp::vec2f(v.x + 10, v.y), 5, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
-				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);
+				drawline(shp::vec2f(v.x - 2.5f, v.y), shp::vec2f(v.x + 2.5f, v.y), 10, DX11Color(0, 0, 1.0f, 1.0f), 0.01f);
+				lastpos = shp::vec2f(rate * c.p1.x, rate * c.p1.y);*/
 			}
 		}
 

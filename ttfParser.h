@@ -288,9 +288,9 @@ namespace TTFFontParser {
 	};
 	struct Curve
 	{
-		float_v2 p0;
-		float_v2 p1;
-		float_v2 c; //control point if is_curve
+		float_v2 p0; //start point
+		float_v2 p1; // if is_curve control point else endpoint
+		float_v2 c;  // if is_curve end point
 		bool is_curve;
 	};
 	struct Path {

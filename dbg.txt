@@ -458,3 +458,4 @@ vsiz : 21
 
 isiz : 1
 [iv0 : (2, 1, 0)]
+mainSprite_init

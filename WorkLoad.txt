@@ -8,3 +8,4 @@ while(bechanged == 0){
 -> disasm icon make
 -> text to objects
 -> correct text output
+-> correct i I H ...
